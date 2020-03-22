@@ -88,6 +88,41 @@ class ForceJoinViewController: ViewController, Shimmable {
             $0.top.leading.trailing.bottom.equalToSuperview()
         }
     }
+
+    // MARK: - Actions
+
+    @objc func didPressJoinButton(_ sender: Any) {
+        guard let buttton = sender as? JoinButton, let userId = buttton.accessibilityIdentifier else { return }
+        guard let viewModel = userViewModels.filter ({ return $0.user?.id == userId }).first, let user = viewModel.user else { return }
+
+        buttton.isLoading = true
+
+        if user.hasJoined(race) {
+            ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Resign \(viewModel.username) from the race?", message: nil, destructiveTitle: "Yes, resign", completion: { (action) in
+                self.resignUser(with: userId) { (status, error) in
+                    buttton.isLoading = false
+                }
+            }) { (action) in
+                 buttton.isLoading = false
+            }
+        } else {
+            ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Force join \(viewModel.username) to the race?", destructiveTitle: "Yes, force join", completion: { (action) in
+                self.forceJoinUser(with: userId) { (status, error) in
+                    buttton.isLoading = false
+                }
+            }) { (action) in
+                 buttton.isLoading = false
+            }
+        }
+    }
+
+    func forceJoinUser(with id: ObjectId, completion: StatusCompletionBlock) {
+        print("Join User \(id)")
+    }
+
+    func resignUser(with id: ObjectId, completion: StatusCompletionBlock) {
+        print("Join User \(id)")
+    }
 }
 
 extension ForceJoinViewController {
@@ -142,9 +177,33 @@ extension ForceJoinViewController: UITableViewDataSource {
 
     func userTableViewCell(for viewModel: UserViewModel) -> UserTableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: UserTableViewCell.identifier) as! UserTableViewCell
+        guard let user = viewModel.user else { return cell }
+
         cell.titleLabel.text = viewModel.pilotName
         cell.avatarImageView.imageView.setImage(with: viewModel.pictureUrl, placeholderImage: UIImage(named: "placeholder_medium"))
-        cell.subtitleLabel.text = viewModel.displayName
+        cell.subtitleLabel.text = viewModel.fullName
+
+        let joinButton = JoinButton(type: .system)
+        joinButton.addTarget(self, action: #selector(didPressJoinButton), for: .touchUpInside)
+        joinButton.hitTestEdgeInsets = UIEdgeInsets(proportionally: -10)
+        joinButton.accessibilityIdentifier = user.id
+
+        if user.hasJoined(race) {
+            joinButton.joinState = .joined
+        } else {
+            joinButton.joinState = .join
+            joinButton.setTitle("Force Join", for: .normal)
+        }
+
+        cell.accessoryType = .none
+        cell.contentView.addSubview(joinButton)
+        joinButton.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.height.equalTo(JoinButton.minHeight)
+            $0.width.equalTo(92)
+            $0.trailing.equalToSuperview().offset(-Constants.padding)
+        }
+
         return cell
     }
 }

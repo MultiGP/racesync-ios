@@ -131,7 +131,7 @@ class RaceRosterViewController: ViewController, Joinable {
         }
     }
 
-    // MARK: - Layout
+    // MARK: - Actions
 
     @objc func didPressAddButton() {
         let vc = ForceJoinViewController(with: race)
@@ -199,7 +199,7 @@ extension RaceRosterViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: UserTableViewCell.identifier) as! UserTableViewCell
         cell.titleLabel.text = viewModel.pilotName
         cell.avatarImageView.imageView.setImage(with: viewModel.pictureUrl, placeholderImage: UIImage(named: "placeholder_medium"))
-        cell.subtitleLabel.text = viewModel.displayName
+        cell.subtitleLabel.text = viewModel.fullName
 
         if let raceEntry = viewModel.raceEntry {
             cell.channelBadge.titleLabel.text = RaceEntryViewModel.shortChannelLabel(for: raceEntry)

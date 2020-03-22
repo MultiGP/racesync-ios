@@ -16,6 +16,7 @@ class UserViewModel: Descriptable {
     let username: String
     let pilotName: String
     let displayName: String
+    let fullName: String
     let pictureUrl: String?
 
     init(with user: User) {
@@ -25,6 +26,7 @@ class UserViewModel: Descriptable {
         self.username = user.userName
         self.pilotName = ViewModelHelper.titleLabel(for: user.userName, country: user.country)
         self.displayName = user.displayName
+        self.fullName = "\(user.firstName.capitalized) \(user.lastName.capitalized)"
         self.pictureUrl = user.profilePictureUrl
     }
 
@@ -43,6 +45,7 @@ class UserViewModel: Descriptable {
         self.username = raceEntry.userName
         self.pilotName = ViewModelHelper.titleLabel(for: raceEntry.userName)
         self.displayName = raceEntry.displayName
+        self.fullName = "\(raceEntry.firstName.capitalized) \(raceEntry.lastName.capitalized)"
         self.pictureUrl = raceEntry.profilePictureUrl
     }
 
