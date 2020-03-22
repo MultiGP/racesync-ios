@@ -92,36 +92,67 @@ class ForceJoinViewController: ViewController, Shimmable {
     // MARK: - Actions
 
     @objc func didPressJoinButton(_ sender: Any) {
-        guard let buttton = sender as? JoinButton, let userId = buttton.accessibilityIdentifier else { return }
+        guard let button = sender as? JoinButton, let userId = button.accessibilityIdentifier else { return }
         guard let viewModel = userViewModels.filter ({ return $0.user?.id == userId }).first, let user = viewModel.user else { return }
 
-        buttton.isLoading = true
+        button.isLoading = true
+        let state = button.joinState
 
         if user.hasJoined(race) {
             ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Resign \(viewModel.username) from the race?", message: nil, destructiveTitle: "Yes, resign", completion: { (action) in
-                self.resignUser(with: userId) { (status, error) in
-                    buttton.isLoading = false
+                self.resignUser(with: userId) { (newState) in
+                    button.isLoading = false
+
+                    if state != newState {
+                        button.joinState = newState
+                    }
                 }
             }) { (action) in
-                 buttton.isLoading = false
+                 button.isLoading = false
             }
         } else {
             ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Force join \(viewModel.username) to the race?", destructiveTitle: "Yes, force join", completion: { (action) in
-                self.forceJoinUser(with: userId) { (status, error) in
-                    buttton.isLoading = false
+                self.forceJoinUser(with: userId) { (newState) in
+                    button.isLoading = false
+
+                    if state != newState {
+                        button.joinState = newState
+                    }
                 }
             }) { (action) in
-                 buttton.isLoading = false
+                 button.isLoading = false
             }
         }
     }
 
-    func forceJoinUser(with id: ObjectId, completion: StatusCompletionBlock) {
-        print("Join User \(id)")
+    func forceJoinUser(with id: ObjectId, completion: @escaping JoinStateCompletionBlock) {
+
+        raceApi.forceJoin(race: race.id, pilotId: id) { (status, error) in
+            if status == true {
+                completion(.joined)
+                // TODO: Reload race entries
+            } else if let error = error {
+                completion(.join)
+                AlertUtil.presentAlertMessage("Couldn't force join this user to the race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
+            } else {
+                completion(.join)
+            }
+        }
     }
 
-    func resignUser(with id: ObjectId, completion: StatusCompletionBlock) {
-        print("Join User \(id)")
+    func resignUser(with id: ObjectId, completion: @escaping JoinStateCompletionBlock) {
+
+        raceApi.forceResign(race: race.id, pilotId: id) { (status, error) in
+            if status == true {
+                completion(.join)
+                // TODO: Reload race entries
+            } else if let error = error {
+                completion(.joined)
+                AlertUtil.presentAlertMessage("Couldn't remove this user from the race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
+            } else {
+                completion(.joined)
+            }
+        }
     }
 }
 
