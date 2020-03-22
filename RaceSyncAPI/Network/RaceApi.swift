@@ -73,6 +73,10 @@ public protocol RaceApiInterface {
     func resign(race raceId: ObjectId, completion: @escaping StatusCompletionBlock)
 
     /**
+    */
+    func forceJoin(race raceId: ObjectId, pilotId: ObjectId, aircraftId: ObjectId, completion: @escaping StatusCompletionBlock)
+
+    /**
      */
     func open(race raceId: ObjectId, completion: @escaping StatusCompletionBlock)
 
@@ -157,6 +161,14 @@ public class RaceApi: RaceApiInterface {
         let endpoint = "\(EndPoint.raceResign)?\(ParameterKey.id)=\(raceId)"
 
         repositoryAdapter.performAction(endpoint, completion: completion)
+    }
+
+    public func forceJoin(race raceId: ObjectId, pilotId: ObjectId, aircraftId: ObjectId, completion: @escaping StatusCompletionBlock) {
+
+        let endpoint = "\(EndPoint.raceJoin)?\(ParameterKey.id)=\(raceId)"
+        let parameters = [ParameterKey.pilotId: pilotId, ParameterKey.aircraftId: aircraftId, ]
+
+        repositoryAdapter.performAction(endpoint, parameters: parameters, completion: completion)
     }
 
     public func open(race raceId: ObjectId, completion: @escaping StatusCompletionBlock) {
