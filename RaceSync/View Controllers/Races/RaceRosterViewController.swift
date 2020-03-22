@@ -134,8 +134,8 @@ class RaceRosterViewController: ViewController, Joinable {
     // MARK: - Layout
 
     @objc func didPressAddButton() {
-        // TODO: Push to chapter member list
-        print("didPressAddButton")
+        let vc = ForceJoinViewController(with: race)
+        navigationController?.pushViewController(vc, animated: true)
     }
 
 }
