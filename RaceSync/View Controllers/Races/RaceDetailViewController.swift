@@ -216,6 +216,7 @@ class RaceDetailViewController: ViewController, Joinable {
         static let mapHeight: CGFloat = 260
         static let cellHeight: CGFloat = 50
         static let minButtonSize: CGFloat = 72
+        static let buttonSpacing: CGFloat = 12
     }
 
     fileprivate var race: Race
@@ -248,6 +249,7 @@ class RaceDetailViewController: ViewController, Joinable {
         super.viewDidLoad()
 
         setupLayout()
+        configureNavigationItems()
         populateContent()
     }
 
@@ -262,9 +264,6 @@ class RaceDetailViewController: ViewController, Joinable {
     // MARK: - Layout
 
     fileprivate func setupLayout() {
-
-        title = "Race Details"
-        tabBarItem = UITabBarItem(title: "Details", image: UIImage(named: "icn_tab_details"), selectedImage: UIImage(named: "icn_tab_details_selected"))
 
         view.backgroundColor = Color.white
 
@@ -390,6 +389,33 @@ class RaceDetailViewController: ViewController, Joinable {
         }
     }
 
+    fileprivate func configureNavigationItems() {
+
+        title = "Race Details"
+        tabBarItem = UITabBarItem(title: "Details", image: UIImage(named: "icn_tab_details"), selectedImage: UIImage(named: "icn_tab_details_selected"))
+
+        var buttons = [UIButton]()
+
+        if let _ = race.calendarEvent {
+            let calendarButton = CustomButton(type: .system)
+            calendarButton.addTarget(self, action: #selector(didPressCalendarButton), for: .touchUpInside)
+            calendarButton.setImage(UIImage(named: "icn_calendar"), for: .normal)
+            buttons += [calendarButton]
+        }
+
+        let shareButton = CustomButton(type: .system)
+        shareButton.addTarget(self, action: #selector(didPressShareButton), for: .touchUpInside)
+        shareButton.setImage(UIImage(named: "icn_share"), for: .normal)
+        buttons += [shareButton]
+
+        let stackView = UIStackView(arrangedSubviews: buttons)
+        stackView.axis = .horizontal
+        stackView.distribution = .fillEqually
+        stackView.alignment = .lastBaseline
+        stackView.spacing = Constants.buttonSpacing
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: stackView)
+    }
+
     fileprivate func populateContent() {
         titleLabel.text = raceViewModel.titleLabel.uppercased()
         joinButton.joinState = raceViewModel.joinState
@@ -444,8 +470,7 @@ class RaceDetailViewController: ViewController, Joinable {
     }
 
     @objc func didPressDateButton(_ sender: UITapGestureRecognizer) {
-        guard let tabBarController = tabBarController as? RaceTabBarController else { return }
-        tabBarController.didPressCalendarButton()
+        didPressCalendarButton()
     }
 
     @objc func didPressJoinButton(_ sender: JoinButton) {
@@ -462,6 +487,30 @@ class RaceDetailViewController: ViewController, Joinable {
     @objc func didPressMemberView(_ sender: MemberBadgeView) {
         guard let tabBarController = tabBarController as? RaceTabBarController else { return }
         tabBarController.selectTab(.race)
+    }
+
+    @objc func didPressCalendarButton() {
+        guard let event = race.calendarEvent else { return }
+
+        ActionSheetUtil.presentActionSheet(withTitle: "Save the race details to your calendar?", buttonTitle: "Save to Calendar", completion: { (action) in
+            CalendarUtil.add(event)
+        })
+    }
+
+    @objc func didPressShareButton() {
+        guard let raceUrl = URL(string: race.url) else { return }
+
+        var items: [Any] = [raceUrl]
+        var activities: [UIActivity] = [SafariActivity()]
+
+        // Calendar integration
+        if let event = race.calendarEvent {
+            items += [event]
+            activities += [CalendarActivity()]
+        }
+
+        let activityVC = UIActivityViewController(activityItems: items, applicationActivities: activities)
+        present(activityVC, animated: true)
     }
 }
 

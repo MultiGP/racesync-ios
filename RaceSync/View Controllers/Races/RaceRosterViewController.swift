@@ -68,6 +68,7 @@ class RaceRosterViewController: ViewController, Joinable {
         super.viewDidLoad()
 
         setupLayout()
+        configureNavigationItems()
         populateData()
     }
 
@@ -82,9 +83,6 @@ class RaceRosterViewController: ViewController, Joinable {
     // MARK: - Layout
 
     fileprivate func setupLayout() {
-
-        title = "Race Roster"
-        tabBarItem = UITabBarItem(title: "Roster", image: UIImage(named: "icn_tab_roster"), selectedImage: UIImage(named: "icn_tab_roster_selected"))
 
         view.backgroundColor = Color.white
 
@@ -122,6 +120,24 @@ class RaceRosterViewController: ViewController, Joinable {
 
         tableView.reloadData()
     }
+
+    fileprivate func configureNavigationItems() {
+
+        title = "Race Roster"
+        tabBarItem = UITabBarItem(title: "Roster", image: UIImage(named: "icn_tab_roster"), selectedImage: UIImage(named: "icn_tab_roster_selected"))
+
+        if race.isMyChapter {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "icn_navbar_add"), style: .done, target: self, action: #selector(didPressAddButton))
+        }
+    }
+
+    // MARK: - Layout
+
+    @objc func didPressAddButton() {
+        // TODO: Push to chapter member list
+        print("didPressAddButton")
+    }
+
 }
 
 extension RaceRosterViewController: UITableViewDelegate {
