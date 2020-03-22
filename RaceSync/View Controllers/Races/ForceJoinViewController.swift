@@ -12,6 +12,11 @@ import RaceSyncAPI
 import EmptyDataSet_Swift
 import ShimmerSwift
 
+fileprivate struct Section {
+    let letter : String
+    let viewModels : [UserViewModel]
+}
+
 class ForceJoinViewController: ViewController, Shimmable {
 
     // MARK: - Public Variables
@@ -22,7 +27,7 @@ class ForceJoinViewController: ViewController, Shimmable {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.tableFooterView = UIView()
-
+        tableView.tintColor = Color.blue
         return tableView
     }()
 
@@ -36,6 +41,7 @@ class ForceJoinViewController: ViewController, Shimmable {
     fileprivate var userApi = UserApi()
 
     fileprivate var userViewModels = [UserViewModel]()
+    fileprivate var sections = [Section]()
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -174,13 +180,25 @@ extension ForceJoinViewController {
     func fetchUsers(_ completion: VoidCompletionBlock? = nil) {
         chapterApi.getUsers(with: race.chapterId) { [weak self] (users, error) in
             if let users = users {
-                self?.userViewModels = UserViewModel.viewModels(with: users)
+                let viewModels = UserViewModel.viewModels(with: users)
+                self?.processUserViewModels(viewModels)
             } else {
                 Clog.log("getMyRaces error : \(error.debugDescription)")
             }
 
             completion?()
         }
+    }
+
+    func processUserViewModels(_ viewModels: [UserViewModel]) {
+        userViewModels = viewModels.sorted { $0.username.lowercased() < $1.username.lowercased() }
+
+        let groupedDictionary = Dictionary(grouping: viewModels, by: { String($0.username.prefix(1).uppercased()) })
+        let keys = groupedDictionary.keys.sorted()
+
+        sections = keys.compactMap({ (key) -> Section in
+            return Section(letter: key, viewModels: groupedDictionary[key]!.sorted())
+        })
     }
 }
 
@@ -193,17 +211,33 @@ extension ForceJoinViewController: UITableViewDelegate {
 
 extension ForceJoinViewController: UITableViewDataSource {
 
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return sections.count
+    }
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return userViewModels.count
+        guard sections.count > 0 else { return 0 }
+        print("section \(section) count \(sections[section].viewModels.count)")
+        return sections[section].viewModels.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let viewModel = userViewModels[indexPath.row]
-        return userTableViewCell(for: viewModel)
+        let viewModels = sections[indexPath.section].viewModels
+        return userTableViewCell(for: viewModels[indexPath.row])
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UserTableViewCell.height
+    }
+
+    func sectionIndexTitles(for tableView: UITableView) -> [String]? {
+        guard sections.count > 0 else { return nil }
+        return sections.map { $0.letter }
+    }
+
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        guard sections.count > 0 else { return nil }
+        return sections[section].letter
     }
 
     func userTableViewCell(for viewModel: UserViewModel) -> UserTableViewCell {

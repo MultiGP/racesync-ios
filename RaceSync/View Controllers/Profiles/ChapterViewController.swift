@@ -151,7 +151,8 @@ fileprivate extension ChapterViewController {
     func fetchUsers(_ completion: VoidCompletionBlock? = nil) {
         chapterApi.getUsers(with: chapter.id) { (users, error) in
             if let users = users {
-                self.userViewModels = UserViewModel.viewModels(with: users)
+                let viewModels = UserViewModel.viewModels(with: users)
+                self.userViewModels = viewModels.sorted { $0.username.lowercased() < $1.username.lowercased() }
                 self.tableView.reloadData()
             } else {
                 Clog.log("getMyRaces error : \(error.debugDescription)")

@@ -57,3 +57,13 @@ class UserViewModel: Descriptable {
         return viewModels
     }
 }
+
+extension UserViewModel: Comparable {
+    static func == (lhs: UserViewModel, rhs: UserViewModel) -> Bool {
+        return lhs.username == rhs.username
+    }
+
+    static func < (lhs: UserViewModel, rhs: UserViewModel) -> Bool {
+        return lhs.username < rhs.username
+    }
+}
