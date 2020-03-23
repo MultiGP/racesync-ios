@@ -23,12 +23,28 @@ class ForceJoinViewController: ViewController, Shimmable {
 
     lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
-        tableView.register(UserTableViewCell.self, forCellReuseIdentifier: UserTableViewCell.identifier)
+        tableView.register(ChapterMemberTableViewCell.self, forCellReuseIdentifier: ChapterMemberTableViewCell.identifier)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.tableFooterView = UIView()
-        tableView.tintColor = Color.blue
+        tableView.tableHeaderView = self.searchBar
+        tableView.emptyDataSetSource = self
+        tableView.tintColor = Color.gray400
         return tableView
+    }()
+
+    lazy var searchBar: UISearchBar = {
+        let size: CGSize = CGSize(width: UIScreen.main.bounds.width, height: 56)
+        let frame = CGRect(origin: .zero, size: size)
+
+        let searchBar = UISearchBar(frame: frame)
+        searchBar.delegate = self
+        searchBar.searchBarStyle = .minimal
+        searchBar.placeholder = "Search Pilot"
+        searchBar.barTintColor = .white
+        searchBar.isTranslucent = false
+        searchBar.backgroundImage = UIImage()
+        return searchBar
     }()
 
     let shimmeringView: ShimmeringView = defaultShimmeringView()
@@ -40,8 +56,17 @@ class ForceJoinViewController: ViewController, Shimmable {
     fileprivate var chapterApi = ChapterApi()
     fileprivate var userApi = UserApi()
 
-    fileprivate var userViewModels = [UserViewModel]()
     fileprivate var sections = [Section]()
+    fileprivate var userViewModels = [UserViewModel]()
+    fileprivate var searchResult = [UserViewModel]()
+
+    fileprivate var emptyStateMembers = EmptyStateViewModel(.noChapterMembers)
+    fileprivate var emptyStateSearch = EmptyStateViewModel(.noSearchResults)
+
+    fileprivate var isSearching: Bool {
+        guard let text = searchBar.text else { return false }
+        return !text.isEmpty
+    }
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -212,63 +237,130 @@ extension ForceJoinViewController: UITableViewDelegate {
 extension ForceJoinViewController: UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
+        if isSearching { return 1 }
         return sections.count
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        guard !isSearching else { return searchResult.count }
         guard sections.count > 0 else { return 0 }
-        print("section \(section) count \(sections[section].viewModels.count)")
         return sections[section].viewModels.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let viewModels = sections[indexPath.section].viewModels
-        return userTableViewCell(for: viewModels[indexPath.row])
+        if isSearching {
+            let viewModels = searchResult[indexPath.row]
+            return tableViewCell(for: viewModels)
+        } else {
+            let viewModels = sections[indexPath.section].viewModels
+            return tableViewCell(for: viewModels[indexPath.row])
+        }
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UserTableViewCell.height
+        return ChapterMemberTableViewCell.height
     }
 
     func sectionIndexTitles(for tableView: UITableView) -> [String]? {
+        guard !isSearching else { return nil }
         guard sections.count > 0 else { return nil }
         return sections.map { $0.letter }
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        guard !isSearching else { return nil }
         guard sections.count > 0 else { return nil }
         return sections[section].letter
     }
 
-    func userTableViewCell(for viewModel: UserViewModel) -> UserTableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: UserTableViewCell.identifier) as! UserTableViewCell
+    func tableViewCell(for viewModel: UserViewModel) -> ChapterMemberTableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: ChapterMemberTableViewCell.identifier) as! ChapterMemberTableViewCell
         guard let user = viewModel.user else { return cell }
 
         cell.titleLabel.text = viewModel.pilotName
         cell.avatarImageView.imageView.setImage(with: viewModel.pictureUrl, placeholderImage: UIImage(named: "placeholder_medium"))
         cell.subtitleLabel.text = viewModel.fullName
 
-        let joinButton = JoinButton(type: .system)
-        joinButton.addTarget(self, action: #selector(didPressJoinButton), for: .touchUpInside)
-        joinButton.hitTestEdgeInsets = UIEdgeInsets(proportionally: -10)
-        joinButton.accessibilityIdentifier = user.id
+        cell.joinButton.addTarget(self, action: #selector(didPressJoinButton), for: .touchUpInside)
+        cell.joinButton.hitTestEdgeInsets = UIEdgeInsets(proportionally: -10)
+        cell.joinButton.accessibilityIdentifier = user.id
 
         if user.hasJoined(race) {
-            joinButton.joinState = .joined
+            cell.joinButton.joinState = .joined
         } else {
-            joinButton.joinState = .join
-            joinButton.setTitle("Force Join", for: .normal)
+            cell.joinButton.joinState = .join
+            cell.joinButton.setTitle("Force Join", for: .normal)
         }
 
-        cell.accessoryType = .none
-        cell.contentView.addSubview(joinButton)
+        return cell
+    }
+}
+
+extension ForceJoinViewController: UISearchBarDelegate {
+
+    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+        searchBar.setShowsCancelButton(true, animated: true)
+        return true
+    }
+
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+
+    }
+
+    func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
+        return true
+    }
+
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        searchBar.setShowsCancelButton(false, animated: true)
+    }
+
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        let query = searchText.lowercased()
+        if !query.isEmpty {
+            searchResult = userViewModels.filter({
+                $0.username.lowercased().contains(query) || $0.fullName.lowercased().contains(query)
+            })
+        }
+        tableView.reloadData()
+    }
+
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = nil
+        searchBar.resignFirstResponder()
+        tableView.reloadData()
+    }
+}
+
+extension ForceJoinViewController: EmptyDataSetSource {
+
+    func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        if isSearching {
+            return emptyStateSearch.title
+        } else {
+            return emptyStateMembers.title
+        }
+    }
+
+    func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
+        return -scrollView.frame.height/5
+    }
+}
+
+class ChapterMemberTableViewCell: UserTableViewCell {
+
+    let joinButton = JoinButton(type: .system)
+
+    override func setupLayout() {
+        super.setupLayout()
+
+        accessoryType = .none
+        contentView.addSubview(joinButton)
         joinButton.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.height.equalTo(JoinButton.minHeight)
             $0.width.equalTo(92)
-            $0.trailing.equalToSuperview().offset(-Constants.padding)
+            $0.trailing.equalToSuperview().offset(-UniversalConstants.padding)
         }
-
-        return cell
     }
 }
