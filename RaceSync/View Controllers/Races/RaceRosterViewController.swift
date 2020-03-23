@@ -10,21 +10,15 @@ import UIKit
 import EmptyDataSet_Swift
 import RaceSyncAPI
 
-class RaceRosterViewController: ViewController, Joinable {
+class RaceRosterViewController: ViewController, Joinable, RaceTabbable {
+
+    // MARK: - Public Variables
+
+    var race: Race
 
     // MARK: - Private Variables
 
-    fileprivate var isLoading: Bool {
-        get {
-            guard let tabBarController = tabBarController as? RaceTabBarController else { return false }
-            return tabBarController.isLoading
-        }
-        set { }
-    }
-
-    fileprivate let headerView = RaceHeaderView()
-
-    fileprivate lazy var tableView: UITableView = {
+    lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.dataSource = self
         tableView.delegate = self
@@ -36,9 +30,18 @@ class RaceRosterViewController: ViewController, Joinable {
         return tableView
     }()
 
+    fileprivate var isLoading: Bool {
+        get {
+            guard let tabBarController = tabBarController as? RaceTabBarController else { return false }
+            return tabBarController.isLoading
+        }
+        set { }
+    }
+
+    fileprivate let headerView = RaceHeaderView()
+    
     fileprivate var raceApi = RaceApi()
     fileprivate var userApi = UserApi()
-    fileprivate var race: Race
     fileprivate var myRaceEntry: RaceEntry?
     fileprivate var isRacing: Bool { return myRaceEntry != nil }
     fileprivate var commonUserViewModels = [UserViewModel]()
@@ -92,6 +95,16 @@ class RaceRosterViewController: ViewController, Joinable {
         }
     }
 
+    fileprivate func configureNavigationItems() {
+
+        title = "Race Roster"
+        tabBarItem = UITabBarItem(title: "Roster", image: UIImage(named: "icn_tab_roster"), selectedImage: UIImage(named: "icn_tab_roster_selected"))
+
+        if race.isMyChapter {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "icn_navbar_add"), style: .done, target: self, action: #selector(didPressAddButton))
+        }
+    }
+
     fileprivate func populateData() {
         guard let myUser = APIServices.shared.myUser else { return }
         guard let entries = race.entries else { return }
@@ -117,27 +130,25 @@ class RaceRosterViewController: ViewController, Joinable {
         } else {
             otherUserViewModels = UserViewModel.viewModels(with: entries)
         }
+    }
 
+    func reloadContent() {
+        populateData()
         tableView.reloadData()
     }
 
-    fileprivate func configureNavigationItems() {
-
-        title = "Race Roster"
-        tabBarItem = UITabBarItem(title: "Roster", image: UIImage(named: "icn_tab_roster"), selectedImage: UIImage(named: "icn_tab_roster_selected"))
-
-        if race.isMyChapter {
-            navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "icn_navbar_add"), style: .done, target: self, action: #selector(didPressAddButton))
-        }
+    fileprivate func reloadRaceView() {
+        guard let tabBarController = tabBarController as? RaceTabBarController else { return }
+        tabBarController.reloadRaceView()
     }
 
     // MARK: - Actions
 
     @objc func didPressAddButton() {
         let vc = ForceJoinViewController(with: race)
+        vc.delegate = self
         navigationController?.pushViewController(vc, animated: true)
     }
-
 }
 
 extension RaceRosterViewController: UITableViewDelegate {
@@ -226,6 +237,13 @@ extension RaceRosterViewController: UITableViewDataSource {
     }
 }
 
+extension RaceRosterViewController: ForceJoinViewControllerDelegate {
+
+    func forceJoinViewControllerDidForce(_ viewController: ForceJoinViewController) {
+        reloadRaceView()
+    }
+}
+
 extension RaceRosterViewController: EmptyDataSetSource {
 
     func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
@@ -260,9 +278,8 @@ extension RaceRosterViewController: EmptyDataSetDelegate {
         let currentState: JoinState = .join
 
         join(race: race, raceApi: raceApi) { [weak self] (newState) in
-            if let tabBarController = self?.tabBarController as? RaceTabBarController, currentState != newState {
-                tabBarController.reloadAllTabs()
-                self?.tableView.reloadEmptyDataSet()
+            if currentState != newState {
+                self?.reloadRaceView()
             }
         }
     }

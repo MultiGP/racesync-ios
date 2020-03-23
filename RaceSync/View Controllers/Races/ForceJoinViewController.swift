@@ -12,14 +12,15 @@ import RaceSyncAPI
 import EmptyDataSet_Swift
 import ShimmerSwift
 
-fileprivate struct Section {
-    let letter : String
-    let viewModels : [UserViewModel]
+protocol ForceJoinViewControllerDelegate {
+    func forceJoinViewControllerDidForce(_ viewController: ForceJoinViewController)
 }
 
 class ForceJoinViewController: ViewController, Shimmable {
 
     // MARK: - Public Variables
+
+    var delegate: ForceJoinViewControllerDelegate?
 
     lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
@@ -59,6 +60,8 @@ class ForceJoinViewController: ViewController, Shimmable {
     fileprivate var sections = [Section]()
     fileprivate var userViewModels = [UserViewModel]()
     fileprivate var searchResult = [UserViewModel]()
+    fileprivate var joinedIds = [ObjectId]()
+    fileprivate var didForceJoin: Bool = false
 
     fileprivate var emptyStateMembers = EmptyStateViewModel(.noChapterMembers)
     fileprivate var emptyStateSearch = EmptyStateViewModel(.noSearchResults)
@@ -101,6 +104,14 @@ class ForceJoinViewController: ViewController, Shimmable {
         super.viewDidAppear(animated)
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        if didForceJoin {
+            delegate?.forceJoinViewControllerDidForce(self)
+        }
+    }
+
     // MARK: - Layout
 
     func setupLayout() {
@@ -129,13 +140,16 @@ class ForceJoinViewController: ViewController, Shimmable {
         button.isLoading = true
         let state = button.joinState
 
-        if user.hasJoined(race) {
+        if user.hasJoined(race) || joinedIds.contains(user.id) {
             ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Resign \(viewModel.username) from the race?", message: nil, destructiveTitle: "Yes, resign", completion: { (action) in
                 self.resignUser(with: userId) { (newState) in
                     button.isLoading = false
 
                     if state != newState {
                         button.joinState = newState
+                        button.setTitle("Force Join", for: .normal)
+                        self.joinedIds = self.joinedIds.filter { $0 != userId }
+                        self.didForceJoin = true
                     }
                 }
             }) { (action) in
@@ -148,6 +162,8 @@ class ForceJoinViewController: ViewController, Shimmable {
 
                     if state != newState {
                         button.joinState = newState
+                        self.joinedIds += [userId]
+                        self.didForceJoin = true
                     }
                 }
             }) { (action) in
@@ -285,7 +301,7 @@ extension ForceJoinViewController: UITableViewDataSource {
         cell.joinButton.hitTestEdgeInsets = UIEdgeInsets(proportionally: -10)
         cell.joinButton.accessibilityIdentifier = user.id
 
-        if user.hasJoined(race) {
+        if user.hasJoined(race) || joinedIds.contains(user.id) {
             cell.joinButton.joinState = .joined
         } else {
             cell.joinButton.joinState = .join
@@ -345,6 +361,11 @@ extension ForceJoinViewController: EmptyDataSetSource {
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
         return -scrollView.frame.height/5
     }
+}
+
+fileprivate struct Section {
+    let letter : String
+    let viewModels : [UserViewModel]
 }
 
 class ChapterMemberTableViewCell: UserTableViewCell {

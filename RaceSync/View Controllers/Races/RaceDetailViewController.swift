@@ -10,7 +10,11 @@ import UIKit
 import MapKit
 import RaceSyncAPI
 
-class RaceDetailViewController: ViewController, Joinable {
+class RaceDetailViewController: ViewController, Joinable, RaceTabbable {
+
+    // MARK: - Public Variables
+
+    var race: Race
 
     // MARK: - Private Variables
 
@@ -219,7 +223,6 @@ class RaceDetailViewController: ViewController, Joinable {
         static let buttonSpacing: CGFloat = 12
     }
 
-    fileprivate var race: Race
     fileprivate var raceViewModel: RaceViewModel
     fileprivate let raceApi = RaceApi()
     fileprivate var chapterApi = ChapterApi()
@@ -458,6 +461,17 @@ class RaceDetailViewController: ViewController, Joinable {
         loadMapIfPossible()
     }
 
+    func reloadContent() {
+
+        let viewModel = RaceViewModel(with: race)
+
+        joinButton.joinState = viewModel.joinState
+        memberBadgeView.count = viewModel.participantCount
+
+        raceViewModel = viewModel
+        tableView.reloadData()
+    }
+
     // MARK: - Actions
 
     @objc func didTapMapView(_ sender: UITapGestureRecognizer) {
@@ -595,19 +609,8 @@ fileprivate extension RaceDetailViewController {
     }
 
     func reloadRaceView() {
-
-        raceApi.viewSimple(race: race.id) { [weak self] (race, error) in
-
-            if let race = race {
-                let viewModel = RaceViewModel(with: race)
-
-                self?.joinButton.joinState = viewModel.joinState
-                self?.memberBadgeView.count = viewModel.participantCount
-
-                self?.raceViewModel = viewModel
-                self?.tableView.reloadData()
-            }
-        }
+        guard let tabBarController = tabBarController as? RaceTabBarController else { return }
+        tabBarController.reloadRaceView()
     }
 
     func setLoading(_ cell: FormTableViewCell, loading: Bool) {

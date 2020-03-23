@@ -171,9 +171,19 @@ extension RaceTabBarController {
         }
     }
 
-    func reloadAllTabs() {
-        DispatchQueue.main.async { [weak self] in
-            self?.loadRaceView()
+    func reloadRaceView() {
+        guard !isLoading else { return }
+
+        raceApi.viewSimple(race: raceId) { [weak self] (race, error) in
+            guard let race = race, let vcs = self?.viewControllers else { return }
+
+            self?.race = race
+
+            for vc in vcs {
+                guard var vcc = vc as? RaceTabbable else { continue }
+                vcc.race = race
+                vcc.reloadContent()
+            }
         }
     }
 }
