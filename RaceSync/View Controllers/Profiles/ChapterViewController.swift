@@ -10,9 +10,19 @@ import UIKit
 import RaceSyncAPI
 import EmptyDataSet_Swift
 
-class ChapterViewController: ProfileViewController, Joinable {
+class ChapterViewController: ProfileViewController, ViewJoinable {
 
     // MARK: - Private Variables
+
+    fileprivate lazy var joinButton: JoinButton = {
+        let button = JoinButton(type: .system)
+        button.addTarget(self, action: #selector(didPressJoinButton), for: .touchUpInside)
+        button.hitTestEdgeInsets = UIEdgeInsets(proportionally: -10)
+        button.type = .chapter
+        button.objectId = chapter.id
+        button.joinState = chapterViewModel.joinState
+        return button
+    }()
 
     fileprivate let chapter: Chapter
     fileprivate let raceApi = RaceApi()
@@ -20,19 +30,21 @@ class ChapterViewController: ProfileViewController, Joinable {
 
     fileprivate var raceViewModels = [RaceViewModel]()
     fileprivate var userViewModels = [UserViewModel]()
+    fileprivate let chapterViewModel: ChapterViewModel
 
     fileprivate var emptyStateRaces = EmptyStateViewModel(.noRaces)
     fileprivate var emptyStateUsers = EmptyStateViewModel(.commingSoon)
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
-        static let cellHeight: CGFloat = UniversalConstants.cellHeight
+        static let buttonHeight: CGFloat = 32
     }
 
     // MARK: - Initialization
 
     init(with chapter: Chapter) {
         self.chapter = chapter
+        self.chapterViewModel = ChapterViewModel(with: chapter)
 
         let profileViewModel = ProfileViewModel(with: chapter)
         super.init(with: profileViewModel)
@@ -70,6 +82,13 @@ class ChapterViewController: ProfileViewController, Joinable {
 
     override func setupLayout() {
         super.setupLayout()
+
+        headerView.addSubview(joinButton)
+        joinButton.snp.makeConstraints {
+            $0.bottom.equalToSuperview()
+            $0.trailing.equalToSuperview().offset(-Constants.padding)
+            $0.height.equalTo(Constants.buttonHeight)
+        }
     }
 
     // MARK: - Actions
@@ -163,13 +182,22 @@ fileprivate extension ChapterViewController {
     }
 
     @objc func didPressJoinButton(_ sender: JoinButton) {
-        guard let raceId = sender.raceId, let race = raceViewModels.race(withId: raceId) else { return }
+        guard let objectId = sender.objectId else { return }
         let joinState = sender.joinState
 
-        toggleJoinButton(sender, forRace: race, raceApi: raceApi) { [weak self] (newState) in
-            if joinState != newState {
-                // reload races to reflect race changes, specially join counts
-                self?.fetchRaces(nil)
+        if sender.type == .race, let race = raceViewModels.race(withId: objectId) {
+            toggleJoinButton(sender, forRace: race, raceApi: raceApi) { [weak self] (newState) in
+                if joinState != newState {
+                    // reload races to reflect race changes, specially join counts
+                    self?.fetchRaces(nil)
+                }
+            }
+        } else if sender.type == .chapter {
+            toggleJoinButton(sender, forChapter: chapter, chapterApi: chapterApi) { [weak self] (newState) in
+                if joinState != newState {
+                    self?.chapter.isJoined = (newState == .joined)
+                    sender.joinState = newState
+                }
             }
         }
     }
@@ -217,7 +245,8 @@ extension ChapterViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: RaceTableViewCell.identifier) as! RaceTableViewCell
         cell.dateLabel.text = viewModel.dateLabel //"Saturday Sept 14 @ 9:00 AM"
         cell.titleLabel.text = viewModel.titleLabel
-        cell.joinButton.raceId = viewModel.race.id
+        cell.joinButton.type = .race
+        cell.joinButton.objectId = viewModel.race.id
         cell.joinButton.joinState = viewModel.joinState
         cell.joinButton.addTarget(self, action: #selector(didPressJoinButton), for: .touchUpInside)
         cell.memberBadgeView.count = viewModel.participantCount

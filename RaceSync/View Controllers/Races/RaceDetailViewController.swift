@@ -10,7 +10,7 @@ import UIKit
 import MapKit
 import RaceSyncAPI
 
-class RaceDetailViewController: ViewController, Joinable, RaceTabbable {
+class RaceDetailViewController: ViewController, ViewJoinable, RaceTabbable {
 
     // MARK: - Public Variables
 

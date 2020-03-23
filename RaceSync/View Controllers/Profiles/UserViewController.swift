@@ -12,7 +12,7 @@ import RaceSyncAPI
 import Presentr
 import EmptyDataSet_Swift
 
-class UserViewController: ProfileViewController, Joinable {
+class UserViewController: ProfileViewController, ViewJoinable {
 
     // MARK: - Private Variables
 
@@ -199,7 +199,7 @@ class UserViewController: ProfileViewController, Joinable {
     }
 
     @objc func didPressJoinButton(_ sender: JoinButton) {
-        guard let raceId = sender.raceId, let race = raceViewModels.race(withId: raceId) else { return }
+        guard let objectId = sender.objectId, let race = raceViewModels.race(withId: objectId) else { return }
         let joinState = sender.joinState
 
         toggleJoinButton(sender, forRace: race, raceApi: raceApi) { [weak self] (newState) in
@@ -305,7 +305,8 @@ extension UserViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: UserRaceTableViewCell.identifier) as! UserRaceTableViewCell
         cell.dateLabel.text = viewModel.dateLabel //"Saturday Sept 14 @ 9:00 AM"
         cell.titleLabel.text = viewModel.titleLabel
-        cell.joinButton.raceId = viewModel.race.id
+        cell.joinButton.type = .race
+        cell.joinButton.objectId = viewModel.race.id
         cell.joinButton.joinState = viewModel.joinState
         cell.joinButton.addTarget(self, action: #selector(didPressJoinButton), for: .touchUpInside)
         cell.memberBadgeView.count = viewModel.participantCount

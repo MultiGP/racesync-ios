@@ -9,7 +9,7 @@
 import Foundation
 import ObjectMapper
 
-public class Chapter: Mappable, Descriptable {
+public class Chapter: Mappable, Joinable, Descriptable {
 
     public var id: ObjectId = ""
     public var name: String = ""
