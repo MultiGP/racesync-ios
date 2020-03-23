@@ -105,7 +105,7 @@ class ForceJoinViewController: ViewController, Shimmable {
     }
 
     override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+        super.viewWillDisappear(animated)
 
         if didForceJoin {
             delegate?.forceJoinViewControllerDidForce(self)
@@ -117,6 +117,7 @@ class ForceJoinViewController: ViewController, Shimmable {
     func setupLayout() {
 
         title = "Force Join Pilots"
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "icn_navbar_close"), style: .done, target: self, action: #selector(didPressCloseButton))
 
         view.backgroundColor = Color.white
 
@@ -200,6 +201,10 @@ class ForceJoinViewController: ViewController, Shimmable {
                 completion(.joined)
             }
         }
+    }
+
+    @objc func didPressCloseButton() {
+        dismiss(animated: true, completion: nil)
     }
 }
 

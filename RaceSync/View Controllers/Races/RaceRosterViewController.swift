@@ -147,7 +147,8 @@ class RaceRosterViewController: ViewController, Joinable, RaceTabbable {
     @objc func didPressAddButton() {
         let vc = ForceJoinViewController(with: race)
         vc.delegate = self
-        navigationController?.pushViewController(vc, animated: true)
+        let nc = NavigationController(rootViewController: vc)
+        present(nc, animated: true, completion: nil)
     }
 }
 
