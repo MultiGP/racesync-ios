@@ -149,7 +149,7 @@ fileprivate extension ChapterViewController {
     }
 
     func fetchUsers(_ completion: VoidCompletionBlock? = nil) {
-        chapterApi.getUsers(with: chapter.id) { (users, error) in
+        chapterApi.getChapterMembers(with: chapter.id) { (users, error) in
             if let users = users {
                 let viewModels = UserViewModel.viewModels(with: users)
                 self.userViewModels = viewModels.sorted { $0.username.lowercased() < $1.username.lowercased() }

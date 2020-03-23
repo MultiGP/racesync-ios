@@ -229,7 +229,7 @@ extension ForceJoinViewController {
     }
 
     fileprivate func fetchUsers(_ completion: VoidCompletionBlock? = nil) {
-        chapterApi.getUsers(with: race.chapterId) { [weak self] (users, error) in
+        chapterApi.getChapterMembers(with: race.chapterId) { [weak self] (users, error) in
             if let users = users {
                 let viewModels = UserViewModel.viewModels(with: users)
                 self?.processUserViewModels(viewModels)
