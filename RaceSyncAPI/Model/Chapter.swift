@@ -17,6 +17,7 @@ public class Chapter: Mappable, Descriptable {
     public var url: String = ""
     public var urlName: String = ""
     public var description: String = ""
+    public var isJoined: Bool = false
     public var mainImageUrl: String? //mainImageFileName
     public var backgroundUrl: String? //backgroundFileName
 
@@ -63,6 +64,7 @@ public class Chapter: Mappable, Descriptable {
         url = "\(MGPWeb.getUrl(for: .chapterView))=\(name)"
         urlName <- map["urlName"]
         description <- map["description"]
+        isJoined <- map["isJoined"]
 
         // special parsing due to API iconsistencies
         if let mainImageFileName = map.JSON["mainImageFileName"] as? String, let backgroundFileName = map.JSON["backgroundFileName"] as? String {
