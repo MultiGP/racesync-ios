@@ -9,6 +9,7 @@
 import UIKit
 import RaceSyncAPI
 import EmptyDataSet_Swift
+import CoreLocation
 
 class ChapterViewController: ProfileViewController, ViewJoinable {
 
@@ -31,6 +32,7 @@ class ChapterViewController: ProfileViewController, ViewJoinable {
     fileprivate var raceViewModels = [RaceViewModel]()
     fileprivate var userViewModels = [UserViewModel]()
     fileprivate let chapterViewModel: ChapterViewModel
+    fileprivate var chapterCoordinates: CLLocationCoordinate2D?
 
     fileprivate var emptyStateRaces = EmptyStateViewModel(.noRaces)
     fileprivate var emptyStateUsers = EmptyStateViewModel(.commingSoon)
@@ -48,6 +50,10 @@ class ChapterViewController: ProfileViewController, ViewJoinable {
 
         let profileViewModel = ProfileViewModel(with: chapter)
         super.init(with: profileViewModel)
+
+        if let latitude = CLLocationDegrees(chapter.latitude), let longitude = CLLocationDegrees(chapter.longitude) {
+            self.chapterCoordinates = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -104,7 +110,14 @@ class ChapterViewController: ProfileViewController, ViewJoinable {
     }
 
     override func didPressLocationButton() {
-        print("didPressLocationButton")
+        guard let coordinates = chapterCoordinates else { return }
+
+        let mapVC = MapViewController(with: coordinates, address: profileViewModel.locationName)
+        mapVC.title = "Chapter Location"
+        mapVC.showsDirection = false
+        let mapNC = NavigationController(rootViewController: mapVC)
+
+        present(mapNC, animated: true, completion: nil)
     }
 
     override func didSelectRow(at indexPath: IndexPath) {

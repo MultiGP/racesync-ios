@@ -47,7 +47,7 @@
 		4F5C1E45238D1BD200D756EB /* PasteboardButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5C1E44238D1BD200D756EB /* PasteboardButton.swift */; };
 		4F5C1E47238D1C3200D756EB /* TextCopiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5C1E46238D1C3200D756EB /* TextCopiable.swift */; };
 		4F5C1E49238DD82500D756EB /* UIView+RecognizerBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5C1E48238DD82500D756EB /* UIView+RecognizerBlock.swift */; };
-		4F5C1E4B238EEC5200D756EB /* RaceMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5C1E4A238EEC5200D756EB /* RaceMapViewController.swift */; };
+		4F5C1E4B238EEC5200D756EB /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5C1E4A238EEC5200D756EB /* MapViewController.swift */; };
 		4F5C1E4D2390600400D756EB /* APISessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5C1E4C2390600400D756EB /* APISessionManager.swift */; };
 		4F5C1E4F2390B01700D756EB /* ImageNetworking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5C1E4E2390B01700D756EB /* ImageNetworking.swift */; };
 		4F64290E24019090005E8036 /* NewAircraftViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F64290D24019090005E8036 /* NewAircraftViewController.swift */; };
@@ -264,7 +264,7 @@
 		4F5C1E44238D1BD200D756EB /* PasteboardButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardButton.swift; sourceTree = "<group>"; };
 		4F5C1E46238D1C3200D756EB /* TextCopiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextCopiable.swift; sourceTree = "<group>"; };
 		4F5C1E48238DD82500D756EB /* UIView+RecognizerBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+RecognizerBlock.swift"; sourceTree = "<group>"; };
-		4F5C1E4A238EEC5200D756EB /* RaceMapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RaceMapViewController.swift; sourceTree = "<group>"; };
+		4F5C1E4A238EEC5200D756EB /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		4F5C1E4C2390600400D756EB /* APISessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APISessionManager.swift; sourceTree = "<group>"; };
 		4F5C1E4E2390B01700D756EB /* ImageNetworking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageNetworking.swift; sourceTree = "<group>"; };
 		4F64290D24019090005E8036 /* NewAircraftViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewAircraftViewController.swift; sourceTree = "<group>"; };
@@ -583,7 +583,7 @@
 		4F714DE423CD769F000C4036 /* Map */ = {
 			isa = PBXGroup;
 			children = (
-				4F5C1E4A238EEC5200D756EB /* RaceMapViewController.swift */,
+				4F5C1E4A238EEC5200D756EB /* MapViewController.swift */,
 			);
 			path = Map;
 			sourceTree = "<group>";
@@ -1214,7 +1214,7 @@
 				4F68BE6B2399CF07009D44F7 /* ActionSheetUtil.swift in Sources */,
 				4FAC24A823DC3E06009AD585 /* UILabel+LinesCount.swift in Sources */,
 				4F5001E523823C940025A593 /* FlagEmojiGenerator.swift in Sources */,
-				4F5C1E4B238EEC5200D756EB /* RaceMapViewController.swift in Sources */,
+				4F5C1E4B238EEC5200D756EB /* MapViewController.swift in Sources */,
 				4FAAA88523AA15EA00A004DC /* MapKit+Extensions.swift in Sources */,
 				4F5C1E43238CF6BD00D756EB /* ProfileViewController.swift in Sources */,
 				4F8175A32411C39C00685F83 /* RaceListController.swift in Sources */,

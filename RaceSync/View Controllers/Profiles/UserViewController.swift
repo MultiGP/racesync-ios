@@ -11,6 +11,7 @@ import SnapKit
 import RaceSyncAPI
 import Presentr
 import EmptyDataSet_Swift
+import CoreLocation
 
 class UserViewController: ProfileViewController, ViewJoinable {
 
@@ -50,6 +51,7 @@ class UserViewController: ProfileViewController, ViewJoinable {
     fileprivate var raceViewModels = [RaceViewModel]()
     fileprivate var chapterViewModels = [ChapterViewModel]()
     fileprivate var presenter: Presentr?
+    fileprivate var userCoordinates: CLLocationCoordinate2D?
 
     fileprivate var emptyStateRaces = EmptyStateViewModel(.noProfileRaces)
     fileprivate var emptyStateChapters = EmptyStateViewModel(.noProfileChapters)
@@ -69,6 +71,10 @@ class UserViewController: ProfileViewController, ViewJoinable {
 
         let profileViewModel = ProfileViewModel(with: user)
         super.init(with: profileViewModel)
+
+        if let latitude = CLLocationDegrees(user.latitude), let longitude = CLLocationDegrees(user.longitude) {
+            self.userCoordinates = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -156,7 +162,14 @@ class UserViewController: ProfileViewController, ViewJoinable {
     }
 
     override func didPressLocationButton() {
-        print("didPressLocationButton")
+        guard let coordinates = userCoordinates else { return }
+
+        let mapVC = MapViewController(with: coordinates, address: profileViewModel.locationName)
+        mapVC.title = "User Location"
+        mapVC.showsDirection = false
+        let mapNC = NavigationController(rootViewController: mapVC)
+
+        present(mapNC, animated: true, completion: nil)
     }
 
     override func didSelectRow(at indexPath: IndexPath) {
