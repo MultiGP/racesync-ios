@@ -24,7 +24,7 @@ class ForceJoinViewController: ViewController, Shimmable {
 
     lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
-        tableView.register(ChapterMemberTableViewCell.self, forCellReuseIdentifier: ChapterMemberTableViewCell.identifier)
+        tableView.register(ChapterUserTableViewCell.self, forCellReuseIdentifier: ChapterUserTableViewCell.identifier)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.tableFooterView = UIView()
@@ -114,7 +114,7 @@ class ForceJoinViewController: ViewController, Shimmable {
 
     // MARK: - Layout
 
-    func setupLayout() {
+    fileprivate func setupLayout() {
 
         title = "Force Join Pilots"
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "icn_navbar_close"), style: .done, target: self, action: #selector(didPressCloseButton))
@@ -134,7 +134,7 @@ class ForceJoinViewController: ViewController, Shimmable {
 
     // MARK: - Actions
 
-    @objc func didPressJoinButton(_ sender: Any) {
+    @objc fileprivate func didPressJoinButton(_ sender: Any) {
         guard let button = sender as? JoinButton, let userId = button.accessibilityIdentifier else { return }
         guard let viewModel = userViewModels.filter ({ return $0.user?.id == userId }).first, let user = viewModel.user else { return }
 
@@ -173,7 +173,7 @@ class ForceJoinViewController: ViewController, Shimmable {
         }
     }
 
-    func forceJoinUser(with id: ObjectId, completion: @escaping JoinStateCompletionBlock) {
+    fileprivate func forceJoinUser(with id: ObjectId, completion: @escaping JoinStateCompletionBlock) {
 
         raceApi.forceJoin(race: race.id, pilotId: id) { (status, error) in
             if status == true {
@@ -188,7 +188,7 @@ class ForceJoinViewController: ViewController, Shimmable {
         }
     }
 
-    func resignUser(with id: ObjectId, completion: @escaping JoinStateCompletionBlock) {
+    fileprivate func resignUser(with id: ObjectId, completion: @escaping JoinStateCompletionBlock) {
 
         raceApi.forceResign(race: race.id, pilotId: id) { (status, error) in
             if status == true {
@@ -203,14 +203,14 @@ class ForceJoinViewController: ViewController, Shimmable {
         }
     }
 
-    @objc func didPressCloseButton() {
+    @objc fileprivate func didPressCloseButton() {
         dismiss(animated: true, completion: nil)
     }
 }
 
 extension ForceJoinViewController {
 
-    func loadUsers() {
+    fileprivate func loadUsers() {
         if userViewModels.isEmpty {
             isLoading(true)
 
@@ -223,7 +223,7 @@ extension ForceJoinViewController {
         }
     }
 
-    func fetchUsers(_ completion: VoidCompletionBlock? = nil) {
+    fileprivate func fetchUsers(_ completion: VoidCompletionBlock? = nil) {
         chapterApi.getUsers(with: race.chapterId) { [weak self] (users, error) in
             if let users = users {
                 let viewModels = UserViewModel.viewModels(with: users)
@@ -236,7 +236,7 @@ extension ForceJoinViewController {
         }
     }
 
-    func processUserViewModels(_ viewModels: [UserViewModel]) {
+    fileprivate func processUserViewModels(_ viewModels: [UserViewModel]) {
         userViewModels = viewModels.sorted { $0.username.lowercased() < $1.username.lowercased() }
 
         let groupedDictionary = Dictionary(grouping: viewModels, by: { String($0.username.prefix(1).uppercased()) })
@@ -279,7 +279,7 @@ extension ForceJoinViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return ChapterMemberTableViewCell.height
+        return ChapterUserTableViewCell.height
     }
 
     func sectionIndexTitles(for tableView: UITableView) -> [String]? {
@@ -294,8 +294,8 @@ extension ForceJoinViewController: UITableViewDataSource {
         return sections[section].letter
     }
 
-    func tableViewCell(for viewModel: UserViewModel) -> ChapterMemberTableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ChapterMemberTableViewCell.identifier) as! ChapterMemberTableViewCell
+    fileprivate func tableViewCell(for viewModel: UserViewModel) -> ChapterUserTableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: ChapterUserTableViewCell.identifier) as! ChapterUserTableViewCell
         guard let user = viewModel.user else { return cell }
 
         cell.titleLabel.text = viewModel.pilotName
@@ -371,22 +371,4 @@ extension ForceJoinViewController: EmptyDataSetSource {
 fileprivate struct Section {
     let letter : String
     let viewModels : [UserViewModel]
-}
-
-class ChapterMemberTableViewCell: UserTableViewCell {
-
-    let joinButton = JoinButton(type: .system)
-
-    override func setupLayout() {
-        super.setupLayout()
-
-        accessoryType = .none
-        contentView.addSubview(joinButton)
-        joinButton.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.height.equalTo(JoinButton.minHeight)
-            $0.width.equalTo(92)
-            $0.trailing.equalToSuperview().offset(-UniversalConstants.padding)
-        }
-    }
 }
