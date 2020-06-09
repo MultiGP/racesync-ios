@@ -82,7 +82,7 @@ extension AircraftRow {
 
     var isAircraftSpecRequired: Bool {
         switch self {
-        case .name, .videoTx, .videoTxChannels, .antenna:
+        case .name, .videoTx, .videoTxChannels, .videoRxChannels, .antenna:
             return true
         default:
             return false
