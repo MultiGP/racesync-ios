@@ -186,7 +186,7 @@ class ForceJoinViewController: ViewController, Shimmable {
             if status == true {
                 completion(.joined)
 
-                strongSelf.raceApi.checkIn(race: strongSelf.race.id) { (raceEntry, error) in
+                strongSelf.raceApi.checkIn(race: strongSelf.race.id, pilotId: id) { (raceEntry, error) in
                     // when joining a race, we checkin to get a frequency assigned
                 }
             } else if let error = error {
