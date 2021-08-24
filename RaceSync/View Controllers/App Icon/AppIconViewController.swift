@@ -8,6 +8,7 @@
 
 import UIKit
 import SnapKit
+import RaceSyncAPI
 
 class AppIconViewController: UIViewController {
 
@@ -26,6 +27,11 @@ class AppIconViewController: UIViewController {
 
         return tableView
     }()
+
+    fileprivate let sections: [Section: [AppIcon]] = [
+        .mgp: [.default, .blue, .white, .io2021],
+        .chapters: [.kru]
+    ]
 
     let appIconManager = AppIconManager()
     
@@ -53,6 +59,11 @@ class AppIconViewController: UIViewController {
             $0.top.leading.trailing.bottom.equalToSuperview()
         }
     }
+
+    fileprivate func getAppIcon(at indexPath: IndexPath) -> AppIcon {
+        guard let section = Section(rawValue: indexPath.section), let rows = sections[section] else { return .default }
+        return rows[indexPath.row]
+    }
 }
 
 extension AppIconViewController: UITableViewDelegate {
@@ -61,7 +72,9 @@ extension AppIconViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
 
         let currentAppIcon = AppIconManager.current()
-        guard let appIcon = AppIcon(rawValue: indexPath.row), appIcon != currentAppIcon else { return }
+        let appIcon = getAppIcon(at: indexPath)
+
+        guard appIcon != currentAppIcon else { return }
 
         AppIconManager.setIcon(appIcon) { (didSet) in
             tableView.reloadData()
@@ -72,24 +85,21 @@ extension AppIconViewController: UITableViewDelegate {
 extension AppIconViewController: UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return sections.count
     }
 
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return AppIcon.allCases.count
+    func tableView(_ tableView: UITableView, numberOfRowsInSection sectionIdx: Int) -> Int {
+        guard let section = Section(rawValue: sectionIdx), let rows = sections[section] else { return 0 }
+        return rows.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         return iconTableViewCell(for: indexPath)
     }
 
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UniversalConstants.cellHeight
-    }
-
     func iconTableViewCell(for indexPath: IndexPath) -> FormTableViewCell {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as FormTableViewCell
-        guard let appIcon = AppIcon(rawValue: indexPath.row) else { return cell }
+        let appIcon = getAppIcon(at: indexPath)
 
         cell.textLabel?.text = appIcon.title
         cell.imageView?.image = appIcon.preview?.rounded(with: 60 / 4)
@@ -108,5 +118,33 @@ extension AppIconViewController: UITableViewDataSource {
         }
 
         return cell
+    }
+
+    func tableView(_ tableView: UITableView, titleForHeaderInSection sectionIdx: Int) -> String? {
+        guard let section = Section(rawValue: sectionIdx) else { return nil }
+        return section.title
+    }
+
+    func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        if let section = Section(rawValue: section), section == .chapters {
+            return "Want to include your chapter's icon? Contact us at ios@multigp.com"
+        } else {
+            return nil
+        }
+    }
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UniversalConstants.cellHeight
+    }
+}
+
+fileprivate enum Section: Int, EnumTitle, CaseIterable {
+    case mgp, chapters
+
+    var title: String {
+        switch self {
+        case .mgp:          return "MultiGP"
+        case .chapters:     return "Chapters"
+        }
     }
 }

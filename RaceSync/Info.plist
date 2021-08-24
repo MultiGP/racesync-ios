@@ -17,11 +17,18 @@
 					<string>AppIcon-Blue</string>
 				</array>
 			</dict>
-			<key>Special</key>
+			<key>IO2021</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
 				<array>
-					<string>AppIcon-Special</string>
+					<string>AppIcon-IO2021</string>
+				</array>
+			</dict>
+			<key>KRU</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>AppIcon-KRU</string>
 				</array>
 			</dict>
 			<key>White</key>

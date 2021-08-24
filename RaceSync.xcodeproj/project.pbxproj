@@ -16,8 +16,6 @@
 		4F00E078242963F1001DCFC4 /* Joinable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F00E077242963F1001DCFC4 /* Joinable.swift */; };
 		4F03693626D457CB00E30821 /* AppIconViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03693526D457CB00E30821 /* AppIconViewController.swift */; };
 		4F03693D26D457DE00E30821 /* AppIconManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03693C26D457DE00E30821 /* AppIconManager.swift */; };
-		4F03694A26D45C3A00E30821 /* AppIcon-Special@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F03694826D45C3A00E30821 /* AppIcon-Special@3x.png */; };
-		4F03694B26D45C3A00E30821 /* AppIcon-Special@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F03694926D45C3A00E30821 /* AppIcon-Special@2x.png */; };
 		4F0B613C238528C300930D91 /* PasteboardLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0B613B238528C300930D91 /* PasteboardLabel.swift */; };
 		4F0B613F2385DA8F00930D91 /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0B613E2385DA8F00930D91 /* UIImage+Extensions.swift */; };
 		4F0B61432385EEFF00930D91 /* ViewModelHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0B61422385EEFF00930D91 /* ViewModelHelper.swift */; };
@@ -120,6 +118,10 @@
 		4F95B7C62596DBDF00631A27 /* WatchSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F95B7C52596DBDF00631A27 /* WatchSessionManager.swift */; };
 		4F95B7E825972E0900631A27 /* WatchUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F95B7E725972E0900631A27 /* WatchUser.swift */; };
 		4F95B7EF2598232400631A27 /* OnboardInterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F95B7EE2598232400631A27 /* OnboardInterfaceController.swift */; };
+		4F9979BD26D57CFF00496451 /* AppIcon-IO2021@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F9979B926D57CFF00496451 /* AppIcon-IO2021@3x.png */; };
+		4F9979BE26D57CFF00496451 /* AppIcon-KRU@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F9979BA26D57CFF00496451 /* AppIcon-KRU@2x.png */; };
+		4F9979BF26D57CFF00496451 /* AppIcon-KRU@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F9979BB26D57CFF00496451 /* AppIcon-KRU@3x.png */; };
+		4F9979C026D57CFF00496451 /* AppIcon-IO2021@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F9979BC26D57CFF00496451 /* AppIcon-IO2021@2x.png */; };
 		4F9DB79723D2B01C00570483 /* MGPWebConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA26826237A4079008970AC /* MGPWebConstants.swift */; };
 		4F9DB79923D2D94E00570483 /* ExternalAppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9DB79823D2D94E00570483 /* ExternalAppConstants.swift */; };
 		4F9DB79E23D30F3200570483 /* APICredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6C8A8E23657DE00017FD78 /* APICredential.swift */; };
@@ -313,8 +315,6 @@
 		4F00E077242963F1001DCFC4 /* Joinable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Joinable.swift; sourceTree = "<group>"; };
 		4F03693526D457CB00E30821 /* AppIconViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconViewController.swift; sourceTree = "<group>"; };
 		4F03693C26D457DE00E30821 /* AppIconManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconManager.swift; sourceTree = "<group>"; };
-		4F03694826D45C3A00E30821 /* AppIcon-Special@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-Special@3x.png"; sourceTree = "<group>"; };
-		4F03694926D45C3A00E30821 /* AppIcon-Special@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-Special@2x.png"; sourceTree = "<group>"; };
 		4F0B613B238528C300930D91 /* PasteboardLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardLabel.swift; sourceTree = "<group>"; };
 		4F0B613E2385DA8F00930D91 /* UIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
 		4F0B61422385EEFF00930D91 /* ViewModelHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelHelper.swift; sourceTree = "<group>"; };
@@ -426,6 +426,10 @@
 		4F95B7C52596DBDF00631A27 /* WatchSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionManager.swift; sourceTree = "<group>"; };
 		4F95B7E725972E0900631A27 /* WatchUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchUser.swift; sourceTree = "<group>"; };
 		4F95B7EE2598232400631A27 /* OnboardInterfaceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardInterfaceController.swift; sourceTree = "<group>"; };
+		4F9979B926D57CFF00496451 /* AppIcon-IO2021@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-IO2021@3x.png"; sourceTree = "<group>"; };
+		4F9979BA26D57CFF00496451 /* AppIcon-KRU@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-KRU@2x.png"; sourceTree = "<group>"; };
+		4F9979BB26D57CFF00496451 /* AppIcon-KRU@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-KRU@3x.png"; sourceTree = "<group>"; };
+		4F9979BC26D57CFF00496451 /* AppIcon-IO2021@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-IO2021@2x.png"; sourceTree = "<group>"; };
 		4F9DB79823D2D94E00570483 /* ExternalAppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalAppConstants.swift; sourceTree = "<group>"; };
 		4F9DB79F23D3816800570483 /* RaceSync.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RaceSync.entitlements; sourceTree = "<group>"; };
 		4F9DB7A223D397B700570483 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
@@ -736,12 +740,14 @@
 		4F39977726D453D2006B1075 /* AppIcons */ = {
 			isa = PBXGroup;
 			children = (
-				4F03694926D45C3A00E30821 /* AppIcon-Special@2x.png */,
-				4F03694826D45C3A00E30821 /* AppIcon-Special@3x.png */,
 				4F39977A26D453D2006B1075 /* AppIcon-Blue@2x.png */,
 				4F39977D26D453D2006B1075 /* AppIcon-Blue@3x.png */,
 				4F39977C26D453D2006B1075 /* AppIcon-White@2x.png */,
 				4F39977B26D453D2006B1075 /* AppIcon-White@3x.png */,
+				4F9979BC26D57CFF00496451 /* AppIcon-IO2021@2x.png */,
+				4F9979B926D57CFF00496451 /* AppIcon-IO2021@3x.png */,
+				4F9979BA26D57CFF00496451 /* AppIcon-KRU@2x.png */,
+				4F9979BB26D57CFF00496451 /* AppIcon-KRU@3x.png */,
 			);
 			path = AppIcons;
 			sourceTree = "<group>";
@@ -1319,15 +1325,17 @@
 				4F13428F236120E700A9DBDE /* LoginViewController.xib in Resources */,
 				4F39978226D453D2006B1075 /* AppIcon-White@2x.png in Resources */,
 				4F39978126D453D2006B1075 /* AppIcon-White@3x.png in Resources */,
-				4F03694B26D45C3A00E30821 /* AppIcon-Special@2x.png in Resources */,
 				4F39978026D453D2006B1075 /* AppIcon-Blue@2x.png in Resources */,
 				4F39978326D453D2006B1075 /* AppIcon-Blue@3x.png in Resources */,
 				4F1342522360B67D00A9DBDE /* LaunchScreen.storyboard in Resources */,
+				4F9979BE26D57CFF00496451 /* AppIcon-KRU@2x.png in Resources */,
+				4F9979BD26D57CFF00496451 /* AppIcon-IO2021@3x.png in Resources */,
 				4F65D8D82574EA5400C506C3 /* track-list.json in Resources */,
+				4F9979C026D57CFF00496451 /* AppIcon-IO2021@2x.png in Resources */,
 				4FBE7608259B348200312B66 /* Assets.xcassets in Resources */,
 				4FCAFA0023AED59D00ACE7D3 /* preview.pkpass in Resources */,
-				4F03694A26D45C3A00E30821 /* AppIcon-Special@3x.png in Resources */,
 				4F13424D2360B67D00A9DBDE /* Main.storyboard in Resources */,
+				4F9979BF26D57CFF00496451 /* AppIcon-KRU@3x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
