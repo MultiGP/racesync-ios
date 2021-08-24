@@ -14,7 +14,7 @@ class AppIconViewController: UIViewController {
 
     // MARK: - Private Variables
 
-    lazy var tableView: UITableView = {
+    fileprivate lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.dataSource = self
         tableView.delegate = self
@@ -28,12 +28,17 @@ class AppIconViewController: UIViewController {
         return tableView
     }()
 
-    fileprivate let sections: [Section: [AppIcon]] = [
-        .mgp: [.default, .blue, .white, .io2021],
-        .chapters: [.kru]
-    ]
+    fileprivate lazy var sections: [Section: [AppIcon]] = {
+        var list = [Section.mgp: [AppIcon.default, .blue, .white, .io2021]]
 
-    let appIconManager = AppIconManager()
+        if isChapterIconEnabled {
+            list += [Section.chapters: [AppIcon.kru]]
+        }
+        return list
+    }()
+
+    fileprivate let appIconManager = AppIconManager()
+    fileprivate let isChapterIconEnabled: Bool = true
     
     // MARK: - Lifecycle Methods
 
