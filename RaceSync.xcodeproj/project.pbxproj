@@ -528,6 +528,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		370DB022DF98C379304057AE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4F1342412360B67D00A9DBDE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1232,6 +1239,7 @@
 			buildPhases = (
 				4F95B7462596967E00631A27 /* Resources */,
 				4F95B76B2596968200631A27 /* Embed App Extensions */,
+				370DB022DF98C379304057AE /* Frameworks */,
 			);
 			buildRules = (
 			);
