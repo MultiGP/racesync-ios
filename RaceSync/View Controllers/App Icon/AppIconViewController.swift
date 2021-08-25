@@ -38,7 +38,7 @@ class AppIconViewController: UIViewController {
     }()
 
     fileprivate let appIconManager = AppIconManager()
-    fileprivate let isChapterIconEnabled: Bool = true
+    fileprivate let isChapterIconEnabled: Bool = false
     
     // MARK: - Lifecycle Methods
 
