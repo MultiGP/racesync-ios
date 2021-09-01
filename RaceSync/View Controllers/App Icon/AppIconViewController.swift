@@ -38,7 +38,12 @@ class AppIconViewController: UIViewController {
     }()
 
     fileprivate let appIconManager = AppIconManager()
-    fileprivate let isChapterIconEnabled: Bool = false
+
+    fileprivate var isChapterIconEnabled: Bool {
+        if let myUser = APIServices.shared.myUser, myUser.id == "20676" {
+            return true
+        } else { return false }
+    }
     
     // MARK: - Lifecycle Methods
 
