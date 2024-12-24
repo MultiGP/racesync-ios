@@ -48,14 +48,14 @@ public class User: Mappable, Descriptable {
 
     public func mapping(map: Map) {
         id <- map[ParamKey.id]
-        userName <- map[ParamKey.userName]
-        displayName <- map[ParamKey.displayName]
-        firstName <- map[ParamKey.firstName]
-        lastName <- map[ParamKey.lastName]
+        userName <- (map[ParamKey.userName], MapperUtil.stringTransform)
+        displayName <- (map[ParamKey.displayName], MapperUtil.stringTransform)
+        firstName <- (map[ParamKey.firstName], MapperUtil.stringTransform)
+        lastName <- (map[ParamKey.lastName], MapperUtil.stringTransform)
         profilePictureUrl <- map[ParamKey.profilePictureUrl]
         profileBackgroundUrl <- map[ParamKey.profileBackgroundUrl]
         authType <- map[ParamKey.authType]
-        url = "https://www.multigp.com/pilots/view/?pilot=\(userName)"
+        url = MGPWeb.getUrl(for: .userView, value: userName)
 
         city <- map[ParamKey.city]
         state <- map[ParamKey.state]

@@ -15,6 +15,8 @@ public enum MGPWebConstant: String {
     case raceView = "https://www.multigp.com/races/view/?race"
     case chapterView = "https://www.multigp.com/chapters/view/?chapter"
     case userView = "https://www.multigp.com/pilots/view/?pilot"
+
+    case zippyqView = "https://www.multigp.com/MultiGP/views/zippyq.php?raceId"
 }
 
 public class MGPWeb {
@@ -28,7 +30,7 @@ public class MGPWeb {
 
         var baseUrl = constant.rawValue
         if APIServices.shared.settings.isDev {
-            baseUrl = constant.rawValue.replacingOccurrences(of: "www", with: "ppt")
+            baseUrl = constant.rawValue.replacingOccurrences(of: "www", with: "dev")
         }
 
         if let value = value {
@@ -36,5 +38,10 @@ public class MGPWeb {
         } else {
             return baseUrl
         }
+    }
+
+    public static func getURL(for constant: MGPWebConstant, value: String? = nil) -> URL? {
+        let url = Self.getUrl(for: constant, value: value)
+        return URL(string: url)
     }
 }

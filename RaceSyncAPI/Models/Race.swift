@@ -21,13 +21,14 @@ public class Race: Mappable, Joinable, Descriptable {
     public var status: RaceStatus = .open
     public var isJoined: Bool = false
     public var type: EventType = .public
-    public var scoringFormat: ScoringFormat = .aggregateLap
+    public var scoringFormat: ScoringFormat = .fastest3Laps
     public var raceClass: RaceClass = .open
-    public var raceClassString: String = "Open"
+    public var raceClassString: String = RaceClass.open.title
     public var raceType: RaceType = .normal
     public var officialStatus: RaceOfficialStatus = .normal
     public var scoringDisabled: Bool = false
     public var captureTimeEnabled: Bool = true
+    public var isFinalized: Bool = false
     public var cycleCount: Int32 = 0
     public var disableSlotAutoPopulation: QualifyingType = .controlled
     public var maxZippyqDepth: Int32 = 0
@@ -36,7 +37,8 @@ public class Race: Mappable, Joinable, Descriptable {
 
     public var url: String = ""
     public var urlName: String = ""
-    public var liveTimeUrl: String?
+    public var zippyqUrl: String = ""
+    public var liveTimeEventUrl: String?
     public var description: String = ""
     public var content: String = ""
     public var itinerary: String = ""
@@ -70,15 +72,16 @@ public class Race: Mappable, Joinable, Descriptable {
     public var batteryRestriction: String = ""
     public var propSizeRestriction: String = ""
 
-    public var races: [RaceLite]? = nil
     public var entries: [RaceEntry]? = nil
+    public var schedule: RaceSchedule? = nil
+    public var results: [ResultEntry]? = nil
 
     public static let nameMinLength: Int = 3
     public static let nameMaxLength: Int = 50
 
     // MARK: - Initialization
 
-    fileprivate static let requiredProperties = [ParamKey.id, ParamKey.name, ParamKey.chapterId, ParamKey.ownerId]
+    fileprivate static let requiredProperties = [/*ParamKey.id, */ParamKey.name, ParamKey.chapterId, ParamKey.ownerId]
 
     public required convenience init?(map: Map) {
         for requiredProperty in Self.requiredProperties {
@@ -93,7 +96,7 @@ public class Race: Mappable, Joinable, Descriptable {
 
     public func mapping(map: Map) {
         id <- map[ParamKey.id]
-        name <- map[ParamKey.name]
+        name <- (map[ParamKey.name], MapperUtil.stringTransform)
         startDate <- (map[ParamKey.startDate], MapperUtil.dateTransform)
         endDate <- (map[ParamKey.endDate], MapperUtil.dateTransform)
         mainImageFileName <- map[ParamKey.mainImageFileName]
@@ -112,8 +115,9 @@ public class Race: Mappable, Joinable, Descriptable {
         raceClassString <- map[ParamKey.raceClassString]
         raceType <- (map[ParamKey.raceType], EnumTransform<RaceType>())
         officialStatus <- (map[ParamKey.officialStatus], EnumTransform<RaceOfficialStatus>())
-        captureTimeEnabled <- (map[ParamKey.captureTimeEnabled], BooleanTransform()) // returned as String from API
-        scoringDisabled <- (map[ParamKey.scoringDisabled], BooleanTransform()) // returned as String from API
+        captureTimeEnabled <- (map[ParamKey.captureTimeEnabled], BooleanTransform()) // returns as String from API
+        isFinalized <- (map[ParamKey.finalized], BooleanTransform()) // returns as String from API
+        scoringDisabled <- (map[ParamKey.scoringDisabled], BooleanTransform()) // returns as String from API
         cycleCount <- (map[ParamKey.cycleCount], IntegerTransform())
         disableSlotAutoPopulation <- (map[ParamKey.disableSlotAutoPopulation], EnumTransform<QualifyingType>())
         maxZippyqDepth <- (map[ParamKey.maxZippyqDepth], IntegerTransform())
@@ -122,7 +126,8 @@ public class Race: Mappable, Joinable, Descriptable {
 
         url = MGPWeb.getUrl(for: .raceView, value: id)
         urlName <- map[ParamKey.urlName]
-        liveTimeUrl <- map[ParamKey.liveTimeUrl]
+        zippyqUrl = MGPWeb.getUrl(for: .zippyqView, value: id)
+        liveTimeEventUrl <- map[ParamKey.liveTimeEventUrl]
         description <- map[ParamKey.description]
         content <- map[ParamKey.content]
         itinerary <- map[ParamKey.itineraryContent]
@@ -138,49 +143,26 @@ public class Race: Mappable, Joinable, Descriptable {
         longitude <- map[ParamKey.longitude]
 
         chapterId <- map[ParamKey.chapterId]
-        chapterName <- map[ParamKey.chapterName]
+        chapterName <- (map[ParamKey.chapterName], MapperUtil.stringTransform)
         chapterImageFileName <- map[ParamKey.chapterImageFileName]
 
         ownerId <- map[ParamKey.ownerId]
-        ownerUserName <- map[ParamKey.ownerUserName]
+        ownerUserName <- (map[ParamKey.ownerUserName], MapperUtil.stringTransform)
 
         childRaceCount <- map[ParamKey.childRaceCount]
         parentRaceId <- map[ParamKey.parentRaceId]
         seasonId <- map[ParamKey.seasonId]
-        seasonName <- map[ParamKey.seasonName]
+        seasonName <- (map[ParamKey.seasonName], MapperUtil.stringTransform)
         courseId <- map[ParamKey.courseId]
-        courseName <- map[ParamKey.courseName]
+        courseName <- (map[ParamKey.courseName], MapperUtil.stringTransform)
 
         typeRestriction <- map[ParamKey.typeRestriction]
         sizeRestriction <- map[ParamKey.sizeRestriction]
         batteryRestriction <- map[ParamKey.batteryRestriction]
         propSizeRestriction <- map[ParamKey.propellerSizeRestriction]
 
-        races <- map[ParamKey.races]
         entries <- map[ParamKey.entries]
-    }
-}
-
-public class RaceLite: Mappable, Descriptable {
-
-    fileprivate static let requiredProperties = [ParamKey.id, ParamKey.name]
-
-    public var id: String = ""
-    public var name: String = ""
-
-    // MARK: - Initialization
-
-    public required convenience init?(map: Map) {
-        for requiredProperty in RaceLite.requiredProperties {
-            if map.JSON[requiredProperty] == nil { return nil }
-        }
-
-        self.init()
-        self.mapping(map: map)
-    }
-
-    public func mapping(map: Map) {
-        id <- map[ParamKey.id]
-        name <- map[ParamKey.name]
+        schedule <- map[ParamKey.schedule]
+        results = ResultEntry.resultEntries(from: schedule)
     }
 }

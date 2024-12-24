@@ -18,6 +18,24 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     var race: Race
 
+    // TODO: Temporary hack since race/view API doesn't include the raceId attribute just yet
+    // See issue https://github.com/MultiGP/multigp-com/issues/88
+    var raceId: ObjectId {
+        guard race.id.count > 0 else { return tabBarController.raceId }
+        return race.id
+    }
+
+    // TODO: Temporary hack since race/view API doesn't include the ownerUserName attribute just yet
+    // See issue https://github.com/MultiGP/multigp-com/issues/88
+    var raceOwnerName: String? {
+        guard race.ownerUserName.count > 0 else { return tabBarController.raceOwnerName }
+        return race.ownerUserName
+    }
+
+    override var tabBarController: RaceTabBarController {
+        return super.tabBarController as! RaceTabBarController
+    }
+
     // MARK: - Private Variables
 
     fileprivate lazy var mapView: MKMapView = {
@@ -192,11 +210,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         return nil
     }
 
-    fileprivate var canEditRaces: Bool {
-        guard race.isMyChapter else { return false }
-        return true
-    }
-
     fileprivate var canDisplayGQIcon: Bool {
         return race.officialStatus == .approved
     }
@@ -237,7 +250,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     fileprivate let raceApi = RaceApi()
     fileprivate var chapterApi = ChapterApi()
     fileprivate var userApi = UserApi()
-
 
     fileprivate var htmlViewHeightConstraint: Constraint?
 
@@ -382,26 +394,14 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     }
 
     fileprivate func loadRows() {
-
-        tableViewRows = [Row]()
-
-        if raceViewModel.classLabel != "" {
-            tableViewRows += [Row.class]
-        }
-
-        tableViewRows += [Row.owner]
-
-        if raceViewModel.chapterLabel != "" {
-            tableViewRows += [Row.chapter]
-        }
-
-        if raceViewModel.seasonLabel != "" {
-            tableViewRows += [Row.season]
-        }
-
-        if race.liveTimeUrl != nil {
-            tableViewRows += [Row.liveTime]
-        }
+        tableViewRows = [
+            raceViewModel.classLabel.isEmpty ? nil : Row.class,
+            raceOwnerName != nil ? Row.owner : nil,
+            raceViewModel.chapterLabel.isEmpty ? nil : Row.chapter,
+            raceViewModel.seasonLabel.isEmpty ? nil : Row.season,
+            (race.maxZippyqDepth > 0 && race.disableSlotAutoPopulation == .open) ? Row.zippyQ : nil,
+            race.liveTimeEventUrl != nil ? Row.results : nil
+        ].compactMap { $0 }
     }
 
     fileprivate func populateContent() {
@@ -472,13 +472,12 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     }
 
     fileprivate func configureNavigationItems() {
-        title = "Race Details"
-
-        tabBarItem = UITabBarItem(title: "Details", image: UIImage(named: "icn_tabbar_details"), selectedImage: UIImage(named: "icn_tabbar_details_selected"))
+        title = "Details"
+        tabBarItem = UITabBarItem(title: "Race Details", image: UIImage(named: "icn_tabbar_details"), selectedImage: nil)
 
         var buttons = [UIButton]()
 
-        if canEditRaces {
+        if race.canBeEdited {
             let editButton = CustomButton(type: .system)
             editButton.addTarget(self, action: #selector(didPressEditButton), for: .touchUpInside)
             editButton.setImage(ButtonImg.edit, for: .normal)
@@ -532,7 +531,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     }
 
     @objc fileprivate func didPressMemberView(_ sender: MemberBadgeView) {
-        guard let tabBarController = tabBarController as? RaceTabBarController else { return }
         tabBarController.selectTab(.race)
     }
 
@@ -544,9 +542,13 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         let editAction = UIAlertAction(title: "Edit Race", style: .default) { [weak self] action in
             self?.editRace()
         }
+        alert.addAction(editAction)
 
-        let duplicateAction = UIAlertAction(title: "Duplicate Race", style: .default) { [weak self] action in
-            self?.duplicateRace()
+        if race.canBeDuplicated {
+            let duplicateAction = UIAlertAction(title: "Duplicate Race", style: .default) { [weak self] action in
+                self?.duplicateRace()
+            }
+            alert.addAction(duplicateAction)
         }
 
         let deleteAction = UIAlertAction(title: "Delete Race", style: .destructive) { action in
@@ -556,10 +558,8 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
                 self?.deleteRace()
             })
         }
-
-        alert.addAction(editAction)
-        alert.addAction(duplicateAction)
         alert.addAction(deleteAction)
+
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         present(alert, animated: true)
     }
@@ -573,7 +573,11 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     }
 
     @objc fileprivate func didPressShareButton() {
-        guard let raceURL = URL(string: race.url) else { return }
+
+        //TODO: hacking the race url, since race.id is missing from Race/View API
+//        guard let raceURL = URL(string: race.url) else { return }
+
+        guard  let raceURL = MGPWeb.getURL(for: .raceView, value: raceId) else { return }
 
         var items: [Any] = [raceURL]
         var activities: [UIActivity] = [CopyLinkActivity()]
@@ -657,7 +661,7 @@ fileprivate extension RaceDetailViewController {
     }
 
     func deleteRace() {
-        raceApi.deleteRace(with: race.id) { status, error in
+        raceApi.deleteRace(with: raceId) { status, error in
             if status == true {
                 self.navigationController?.popViewController(animated: true)
             } else if let error = error {
@@ -667,7 +671,6 @@ fileprivate extension RaceDetailViewController {
     }
 
     func reloadRaceView() {
-        guard let tabBarController = tabBarController as? RaceTabBarController else { return }
         tabBarController.reloadRaceView()
     }
 
@@ -703,25 +706,10 @@ fileprivate extension RaceDetailViewController {
 
         let raceClass = race.raceClass
 
-        raceApi.getRaces(forClass: raceClass) { [weak self] (races, error) in
+        raceApi.getRaces(forClass: raceClass, filters: [.upcoming]) { [weak self] (races, error) in
             if let races = races {
-                let sortedViewModels = RaceViewModel.sortedViewModels(with: races)
+                let sortedViewModels = RaceViewModel.sortedViewModels(with: races, sorting: .descending)
                 let vc = RaceListViewController(sortedViewModels, raceClass: raceClass)
-                self?.navigationController?.pushViewController(vc, animated: true)
-            } else if let _ = error {
-                // handle error
-            }
-            self?.setLoading(cell, loading: false)
-        }
-    }
-
-    func showChapterProfile(_ cell: FormTableViewCell) {
-        guard canInteract(with: cell) else { return }
-        setLoading(cell, loading: true)
-
-        chapterApi.getChapter(with: race.chapterId) { [weak self] (chapter, error) in
-            if let chapter = chapter {
-                let vc = ChapterViewController(with: chapter)
                 self?.navigationController?.pushViewController(vc, animated: true)
             } else if let _ = error {
                 // handle error
@@ -747,11 +735,26 @@ fileprivate extension RaceDetailViewController {
         }
     }
 
+    func showChapterProfile(_ cell: FormTableViewCell) {
+        guard canInteract(with: cell) else { return }
+        setLoading(cell, loading: true)
+
+        chapterApi.getChapter(with: race.chapterId) { [weak self] (chapter, error) in
+            if let chapter = chapter {
+                let vc = ChapterViewController(with: chapter)
+                self?.navigationController?.pushViewController(vc, animated: true)
+            } else if let _ = error {
+                // handle error
+            }
+            self?.setLoading(cell, loading: false)
+        }
+    }
+
     func openRace(_ cell: FormTableViewCell) {
         guard canInteract(with: cell) else { return }
         setLoading(cell, loading: true)
 
-        raceApi.open(race: race.id) { [weak self] (status, error) in
+        raceApi.open(race: raceId) { [weak self] (status, error) in
             if status {
                 self?.race.status = .open
                 self?.reloadRaceView()
@@ -764,7 +767,7 @@ fileprivate extension RaceDetailViewController {
         guard canInteract(with: cell) else { return }
         setLoading(cell, loading: true)
 
-        raceApi.close(race: race.id) { [weak self] (status, error) in
+        raceApi.close(race: raceId) { [weak self] (status, error) in
             if status {
                 self?.race.status = .closed
                 self?.reloadRaceView()
@@ -774,8 +777,13 @@ fileprivate extension RaceDetailViewController {
         }
     }
 
-    func openLiveTime(_ cell: FormTableViewCell) {
-        guard let url = race.liveTimeUrl else { return }
+    func openZippyQSchedule(_ cell: FormTableViewCell) {
+        guard race.zippyqUrl.count > 0 else { return }
+        WebViewController.openUrl(race.zippyqUrl)
+    }
+
+    func openLiveFPV(_ cell: FormTableViewCell) {
+        guard let url = race.liveTimeEventUrl else { return }
         WebViewController.openUrl(url)
     }
 }
@@ -796,8 +804,10 @@ extension RaceDetailViewController: UITableViewDelegate {
             showChapterProfile(cell)
         } else if row == .season {
             showSeasonRaces(cell)
-        } else if row == .liveTime {
-            openLiveTime(cell)
+        } else if row == .zippyQ {
+            openZippyQSchedule(cell)
+        } else if row == .results {
+            openLiveFPV(cell)
         }
 
         tableView.deselectRow(at: indexPath, animated: true)
@@ -824,11 +834,21 @@ extension RaceDetailViewController: UITableViewDataSource {
         } else if row == .chapter {
             cell.detailTextLabel?.text = raceViewModel.chapterLabel
         } else if row == .owner {
-            cell.detailTextLabel?.text = raceViewModel.ownerLabel
+            cell.detailTextLabel?.text = raceOwnerName
         } else if row == .season {
             cell.detailTextLabel?.text = raceViewModel.seasonLabel
-        } else if row == .liveTime {
-            cell.detailTextLabel?.text = ""
+        } else if row == .zippyQ {
+            cell.detailTextLabel?.text = "multigp.com"
+        } else if row == .results, let url = race.liveTimeEventUrl {
+            if let web = AppWeb(url: url) {
+                if web == .livefpv {
+                    cell.accessoryView = UIImageView(image: UIImage(named: "logo_livefpv"))
+                } else if web == .fpvscores {
+                    cell.accessoryView = UIImageView(image: UIImage(named: "logo_fpvscores"))
+                } else {
+                    cell.detailTextLabel?.text = URL(string: url)?.rootDomain ?? ""
+                }
+            }
         }
 
         return cell
@@ -906,15 +926,16 @@ extension RaceDetailViewController: MKMapViewDelegate {
 }
 
 fileprivate enum Row: Int, EnumTitle, CaseIterable {
-    case `class`, chapter, owner, season, liveTime
+    case `class`, chapter, owner, season, zippyQ, results
 
     var title: String {
         switch self {
-        case .class:            return "Race Class"
+        case .class:            return "Class"
         case .chapter:          return "Chapter"
         case .owner:            return "Coordinator"
         case .season:           return "Season"
-        case .liveTime:         return "Go to LiveFPV.com"
+        case .zippyQ:           return "ZippyQ"
+        case .results:          return "View on"
         }
     }
 }

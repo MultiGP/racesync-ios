@@ -19,6 +19,10 @@ class RaceTabBarController: UITabBarController {
 
     // MARK: - Public Variables
 
+    var raceId: ObjectId
+    var race: Race?
+    var raceOwnerName: String?
+
     var isDismissable: Bool = false {
         didSet {
             if isDismissable {
@@ -55,19 +59,14 @@ class RaceTabBarController: UITabBarController {
         return button
     }()
 
-    let isResultsTabEnabled: Bool = false
-
     fileprivate lazy var activityIndicatorView: UIActivityIndicatorView = {
         return UIActivityIndicatorView(style: .medium)
     }()
 
     fileprivate var initialSelectedIndex: Int = RaceTabs.event.rawValue
+    fileprivate var emptyStateError: EmptyStateViewModel?
 
     fileprivate let raceApi = RaceApi()
-    fileprivate var raceId: ObjectId
-    fileprivate var race: Race?
-
-    fileprivate var emptyStateError: EmptyStateViewModel?
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -75,14 +74,16 @@ class RaceTabBarController: UITabBarController {
 
     // MARK: - Initialization
 
-    init(with raceId: ObjectId) {
+    init(with raceId: ObjectId, ownerName: String? = nil) {
         self.raceId = raceId
+        self.raceOwnerName = ownerName
         super.init(nibName: nil, bundle: nil)
     }
 
     init(with race: Race) {
         self.race = race
         self.raceId = race.id
+        self.raceOwnerName = race.ownerUserName
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -132,11 +133,7 @@ class RaceTabBarController: UITabBarController {
 
         var vcs = [UIViewController]()
         vcs += [RaceDetailViewController(with: race)]
-        vcs += [RaceRosterViewController(with: race)]
-
-        if isResultsTabEnabled {
-            vcs += [RaceResultsViewController(with: race)]
-        }
+        vcs += [RacePilotsViewController(with: race)]
 
         for vc in vcs { vc.willMove(toParent: self) }
         viewControllers = vcs
@@ -177,11 +174,10 @@ class RaceTabBarController: UITabBarController {
         guard let race = race else { return }
 
         let btnTitle = titleButton.title(for: .normal)
-        let id = race.id
 
         if btnTitle == title {
-            titleButton.setTitle(id, for: .normal)
-        } else if btnTitle == id {
+            titleButton.setTitle(raceId, for: .normal)
+        } else if btnTitle == raceId {
             titleButton.setTitle(title, for: .normal)
         }
     }
@@ -215,7 +211,7 @@ extension RaceTabBarController {
 
         isLoading = true
 
-        raceApi.viewSimple(race: raceId) { [weak self] (race, error) in
+        raceApi.view(race: raceId) { [weak self] (race, error) in
             self?.isLoading = false
 
             if let race = race {
@@ -230,7 +226,7 @@ extension RaceTabBarController {
     func reloadRaceView() {
         guard !isLoading else { return }
 
-        raceApi.viewSimple(race: raceId) { [weak self] (race, error) in
+        raceApi.view(race: raceId) { [weak self] (race, error) in
             guard let race = race, let vcs = self?.viewControllers else { return }
 
             self?.race = race

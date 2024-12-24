@@ -17,15 +17,16 @@ public struct RaceData: Descriptable {
     public var chapterId: String
     public var chapterName: String
 
+    // Default race values, useful for new race creation
     public var raceClass: String = RaceClass.open.rawValue
-    public var format: String = ScoringFormat.aggregateLap.rawValue
+    public var format: String = ScoringFormat.fastest3Laps.rawValue
     public var qualifying: String = QualifyingType.controlled.rawValue
     public var privacy: String = EventType.public.rawValue
-    public var status: String = RaceStatus.closed.rawValue
-
+    public var status: String = RaceStatus.open.rawValue
     public var funfly: Bool = false
     public var timing: Bool = true
     public var rounds: Int32 = 5
+
     public var seasonId: String? = nil
     public var seasonName: String? = nil
     public var courseId: String? = nil
@@ -52,10 +53,10 @@ public struct RaceData: Descriptable {
         self.chapterName = race.chapterName
 
         if let date = race.startDate {
-            self.startDateString = DateUtil.isoDateFormatter.string(from: date)
+            self.startDateString = DateUtil.standardDateFormatter.string(from: date)
         }
         if let date = race.endDate {
-            self.endDateString = DateUtil.isoDateFormatter.string(from: date)
+            self.endDateString = DateUtil.standardDateFormatter.string(from: date)
         }
 
         self.raceClass = race.raceClass.rawValue
@@ -129,7 +130,7 @@ extension RaceData {
     public var startDate: Date? {
         get {
             guard let str = startDateString else { return nil }
-            return DateUtil.isoDateFormatter.date(from: str)
+            return DateUtil.standardDateFormatter.date(from: str)
         }
         set { }
     }
@@ -137,7 +138,7 @@ extension RaceData {
     public var endDate: Date? {
         get {
             guard let str = endDateString else { return nil }
-            return DateUtil.isoDateFormatter.date(from: str)
+            return DateUtil.standardDateFormatter.date(from: str)
         }
         set { }
     }
