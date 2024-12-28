@@ -77,7 +77,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLIconFile</key>
-			<string></string>
+			<string>AppIcon-MGP1@2x</string>
 			<key>CFBundleURLName</key>
 			<string>com.multigp.RaceSync</string>
 			<key>CFBundleURLSchemes</key>

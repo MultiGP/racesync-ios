@@ -564,8 +564,6 @@
 		4FEBB27E23A310BB007514B4 /* User+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Extensions.swift"; sourceTree = "<group>"; };
 		4FFF07ED27A0F87100EFC30D /* TrackLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackLoader.swift; sourceTree = "<group>"; };
 		912450B59256F98707505DCE /* Pods_RaceSyncAPITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RaceSyncAPITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		935E289DD2B5422FABA6329D /* Pods-RaceSyncTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RaceSyncTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RaceSyncTests/Pods-RaceSyncTests.debug.xcconfig"; sourceTree = "<group>"; };
-		9C8FF42CD75D17C9607E692D /* Pods-RaceSyncTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RaceSyncTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-RaceSyncTests/Pods-RaceSyncTests.release.xcconfig"; sourceTree = "<group>"; };
 		C0AD3F0FAC42488B672FD23B /* Pods-RaceSyncAPITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RaceSyncAPITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RaceSyncAPITests/Pods-RaceSyncAPITests.debug.xcconfig"; sourceTree = "<group>"; };
 		D073602CBE253F96567B3B54 /* Pods_RaceSyncAPI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RaceSyncAPI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -1242,8 +1240,6 @@
 				0B33D87E0F5A0D3C15F5A09A /* Pods-RaceSyncAPI.release.xcconfig */,
 				C0AD3F0FAC42488B672FD23B /* Pods-RaceSyncAPITests.debug.xcconfig */,
 				39172015E1CE1AD9586A8B50 /* Pods-RaceSyncAPITests.release.xcconfig */,
-				935E289DD2B5422FABA6329D /* Pods-RaceSyncTests.debug.xcconfig */,
-				9C8FF42CD75D17C9607E692D /* Pods-RaceSyncTests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -1273,7 +1269,6 @@
 				4F1342412360B67D00A9DBDE /* Frameworks */,
 				4F1342422360B67D00A9DBDE /* Resources */,
 				3B4D116BF1F8D1B8A506C31E /* [CP] Embed Pods Frameworks */,
-				4F81759D241195AD00685F83 /* Upload Symbols with sentry-cli */,
 			);
 			buildRules = (
 			);
@@ -1488,26 +1483,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Since app credentials/api key are not being versioned on the repository\n# we are copying them into the build directory of the framework instead.\n#\n# This plist file must be placed in a directory located at ../credentials/\n# and contain the following keys:\n# @key \"API_KEY\"    The MGP client API key\n# @key \"EMAIL\"      The debug email to login with (optional)\n# @key \"PASSWORD\"   The debug email to login with (optional) \n#\n\nRESOURCE_PATH=$SRCROOT/../credentials/\nFILENAME=credentials.plist\nDEBUG_FILENAME=credentials-debug.plist\n\nBUILD_APP_DIR=${BUILT_PRODUCTS_DIR}/${FULL_PRODUCT_NAME}\n\nif [ \"$CONFIGURATION\" == \"Debug\" ]; then\n    # copy file or fail silently (cause ci)\n    cp \"$RESOURCE_PATH/$DEBUG_FILENAME\" \"$BUILD_APP_DIR/$FILENAME\" 2>/dev/null || :\nelse\n    # copy file or fail\n    cp \"$RESOURCE_PATH/$FILENAME\" \"$BUILD_APP_DIR/$FILENAME\"\nfi\n";
-		};
-		4F81759D241195AD00685F83 /* Upload Symbols with sentry-cli */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}",
-			);
-			name = "Upload Symbols with sentry-cli";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "exit\nif which sentry-cli >/dev/null; then\nexport SENTRY_ORG=multigp\nexport SENTRY_PROJECT=racesync\nexport SENTRY_AUTH_TOKEN=d651fada4b384049bfaf5b725250c7826f35d91417e94bbb8d842d44c9212576\n\nif [ \"${CONFIGURATION}\" = \"Release\" ]; then\n  ERROR=$(sentry-cli upload-dif \"$DWARF_DSYM_FOLDER_PATH\" 2>&1 >/dev/null)\n  if [ ! $? -eq 0 ]; then\n    echo \"warning: sentry-cli - $ERROR\"\n  fi\n  else\n    echo \"warning: sentry-cli not installed, download from https://github.com/getsentry/sentry-cli/releases\"\n  fi\nfi\n\n\n";
-			showEnvVarsInLog = 0;
 		};
 		7F2DC3FC3A2F8DECDD85A749 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

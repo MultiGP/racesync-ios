@@ -111,7 +111,7 @@ class LoginViewController: UIViewController {
         let linkAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .medium),
                           NSAttributedString.Key.foregroundColor: Color.red]
 
-        let attributedString = NSMutableAttributedString(string:label , attributes: attributes)
+        let attributedString = NSMutableAttributedString(string: label, attributes: attributes)
         attributedString.setAttributes(linkAttributes, range: NSString(string: label).range(of: link))
         button.setAttributedTitle(attributedString, for: .normal)
 
