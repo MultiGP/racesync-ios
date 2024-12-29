@@ -89,19 +89,23 @@ public enum RaceClass: String, EnumTitle {
     case whoop = "1"
     case micro = "2"
     case freedom = "3"
-    case street = "4"
+    case `spec7in` = "4"
     case mega = "5"
     case velo = "6"
+    case `spec5in` = "7"
+    case prospec = "8"
 
     public var title: String {
         switch self {
         case .open:         return "Open"
-        case .whoop:        return "Tiny Whoop"
-        case .micro:        return "Micro (Tiny Trainer)"
+        case .whoop:        return "Whoop"
+        case .micro:        return "Micro"
         case .freedom:      return "Freedom Spec"
-        case .street:       return "Street League"
+        case .spec7in:      return "7 Inch Spec"
         case .mega:         return "Mega"
         case .velo:         return "Velocidrone"
+        case .spec5in:      return "5 Inch Spec"
+        case .prospec:      return "Pro Spec"
         }
     }
 }
