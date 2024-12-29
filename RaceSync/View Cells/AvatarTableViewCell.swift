@@ -40,7 +40,7 @@ class AvatarTableViewCell: UITableViewCell {
 
     lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        label.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
         label.textColor = Color.black
         return label
     }()
@@ -115,7 +115,7 @@ class AvatarTableViewCell: UITableViewCell {
         contentView.addSubview(textStackView)
         textStackView.snp.makeConstraints {
             $0.leading.equalTo(avatarImageView.snp.trailing).offset(Constants.padding)
-            $0.trailing.equalToSuperview().offset(Constants.padding*3)
+            $0.trailing.equalToSuperview().offset(-Constants.padding)
             $0.centerY.equalToSuperview()
         }
     }

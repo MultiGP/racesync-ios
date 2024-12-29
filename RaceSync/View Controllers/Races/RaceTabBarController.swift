@@ -171,7 +171,7 @@ class RaceTabBarController: UITabBarController {
     }
 
     @objc fileprivate func didPressTitleButton() {
-        guard let race = race else { return }
+        guard let _ = race else { return }
 
         let btnTitle = titleButton.title(for: .normal)
 
