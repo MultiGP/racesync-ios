@@ -100,8 +100,8 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate func configureNavigationItems() {
 
-        title = shouldShowResults ? "Results" : "Pilots"
-        let itemTitle = shouldShowResults ? "Race Results" : "Racing Pilots"
+        title = shouldShowResults ? "Race Results" : "Racing Pilots"
+        let itemTitle = shouldShowResults ? "Results" : "Pilots"
         tabBarItem = UITabBarItem(title: itemTitle, image: UIImage(named: "icn_tabbar_roster"), selectedImage: nil)
 
         if race.isMyChapter {

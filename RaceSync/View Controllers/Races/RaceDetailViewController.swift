@@ -472,8 +472,8 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     }
 
     fileprivate func configureNavigationItems() {
-        title = "Details"
-        tabBarItem = UITabBarItem(title: "Race Details", image: UIImage(named: "icn_tabbar_details"), selectedImage: nil)
+        title = "Race Details"
+        tabBarItem = UITabBarItem(title: "Details", image: UIImage(named: "icn_tabbar_details"), selectedImage: nil)
 
         var buttons = [UIButton]()
 
@@ -531,7 +531,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     }
 
     @objc fileprivate func didPressMemberView(_ sender: MemberBadgeView) {
-        tabBarController.selectTab(.race)
+        tabBarController.selectTab(.results)
     }
 
     @objc fileprivate func didPressEditButton() {

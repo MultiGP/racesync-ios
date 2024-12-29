@@ -12,7 +12,7 @@ import EmptyDataSet_Swift
 import RaceSyncAPI
 
 enum RaceTabs: Int {
-    case event, race, results
+    case details, results, schedule
 }
 
 class RaceTabBarController: UITabBarController {
@@ -63,7 +63,7 @@ class RaceTabBarController: UITabBarController {
         return UIActivityIndicatorView(style: .medium)
     }()
 
-    fileprivate var initialSelectedIndex: Int = RaceTabs.event.rawValue
+    fileprivate var initialSelectedIndex: Int = RaceTabs.details.rawValue
     fileprivate var emptyStateError: EmptyStateViewModel?
 
     fileprivate let raceApi = RaceApi()
@@ -134,6 +134,7 @@ class RaceTabBarController: UITabBarController {
         var vcs = [UIViewController]()
         vcs += [RaceDetailViewController(with: race)]
         vcs += [RacePilotsViewController(with: race)]
+        vcs += [RaceScheduleViewController()]
 
         for vc in vcs { vc.willMove(toParent: self) }
         viewControllers = vcs
@@ -162,6 +163,8 @@ class RaceTabBarController: UITabBarController {
 
         title = vc.title
         titleButton.setTitle(title, for: .normal)
+        titleButton.isUserInteractionEnabled = (selectedIndex == RaceTabs.details.rawValue)
+        titleButton.sizeToFit()
 
         navigationItem.rightBarButtonItem = vc.navigationItem.rightBarButtonItem
     }
@@ -172,6 +175,7 @@ class RaceTabBarController: UITabBarController {
 
     @objc fileprivate func didPressTitleButton() {
         guard let _ = race else { return }
+        guard selectedIndex == RaceTabs.details.rawValue else { return }
 
         let btnTitle = titleButton.title(for: .normal)
 
