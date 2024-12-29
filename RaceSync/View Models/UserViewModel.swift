@@ -80,6 +80,18 @@ class UserViewModel: Descriptable {
         }
         return viewModels
     }
+
+    static func viewModels(_ viewModels: [UserViewModel], withoutResults entries: [RaceEntry]) -> [UserViewModel] {
+        var seenIds = Set(viewModels.map { $0.userId })
+
+        let uniqueRaceEntries = entries.filter { entry in
+            guard !seenIds.contains(entry.pilotId) else { return false }
+            seenIds.insert(entry.pilotId)
+            return true
+        }.sorted { ($0.dateAdded ?? Date.distantPast) < ($1.dateAdded ?? Date.distantPast) }
+
+        return viewModelsFromEntries(uniqueRaceEntries)
+    }
 }
 
 extension UserViewModel: Comparable {

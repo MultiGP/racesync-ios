@@ -46,10 +46,11 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
     fileprivate var emptyStateRaceRegisters = EmptyStateViewModel(.noRaceRegisters)
     fileprivate var didTapCell: Bool = false
 
-    fileprivate var shouldShowResults: Bool {
+    fileprivate var showingResults: Bool {
         guard let results = race.results, results.count > 0 else { return false }
+        guard let resultsUrl = race.liveTimeEventUrl else { return false }
         guard let startDate = race.startDate else { return false }
-        return race.isFinalized && startDate.isPassed
+        return startDate.isPassed
     }
 
     fileprivate enum Constants {
@@ -100,8 +101,8 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate func configureNavigationItems() {
 
-        title = shouldShowResults ? "Race Results" : "Racing Pilots"
-        let itemTitle = shouldShowResults ? "Results" : "Pilots"
+        title = showingResults ? "Race Results" : "Racing Pilots"
+        let itemTitle = showingResults ? "Results" : "Pilots"
         tabBarItem = UITabBarItem(title: itemTitle, image: UIImage(named: "icn_tabbar_roster"), selectedImage: nil)
 
         if race.isMyChapter {
@@ -111,11 +112,22 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate func populateData() {
 
-        if shouldShowResults, let results = ResultEntryViewModel.combinedResults(from: race.results, for: race.trueScoringFormat) {
-            userViewModels = UserViewModel.viewModelsFromResults(results)
-        } else if let entries = race.entries {
-            userViewModels = UserViewModel.viewModelsFromEntries(entries)
+        var viewModels = [UserViewModel]()
+
+        if showingResults, let results = ResultEntryViewModel.combinedResults(from: race.results, for: race.trueScoringFormat) {
+            viewModels += UserViewModel.viewModelsFromResults(results)
         }
+
+        if let entries = race.entries {
+            // We need to include the pilots that didn't complete laps still
+            if viewModels.count > 0, viewModels.count < entries.count {
+                viewModels += UserViewModel.viewModels(viewModels, withoutResults: entries)
+            } else {
+                viewModels += UserViewModel.viewModelsFromEntries(entries)
+            }
+        }
+
+        userViewModels = viewModels
     }
 
     func reloadContent() {
@@ -180,7 +192,7 @@ extension RacePilotsViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if shouldShowResults {
+        if showingResults {
             if race.isGQ {
                 return "GQ Results: \(ScoringFormat.fastest3Laps.title)"
             } else {
@@ -222,16 +234,23 @@ extension RacePilotsViewController: UITableViewDataSource {
         cell.avatarImageView.imageView.setImage(with: viewModel.pictureUrl, placeholderImage: PlaceholderImg.medium)
         cell.titleLabel.text = viewModel.displayName
 
-        if shouldShowResults, let resultEntry = viewModel.resultEntry {
-            let resultViewModel = ResultEntryViewModel(with: resultEntry, from: race)
-            cell.subtitleLabel.text = resultViewModel.resultLabel
-            cell.rankLabel.text = ResultEntryViewModel.rankLabel(for: indexPath.row+1)
-            cell.rankLabel.isHidden = false
+        if showingResults {
+            if let resultEntry = viewModel.resultEntry {
+                let resultViewModel = ResultEntryViewModel(with: resultEntry, from: race)
+                cell.subtitleLabel.text = resultViewModel.resultLabel
+                cell.rankLabel.text = ResultEntryViewModel.rankLabel(for: indexPath.row+1)
+                cell.rankLabel.isHidden = false
+            } else {
+                cell.subtitleLabel.text = ResultEntryViewModel.noResultPlaceholder
+                cell.rankLabel.text = "" // Empty string
+                cell.rankLabel.isHidden = false
+            }
         } else {
             // TODO: Replace with something more useful? like location, race counts, or even a custom message when joining the race!
             cell.subtitleLabel.text = ResultEntryViewModel.noResultPlaceholder
             cell.rankLabel.isHidden = true
         }
+
 
         return cell
     }

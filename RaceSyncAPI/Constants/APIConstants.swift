@@ -221,4 +221,8 @@ enum ParamKey {
     static let backgroundFileName = "backgroundFileName"
     static let backgroundUrl = "backgroundUrl"
     static let chapterImageFileName = "chapterImageFileName"
+
+    // System
+    static let dateAdded = "dateAdded"
+    static let dateModified = "dateModified"
 }

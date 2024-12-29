@@ -32,6 +32,9 @@ public class RaceEntry: Mappable, Descriptable {
     public var aircraftId: String = ""
     public var aircraftName: String = ""
 
+    public var dateAdded: Date?
+    public var dateModified: Date?
+
     // MARK: - Initialization
 
     fileprivate static let requiredProperties = [ParamKey.id, ParamKey.pilotId, ParamKey.aircraftId]
@@ -66,5 +69,8 @@ public class RaceEntry: Mappable, Descriptable {
 
         aircraftId <- map[ParamKey.aircraftId]
         aircraftName <- (map[ParamKey.aircraftName], MapperUtil.stringTransform)
+
+        dateAdded <- (map[ParamKey.dateAdded], MapperUtil.dateTransform)
+        dateModified <- (map[ParamKey.dateModified], MapperUtil.dateTransform)
     }
 }

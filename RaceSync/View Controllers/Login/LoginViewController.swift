@@ -137,7 +137,7 @@ class LoginViewController: UIViewController {
     }
 
     fileprivate var titleText: String? {
-        return APIServices.shared.settings.isDev ? "Login with dev.MultiGP" : "Login with MultiGP"
+        return APIServices.shared.settings.isDev ? "Login with a dev.MultiGP account" : "Login with a MultiGP account"
     }
 
     fileprivate enum Constants {
