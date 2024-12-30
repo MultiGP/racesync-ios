@@ -678,8 +678,8 @@ fileprivate extension RaceDetailViewController {
         guard let chapters = APIServices.shared.myManagedChapters, chapters.count > 0 else { return }
         guard let chapter = chapters.filter ({ return $0.id == race.chapterId }).first else { return }
 
-        let data = RaceData(with: race)
-        let initialData = RaceData(with: race)
+        let data = RaceData(with: race, id: raceId)
+        let initialData = RaceData(with: race, id: raceId)
 
         let vc = RaceFormViewController(with: [chapter], raceData: data, initialRaceData: initialData, section: .general)
         vc.editMode = .update
@@ -713,7 +713,7 @@ fileprivate extension RaceDetailViewController {
     func duplicateRace() {
         guard let chapters = APIServices.shared.myManagedChapters, chapters.count > 0 else { return }
 
-        let data = RaceData(with: race)
+        let data = RaceData(with: race, id: raceId)
 
         let vc = RaceFormViewController(with: chapters, raceData: data, section: .general)
         vc.editMode = .new

@@ -48,8 +48,8 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate var showingResults: Bool {
         guard let results = race.results, results.count > 0 else { return false }
-        guard let resultsUrl = race.liveTimeEventUrl else { return false }
         guard let startDate = race.startDate else { return false }
+        guard race.liveTimeEventUrl != nil else { return false }
         return startDate.isPassed
     }
 
