@@ -36,7 +36,6 @@
 		4F1342822360DA4C00A9DBDE /* RaceSyncAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F13426D2360DA4B00A9DBDE /* RaceSyncAPI.framework */; };
 		4F1342832360DA4C00A9DBDE /* RaceSyncAPI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4F13426D2360DA4B00A9DBDE /* RaceSyncAPI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4F13428C2360DAD100A9DBDE /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F13428B2360DAD100A9DBDE /* LoginViewController.swift */; };
-		4F13428F236120E700A9DBDE /* LoginViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4F13428E236120E700A9DBDE /* LoginViewController.xib */; };
 		4F1571AE24D8D74F004A7CEE /* ProfileBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1571AD24D8D74F004A7CEE /* ProfileBackgroundView.swift */; };
 		4F1DC112297E42BA005EDAE0 /* BooleanTransform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1DC111297E42BA005EDAE0 /* BooleanTransform.swift */; };
 		4F1E150524107BCE0082C486 /* URL+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1E150424107BCE0082C486 /* URL+Extensions.swift */; };
@@ -72,6 +71,7 @@
 		4F642910240199AC005E8036 /* AircraftForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F64290F240199AC005E8036 /* AircraftForm.swift */; };
 		4F6429122402DB00005E8036 /* ImageConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6429112402DB00005E8036 /* ImageConstants.swift */; };
 		4F6429142403AE9A005E8036 /* FormBaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6429132403AE9A005E8036 /* FormBaseViewController.swift */; };
+		4F64B34B2D22879C00FC5BF1 /* launch_bkgd.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4F64B34A2D22879C00FC5BF1 /* launch_bkgd.jpg */; };
 		4F64F680257B97E000574F4D /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F64F67F257B97E000574F4D /* WebViewController.swift */; };
 		4F65D8D82574EA5400C506C3 /* tracks-list.json in Resources */ = {isa = PBXBuildFile; fileRef = 4F65D8D72574EA5400C506C3 /* tracks-list.json */; };
 		4F65D8E02574F6CF00C506C3 /* TrackListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F65D8DF2574F6CF00C506C3 /* TrackListViewController.swift */; };
@@ -349,7 +349,6 @@
 		4F13427C2360DA4C00A9DBDE /* RaceSyncAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceSyncAPITests.swift; sourceTree = "<group>"; };
 		4F13427E2360DA4C00A9DBDE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4F13428B2360DAD100A9DBDE /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
-		4F13428E236120E700A9DBDE /* LoginViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LoginViewController.xib; sourceTree = "<group>"; };
 		4F1571AD24D8D74F004A7CEE /* ProfileBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileBackgroundView.swift; sourceTree = "<group>"; };
 		4F1DC111297E42BA005EDAE0 /* BooleanTransform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooleanTransform.swift; sourceTree = "<group>"; };
 		4F1E150424107BCE0082C486 /* URL+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Extensions.swift"; sourceTree = "<group>"; };
@@ -385,6 +384,7 @@
 		4F64290F240199AC005E8036 /* AircraftForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AircraftForm.swift; sourceTree = "<group>"; };
 		4F6429112402DB00005E8036 /* ImageConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageConstants.swift; sourceTree = "<group>"; };
 		4F6429132403AE9A005E8036 /* FormBaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormBaseViewController.swift; sourceTree = "<group>"; };
+		4F64B34A2D22879C00FC5BF1 /* launch_bkgd.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = launch_bkgd.jpg; sourceTree = "<group>"; };
 		4F64F67F257B97E000574F4D /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		4F65D8D72574EA5400C506C3 /* tracks-list.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "tracks-list.json"; sourceTree = "<group>"; };
 		4F65D8DF2574F6CF00C506C3 /* TrackListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackListViewController.swift; sourceTree = "<group>"; };
@@ -695,6 +695,7 @@
 				4F13424B2360B67D00A9DBDE /* Main.storyboard */,
 				4F1342502360B67D00A9DBDE /* LaunchScreen.storyboard */,
 				4F13424E2360B67D00A9DBDE /* Assets.xcassets */,
+				4F64B34A2D22879C00FC5BF1 /* launch_bkgd.jpg */,
 				4F9DB79F23D3816800570483 /* RaceSync.entitlements */,
 				4F8175A82412F82900685F83 /* RaceSync-Bridging-Header.h */,
 				4FCAF9FF23AED59D00ACE7D3 /* preview.pkpass */,
@@ -709,7 +710,6 @@
 			isa = PBXGroup;
 			children = (
 				4F13428B2360DAD100A9DBDE /* LoginViewController.swift */,
-				4F13428E236120E700A9DBDE /* LoginViewController.xib */,
 			);
 			path = Login;
 			sourceTree = "<group>";
@@ -1398,9 +1398,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F64B34B2D22879C00FC5BF1 /* launch_bkgd.jpg in Resources */,
 				4FB06AB6296B521000F14E59 /* AppIcon-MGP1@2x.png in Resources */,
 				4F6881B2257ECAE500D33672 /* track-images in Resources */,
-				4F13428F236120E700A9DBDE /* LoginViewController.xib in Resources */,
 				4FA213F72947AB5900C8E45A /* AppIcon-FMR@2x.png in Resources */,
 				4F80A65F296F9951008B19AF /* Assets.xcassets in Resources */,
 				4FB06AB4296B521000F14E59 /* AppIcon-MGP2@2x.png in Resources */,

@@ -108,7 +108,7 @@
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Browse and save images</string>
 	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
+	<string>LaunchScreen.storyboard</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UIRequiredDeviceCapabilities</key>

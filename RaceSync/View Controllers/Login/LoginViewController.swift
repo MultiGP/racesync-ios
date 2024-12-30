@@ -19,7 +19,7 @@ class LoginViewController: UIViewController {
     fileprivate lazy var loginFormView: UIView = {
         let view = UIView()
         view.alpha = 0
-        view.backgroundColor = Color.white
+        view.backgroundColor = Color.clear
         view.addSubview(self.titleLabel)
         view.addSubview(self.emailField)
         view.addSubview(self.passwordField)
@@ -90,7 +90,7 @@ class LoginViewController: UIViewController {
         button.titleLabel?.font = UIFont.systemFont(ofSize: 21, weight: .regular)
         button.setTitleColor(Color.blue, for: .normal)
         button.setTitle("Login", for: .normal)
-        button.backgroundColor = Color.white
+        button.backgroundColor = Color.white.withAlphaComponent(0.5)
         button.layer.cornerRadius = Constants.padding/2
         button.layer.borderColor = Color.gray100.cgColor
         button.layer.borderWidth = 0.5
