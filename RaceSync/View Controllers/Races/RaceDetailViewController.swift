@@ -431,17 +431,20 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             guard let s = self else { return }
 
             var html = ""
-            let spacing = 12
+            let spacing = Constants.padding * 3/4
 
             if s.canDisplayDescription {
-                html += "<div id=\"description\" style=\"color:\(Color.gray300.toHexString());\">\(s.race.description)</div>"
+                let description = s.race.description.replaceHTMLColorTag(with: Color.gray300).stripHTMLFontTag()
+                html += "<div id=\"description\">\(description)</div>"
             }
             if s.canDisplayContent {
-                html += "<div id=\"content\" style=\"padding-top: \(spacing)px; padding-bottom: \(spacing)px;\">\(s.race.content)</div>"
+                let content = s.race.content.replaceHTMLColorTag(with: Color.black).stripHTMLFontTag()
+                html += "<div id=\"content\" style=\"color:\(Color.black.toHexString()); padding-top: \(spacing)px; padding-bottom: \(spacing)px;\">\(content)</div>"
             }
             if s.canDisplayItinerary {
-                html += "<hr style=\"border-top: 0.25px solid \(Color.gray100.toHexString());\">"
-                html += "<div id=\"itinerary\" style=\"padding-top: \(spacing)px;\">\(s.race.itinerary)</div>"
+                let itinerary = s.race.description.replaceHTMLColorTag(with: Color.gray100).stripHTMLFontTag()
+                html += "<hr style=\"border-top: 0.25px solid;\">"
+                html += "<div id=\"itinerary\" style=\"padding-top: \(spacing)px;\">\(itinerary)</div>"
             }
 
             s.htmlView.html = html
