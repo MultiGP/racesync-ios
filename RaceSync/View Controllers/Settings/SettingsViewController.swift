@@ -40,6 +40,8 @@ class SettingsViewController: UIViewController {
             $0.top.equalToSuperview().offset(-100)
         }
 
+        UIView.addParallaxToView(view)
+
         return view
     }()
 

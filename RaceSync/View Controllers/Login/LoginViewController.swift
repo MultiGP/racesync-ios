@@ -90,7 +90,7 @@ class LoginViewController: UIViewController {
         button.titleLabel?.font = UIFont.systemFont(ofSize: 21, weight: .regular)
         button.setTitleColor(Color.blue, for: .normal)
         button.setTitle("Login", for: .normal)
-        button.backgroundColor = Color.white.withAlphaComponent(0.5)
+        button.backgroundColor = Color.white.withAlphaComponent(0.7)
         button.layer.cornerRadius = Constants.padding/2
         button.layer.borderColor = Color.gray100.cgColor
         button.layer.borderWidth = 0.5
@@ -268,6 +268,11 @@ class LoginViewController: UIViewController {
             $0.top.equalTo(loginButton.snp.bottom).offset(Constants.padding/2)
             $0.centerX.equalToSuperview()
         }
+
+        UIView.addParallaxToView(loginFormView)
+        UIView.addParallaxToView(racesyncLogoView)
+        UIView.addParallaxToView(mgpLogoLabel)
+        UIView.addParallaxToView(mgpLogoView)
     }
 
     // MARK: - Actions
