@@ -23,7 +23,7 @@ public extension Race {
 
     var canChangeEnrollment: Bool {
         guard isMyChapter else { return false }
-        return true
+        return !isFinalized
     }
 
     var canBeDuplicated: Bool {

@@ -253,6 +253,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate var htmlViewHeightConstraint: Constraint?
     fileprivate let ignoreFinalizingError: Bool = true // The API finalize(id) still returns 500 error. Reported https://github.com/MultiGP/multigp-com/issues/93
+    fileprivate let isEnrollmentTogglingEnabled: Bool = false // The API open(id)/close(id) returns 400 error.
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -550,6 +551,19 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             alert.addAction(action)
         }
 
+        if race.canChangeEnrollment, isEnrollmentTogglingEnabled {
+            let isClose = (race.status == .closed)
+            let title = isClose ? "Open Enrollment" : "Close Enrollment"
+            let message = isClose ? "Are you sure you want to open race enrollment?" : "Are you sure you want to close race enrollment?"
+
+            let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+                ActionSheetUtil.presentActionSheet(withTitle: message) { [weak self] (action) in
+                    self?.toggleRaceEnrollment()
+                }
+            }
+            alert.addAction(action)
+        }
+
         if race.canBeDuplicated {
             let action = UIAlertAction(title: "Duplicate", style: .default) { [weak self] action in
                 self?.duplicateRace()
@@ -674,6 +688,26 @@ fileprivate extension RaceDetailViewController {
         let nc = NavigationController(rootViewController: vc)
         nc.modalPresentationStyle = .fullScreen
         present(nc, animated: true)
+    }
+
+    func toggleRaceEnrollment() {
+        if race.status == .closed {
+            raceApi.open(race: raceId) { status, error in
+                if status == true {
+                    self.reloadRaceView()
+                } else if let error = error {
+                    AlertUtil.presentAlertMessage("Couldn't open this race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
+                }
+            }
+        } else {
+            raceApi.close(race: raceId) { status, error in
+                if status == true {
+                    self.reloadRaceView()
+                } else if let error = error {
+                    AlertUtil.presentAlertMessage("Couldn't close this race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
+                }
+            }
+        }
     }
 
     func duplicateRace() {
