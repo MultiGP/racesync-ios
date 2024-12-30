@@ -252,6 +252,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     fileprivate var userApi = UserApi()
 
     fileprivate var htmlViewHeightConstraint: Constraint?
+    fileprivate let ignoreFinalizingError: Bool = true // The API finalize(id) still returns 500 error. Reported https://github.com/MultiGP/multigp-com/issues/93
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -542,26 +543,42 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.view.tintColor = Color.blue
 
-        let editAction = UIAlertAction(title: "Edit Race", style: .default) { [weak self] action in
-            self?.editRace()
+        if race.canBeEdited {
+            let action = UIAlertAction(title: "Edit", style: .default) { [weak self] action in
+                self?.editRace()
+            }
+            alert.addAction(action)
         }
-        alert.addAction(editAction)
 
         if race.canBeDuplicated {
-            let duplicateAction = UIAlertAction(title: "Duplicate Race", style: .default) { [weak self] action in
+            let action = UIAlertAction(title: "Duplicate", style: .default) { [weak self] action in
                 self?.duplicateRace()
             }
-            alert.addAction(duplicateAction)
+            alert.addAction(action)
         }
 
-        let deleteAction = UIAlertAction(title: "Delete Race", style: .destructive) { action in
-            ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Are you sure you want to delete \"\(self.race.name)\"?",
-                                                          destructiveTitle: "Yes, Delete",
-                                                          completion: { [weak self] (action) in
-                self?.deleteRace()
-            })
+        if race.canBeFinalized {
+            let action = UIAlertAction(title: "Finalize", style: .destructive) { action in
+                ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Are you sure you want to finalize \"\(self.race.name)\"?",
+                                                              message: "Finalizing this race will close enrollment, email the results to the pilots, and initialize the next race if configured.",
+                                                              destructiveTitle: "Yes, Finalize",
+                                                              completion: { [weak self] (action) in
+                    self?.finalizeRace()
+                })
+            }
+            alert.addAction(action)
         }
-        alert.addAction(deleteAction)
+
+        if race.canBeDeleted {
+            let action = UIAlertAction(title: "Delete", style: .destructive) { action in
+                ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Are you sure you want to delete \"\(self.race.name)\"?",
+                                                              destructiveTitle: "Yes, Delete",
+                                                              completion: { [weak self] (action) in
+                    self?.deleteRace()
+                })
+            }
+            alert.addAction(action)
+        }
 
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         present(alert, animated: true)
@@ -631,6 +648,16 @@ fileprivate extension RaceDetailViewController {
         vc.showsDirection = true
         let nc = NavigationController(rootViewController: vc)
         present(nc, animated: true)
+    }
+
+    func finalizeRace() {
+        raceApi.finalizeRace(with: raceId) { status, error in
+            if status == true || self.ignoreFinalizingError == true {
+                self.reloadRaceView()
+            } else if let error = error {
+                AlertUtil.presentAlertMessage("Couldn't finalize this race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
+            }
+        }
     }
 
     func editRace() {
