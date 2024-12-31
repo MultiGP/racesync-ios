@@ -42,17 +42,17 @@
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="vTT-rp-wMx" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="141" id="2uz-TR-eJF"/>
-                            <constraint firstItem="dDa-EW-3R5" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" constant="34" id="8aM-kR-Aps"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="dDa-EW-3R5" secondAttribute="trailing" id="PHn-sN-mNW"/>
+                            <constraint firstItem="dDa-EW-3R5" firstAttribute="bottom" relation="lessThanOrEqual" secondItem="Ze5-6b-2t3" secondAttribute="bottom" id="8aM-kR-Aps"/>
+                            <constraint firstAttribute="trailing" secondItem="dDa-EW-3R5" secondAttribute="trailing" id="PHn-sN-mNW"/>
                             <constraint firstItem="pjL-zg-3Xr" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="308" id="VtH-Yq-ORu"/>
                             <constraint firstItem="Zbk-nJ-yB8" firstAttribute="centerX" secondItem="vTT-rp-wMx" secondAttribute="centerX" id="WCs-QQ-Fem"/>
                             <constraint firstItem="vTT-rp-wMx" firstAttribute="top" secondItem="Zbk-nJ-yB8" secondAttribute="bottom" constant="10" id="Weq-eE-jZM"/>
                             <constraint firstItem="vTT-rp-wMx" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="YlS-RA-D5R"/>
                             <constraint firstItem="pjL-zg-3Xr" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="cfh-t6-VEJ"/>
-                            <constraint firstItem="dDa-EW-3R5" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="gtu-YB-Q78"/>
+                            <constraint firstItem="dDa-EW-3R5" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="gtu-YB-Q78"/>
                             <constraint firstItem="pjL-zg-3Xr" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="27" id="nKo-Yy-KRn"/>
                             <constraint firstItem="pjL-zg-3Xr" firstAttribute="centerX" secondItem="Zbk-nJ-yB8" secondAttribute="centerX" id="vsh-dG-EJX"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="top" secondItem="dDa-EW-3R5" secondAttribute="top" constant="59" id="wX0-59-FiQ"/>
+                            <constraint firstAttribute="top" relation="lessThanOrEqual" secondItem="dDa-EW-3R5" secondAttribute="top" id="wX0-59-FiQ"/>
                         </constraints>
                     </view>
                 </viewController>
