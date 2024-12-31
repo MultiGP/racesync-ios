@@ -13,10 +13,12 @@ class ResultEntryViewModel: Descriptable {
 
     let entry: ResultEntry
     let resultLabel: String
+    let lapCount: Int
 
     init(with entry: ResultEntry, from race: Race) {
         self.entry = entry
         self.resultLabel = Self.resultLabel(for: entry, for: race)
+        self.lapCount = Self.resultLapCount(for: entry)
     }
 }
 
@@ -84,11 +86,9 @@ fileprivate extension ResultEntryViewModel {
         var resultLabel: String = ""
 
         // Needs at least 1 lap
-        guard let laps = Int(entry.totalLaps ?? "-1"), laps > 0 else {
-            return placeholder
-        }
+        let laps = resultLapCount(for: entry)
 
-        if format == .aggregateLap, let laps = entry.totalLaps {
+        if format == .aggregateLap, laps > 0 {
             resultLabel += " \(laps) Laps"
         } else {
             var time: String?
@@ -106,7 +106,7 @@ fileprivate extension ResultEntryViewModel {
             }
         }
 
-        if let roundLabel = Self.roundLabel(for: entry, for: race) {
+        if resultLabel.count > 0, let roundLabel = Self.roundLabel(for: entry, for: race) {
             resultLabel += " \(roundLabel)"
         }
 
@@ -125,5 +125,10 @@ fileprivate extension ResultEntryViewModel {
             }
         }
         return  nil
+    }
+
+    static func resultLapCount(for raceEntry: ResultEntry) -> Int {
+        guard let laps = Int(raceEntry.totalLaps ?? "0") else { return 0 }
+        return laps
     }
 }

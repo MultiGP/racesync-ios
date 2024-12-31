@@ -49,7 +49,6 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
     fileprivate var showingResults: Bool {
         guard let results = race.results, results.count > 0 else { return false }
         guard let startDate = race.startDate else { return false }
-        guard race.liveTimeEventUrl != nil else { return false }
         return startDate.isPassed
     }
 
@@ -101,7 +100,7 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate func configureNavigationItems() {
 
-        title = showingResults ? "Race Results" : "Racing Pilots"
+        title = showingResults ? "Race Results" : "Pilots Racing"
         let itemTitle = showingResults ? "Results" : "Pilots"
         tabBarItem = UITabBarItem(title: itemTitle, image: UIImage(named: "icn_tabbar_roster"), selectedImage: nil)
 
@@ -118,11 +117,11 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
             viewModels += UserViewModel.viewModelsFromResults(results)
         }
 
-        if let entries = race.entries {
+        if let entries = race.entries, entries.count > 0 {
             // We need to include the pilots that didn't complete laps still
             if viewModels.count > 0, viewModels.count < entries.count {
                 viewModels += UserViewModel.viewModels(viewModels, withoutResults: entries)
-            } else {
+            } else if viewModels.count == 0 {
                 viewModels += UserViewModel.viewModelsFromEntries(entries)
             }
         }
@@ -233,24 +232,24 @@ extension RacePilotsViewController: UITableViewDataSource {
 
         cell.avatarImageView.imageView.setImage(with: viewModel.pictureUrl, placeholderImage: PlaceholderImg.medium)
         cell.titleLabel.text = viewModel.displayName
+        cell.rankLabel.text = nil
+        cell.rankLabel.isHidden = true
 
-        if showingResults {
-            if let resultEntry = viewModel.resultEntry {
-                let resultViewModel = ResultEntryViewModel(with: resultEntry, from: race)
-                cell.subtitleLabel.text = resultViewModel.resultLabel
+        if showingResults, let entry = viewModel.resultEntry {
+
+            let viewModel = ResultEntryViewModel(with: entry, from: race)
+
+            if viewModel.lapCount > 0 {
+                cell.subtitleLabel.text = viewModel.resultLabel
                 cell.rankLabel.text = ResultEntryViewModel.rankLabel(for: indexPath.row+1)
                 cell.rankLabel.isHidden = false
             } else {
                 cell.subtitleLabel.text = ResultEntryViewModel.noResultPlaceholder
-                cell.rankLabel.text = "" // Empty string
-                cell.rankLabel.isHidden = false
             }
         } else {
             // TODO: Replace with something more useful? like location, race counts, or even a custom message when joining the race!
             cell.subtitleLabel.text = ResultEntryViewModel.noResultPlaceholder
-            cell.rankLabel.isHidden = true
         }
-
 
         return cell
     }

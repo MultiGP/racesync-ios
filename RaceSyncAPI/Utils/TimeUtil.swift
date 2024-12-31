@@ -25,7 +25,7 @@ public class TimeUtil {
             return String(format: "%02d.%03d", seconds, milliseconds)
         } else {
             // Format into "MM:SS.mmm"
-            return String(format: "%02d:%02d.%03d", minutes, seconds, milliseconds) // TODO: Add attributed string for the ms part?
+            return String(format: "%02d:%02d.%03d", minutes, seconds, milliseconds)
         }
     }
 }
