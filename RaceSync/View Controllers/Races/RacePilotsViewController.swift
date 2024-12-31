@@ -54,6 +54,7 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
+        static let buttonSpacing: CGFloat = 12
     }
 
     // MARK: - Initialization
@@ -104,9 +105,26 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
         let itemTitle = showingResults ? "Results" : "Pilots"
         tabBarItem = UITabBarItem(title: itemTitle, image: UIImage(named: "icn_tabbar_roster"), selectedImage: nil)
 
+        var buttons = [UIButton]()
+
         if race.isMyChapter {
-            navigationItem.rightBarButtonItem = UIBarButtonItem(image: ButtonImg.edit, style: .done, target: self, action: #selector(didPressEditButton))
+            let editButton = CustomButton(type: .system)
+            editButton.addTarget(self, action: #selector(didPressEditButton), for: .touchUpInside)
+            editButton.setImage(ButtonImg.edit, for: .normal)
+            buttons += [editButton]
         }
+
+        let shareButton = CustomButton(type: .system)
+        shareButton.addTarget(tabBarController, action: #selector(tabBarController.didPressShareButton), for: .touchUpInside)
+        shareButton.setImage(ButtonImg.share, for: .normal)
+        buttons += [shareButton]
+
+        let stackView = UIStackView(arrangedSubviews: buttons)
+        stackView.axis = .horizontal
+        stackView.distribution = .fillEqually
+        stackView.alignment = .lastBaseline
+        stackView.spacing = Constants.buttonSpacing
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: stackView)
     }
 
     fileprivate func populateData() {

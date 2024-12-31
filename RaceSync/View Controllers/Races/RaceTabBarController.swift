@@ -163,7 +163,6 @@ class RaceTabBarController: UITabBarController {
 
         title = vc.title
         titleButton.setTitle(title, for: .normal)
-        titleButton.isUserInteractionEnabled = (selectedIndex == RaceTabs.details.rawValue)
         titleButton.sizeToFit()
 
         navigationItem.rightBarButtonItem = vc.navigationItem.rightBarButtonItem
@@ -175,7 +174,6 @@ class RaceTabBarController: UITabBarController {
 
     @objc fileprivate func didPressTitleButton() {
         guard let _ = race else { return }
-        guard selectedIndex == RaceTabs.details.rawValue else { return }
 
         let btnTitle = titleButton.title(for: .normal)
 
@@ -210,7 +208,7 @@ class RaceTabBarController: UITabBarController {
 
 extension RaceTabBarController {
 
-    func loadRaceView() {
+    public func loadRaceView() {
         guard !isLoading else { return }
 
         isLoading = true
@@ -227,7 +225,7 @@ extension RaceTabBarController {
         }
     }
 
-    func reloadRaceView() {
+    public func reloadRaceView() {
         guard !isLoading else { return }
 
         raceApi.view(race: raceId) { [weak self] (race, error) in
@@ -241,6 +239,29 @@ extension RaceTabBarController {
                 vc.reloadContent()
             }
         }
+    }
+
+    @objc public func didPressShareButton() {
+
+        //TODO: hacking the race url, since race.id is missing from Race/View API
+//        guard let raceURL = URL(string: race.url) else { return }
+
+        guard  let raceURL = MGPWeb.getURL(for: .raceView, value: raceId) else { return }
+
+        var items: [Any] = [raceURL]
+        var activities: [UIActivity] = [CopyLinkActivity()]
+
+        // Calendar integration
+        if let event = race?.calendarEvent {
+            items += [event]
+            activities += [CalendarActivity()]
+        }
+
+        activities += [MultiGPActivity()]
+
+        let vc = UIActivityViewController(activityItems: items, applicationActivities: activities)
+        vc.excludeAllActivityTypes(except: [.airDrop])
+        present(vc, animated: true)
     }
 }
 

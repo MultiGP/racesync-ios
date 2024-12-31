@@ -497,7 +497,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         }
 
         let shareButton = CustomButton(type: .system)
-        shareButton.addTarget(self, action: #selector(didPressShareButton), for: .touchUpInside)
+        shareButton.addTarget(tabBarController, action: #selector(tabBarController.didPressShareButton), for: .touchUpInside)
         shareButton.setImage(ButtonImg.share, for: .normal)
         buttons += [shareButton]
 
@@ -606,28 +606,28 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         })
     }
 
-    @objc fileprivate func didPressShareButton() {
-
-        //TODO: hacking the race url, since race.id is missing from Race/View API
-//        guard let raceURL = URL(string: race.url) else { return }
-
-        guard  let raceURL = MGPWeb.getURL(for: .raceView, value: raceId) else { return }
-
-        var items: [Any] = [raceURL]
-        var activities: [UIActivity] = [CopyLinkActivity()]
-
-        // Calendar integration
-        if let event = race.calendarEvent {
-            items += [event]
-            activities += [CalendarActivity()]
-        }
-
-        activities += [MultiGPActivity()]
-
-        let vc = UIActivityViewController(activityItems: items, applicationActivities: activities)
-        vc.excludeAllActivityTypes(except: [.airDrop])
-        present(vc, animated: true)
-    }
+//    @objc fileprivate func didPressShareButton() {
+//
+//        //TODO: hacking the race url, since race.id is missing from Race/View API
+////        guard let raceURL = URL(string: race.url) else { return }
+//
+//        guard  let raceURL = MGPWeb.getURL(for: .raceView, value: raceId) else { return }
+//
+//        var items: [Any] = [raceURL]
+//        var activities: [UIActivity] = [CopyLinkActivity()]
+//
+//        // Calendar integration
+//        if let event = race.calendarEvent {
+//            items += [event]
+//            activities += [CalendarActivity()]
+//        }
+//
+//        activities += [MultiGPActivity()]
+//
+//        let vc = UIActivityViewController(activityItems: items, applicationActivities: activities)
+//        vc.excludeAllActivityTypes(except: [.airDrop])
+//        present(vc, animated: true)
+//    }
 }
 
 extension RaceDetailViewController {
