@@ -12,8 +12,8 @@ import UIKit
 class ResultEntryViewModel: Descriptable {
 
     let entry: ResultEntry
-    let resultLabel: String
     let lapCount: Int
+    let resultLabel: String?
 
     init(with entry: ResultEntry, from race: Race) {
         self.entry = entry
@@ -45,6 +45,7 @@ extension ResultEntryViewModel {
 
         let unique = entries.reduce(into: [ObjectId: ResultEntry]()) { dict, entry in
             guard let newValue = Double(entry[keyPath: format.key] ?? "") else { return }
+            guard newValue > 0 && newValue < 1500 else { return } // a value can't be over 15 minutes, else it's considered invalid
 
             if let oldEntry = dict[entry.pilotId],
                let oldValue = Double(oldEntry[keyPath: format.key] ?? "") {
@@ -79,10 +80,9 @@ extension ResultEntryViewModel {
 
 fileprivate extension ResultEntryViewModel {
 
-    static func resultLabel(for entry: ResultEntry, for race: Race) -> String {
+    static func resultLabel(for entry: ResultEntry, for race: Race) -> String? {
 
         let format = race.trueScoringFormat
-        let placeholder: String = "Did not complete laps"
         var resultLabel: String = ""
 
         // Needs at least 1 lap
@@ -110,7 +110,7 @@ fileprivate extension ResultEntryViewModel {
             resultLabel += " \(roundLabel)"
         }
 
-        return resultLabel.count > 0 ? resultLabel : placeholder
+        return resultLabel.count > 0 ? resultLabel : nil
     }
 
     static func roundLabel(for raceEntry: ResultEntry, for race: Race) -> String? {

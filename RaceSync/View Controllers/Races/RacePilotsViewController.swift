@@ -250,6 +250,7 @@ extension RacePilotsViewController: UITableViewDataSource {
 
         cell.avatarImageView.imageView.setImage(with: viewModel.pictureUrl, placeholderImage: PlaceholderImg.medium)
         cell.titleLabel.text = viewModel.displayName
+        cell.subtitleLabel.text = ResultEntryViewModel.noResultPlaceholder
         cell.rankLabel.text = nil
         cell.rankLabel.isHidden = true
 
@@ -257,16 +258,11 @@ extension RacePilotsViewController: UITableViewDataSource {
 
             let viewModel = ResultEntryViewModel(with: entry, from: race)
 
-            if viewModel.lapCount > 0 {
+            if viewModel.resultLabel != nil {
                 cell.subtitleLabel.text = viewModel.resultLabel
                 cell.rankLabel.text = ResultEntryViewModel.rankLabel(for: indexPath.row+1)
                 cell.rankLabel.isHidden = false
-            } else {
-                cell.subtitleLabel.text = ResultEntryViewModel.noResultPlaceholder
             }
-        } else {
-            // TODO: Replace with something more useful? like location, race counts, or even a custom message when joining the race!
-            cell.subtitleLabel.text = ResultEntryViewModel.noResultPlaceholder
         }
 
         return cell
