@@ -4,16 +4,16 @@
 
 <table bgcolor=green>
   <tr>
-    <th><img src="Documentation/App \Store/Screenshots/RaceSync_6.9_screenshot_0.png"></th>
-    <th><img src="Documentation/App \Store/Screenshots/RaceSync_6.9_screenshot_1.png"></th>
-    <th><img src="Documentation/App \Store/Screenshots/RaceSync_6.9_screenshot_2.png"></th>
-    <th><img src="Documentation/App \Store/Screenshots/RaceSync_6.9_screenshot_3.png"></th>
+    <th><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_0.png"></th>
+    <th><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_1.png"></th>
+    <th><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_2.png"></th>
+    <th><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_3.png"></th>
   </tr>
   <tr>
-    <th><img src="Documentation/App \Store/Screenshots/RaceSync_6.9_screenshot_4.png"></th>
-    <th><img src="Documentation/App \Store/Screenshots/RaceSync_6.9_screenshot_5.png"></th>
-    <th><img src="Documentation/App \Store/Screenshots/RaceSync_6.9_screenshot_6.png"></th>
-    <th><img src="Documentation/App \Store/Screenshots/RaceSync_6.9_screenshot_7.png"></th>
+    <th><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_4.png"></th>
+    <th><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_5.png"></th>
+    <th><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_6.png"></th>
+    <th><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_7.png"></th>
   </tr>
 </table>
 
