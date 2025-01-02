@@ -2,18 +2,18 @@
 
 ## Screenshots
 
-<table bgcolor=green>
+<table style="border-collapse: collapse; width: auto;">
   <tr>
-    <th><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_0.png"></th>
-    <th><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_1.png"></th>
-    <th><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_2.png"></th>
-    <th><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_3.png"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_0.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_1.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_2.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_3.png" style="display: block; width: auto; height: auto;"></th>
   </tr>
   <tr>
-    <th><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_4.png"></th>
-    <th><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_5.png"></th>
-    <th><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_6.png"></th>
-    <th><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_7.png"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_4.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_5.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_6.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_7.png" style="display: block; width: auto; height: auto;"></th>
   </tr>
 </table>
 
