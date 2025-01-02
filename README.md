@@ -2,18 +2,18 @@
 
 ## Screenshots
 
-<table bgcolor=green>
+<table style="border-collapse: collapse; width: auto;">
   <tr>
-    <th><img src="Documentation/UI/AppStore_Screenshots/RaceSync_5.5_display_screenshot1.png"></th>
-    <th><img src="Documentation/UI/AppStore_Screenshots/RaceSync_5.5_display_screenshot2.png"></th>
-    <th><img src="Documentation/UI/AppStore_Screenshots/RaceSync_5.5_display_screenshot3.png"></th>
-    <th><img src="Documentation/UI/AppStore_Screenshots/RaceSync_5.5_display_screenshot4.png"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_0.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_1.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_2.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_3.png" style="display: block; width: auto; height: auto;"></th>
   </tr>
   <tr>
-    <th><img src="Documentation/UI/AppStore_Screenshots/RaceSync_5.5_display_screenshot5.png"></th>
-    <th><img src="Documentation/UI/AppStore_Screenshots/RaceSync_5.5_display_screenshot6.png"></th>
-    <th><img src="Documentation/UI/AppStore_Screenshots/RaceSync_5.5_display_screenshot7.png"></th>
-    <th><img src="Documentation/UI/AppStore_Screenshots/RaceSync_5.5_display_screenshot8.png"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_4.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_5.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_6.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_7.png" style="display: block; width: auto; height: auto;"></th>
   </tr>
 </table>
 
@@ -52,7 +52,9 @@ Feel free to create Issues and submit Pull Requests with your feedback!
 
 * [Download XCode](https://apps.apple.com/ca/app/xcode/id497799835?mt=12).
 * Fork and clone this Git repository
-* Create a file called `credentials.plist` and place it under `$SRCROOT/../credentials/`. Add `API_KEY` to this file and insert your Chapter API key (note that this type of API key won't give you full access to the MGP API but it is enough to run and test the app).
+* Create a file called `credentials-debug.plist` and place it under `$SRCROOT/../credentials/`
+* Generate your chapter API key. [Watch tutorial](https://www.youtube.com/watch?v=O8e9KoRhbHU&t=55s)
+* Add `API_KEY` to the plist and insert your Chapter API key (note that this type of API key won't give you full access to the MGP API but it is enough to run and test the app).
 * Compile and Run!
 
 ## Continuous Integration
@@ -63,5 +65,5 @@ The following application targets are being privately built and tested using XCo
 
 ## Platform
 
-* iOS 13.0+
+* iOS 14.0+
 * WatchOS 7.0+

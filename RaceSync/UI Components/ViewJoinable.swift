@@ -49,21 +49,26 @@ extension ViewJoinable {
         button.isLoading = true
         let state = button.joinState
 
-        if let startDate = race.startDate, !startDate.isPassed {
-            if state == .joined {
-                resign(race: race, raceApi: raceApi) { (newState) in
-                    self.handleStateChange(state, newState: newState, in: button, with: race, completion)
+        if state == .join {
+            if let endDate = race.endDate, endDate.isPassed {
+                
+                var message = "Cannot join or resign a race from the past."
+                if race.ownerUserName.count > 0 {
+                    message += "If you think this is a mistake, contact the race coordinator \"\(race.ownerUserName)\""
                 }
-            } else if state == .join  {
+                AlertUtil.presentAlertMessage(message,
+                                              title: "Uh Oh",
+                                              delay: 0.5,
+                                              completion: { _ in button.isLoading = false })
+            } else {
                 join(race: race, raceApi: raceApi) { (newState) in
                     self.handleStateChange(state, newState: newState, in: button, with: race, completion)
                 }
             }
-        } else {
-            AlertUtil.presentAlertMessage("Cannot join or resign a race from the past. If you think this is a mistake, contact the race coordinator \"\(race.ownerUserName)\"",
-                                          title: "Uh Oh",
-                                          delay: 0.5,
-                                          completion: { _ in button.isLoading = false })
+        } else if state == .joined {
+            resign(race: race, raceApi: raceApi) { (newState) in
+                self.handleStateChange(state, newState: newState, in: button, with: race, completion)
+            }
         }
     }
 

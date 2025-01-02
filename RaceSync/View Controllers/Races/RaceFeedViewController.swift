@@ -50,8 +50,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
         let imageView = UIImageView(image: UIImage(named: "racesync_logo_header"))
         view.addSubview(imageView)
         imageView.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(view.snp.top).offset(4)
+            $0.centerX.centerY.equalToSuperview()
         }
         return view
     }()
@@ -406,17 +405,12 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
         }
     }
 
-    @objc fileprivate func didPressShowPastSeriesButton(_ sender: Any) {
-        raceFeedController.showPastSeries = true
-        loadRaces(forceReload: true)
-    }
-
     @objc fileprivate func didPullRefreshControl() {
         loadRaces(forceReload: true)
     }
 
     fileprivate func openRaceDetail(_ viewModel: RaceViewModel) {
-        let vc = RaceTabBarController(with: viewModel.race.id)
+        let vc = RaceTabBarController(with: viewModel.race.id, ownerName: viewModel.race.ownerUserName)
         vc.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(vc, animated: true)
     }
@@ -461,8 +455,6 @@ fileprivate extension RaceFeedViewController {
                 self?.loadMyHomeChapter(user.homeChapterId)
                 self?.loadMyManagedChapters()
                 self?.updateUserProfileImage()
-
-                CrashCatcher.setupUser(user.id, username: user.userName)
             } else if error != nil {
                 // This is somewhat the best way to detect an invalid session
                 ApplicationControl.shared.invalidateSession(forced: false)
@@ -481,7 +473,18 @@ fileprivate extension RaceFeedViewController {
 
     func loadMyManagedChapters() {
         chapterApi.getMyManagedChapters { (managedChapters, error) in
-            APIServices.shared.myManagedChapters = managedChapters
+
+            guard let chapters = managedChapters else {
+                APIServices.shared.myManagedChapters = []
+                return
+            }
+
+            // Remove duplicated managed chapters, if any, and sorting alphabetically
+            let uniqueChapters = Dictionary(grouping: chapters, by: \.id)
+                .compactMap { $0.value.first }
+                .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+
+            APIServices.shared.myManagedChapters = uniqueChapters
         }
     }
 
@@ -626,8 +629,8 @@ extension RaceFeedViewController: EmptyDataSetSource {
     func getEmptyStateViewModel() -> EmptyStateViewModel {
         switch selectedRaceFilter {
         case .joined:       return emptyStateJoinedRaces
-        case .chapters:     return emptyStateChapterRaces
         case .nearby:       return emptyStateNearbyRaces
+        case .chapters:     return emptyStateChapterRaces
         case .series:       return emptyStateSeriesRaces
         }
     }
@@ -667,8 +670,6 @@ extension RaceFeedViewController: EmptyDataSetDelegate {
             //
         } else if selectedRaceFilter == .nearby {
             didPressFilterButton(button)
-        } else if selectedRaceFilter == .series {
-            didPressShowPastSeriesButton(button)
         }
     }
 }

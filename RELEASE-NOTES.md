@@ -1,6 +1,30 @@
 
 # App Store Release Notes
 
+## 1.6
+
+New Features:
+- Race results are now available on the race detail screen, when applicable.
+- Simplifying race creation for Chapter owners, with only 1 description field and a few default values.
+- Showing LiveFPV & FPVScores logos on the results row of a race detail, when applicable
+- Updating app icon and launch screen visually
+- Displaying associated races to track designs
+- Updated the race classes to match the recent changes in MGP (Pro Spec, Micro, Whoop, etc.)
+- Allowing chapter owners to finalize a race from the race detail screen.
+
+Hot Fixes
+- Displaying only the upcoming races when filtered by class/spec (more relevant to the user)
+- Fixing date related issues when creating and editing a race
+- Removing duplicated managed chapters, if any, and sorting alphabetically
+- GQ races can't be duplicated anymore
+
+Internal
+- Drop iOS 13 support. Make iOS 14 the minimum deployment target.
+- Uninstalled unused libraries (Sentry) and attempt make app load faster and lighter bundle to download
+
+
+---
+
 ## 1.5
 
 Race On with Version 1.5!

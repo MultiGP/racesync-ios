@@ -12,12 +12,16 @@ import EmptyDataSet_Swift
 import RaceSyncAPI
 
 enum RaceTabs: Int {
-    case event, race, results
+    case details, results, schedule
 }
 
 class RaceTabBarController: UITabBarController {
 
     // MARK: - Public Variables
+
+    var raceId: ObjectId
+    var race: Race?
+    var raceOwnerName: String?
 
     var isDismissable: Bool = false {
         didSet {
@@ -55,19 +59,14 @@ class RaceTabBarController: UITabBarController {
         return button
     }()
 
-    let isResultsTabEnabled: Bool = false
-
     fileprivate lazy var activityIndicatorView: UIActivityIndicatorView = {
         return UIActivityIndicatorView(style: .medium)
     }()
 
-    fileprivate var initialSelectedIndex: Int = RaceTabs.event.rawValue
+    fileprivate var initialSelectedIndex: Int = RaceTabs.details.rawValue
+    fileprivate var emptyStateError: EmptyStateViewModel?
 
     fileprivate let raceApi = RaceApi()
-    fileprivate var raceId: ObjectId
-    fileprivate var race: Race?
-
-    fileprivate var emptyStateError: EmptyStateViewModel?
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -75,14 +74,16 @@ class RaceTabBarController: UITabBarController {
 
     // MARK: - Initialization
 
-    init(with raceId: ObjectId) {
+    init(with raceId: ObjectId, ownerName: String? = nil) {
         self.raceId = raceId
+        self.raceOwnerName = ownerName
         super.init(nibName: nil, bundle: nil)
     }
 
     init(with race: Race) {
         self.race = race
         self.raceId = race.id
+        self.raceOwnerName = race.ownerUserName
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -132,11 +133,8 @@ class RaceTabBarController: UITabBarController {
 
         var vcs = [UIViewController]()
         vcs += [RaceDetailViewController(with: race)]
-        vcs += [RaceRosterViewController(with: race)]
-
-        if isResultsTabEnabled {
-            vcs += [RaceResultsViewController(with: race)]
-        }
+        vcs += [RacePilotsViewController(with: race)]
+        vcs += [RaceScheduleViewController()]
 
         for vc in vcs { vc.willMove(toParent: self) }
         viewControllers = vcs
@@ -165,6 +163,7 @@ class RaceTabBarController: UITabBarController {
 
         title = vc.title
         titleButton.setTitle(title, for: .normal)
+        titleButton.sizeToFit()
 
         navigationItem.rightBarButtonItem = vc.navigationItem.rightBarButtonItem
     }
@@ -174,14 +173,13 @@ class RaceTabBarController: UITabBarController {
     }
 
     @objc fileprivate func didPressTitleButton() {
-        guard let race = race else { return }
+        guard let _ = race else { return }
 
         let btnTitle = titleButton.title(for: .normal)
-        let id = race.id
 
         if btnTitle == title {
-            titleButton.setTitle(id, for: .normal)
-        } else if btnTitle == id {
+            titleButton.setTitle(raceId, for: .normal)
+        } else if btnTitle == raceId {
             titleButton.setTitle(title, for: .normal)
         }
     }
@@ -210,12 +208,12 @@ class RaceTabBarController: UITabBarController {
 
 extension RaceTabBarController {
 
-    func loadRaceView() {
+    public func loadRaceView() {
         guard !isLoading else { return }
 
         isLoading = true
 
-        raceApi.viewSimple(race: raceId) { [weak self] (race, error) in
+        raceApi.view(race: raceId) { [weak self] (race, error) in
             self?.isLoading = false
 
             if let race = race {
@@ -227,10 +225,10 @@ extension RaceTabBarController {
         }
     }
 
-    func reloadRaceView() {
+    public func reloadRaceView() {
         guard !isLoading else { return }
 
-        raceApi.viewSimple(race: raceId) { [weak self] (race, error) in
+        raceApi.view(race: raceId) { [weak self] (race, error) in
             guard let race = race, let vcs = self?.viewControllers else { return }
 
             self?.race = race
@@ -241,6 +239,29 @@ extension RaceTabBarController {
                 vc.reloadContent()
             }
         }
+    }
+
+    @objc public func didPressShareButton() {
+
+        //TODO: hacking the race url, since race.id is missing from Race/View API
+//        guard let raceURL = URL(string: race.url) else { return }
+
+        guard  let raceURL = MGPWeb.getURL(for: .raceView, value: raceId) else { return }
+
+        var items: [Any] = [raceURL]
+        var activities: [UIActivity] = [CopyLinkActivity()]
+
+        // Calendar integration
+        if let event = race?.calendarEvent {
+            items += [event]
+            activities += [CalendarActivity()]
+        }
+
+        activities += [MultiGPActivity()]
+
+        let vc = UIActivityViewController(activityItems: items, applicationActivities: activities)
+        vc.excludeAllActivityTypes(except: [.airDrop])
+        present(vc, animated: true)
     }
 }
 

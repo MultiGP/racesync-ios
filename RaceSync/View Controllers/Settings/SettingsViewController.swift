@@ -40,6 +40,8 @@ class SettingsViewController: UIViewController {
             $0.top.equalToSuperview().offset(-100)
         }
 
+        UIView.addParallaxToView(view)
+
         return view
     }()
 
@@ -254,7 +256,7 @@ fileprivate enum Row: Int, EnumTitle {
         switch self {
         case .trackLayouts:         return "MultiGP Track Designs"
         case .buildGuide:           return "Obstacles Build Guide"
-        case .seasonRules:          return "Season Rules & Regulations"
+        case .seasonRules:          return "MultiGP Rule Books"
         case .visitStore:           return "Visit the MultiGP Shop"
         case .appicon:              return "App Icon"
         case .submitFeedback:       return "Send Feedback"

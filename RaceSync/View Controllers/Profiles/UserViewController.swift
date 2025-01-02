@@ -27,17 +27,22 @@ class UserViewController: ProfileViewController, ViewJoinable {
 
     fileprivate lazy var aircraftButton: UIButton = {
         let button = UIButton(type: .system)
+        button.tintColor = Color.white
         button.addTarget(self, action: #selector(didPressAircraftButton), for: .touchUpInside)
-
         button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         button.setTitleColor(Color.white, for: .normal)
 
-        let title = user.isMe ? "My Aircraft" : "Aircraft"
-        button.setTitle(title, for: .normal)
+        button.setTitle("Aircraft", for: .normal)
+        button.setImage(UIImage(named: "icn_button_aircraft"), for: .normal)
 
-        button.contentEdgeInsets = UIEdgeInsets(top: 5, left: 12, bottom: 5, right: 12)
-        button.backgroundColor = Color.blue
-        button.layer.cornerRadius = Constants.buttonHeight/4
+        let padding = Constants.padding
+        let spacing = Constants.buttonSpacing
+        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -spacing/2, bottom: 0, right: spacing/2)
+        button.contentEdgeInsets = UIEdgeInsets(top: spacing/2, left: padding, bottom: spacing/2, right: padding)
+
+        let capInsets = UIEdgeInsets(top: 0, left: padding, bottom: 0, right: padding)
+        let bkgdImage = UIImage(named: "btn_arrow_bkgd")?.resizableImage(withCapInsets: capInsets, resizingMode: .tile).withTintColor(Color.blue)
+        button.setBackgroundImage(bkgdImage, for: .normal)
 
         return button
     }()

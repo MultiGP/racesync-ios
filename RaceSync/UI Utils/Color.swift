@@ -26,8 +26,8 @@ public struct Color {
     public static let gray300: UIColor =        #colorLiteral(red: 0.4274509804, green: 0.4274509804, blue: 0.4470588235, alpha: 1) // #6D6D72         // sub-titles
     public static let gray400: UIColor =        #colorLiteral(red: 0.262745098, green: 0.262745098, blue: 0.262745098, alpha: 1) // #434343         // caption
     public static let gray500: UIColor =        #colorLiteral(red: 0.1921568627, green: 0.1921568627, blue: 0.2, alpha: 1) // #313133
-    public static let black: UIColor =          #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1) // #000000         // titles / text
-    public static let clear: UIColor =          #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0) // #00000000
+    public static let black: UIColor =          #colorLiteral(red: 0.0431372549, green: 0.0431372549, blue: 0.0431372549, alpha: 1) // #0B0B0B         // titles / text
+    public static let clear: UIColor =          #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0) // #000000
 
     // UI specific
     public static let navigationBarColor =      Color.white.withAlphaComponent(0.97)

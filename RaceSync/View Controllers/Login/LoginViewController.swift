@@ -19,7 +19,7 @@ class LoginViewController: UIViewController {
     fileprivate lazy var loginFormView: UIView = {
         let view = UIView()
         view.alpha = 0
-        view.backgroundColor = Color.white
+        view.backgroundColor = Color.clear
         view.addSubview(self.titleLabel)
         view.addSubview(self.emailField)
         view.addSubview(self.passwordField)
@@ -90,7 +90,7 @@ class LoginViewController: UIViewController {
         button.titleLabel?.font = UIFont.systemFont(ofSize: 21, weight: .regular)
         button.setTitleColor(Color.blue, for: .normal)
         button.setTitle("Login", for: .normal)
-        button.backgroundColor = Color.white
+        button.backgroundColor = Color.white.withAlphaComponent(0.7)
         button.layer.cornerRadius = Constants.padding/2
         button.layer.borderColor = Color.gray100.cgColor
         button.layer.borderWidth = 0.5
@@ -111,7 +111,7 @@ class LoginViewController: UIViewController {
         let linkAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .medium),
                           NSAttributedString.Key.foregroundColor: Color.red]
 
-        let attributedString = NSMutableAttributedString(string:label , attributes: attributes)
+        let attributedString = NSMutableAttributedString(string: label, attributes: attributes)
         attributedString.setAttributes(linkAttributes, range: NSString(string: label).range(of: link))
         button.setAttributedTitle(attributedString, for: .normal)
 
@@ -137,7 +137,7 @@ class LoginViewController: UIViewController {
     }
 
     fileprivate var titleText: String? {
-        return APIServices.shared.settings.isDev ? "Login with ppt.MultiGP" : "Login with MultiGP"
+        return APIServices.shared.settings.isDev ? "Login with a dev.MultiGP account" : "Login with a MultiGP account"
     }
 
     fileprivate enum Constants {
@@ -268,6 +268,11 @@ class LoginViewController: UIViewController {
             $0.top.equalTo(loginButton.snp.bottom).offset(Constants.padding/2)
             $0.centerX.equalToSuperview()
         }
+
+        UIView.addParallaxToView(loginFormView)
+        UIView.addParallaxToView(racesyncLogoView)
+        UIView.addParallaxToView(mgpLogoLabel)
+        UIView.addParallaxToView(mgpLogoView)
     }
 
     // MARK: - Actions

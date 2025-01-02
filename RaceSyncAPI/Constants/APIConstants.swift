@@ -12,8 +12,8 @@ public typealias ObjectId = String
 
 public let StandardPageSize: Int = 100
 public let StandardDateFormat: String = "yyyy-MM-dd"
-public let StandardDateTimeFormat: String = "yyyy-MM-dd h:mm a"
-public let ISODateTimeFormat: String = "yyyy-MM-dd'T'HH:mm:ss" //ZZZZZ"
+public let StandardDateTimeFormat: String = "yyyy-MM-dd HH:mm:ss"
+public let OldDateTimeFormat: String = "yyyy-MM-dd h:mm a"
 public let USLocale: String = "en_US_POSIX"
 
 enum EndPoint {
@@ -38,7 +38,8 @@ enum EndPoint {
     static let raceCheckOut = "race/checkOut"
     static let raceCreate = "race/create"
     static let raceUpdate = "race/update"
-    static let raceDelete = "race/delete" // missing API
+    static let raceDelete = "race/delete"
+    static let raceFinalize = "race/finalize"
 
     static let chapterList = "chapter/list"
     static let chapterFindLocal = "chapter/findLocal"
@@ -85,9 +86,9 @@ enum ParamKey {
     static let courseId = "courseId"
     static let parentCourseId = "parentCourseId"
     static let parentRaceId = "parentRaceId"
-    static let scannableId = "scannableId"
     static let homeChapterId = "homeChapterId"
     static let chapterIds = "chapterIds"
+    static let raceEntryId = "raceEntryId"
 
     // Network keywords
     static let url = "url"
@@ -138,6 +139,7 @@ enum ParamKey {
     static let managedChapters = "managedChapters"
     static let races = "races"
     static let entries = "entries"
+    static let schedule = "schedule"
     static let raceType = "raceType"
     static let startDate = "startDate"
     static let endDate = "endDate"
@@ -146,9 +148,15 @@ enum ParamKey {
     static let participantCount = "participantCount"
     static let officialStatus = "officialStatus"
     static let captureTimeEnabled = "captureTimeEnabled"
+    static let finalized = "finalized"
     static let scoringDisabled = "scoringDisabled"
     static let scoringFormat = "scoringFormat"
     static let score = "score"
+    static let totalLaps = "totalLaps"
+    static let totalTime = "totalTime"
+    static let fastest3Laps = "fastest3Laps"
+    static let fastest2Laps = "fastest2Laps"
+    static let fastestLap = "fastestLap"
     static let cycleCount = "cycleCount"
     static let zippyqIterator = "zippyqIterator"
     static let maxZippyqDepth = "maxZippyqDepth"
@@ -180,6 +188,7 @@ enum ParamKey {
     static let raceClassString = "raceClassString"
     static let sendNotification = "sendNotification"
     static let isPublic = "isPublic"
+    static let query = "query"
 
     // Geo-location
     static let address = "address"
@@ -192,7 +201,6 @@ enum ParamKey {
     static let radius = "radius"
 
     // url
-    static let liveTimeUrl = "liveTimeUrl"
     static let liveTimeEventUrl = "liveTimeEventUrl"
     static let facebookUrl = "facebookUrl"
     static let googleUrl = "googleUrl"
@@ -214,4 +222,8 @@ enum ParamKey {
     static let backgroundFileName = "backgroundFileName"
     static let backgroundUrl = "backgroundUrl"
     static let chapterImageFileName = "chapterImageFileName"
+
+    // System
+    static let dateAdded = "dateAdded"
+    static let dateModified = "dateModified"
 }

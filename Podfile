@@ -1,4 +1,4 @@
-platform :ios, '13.0'
+platform :ios, '14.0'
 use_frameworks!
 
 # ignore all warnings from all pods
@@ -34,15 +34,9 @@ end
 def shared_pods
   # Dev Tools
   pod 'SwiftLint'
-  pod 'Sentry', '~> 4.4.1'
 end
 
 target 'RaceSync' do
-  app_pods
-  shared_pods
-end
-
-target 'RaceSyncTests' do
   app_pods
   shared_pods
 end
@@ -57,10 +51,20 @@ target 'RaceSyncAPITests' do
   shared_pods
 end
 
-post_install do |pi|
-    pi.pods_project.targets.each do |t|
-      t.build_configurations.each do |config|
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+post_install do |installer|
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
       end
+    end
+
+    installer.generated_projects.each do |project|
+        project.targets.each do |target|
+            target.build_configurations.each do |config|
+              config.build_settings['EXPANDED_CODE_SIGN_IDENTITY'] = ""
+              config.build_settings['CODE_SIGNING_REQUIRED'] = "NO"
+              config.build_settings['CODE_SIGNING_ALLOWED'] = "NO"
+            end
+        end
     end
 end

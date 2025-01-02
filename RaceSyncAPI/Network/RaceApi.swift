@@ -99,14 +99,29 @@ public protocol RaceApiInterface {
     Gets the races belonging to a specific class.
 
     - parameter raceClass: The race class type.
+    - parameter filters: The list of compounding filters to compose the race query
     - parameter currentPage: The current page cursor position. Default is 0
     - parameter pageSize: The amount of objects to be returned by page. Default is 25.
     - parameter completion: The closure to be called upon completion. Returns a transcient list of Race objects.
     */
     func getRaces(forClass raceClass: RaceClass,
+                  filters: [RaceListFilters],
                   currentPage: Int,
                   pageSize: Int,
                   completion: @escaping ObjectCompletionBlock<[Race]>)
+
+    /**
+    Gets the all races matching the title attribute.
+
+    - parameter name: The race name.
+    - parameter currentPage: The current page cursor position. Default is 0
+    - parameter pageSize: The amount of objects to be returned by page. Default is 25.
+    - parameter completion: The closure to be called upon completion. Returns a transcient list of Race objects.
+    */
+    func getRaces(by name: String,
+                  currentPage: Int,
+                  pageSize: Int,
+                     completion: @escaping ObjectCompletionBlock<[Race]>)
 
     /**
     Gets a full Race object, including pilot entries and schedule
@@ -193,6 +208,11 @@ public protocol RaceApiInterface {
                     completion: @escaping StatusCompletionBlock)
 
     /**
+    */
+    func finalizeRace(with raceId: ObjectId,
+                    completion: @escaping StatusCompletionBlock)
+
+    /**
      Cancels all the HTTP requests of race API endpoint
     */
     func cancelAll()
@@ -260,13 +280,25 @@ public class RaceApi: RaceApiInterface {
     }
 
     public func getRaces(forClass raceClass: RaceClass,
+                         filters: [RaceListFilters],
                          currentPage: Int = 0, pageSize: Int = StandardPageSize,
                          completion: @escaping ObjectCompletionBlock<[Race]>) {
 
         let endpoint = EndPoint.raceList
-        let parameters = [ParamKey.raceClass: raceClass.rawValue]
+        var params = parametersForRaces(filters: filters)
+        params[ParamKey.raceClass] = raceClass.rawValue
 
-        repositoryAdapter.getObjects(endpoint, parameters: parameters, currentPage: currentPage, pageSize: pageSize, type: Race.self, completion)
+        repositoryAdapter.getObjects(endpoint, parameters: params, currentPage: currentPage, pageSize: pageSize, type: Race.self, completion)
+    }
+
+    public func getRaces(by name: String,
+                         currentPage: Int = 0, pageSize: Int = StandardPageSize,
+                         completion: @escaping ObjectCompletionBlock<[Race]>) {
+
+        let endpoint = EndPoint.raceList
+        let params = [ParamKey.name: name]
+
+        repositoryAdapter.getObjects(endpoint, parameters: params, currentPage: currentPage, pageSize: pageSize, type: Race.self, completion)
     }
 
     public func view(race raceId: ObjectId, completion: @escaping ObjectCompletionBlock<Race>) {
@@ -371,6 +403,13 @@ public class RaceApi: RaceApiInterface {
     public func deleteRace(with raceId: ObjectId, completion: @escaping StatusCompletionBlock) {
 
         let endpoint = "\(EndPoint.raceDelete)?\(ParamKey.id)=\(raceId)"
+
+        repositoryAdapter.performAction(endpoint, completion: completion)
+    }
+
+    public func finalizeRace(with raceId: ObjectId, completion: @escaping StatusCompletionBlock) {
+
+        let endpoint = "\(EndPoint.raceFinalize)?\(ParamKey.id)=\(raceId)"
 
         repositoryAdapter.performAction(endpoint, completion: completion)
     }

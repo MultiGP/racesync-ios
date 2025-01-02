@@ -43,10 +43,10 @@ enum RaceFormRow: Int, EnumTitle {
         case .startDate:    return "Start Date"
         case .endDate:      return "End Date"
         case .chapter:      return "Chapter"
-        case .class:        return "Race Class"
-        case .format:       return "Race Format"
+        case .class:        return "Class"
+        case .format:       return "Format"
         case .schedule:     return "Schedule"
-        case .privacy:      return "Event Privacy"
+        case .privacy:      return "Privacy"
         case .status:       return "Status"
 
         case .scoring:      return "Fun Fly (Disable Scoring)"
@@ -55,8 +55,8 @@ enum RaceFormRow: Int, EnumTitle {
         case .season:       return "Season"
         case .location:     return "Location"
         case .shortDesc:    return "Short Description"
-        case .longDesc:     return "Long Description"
-        case .itinerary:    return "Itinerary Content"
+        case .longDesc:     return "Description"
+        case .itinerary:    return "Itinerary"
         case .notify:       return "Send Notification? **"
         }
     }

@@ -56,7 +56,7 @@ extension LocationManager: CLLocationManagerDelegate {
 
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.first {
-            Clog.log("User Location updated \(location.coordinate)")
+            // Clog.log("User Location updated \(location.coordinate)")
 
             authorizationBlock?(nil)
             authorizationBlock = nil
