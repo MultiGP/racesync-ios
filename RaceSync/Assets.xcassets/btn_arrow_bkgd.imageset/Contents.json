@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "btn_arrow_bkgd.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
