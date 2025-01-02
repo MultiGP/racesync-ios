@@ -164,7 +164,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         stackView.axis = .vertical
         stackView.distribution = .fillEqually
         stackView.alignment = .leading
-        stackView.spacing = Constants.padding
+        stackView.spacing = Constants.padding/2
         return stackView
     }()
 
