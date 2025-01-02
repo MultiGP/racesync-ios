@@ -187,13 +187,16 @@ public enum AntennaPolarization: String, EnumTitle {
     }
 }
 
-//BATTERIES = array(3=>'2 cell', 0=>'3 cell',1=>'4 cell',2=>'6 cell')
+
+//BATTERIES = array(4 => '1 cell', 3 => '2 cell', 0 => '3 cell', 1 => '4 cell', 5 => '5 cell', 2 => '6 cell', 6 => '7 cell', 7 => '8 cell', 8 => '12 cell');
 public enum BatterySize: String, EnumTitle {
     case ´1s´ = "4"
     case ´2s´ = "3"
     case ´3s´ = "0"
     case ´4s´ = "1"
+    case ´5s´ = "5"
     case ´6s´ = "2"
+    case ´7s´ = "6"
     case ´8s´ = "7"
     case ´12s´ = "8"
 
@@ -203,9 +206,11 @@ public enum BatterySize: String, EnumTitle {
         case .´2s´:         return "2 Cells"
         case .´3s´:         return "3 Cells"
         case .´4s´:         return "4 Cells"
+        case .´5s´:         return "5 Cells"
         case .´6s´:         return "6 Cells"
+        case .´7s´:         return "7 Cells"
         case .´8s´:         return "8 Cells"
-        case .´12s´:         return "12 Cells"
+        case .´12s´:        return "12 Cells"
         }
     }
 
@@ -215,7 +220,9 @@ public enum BatterySize: String, EnumTitle {
         case .´2s´:         return 2
         case .´3s´:         return 3
         case .´4s´:         return 4
+        case .´5s´:         return 5
         case .´6s´:         return 6
+        case .´7s´:         return 7
         case .´8s´:         return 8
         case .´12s´:        return 12
         }

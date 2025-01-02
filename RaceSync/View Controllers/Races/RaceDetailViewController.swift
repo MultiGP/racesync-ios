@@ -93,7 +93,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate lazy var buttonStackView: UIStackView = {
         var subviews: [UIView] = [joinButton, memberBadgeView, funflyBadge]
-
         let stackView = UIStackView(arrangedSubviews: subviews)
         stackView.axis = .vertical
         stackView.distribution = .fillEqually
@@ -143,7 +142,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate lazy var funflyBadge: CustomButton = {
         let button = CustomButton()
-
         button.setTitle("Fun Fly", for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         button.setTitleColor(Color.white, for: .normal)
@@ -211,10 +209,12 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     }
 
     fileprivate var canDisplayGQIcon: Bool {
+        guard raceViewModel.race.raceClass != .esport else { return false }
         return race.officialStatus == .approved
     }
 
     fileprivate var canDisplayAddress: Bool {
+        guard raceViewModel.race.raceClass != .esport else { return false }
         return raceViewModel.fullLocationLabel.count > 0
     }
 
@@ -224,6 +224,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     }
 
     fileprivate var canDisplayMap: Bool {
+        guard raceViewModel.race.raceClass != .esport else { return false }
         return raceCoordinates != nil
     }
 
@@ -270,7 +271,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     init(with race: Race) {
         self.race = race
         self.raceViewModel = RaceViewModel(with: race)
-
         super.init(nibName: nil, bundle: nil)
     }
     

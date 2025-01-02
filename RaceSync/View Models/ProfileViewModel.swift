@@ -113,10 +113,19 @@ class ProfileViewModel: Descriptable {
         self.leftBadgeLabel = ""
         self.leftBadgeImage = nil
         self.leftSegmentLabel = ""
-
-        self.rightBadgeLabel = ""
-        self.rightBadgeImage = nil
         self.rightSegmentLabel = ""
+
+        if aircraft.entryCount > 0 {
+            self.rightBadgeImage = UIImage(named: "icn_race_small")
+            if aircraft.entryCount == 1 {
+                self.rightBadgeLabel = "\(aircraft.entryCount) Race"
+            } else {
+                self.rightBadgeLabel = "\(aircraft.entryCount) Races"
+            }
+        } else {
+            self.rightBadgeImage = nil
+            self.rightBadgeLabel = ""
+        }
     }
 }
 
