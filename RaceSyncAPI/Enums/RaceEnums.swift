@@ -99,11 +99,11 @@ public enum RaceClass: String, EnumTitle {
         case .open:         return "Open"
         case .whoop:        return "Whoop"
         case .micro:        return "Micro"
-        case .freedom:      return "Freedom Spec"
-        case .spec7in:      return "7 Inch Spec"
+        case .freedom:      return "Freedom"
+        case .spec7in:      return "7 Inch"
         case .mega:         return "Mega"
-        case .esport:       return "E-Sport class"
-        case .spec5in:      return "5 Inch Spec"
+        case .esport:       return "E-Sport"
+        case .spec5in:      return "5 Inch"
         case .prospec:      return "Pro Spec"
         }
     }

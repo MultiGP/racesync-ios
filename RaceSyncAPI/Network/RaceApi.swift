@@ -12,14 +12,6 @@ import SwiftyJSON
 
 // MARK: - Interface
 
-public enum RaceListFilters: String {
-    case upcoming = "upcoming"
-    case past = "past"
-    case nearby = "nearby"
-    case series = "qualifier"
-    case joined = "joined"
-}
-
 public protocol RaceApiInterface {
 
     /**

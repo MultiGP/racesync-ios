@@ -46,11 +46,17 @@ class RaceViewModel: Descriptable {
         self.distance = Self.distance(for: race)
         self.joinState = Self.joinState(for: race)
         self.participantCount = Int(race.participantCount) ?? 0
-        self.classLabel = "\(race.raceClassString) Class"
         self.chapterLabel = race.chapterName
         self.ownerLabel = race.ownerUserName
         self.seasonLabel = race.seasonName
         self.imageUrl = Self.imageUrl(for: race)
+
+        switch race.raceClass {
+        case .prospec, .freedom, .spec5in, .spec7in:
+            self.classLabel = "\(race.raceClass.title) Spec"
+        default:
+            self.classLabel = "\(race.raceClass.title) Class"
+        }
     }
 
     static func viewModels(with objects:[Race]) -> [RaceViewModel] {

@@ -10,19 +10,6 @@ import UIKit
 import RaceSyncAPI
 import CoreLocation
 
-enum RaceFilter: Int, EnumTitle {
-    case joined, nearby, chapters, series
-
-    var title: String {
-        switch self {
-        case .joined:           return "Joined"
-        case .nearby:           return "Nearby"
-        case .chapters:         return "Chapters"
-        case .series:           return "GQ"
-        }
-    }
-}
-
 // 
 class RaceFeedController {
 
@@ -72,6 +59,8 @@ class RaceFeedController {
             getChapterRaces(forceFetch, completion)
         case .series:
             getSeriesRaces(forceFetch, completion)
+        case .classes(let raceClass):
+            getRaces(for: raceClass, forceFetch, completion)
         }
     }
 
@@ -83,8 +72,10 @@ class RaceFeedController {
 fileprivate extension RaceFeedController {
 
     func getJoinedRaces(_ forceFetch: Bool = false, _ completion: @escaping ObjectCompletionBlock<[RaceViewModel]>) {
+        
         if let viewModels = raceCollection[.joined], !forceFetch {
             completion(viewModels, nil)
+            return
         }
 
         let filters = remoteFilters(with: .joined)
@@ -102,8 +93,10 @@ fileprivate extension RaceFeedController {
     }
 
     func getNearbydRaces(_ forceFetch: Bool = false, _ completion: @escaping ObjectCompletionBlock<[RaceViewModel]>) {
+
         if let viewModels = raceCollection[.nearby], !forceFetch {
             completion(viewModels, nil)
+            return
         }
 
         let filters = remoteFilters(with: .nearby)
@@ -128,6 +121,7 @@ fileprivate extension RaceFeedController {
 
         if let viewModels = raceCollection[.chapters], !forceFetch {
             completion(viewModels, nil)
+            return
         }
 
         let filters = remoteFilters()
@@ -145,8 +139,10 @@ fileprivate extension RaceFeedController {
     }
 
     func getSeriesRaces(_ forceFetch: Bool = false, _ completion: @escaping ObjectCompletionBlock<[RaceViewModel]>) {
+
         if let viewModels = raceCollection[.series], !forceFetch {
             completion(viewModels, nil)
+            return
         }
 
         let filters: [RaceListFilters] = [.series, .upcoming]
@@ -160,6 +156,27 @@ fileprivate extension RaceFeedController {
             }) {
                 let sortedViewModels = RaceViewModel.sortedViewModels(with: seriesRaces, sorting: .descending)
                 self.raceCollection[.series] = sortedViewModels
+                completion(sortedViewModels, nil)
+            } else {
+                completion(nil, error)
+            }
+        }
+    }
+
+    func getRaces(for class: RaceClass, _ forceFetch: Bool = false, _ completion: @escaping ObjectCompletionBlock<[RaceViewModel]>) {
+
+        if let viewModels = raceCollection[.classes(`class`)], !forceFetch {
+            completion(viewModels, nil)
+            return
+        }
+
+        let filters: [RaceListFilters] = [.upcoming]
+        let sorting: RaceViewSorting = settings.showPastEvents ? .ascending : .descending
+
+        raceApi.getRaces(forClass: `class`, filters: filters) { [weak self] (races, error) in
+            if let filteredRaces = self?.locallyFilteredRaces(races) {
+                let sortedViewModels = RaceViewModel.sortedViewModels(with: filteredRaces, sorting: sorting)
+                self?.raceCollection[.classes(`class`)] = sortedViewModels
                 completion(sortedViewModels, nil)
             } else {
                 completion(nil, error)

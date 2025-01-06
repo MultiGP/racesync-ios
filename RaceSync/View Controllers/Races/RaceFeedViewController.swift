@@ -172,7 +172,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
     fileprivate var selectedRaceFilter: RaceFilter {
         get {
             let title: String = segmentedControl.titleForSelectedSegment()!
-            return RaceFilter(title: title)!
+            return RaceFilter.filters(with: [title]).first!
         }
     }
 
@@ -613,6 +613,10 @@ extension RaceFeedViewController: APISettingsDelegate {
     func didUpdate(settings: APISettingsType, with value: Any) {
 
         switch settings {
+        case .raceFeedFilters:
+            updateSegmentedControl()
+            unloadRaces() // invalidates collection
+            loadRaces(forceReload: true)
         case .showPastEvents, .searchRadius:
             unloadRaces() // invalidates collection
             loadRaces(forceReload: true)
@@ -621,6 +625,13 @@ extension RaceFeedViewController: APISettingsDelegate {
         default:
             break
         }
+    }
+
+    func updateSegmentedControl() {
+        let settings = APIServices.shared.settings
+        self.segmentedControl.removeAllSegments()
+        self.segmentedControl.setItems(settings.raceFeedFilters.compactMap { $0.title })
+        self.segmentedControl.selectedSegmentIndex = 0
     }
 }
 
@@ -632,6 +643,7 @@ extension RaceFeedViewController: EmptyDataSetSource {
         case .nearby:       return emptyStateNearbyRaces
         case .chapters:     return emptyStateChapterRaces
         case .series:       return emptyStateSeriesRaces
+        default:            return EmptyStateViewModel(.noRaceResults)
         }
     }
 

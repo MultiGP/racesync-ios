@@ -13,11 +13,12 @@ public protocol APISettingsDelegate {
 }
 
 public enum APISettingsType: Int, EnumTitle {
-    case showPastEvents, searchRadius, measurement, environment
+    case showPastEvents, raceFeedFilters, searchRadius, measurement, environment
 
     public var title: String {
         switch self {
         case .showPastEvents:   return "Include Past Events"
+        case .raceFeedFilters:  return "Filter Races By"
         case .searchRadius:     return "Search Radius"
         case .measurement:      return "Measurement System"
         case .environment:      return "Environment"
@@ -27,6 +28,7 @@ public enum APISettingsType: Int, EnumTitle {
     var key: String {
         switch self {
         case .showPastEvents:   return "\(APISettingsDomain).show_past_events"
+        case .raceFeedFilters:  return "\(APISettingsDomain).race_feed_filters"
         case .searchRadius:     return "\(APISettingsDomain).search_radius"
         case .measurement:      return "\(APISettingsDomain).measurement_system"
         case .environment:      return "\(APISettingsDomain).environment"
@@ -48,6 +50,19 @@ public class APISettings {
         }
     }
 
+    public var raceFeedFilters: [RaceFilter] {
+        get {
+            if let filters = filters(for: .raceFeedFilters), filters.count > 0 {
+                return filters
+            } else {
+                return [.joined, .nearby, .chapters] // default values
+            }
+        } set {
+            let stringArray = newValue.map { $0.title }
+            save(stringArray, type: .raceFeedFilters)
+        }
+    }
+
     public var searchRadius: String {
         get {
             return string(for: .searchRadius) ?? self.lengthUnit.defaultValue
@@ -56,7 +71,7 @@ public class APISettings {
         }
     }
 
-    /// Similar to setting searchRadius, except this won't broadcast to delegate. To be used when updating searchRadius, and avoid broadcasting for the same change event.
+    // Similar to setting searchRadius, except this won't broadcast to delegate. To be used when updating searchRadius, and avoid broadcasting for the same change event.
     public func update(searchRadius: String) {
         save(searchRadius, type: .searchRadius, broadcast: false)
     }
@@ -160,5 +175,13 @@ fileprivate extension APISettings {
 
     func bool(for type: APISettingsType) -> Bool? {
         return UserDefaults.standard.bool(forKey: type.key)
+    }
+
+    func filters(for type: APISettingsType) -> [RaceFilter]? {
+        if let array = UserDefaults.standard.array(forKey: type.key) as? [String] {
+            return RaceFilter.filters(with: array)
+        } else {
+            return nil
+        }
     }
 }
