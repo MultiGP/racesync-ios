@@ -151,7 +151,8 @@ extension RaceFeedMenuViewController: UITableViewDelegate {
         vc.didUpdateItems = { items in
             let settings = APIServices.shared.settings
             settings.raceFeedFilters = RaceFilter.filters(with: items)
-            print("didUpdateItems \(items)")
+
+            self.tableView.reloadData()
         }
     }
 
@@ -223,8 +224,8 @@ extension RaceFeedMenuViewController: UITableViewDataSource {
         let settings = APIServices.shared.settings
 
         if row == .raceFeedFilters {
-//            let filterTitles = settings.raceFeedFilters.compactMap { $0.title }
-//            cell.detailTextLabel?.text = filterTitles.joined(separator: ", ")
+            let filterTitles = settings.raceFeedFilters.compactMap { $0.title }
+            cell.detailTextLabel?.text = filterTitles.joined(separator: ", ")
         } else if row == .searchRadius {
             cell.detailTextLabel?.text = "\(settings.searchRadius) \(settings.lengthUnit.symbol)"
         } else if row == .measurement {
