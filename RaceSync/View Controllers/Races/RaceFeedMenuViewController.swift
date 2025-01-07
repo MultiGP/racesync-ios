@@ -21,6 +21,7 @@ class RaceFeedMenuViewController: UIViewController {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.register(cellType: FormTableViewCell.self)
         tableView.contentInsetAdjustmentBehavior = .always
+        tableView.tableHeaderView = headerView
         tableView.tableFooterView = UIView()
         tableView.dataSource = self
         tableView.delegate = self
@@ -39,10 +40,32 @@ class RaceFeedMenuViewController: UIViewController {
         view.addSubview(imageView)
         imageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(-100)
+            $0.top.equalToSuperview().offset(-120)
+        }
+        UIView.addParallaxToView(imageView)
+
+        let label1 = UILabel()
+        label1.text = "Keep scrolling to unlock the secret\nto become the fastest FPV pilot."
+        label1.font = UIFont.systemFont(ofSize: 13, weight: .medium)
+        label1.textColor = Color.gray100
+        label1.textAlignment = .center
+        label1.numberOfLines = 0
+        view.addSubview(label1)
+        label1.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalToSuperview().offset(-300)
         }
 
-        UIView.addParallaxToView(view)
+        let label2 = UILabel()
+        label2.text = "YOU MUST BE A SHIT PILOT!"
+        label2.font = UIFont.systemFont(ofSize: 13, weight: .medium)
+        label2.textColor = Color.gray200
+        label2.textAlignment = .center
+        view.addSubview(label2)
+        label2.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalToSuperview().offset(-400)
+        }
 
         return view
     }()
