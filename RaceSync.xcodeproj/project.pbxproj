@@ -86,6 +86,7 @@
 		4F6A28E32D14F55200FF692D /* TimeUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6A28E22D14F55200FF692D /* TimeUtil.swift */; };
 		4F6A28E52D15005D00FF692D /* RaceSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6A28E42D15005D00FF692D /* RaceSchedule.swift */; };
 		4F6A28E72D15046900FF692D /* ResultEntryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6A28E62D15046900FF692D /* ResultEntryViewModel.swift */; };
+		4F6AE78D2D2DCD4B008636B7 /* RankView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6AE78C2D2DCD4B008636B7 /* RankView.swift */; };
 		4F6C8A8F23657DE00017FD78 /* APICredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6C8A8E23657DE00017FD78 /* APICredential.swift */; };
 		4F6C8A96236A9D580017FD78 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6C8A95236A9D580017FD78 /* UIColor+Extensions.swift */; };
 		4F6C8A98236A9E840017FD78 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6C8A97236A9E840017FD78 /* Color.swift */; };
@@ -401,6 +402,7 @@
 		4F6A28E22D14F55200FF692D /* TimeUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeUtil.swift; sourceTree = "<group>"; };
 		4F6A28E42D15005D00FF692D /* RaceSchedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceSchedule.swift; sourceTree = "<group>"; };
 		4F6A28E62D15046900FF692D /* ResultEntryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultEntryViewModel.swift; sourceTree = "<group>"; };
+		4F6AE78C2D2DCD4B008636B7 /* RankView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RankView.swift; sourceTree = "<group>"; };
 		4F6C8A8E23657DE00017FD78 /* APICredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APICredential.swift; sourceTree = "<group>"; };
 		4F6C8A95236A9D580017FD78 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		4F6C8A97236A9E840017FD78 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
@@ -1183,6 +1185,7 @@
 				4FA26834237A80B9008970AC /* ActionButton.swift */,
 				4FD4E1C2237F960A008816B3 /* CustomButton.swift */,
 				4F791C9723A6105700F15FD7 /* TextPill.swift */,
+				4F6AE78C2D2DCD4B008636B7 /* RankView.swift */,
 				4FD4E1DC237FBE8B008816B3 /* MemberBadgeView.swift */,
 				4F0B613B238528C300930D91 /* PasteboardLabel.swift */,
 				4F5C1E44238D1BD200D756EB /* PasteboardButton.swift */,
@@ -1698,6 +1701,7 @@
 				4FC1797D24B0801900D2EA2D /* ImagePickerController.swift in Sources */,
 				4F9DB7B023D618D100570483 /* UISegmentedControl+Extensions.swift in Sources */,
 				4F65D908257B134700C506C3 /* TrackDetailViewController.swift in Sources */,
+				4F6AE78D2D2DCD4B008636B7 /* RankView.swift in Sources */,
 				4F5C1E45238D1BD200D756EB /* PasteboardButton.swift in Sources */,
 				4FD53FB323A0E9B700158206 /* AvatarImageView.swift in Sources */,
 				4FA1FC8F23D74D29006D4704 /* StringConstants.swift in Sources */,

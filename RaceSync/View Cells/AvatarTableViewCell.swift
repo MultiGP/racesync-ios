@@ -25,15 +25,6 @@ class AvatarTableViewCell: UITableViewCell {
         }
     }
 
-    lazy var rankLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 19, weight: .medium)
-        label.textColor = Color.gray300
-        label.textAlignment = .center
-        label.isHidden = true
-        return label
-    }()
-
     lazy var avatarImageView: AvatarImageView = {
         return AvatarImageView(withHeight: Constants.imageHeight)
     }()
@@ -50,6 +41,12 @@ class AvatarTableViewCell: UITableViewCell {
         label.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         label.textColor = Color.gray300
         return label
+    }()
+
+    lazy var rankView: RankView = {
+        let view = RankView()
+        view.isHidden = true
+        return view
     }()
 
     lazy var textPill: TextPill = {
@@ -112,8 +109,8 @@ class AvatarTableViewCell: UITableViewCell {
             $0.centerY.equalToSuperview()
         }
 
-        contentView.addSubview(rankLabel)
-        rankLabel.snp.makeConstraints {
+        contentView.addSubview(rankView)
+        rankView.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(Constants.padding)
             $0.centerY.equalToSuperview()
             rankLabelWidthConstraint = $0.width.equalTo(Constants.imageHeight/2).constraint
@@ -124,7 +121,7 @@ class AvatarTableViewCell: UITableViewCell {
         avatarImageView.snp.makeConstraints {
             $0.height.width.equalTo(Constants.imageHeight)
             $0.centerY.equalToSuperview()
-            leftSpacingConstraint = $0.leading.equalTo(rankLabel.snp.trailing).offset(Constants.padding/2).constraint
+            leftSpacingConstraint = $0.leading.equalTo(rankView.snp.trailing).offset(Constants.padding/2).constraint
             leftSpacingConstraint?.activate()
         }
 
@@ -138,8 +135,7 @@ class AvatarTableViewCell: UITableViewCell {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        leftSpacingConstraint?.update(offset: rankLabel.isHidden ? 0 : Constants.padding/2)
-        rankLabelWidthConstraint?.update(offset: rankLabel.isHidden ? 0 : Constants.imageHeight/2)
+        leftSpacingConstraint?.update(offset: rankView.isHidden ? 0 : Constants.padding/2)
+        rankLabelWidthConstraint?.update(offset: rankView.isHidden ? 0 : Constants.imageHeight/2)
     }
-
 }

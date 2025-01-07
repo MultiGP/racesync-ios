@@ -65,17 +65,6 @@ extension ResultEntryViewModel {
             return format.order == .lowest ? value1 < value2 : value1 > value2
         }
     }
-
-    static func rankLabel(for position: Int) -> String {
-        if position == 1 {
-            return "🥇"
-        } else if position == 2 {
-            return "🥈"
-        } else if position == 3 {
-            return "🥉"
-        }
-        return "\(position)"
-    }
 }
 
 fileprivate extension ResultEntryViewModel {

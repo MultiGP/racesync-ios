@@ -131,14 +131,28 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
 
         var viewModels = [UserViewModel]()
 
+        func populateScore(in userViewModels: [UserViewModel]) {
+            guard race.isGQ == false else { return } // Don't display points for GQ race results
+
+            for vm in userViewModels {
+                if let raceEntry = race.entries?.filter ({ return $0.pilotId == vm.userId }).first {
+                    vm.score = raceEntry.score
+                }
+            }
+        }
+
         if showingResults, let results = ResultEntryViewModel.combinedResults(from: race.results, for: race.trueScoringFormat) {
             viewModels += UserViewModel.viewModelsFromResults(results)
+            populateScore(in: viewModels)
         }
 
         if let entries = race.entries, entries.count > 0 {
             // We need to include the pilots that didn't complete laps still
             if viewModels.count > 0, viewModels.count < entries.count {
                 viewModels += UserViewModel.viewModels(viewModels, withoutResults: entries)
+                populateScore(in: viewModels)
+
+            // No race results, so let's just populate with race entries instead
             } else if viewModels.count == 0 {
                 viewModels += UserViewModel.viewModelsFromEntries(entries)
             }
@@ -245,24 +259,29 @@ extension RacePilotsViewController: UITableViewDataSource {
     }
 
     func avatarTableViewCell(for indexPath: IndexPath) -> AvatarTableViewCell {
-        let viewModel = userViewModels[indexPath.row]
+        let userVM = userViewModels[indexPath.row]
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as AvatarTableViewCell
 
-        cell.avatarImageView.imageView.setImage(with: viewModel.pictureUrl, placeholderImage: PlaceholderImg.medium)
-        cell.titleLabel.text = viewModel.displayName
+        cell.avatarImageView.imageView.setImage(with: userVM.pictureUrl, placeholderImage: PlaceholderImg.medium)
+        cell.titleLabel.text = userVM.displayName
         cell.subtitleLabel.text = ResultEntryViewModel.noResultPlaceholder
-        cell.textPill.text = showingResults ? nil : viewModel.channelLabel // hidden when results visible
-        cell.rankLabel.isHidden = true
-        cell.rankLabel.text = nil
+        cell.textPill.text = showingResults ? nil : userVM.channelLabel // hidden when results visible
+        cell.rankView.rank = nil
 
-        if showingResults, let resultEntry = viewModel.resultEntry {
+        if showingResults {
+            if let resultEntry = userVM.resultEntry {
+                let resultEntryVM = ResultEntryViewModel(with: resultEntry, from: race)
 
-            let viewModel = ResultEntryViewModel(with: resultEntry, from: race)
+                if resultEntryVM.resultLabel != nil {
+                    cell.subtitleLabel.text = resultEntryVM.resultLabel
+                    cell.rankView.rank = Int32(indexPath.row+1)
+                }
+            }
 
-            if viewModel.resultLabel != nil {
-                cell.subtitleLabel.text = viewModel.resultLabel
-                cell.rankLabel.text = ResultEntryViewModel.rankLabel(for: indexPath.row+1)
-                cell.rankLabel.isHidden = false
+            if let score = userVM.score, score > 0 {
+                let unit = (score == 1) ? "pt" : "pts"
+                cell.textPill.text = "\(score) \(unit)"
+                cell.rankView.rank = Int32(indexPath.row+1)
             }
         }
 

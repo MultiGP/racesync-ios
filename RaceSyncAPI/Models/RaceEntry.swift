@@ -19,7 +19,7 @@ public class RaceEntry: Mappable, Descriptable {
     public var displayName: String = ""
     public var firstName: String = ""
     public var lastName: String = ""
-    public var score: String?
+    public var score: Int32?
     public var profilePictureUrl: String?
 
     public var frequency: String?
@@ -51,7 +51,7 @@ public class RaceEntry: Mappable, Descriptable {
         displayName <- (map[ParamKey.displayName], MapperUtil.stringTransform)
         firstName <- (map[ParamKey.firstName], MapperUtil.stringTransform)
         lastName <- (map[ParamKey.lastName], MapperUtil.stringTransform)
-        score <- map[ParamKey.score]
+        score <- (map[ParamKey.score], IntegerTransform())
         profilePictureUrl <- map[ParamKey.profilePictureUrl]
 
         frequency <- map[ParamKey.frequency]

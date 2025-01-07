@@ -22,6 +22,8 @@ class UserViewModel: Descriptable {
     let pictureUrl: String?
     let channelLabel: String?
 
+    var score: Int32? = nil
+
     init(with user: User) {
         self.userId = user.id
         self.user = user
