@@ -12,6 +12,16 @@ class TextPill: UIView {
 
     // MARK: - Public Variables
 
+    var text: String? {
+        get {
+            return titleLabel.text
+        }
+        set {
+            titleLabel.text = newValue
+            self.isHidden = (newValue == nil)
+        }
+    }
+
     lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
@@ -24,6 +34,7 @@ class TextPill: UIView {
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
+        static let buttonSpacing: CGFloat = 12
         static let height: CGFloat = 26
     }
 
@@ -48,8 +59,8 @@ class TextPill: UIView {
         addSubview(titleLabel)
         titleLabel.snp.makeConstraints {
             $0.top.bottom.equalToSuperview()
-            $0.leading.equalToSuperview().offset(Constants.padding)
-            $0.trailing.equalToSuperview().offset(-Constants.padding)
+            $0.leading.equalToSuperview().offset(Constants.buttonSpacing)
+            $0.trailing.equalToSuperview().offset(-Constants.buttonSpacing)
             $0.height.equalTo(Constants.height)
             $0.centerY.equalToSuperview()
         }

@@ -251,12 +251,13 @@ extension RacePilotsViewController: UITableViewDataSource {
         cell.avatarImageView.imageView.setImage(with: viewModel.pictureUrl, placeholderImage: PlaceholderImg.medium)
         cell.titleLabel.text = viewModel.displayName
         cell.subtitleLabel.text = ResultEntryViewModel.noResultPlaceholder
-        cell.rankLabel.text = nil
+        cell.textPill.text = showingResults ? nil : viewModel.channelLabel // hidden when results visible
         cell.rankLabel.isHidden = true
+        cell.rankLabel.text = nil
 
-        if showingResults, let entry = viewModel.resultEntry {
+        if showingResults, let resultEntry = viewModel.resultEntry {
 
-            let viewModel = ResultEntryViewModel(with: entry, from: race)
+            let viewModel = ResultEntryViewModel(with: resultEntry, from: race)
 
             if viewModel.resultLabel != nil {
                 cell.subtitleLabel.text = viewModel.resultLabel

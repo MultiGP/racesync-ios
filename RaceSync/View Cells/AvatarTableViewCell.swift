@@ -52,6 +52,15 @@ class AvatarTableViewCell: UITableViewCell {
         return label
     }()
 
+    lazy var textPill: TextPill = {
+        let pill = TextPill()
+        pill.titleLabel.font = UIFont.systemFont(ofSize: 15, weight: .bold)
+        pill.titleLabel.textColor = Color.white
+        pill.backgroundColor = Color.gray100
+        pill.isHidden = true
+        return pill
+    }()
+
     // MARK: - Private Variables
 
     fileprivate lazy var textStackView: UIStackView = {
@@ -74,6 +83,7 @@ class AvatarTableViewCell: UITableViewCell {
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
         static let imageHeight: CGFloat = UniversalConstants.cellAvatarHeight
+        static let buttonSpacing: CGFloat = 12
     }
 
     // MARK: - Initializatiom
@@ -96,6 +106,12 @@ class AvatarTableViewCell: UITableViewCell {
 
         accessoryType = .disclosureIndicator
 
+        contentView.addSubview(textPill)
+        textPill.snp.makeConstraints {
+            $0.trailing.equalToSuperview().offset(-Constants.buttonSpacing)
+            $0.centerY.equalToSuperview()
+        }
+
         contentView.addSubview(rankLabel)
         rankLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(Constants.padding)
@@ -115,7 +131,7 @@ class AvatarTableViewCell: UITableViewCell {
         contentView.addSubview(textStackView)
         textStackView.snp.makeConstraints {
             $0.leading.equalTo(avatarImageView.snp.trailing).offset(Constants.padding)
-            $0.trailing.equalToSuperview().offset(-Constants.padding)
+            $0.trailing.equalTo(textPill.snp.leading).offset(-Constants.padding)
             $0.centerY.equalToSuperview()
         }
     }
