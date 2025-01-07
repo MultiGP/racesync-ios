@@ -139,7 +139,8 @@ extension RaceFeedMenuViewController: UITableViewDelegate {
 
         let items = RaceFilter.allCases.compactMap { $0.subtitle }
         let selectedItems = settings.raceFeedFilters.compactMap { $0.title }
-        let withItems = [RaceFilter.classes(.open).subtitle: RaceClass.allCases.compactMap { $0.title }]
+        let withItems = [RaceClass.groupTitle : RaceClass.allCases.compactMap { $0.title }.sorted(by: >),
+                         GQSeries.groupTitle : GQSeries.allCases.compactMap { $0.title }.sorted(by: >)]
 
         let vc = MultiTextPickerViewController(with: items, selectedItems: selectedItems)
         vc.itemWithItems = withItems

@@ -251,7 +251,7 @@ fileprivate extension UserViewController {
     }
 
     func fetchRaces(_ completion: VoidCompletionBlock? = nil) {
-        raceApi.getRaces(forUser: user.id, filters: [.joined]) { (races, error) in
+        raceApi.getRaces(with: [.joined], userId: user.id) { (races, error) in
             if let races = races {
                 let sortedRaces = races.sorted(by: { $0.startDate?.compare($1.startDate ?? Date()) == .orderedDescending })
                 self.raceViewModels = RaceViewModel.viewModels(with: sortedRaces)

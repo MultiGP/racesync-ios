@@ -218,7 +218,7 @@ fileprivate extension ChapterViewController {
     }
 
     func fetchRaces(_ completion: VoidCompletionBlock? = nil) {
-        raceApi.getRaces(forChapter: chapter.id) { (races, error) in
+        raceApi.getRaces(chapterIds: [chapter.id]) { (races, error) in
             if let races = races {
                 // skip parent races for now
                 let childRaces = races.filter({ (race) -> Bool in

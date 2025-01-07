@@ -770,7 +770,7 @@ fileprivate extension RaceDetailViewController {
 
         let raceClass = race.raceClass
 
-        raceApi.getRaces(forClass: raceClass, filters: [.upcoming]) { [weak self] (races, error) in
+        raceApi.getRaces(with: [.upcoming], raceClass: raceClass) { [weak self] (races, error) in
             if let races = races {
                 let sortedViewModels = RaceViewModel.sortedViewModels(with: races, sorting: .descending)
                 let vc = RaceListViewController(sortedViewModels, raceClass: raceClass)
@@ -786,7 +786,7 @@ fileprivate extension RaceDetailViewController {
         guard canInteract(with: cell), let seasonId = race.seasonId else { return }
         setLoading(cell, loading: true)
 
-        raceApi.getRaces(forSeason: seasonId) { [weak self] (races, error) in
+        raceApi.getRaces(seasonId: seasonId) { [weak self] (races, error) in
             if let races = races {
                 let sortedViewModels = RaceViewModel.sortedViewModels(with: races)
                 let vc = RaceListViewController(sortedViewModels, seasonId: seasonId)

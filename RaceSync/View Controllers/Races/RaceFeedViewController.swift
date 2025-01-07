@@ -580,10 +580,10 @@ extension RaceFeedViewController: UITableViewDataSource {
 
         if selectedRaceFilter == .joined {
             cell.subtitleLabel.text = viewModel.locationLabel
-        } else if selectedRaceFilter == .chapters || selectedRaceFilter == .series {
-            cell.subtitleLabel.text = viewModel.chapterLabel
-        } else {
+        } else if selectedRaceFilter == .nearby {
             cell.subtitleLabel.text = viewModel.distanceLabel
+        } else {
+            cell.subtitleLabel.text = viewModel.chapterLabel
         }
 
         return cell
