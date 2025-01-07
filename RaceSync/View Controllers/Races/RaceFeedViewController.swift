@@ -30,7 +30,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
         tableView.register(cellType: RaceTableViewCell.self)
         tableView.refreshControl = self.refreshControl
         tableView.tableFooterView = UIView()
-        tableView.contentInsetAdjustmentBehavior = .never
+        tableView.contentInsetAdjustmentBehavior = .always
 
         for direction in [UISwipeGestureRecognizer.Direction.left, UISwipeGestureRecognizer.Direction.right] {
             let gesture = UISwipeGestureRecognizer(target: self, action: #selector(didSwipeHorizontally(_:)))
