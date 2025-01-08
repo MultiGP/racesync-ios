@@ -820,8 +820,8 @@ fileprivate extension RaceDetailViewController {
     }
 
     func openZippyQSchedule(_ cell: FormTableViewCell) {
-        guard race.zippyqUrl.count > 0 else { return }
-        WebViewController.openUrl(race.zippyqUrl)
+        let zippyqUrl = MGPWeb.getUrl(for: .zippyqView, value: raceId)
+        WebViewController.openUrl(zippyqUrl)
     }
 
     func openLiveFPV(_ cell: FormTableViewCell) {
@@ -978,7 +978,7 @@ fileprivate enum Row: Int, EnumTitle, CaseIterable {
         case .season:           return "Season"
         case .zippyQ:           return "ZippyQ"
         case .class:            return "Class"
-        case .results:          return "View on"
+        case .results:          return "Results on"
         }
     }
 }
