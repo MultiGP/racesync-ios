@@ -88,6 +88,26 @@ class RaceViewModel: Descriptable {
             return false
         })
     }
+
+    func raceClassImage() -> UIImage? {
+
+        let classImageMap: [RaceClass: String] = [
+                .open: "badge_class_open",
+                .whoop: "badge_class_whoop",
+                .micro: "badge_class_micro",
+                .freedom: "badge_class_freedom",
+                .spec7in: "badge_class_spec7in",
+                .esport: "badge_class_esport",
+                .spec5in: "badge_class_spec5in",
+                .prospec: "badge_class_prospec"
+         ]
+
+         if let imageName = classImageMap[race.raceClass] {
+             return UIImage(named: imageName)
+         }
+
+         return nil
+    }
 }
 
 enum RaceViewSorting {

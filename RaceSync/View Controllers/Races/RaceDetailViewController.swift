@@ -185,11 +185,11 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
+        tableView.register(cellType: FormTableViewCell.self)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.tableFooterView = UIView()
         tableView.isScrollEnabled = false
-        tableView.register(cellType: FormTableViewCell.self)
 
         let separatorLine = UIView()
         separatorLine.backgroundColor = Color.gray100
@@ -397,11 +397,11 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate func loadRows() {
         tableViewRows = [
-            raceViewModel.classLabel.isEmpty ? nil : Row.class,
             raceOwnerName != nil ? Row.owner : nil,
             raceViewModel.chapterLabel.isEmpty ? nil : Row.chapter,
             raceViewModel.seasonLabel.isEmpty ? nil : Row.season,
             (race.maxZippyqDepth > 0 && race.disableSlotAutoPopulation == .open) ? Row.zippyQ : nil,
+            raceViewModel.classLabel.isEmpty ? nil : Row.class,
             race.liveTimeEventUrl != nil ? Row.results : nil
         ].compactMap { $0 }
     }
@@ -473,6 +473,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             rect = rect.union(view.frame)
         }
         
+        // Seems like this is not doing anything?
         scrollView.contentSize = CGSize(width: contentRect.size.width, height: contentRect.size.height)
     }
 
@@ -605,29 +606,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             CalendarUtil.add(event)
         })
     }
-
-//    @objc fileprivate func didPressShareButton() {
-//
-//        //TODO: hacking the race url, since race.id is missing from Race/View API
-////        guard let raceURL = URL(string: race.url) else { return }
-//
-//        guard  let raceURL = MGPWeb.getURL(for: .raceView, value: raceId) else { return }
-//
-//        var items: [Any] = [raceURL]
-//        var activities: [UIActivity] = [CopyLinkActivity()]
-//
-//        // Calendar integration
-//        if let event = race.calendarEvent {
-//            items += [event]
-//            activities += [CalendarActivity()]
-//        }
-//
-//        activities += [MultiGPActivity()]
-//
-//        let vc = UIActivityViewController(activityItems: items, applicationActivities: activities)
-//        vc.excludeAllActivityTypes(except: [.airDrop])
-//        present(vc, animated: true)
-//    }
 }
 
 extension RaceDetailViewController {
@@ -643,7 +621,7 @@ extension RaceDetailViewController {
         loadRows()
         populateContent()
 
-        // updating the height of the tableview, since the number of rows could have changed
+        // updating the height of the table view, since the number of rows could have changed
         tableView.snp.updateConstraints { make in
             make.height.equalTo(Constants.cellHeight*CGFloat(tableViewRows.count))
         }
@@ -892,10 +870,9 @@ extension RaceDetailViewController: UITableViewDataSource {
         let row = tableViewRows[indexPath.row]
         cell.textLabel?.text = row.title
         cell.isLoading = false
+        cell.detailImage = nil
 
-        if row == .class {
-            cell.detailTextLabel?.text = raceViewModel.classLabel
-        } else if row == .chapter {
+        if row == .chapter {
             cell.detailTextLabel?.text = raceViewModel.chapterLabel
         } else if row == .owner {
             cell.detailTextLabel?.text = raceOwnerName
@@ -903,12 +880,14 @@ extension RaceDetailViewController: UITableViewDataSource {
             cell.detailTextLabel?.text = raceViewModel.seasonLabel
         } else if row == .zippyQ {
             cell.detailTextLabel?.text = "multigp.com"
+        } else if row == .class {
+            cell.detailImage = raceViewModel.raceClassImage()
         } else if row == .results, let url = race.liveTimeEventUrl {
             if let web = AppWeb(url: url) {
                 if web == .livefpv {
-                    cell.accessoryView = UIImageView(image: UIImage(named: "logo_livefpv"))
+                    cell.detailImage = UIImage(named: "logo_livefpv")
                 } else if web == .fpvscores {
-                    cell.accessoryView = UIImageView(image: UIImage(named: "logo_fpvscores"))
+                    cell.detailImage = UIImage(named: "logo_fpvscores")
                 } else {
                     cell.detailTextLabel?.text = URL(string: url)?.rootDomain ?? ""
                 }
@@ -990,15 +969,15 @@ extension RaceDetailViewController: MKMapViewDelegate {
 }
 
 fileprivate enum Row: Int, EnumTitle, CaseIterable {
-    case `class`, chapter, owner, season, zippyQ, results
+    case chapter, owner, season, zippyQ, `class`, results
 
     var title: String {
         switch self {
-        case .class:            return "Class"
         case .chapter:          return "Chapter"
         case .owner:            return "Coordinator"
         case .season:           return "Season"
         case .zippyQ:           return "ZippyQ"
+        case .class:            return "Class"
         case .results:          return "View on"
         }
     }
