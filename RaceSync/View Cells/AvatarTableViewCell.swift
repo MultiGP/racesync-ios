@@ -50,10 +50,7 @@ class AvatarTableViewCell: UITableViewCell {
     }()
 
     lazy var textPill: TextPill = {
-        let pill = TextPill()
-        pill.titleLabel.font = UIFont.systemFont(ofSize: 15, weight: .bold)
-        pill.titleLabel.textColor = Color.white
-        pill.backgroundColor = Color.gray100
+        let pill = TextPill(style: .badge)
         pill.isHidden = true
         return pill
     }()

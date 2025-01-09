@@ -266,6 +266,7 @@ extension RacePilotsViewController: UITableViewDataSource {
         cell.titleLabel.text = userVM.displayName
         cell.subtitleLabel.text = ResultEntryViewModel.noResultPlaceholder
         cell.textPill.text = showingResults ? nil : userVM.channelLabel // hidden when results visible
+        cell.textPill.style = .badge
         cell.rankView.rank = nil
 
         if showingResults {
@@ -281,6 +282,7 @@ extension RacePilotsViewController: UITableViewDataSource {
             if let score = userVM.score, score > 0 {
                 let unit = (score == 1) ? "pt" : "pts"
                 cell.textPill.text = "\(score) \(unit)"
+                cell.textPill.style = .text
                 cell.rankView.rank = Int32(indexPath.row+1)
             }
         }

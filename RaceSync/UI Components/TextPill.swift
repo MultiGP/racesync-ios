@@ -8,9 +8,28 @@
 
 import UIKit
 
+enum TextPillStyle {
+    case badge, text
+}
+
 class TextPill: UIView {
 
     // MARK: - Public Variables
+
+    var style: TextPillStyle {
+        didSet {
+            switch style {
+            case .badge:
+                titleLabel.font = UIFont.systemFont(ofSize: 15, weight: .bold)
+                titleLabel.textColor = Color.white
+                backgroundColor = Color.gray200
+            case .text:
+                titleLabel.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+                titleLabel.textColor = Color.gray500
+                backgroundColor = Color.gray100
+            }
+        }
+    }
 
     var text: String? {
         get {
@@ -24,8 +43,6 @@ class TextPill: UIView {
 
     lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
-        label.textColor = Color.white
         label.numberOfLines = 1
         return label
     }()
@@ -40,7 +57,8 @@ class TextPill: UIView {
 
     // MARK: - Initialization
 
-    init() {
+    init(style: TextPillStyle) {
+        self.style = style
         super.init(frame: .zero)
         setupLayout()
     }
