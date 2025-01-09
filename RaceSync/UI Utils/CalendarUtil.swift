@@ -32,10 +32,9 @@ class CalendarUtil {
             ekevent.location = event.location
             ekevent.notes = event.description
             ekevent.startDate = event.startDate
-            ekevent.endDate = event.endDate ?? event.startDate
+            ekevent.endDate = (event.endDate != nil) ? event.endDate : event.startDate.advanced(by: 3600) // add 1 hour diff
             ekevent.isAllDay = false
             ekevent.url = event.url
-
             ekevent.calendar = eventStore.defaultCalendarForNewEvents
 
             do {

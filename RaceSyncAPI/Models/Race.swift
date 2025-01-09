@@ -35,7 +35,6 @@ public class Race: Mappable, Joinable, Descriptable {
     public var zippyqIterator: Bool = false
     public var maxBatteriesForQualifying: Int32 = 0
 
-    public var url: String = ""
     public var urlName: String = ""
     public var liveTimeEventUrl: String?
     public var description: String = ""
@@ -123,7 +122,6 @@ public class Race: Mappable, Joinable, Descriptable {
         zippyqIterator <- map[ParamKey.zippyqIterator]
         maxBatteriesForQualifying <- (map[ParamKey.maxBatteriesForQualifying], IntegerTransform())
 
-        url = MGPWeb.getUrl(for: .raceView, value: id)
         urlName <- map[ParamKey.urlName]
         liveTimeEventUrl <- map[ParamKey.liveTimeEventUrl]
         description <- map[ParamKey.description]

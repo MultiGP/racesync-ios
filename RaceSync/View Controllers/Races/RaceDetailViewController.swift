@@ -490,7 +490,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             buttons += [editButton]
         }
 
-        if let _ = race.calendarEvent {
+        if race.canCreateCalendarEvent() {
             let calendarButton = CustomButton(type: .system)
             calendarButton.addTarget(self, action: #selector(didPressCalendarButton), for: .touchUpInside)
             calendarButton.setImage(ButtonImg.calendar, for: .normal)
@@ -600,7 +600,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     }
 
     @objc fileprivate func didPressCalendarButton() {
-        guard let event = race.calendarEvent else { return }
+        guard let event = race.createCalendarEvent(with: raceId) else { return }
 
         ActionSheetUtil.presentActionSheet(withTitle: "Save the race details to your calendar?", buttonTitle: "Save to Calendar", completion: { (action) in
             CalendarUtil.add(event)

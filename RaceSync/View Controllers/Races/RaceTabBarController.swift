@@ -252,7 +252,7 @@ extension RaceTabBarController {
         var activities: [UIActivity] = [CopyLinkActivity()]
 
         // Calendar integration
-        if let event = race?.calendarEvent {
+        if let event = race?.createCalendarEvent(with: raceId) {
             items += [event]
             activities += [CalendarActivity()]
         }
