@@ -62,7 +62,7 @@ class AvatarTableViewCell: UITableViewCell {
         stackView.axis = .vertical
         stackView.distribution = .fillEqually
         stackView.alignment = .leading
-        stackView.spacing = 2
+        stackView.spacing = 5
         return stackView
     }()
 
@@ -77,7 +77,7 @@ class AvatarTableViewCell: UITableViewCell {
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
         static let imageHeight: CGFloat = UniversalConstants.cellAvatarHeight
-        static let buttonSpacing: CGFloat = 12
+        static let buttonSpacing: CGFloat = 8
     }
 
     // MARK: - Initializatiom
@@ -125,7 +125,7 @@ class AvatarTableViewCell: UITableViewCell {
         contentView.addSubview(textStackView)
         textStackView.snp.makeConstraints {
             $0.leading.equalTo(avatarImageView.snp.trailing).offset(Constants.padding)
-            $0.trailing.equalTo(textPill.snp.leading).offset(-Constants.padding)
+            $0.trailing.equalTo(textPill.snp.leading).offset(-Constants.padding).priority(.high)
             $0.centerY.equalToSuperview()
         }
     }

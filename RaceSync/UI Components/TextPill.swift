@@ -20,12 +20,12 @@ class TextPill: UIView {
         didSet {
             switch style {
             case .badge:
-                titleLabel.font = UIFont.systemFont(ofSize: 15, weight: .bold)
+                titleLabel.font = UIFont.systemFont(ofSize: 14, weight: .bold)
                 titleLabel.textColor = Color.white
-                backgroundColor = Color.gray200
+                backgroundColor = Color.gray200.withAlphaComponent(0.5)
             case .text:
-                titleLabel.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
-                titleLabel.textColor = Color.gray500
+                titleLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
+                titleLabel.textColor = Color.gray400
                 backgroundColor = Color.gray100
             }
         }
@@ -43,6 +43,7 @@ class TextPill: UIView {
 
     lazy var titleLabel: UILabel = {
         let label = UILabel()
+        label.adjustsFontSizeToFitWidth = false
         label.numberOfLines = 1
         return label
     }()
@@ -51,7 +52,7 @@ class TextPill: UIView {
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
-        static let buttonSpacing: CGFloat = 12
+        static let buttonSpacing: CGFloat = 10
         static let height: CGFloat = 26
     }
 
@@ -77,10 +78,12 @@ class TextPill: UIView {
         addSubview(titleLabel)
         titleLabel.snp.makeConstraints {
             $0.top.bottom.equalToSuperview()
-            $0.leading.equalToSuperview().offset(Constants.buttonSpacing)
-            $0.trailing.equalToSuperview().offset(-Constants.buttonSpacing)
+
             $0.height.equalTo(Constants.height)
             $0.centerY.equalToSuperview()
+
+            $0.leading.equalToSuperview().offset(Constants.buttonSpacing)
+            $0.trailing.equalToSuperview().offset(-Constants.buttonSpacing)
         }
     }
 }
