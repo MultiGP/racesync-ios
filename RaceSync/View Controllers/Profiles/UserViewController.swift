@@ -178,7 +178,7 @@ class UserViewController: ProfileViewController, ViewJoinable {
 
     override func didSelectRow(at indexPath: IndexPath) {
         if selectedSegment == .left, let viewModel = raceViewModel(for: indexPath.row) {
-            let vc = RaceTabBarController(with: viewModel.race.id)
+            let vc = RaceTabBarController(with: viewModel.race)
             navigationController?.pushViewController(vc, animated: true)
         } else if selectedSegment == .right, let viewModel = chapterViewModel(for: indexPath.row) {
             let vc = ChapterViewController(with: viewModel.chapter)

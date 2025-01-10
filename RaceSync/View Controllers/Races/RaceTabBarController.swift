@@ -73,14 +73,9 @@ class RaceTabBarController: UITabBarController {
 
     // MARK: - Initialization
 
-    init(with raceId: ObjectId) {
-        self.raceId = raceId
-        super.init(nibName: nil, bundle: nil)
-    }
-
     init(with race: Race) {
-        self.race = race
         self.raceId = race.id
+        self.race = race
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -94,12 +89,7 @@ class RaceTabBarController: UITabBarController {
         super.viewDidLoad()
 
         setupLayout()
-
-        if let race = race {
-            configureViewControllers(with: race)
-        } else {
-            loadRaceView()
-        }
+        loadRaceView()
     }
 
     override func viewWillAppear(_ animated: Bool) {

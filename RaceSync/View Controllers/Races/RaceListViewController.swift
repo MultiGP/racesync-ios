@@ -119,7 +119,7 @@ class RaceListViewController: UIViewController, ViewJoinable {
     }
 
     fileprivate func openRaceDetail(_ viewModel: RaceViewModel) {
-        let vc = RaceTabBarController(with: viewModel.race.id)
+        let vc = RaceTabBarController(with: viewModel.race)
         vc.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(vc, animated: true)
     }
