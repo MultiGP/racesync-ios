@@ -18,20 +18,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     var race: Race
 
-    // TODO: Temporary hack since race/view API doesn't include the raceId attribute just yet
-    // See issue https://github.com/MultiGP/multigp-com/issues/88
-    var raceId: ObjectId {
-        guard race.id.count > 0 else { return tabBarController.raceId }
-        return race.id
-    }
-
-    // TODO: Temporary hack since race/view API doesn't include the ownerUserName attribute just yet
-    // See issue https://github.com/MultiGP/multigp-com/issues/88
-    var raceOwnerName: String? {
-        guard race.ownerUserName.count > 0 else { return tabBarController.raceOwnerName }
-        return race.ownerUserName
-    }
-
     override var tabBarController: RaceTabBarController {
         return super.tabBarController as! RaceTabBarController
     }
@@ -397,7 +383,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate func loadRows() {
         tableViewRows = [
-            raceOwnerName != nil ? Row.owner : nil,
+            !race.ownerUserName.isEmpty && !race.ownerId.isEmpty ? Row.owner : nil,
             raceViewModel.chapterLabel.isEmpty ? nil : Row.chapter,
             raceViewModel.seasonLabel.isEmpty ? nil : Row.season,
             (race.maxZippyqDepth > 0 && race.disableSlotAutoPopulation == .open) ? Row.zippyQ : nil,
@@ -600,7 +586,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     }
 
     @objc fileprivate func didPressCalendarButton() {
-        guard let event = race.createCalendarEvent(with: raceId) else { return }
+        guard let event = race.createCalendarEvent(with: race.id) else { return }
 
         ActionSheetUtil.presentActionSheet(withTitle: "Save the race details to your calendar?", buttonTitle: "Save to Calendar", completion: { (action) in
             CalendarUtil.add(event)
@@ -643,7 +629,7 @@ fileprivate extension RaceDetailViewController {
     }
 
     func finalizeRace() {
-        raceApi.finalizeRace(with: raceId) { status, error in
+        raceApi.finalizeRace(with: race.id) { status, error in
             if status == true || self.ignoreFinalizingError == true {
                 self.reloadRaceView()
             } else if let error = error {
@@ -656,8 +642,8 @@ fileprivate extension RaceDetailViewController {
         guard let chapters = APIServices.shared.myManagedChapters, chapters.count > 0 else { return }
         guard let chapter = chapters.filter ({ return $0.id == race.chapterId }).first else { return }
 
-        let data = RaceData(with: race, id: raceId)
-        let initialData = RaceData(with: race, id: raceId)
+        let data = RaceData(with: race)
+        let initialData = RaceData(with: race)
 
         let vc = RaceFormViewController(with: [chapter], raceData: data, initialRaceData: initialData, section: .general)
         vc.editMode = .update
@@ -670,7 +656,7 @@ fileprivate extension RaceDetailViewController {
 
     func toggleRaceEnrollment() {
         if race.status == .closed {
-            raceApi.open(race: raceId) { status, error in
+            raceApi.open(race: race.id) { status, error in
                 if status == true {
                     self.reloadRaceView()
                 } else if let error = error {
@@ -678,7 +664,7 @@ fileprivate extension RaceDetailViewController {
                 }
             }
         } else {
-            raceApi.close(race: raceId) { status, error in
+            raceApi.close(race: race.id) { status, error in
                 if status == true {
                     self.reloadRaceView()
                 } else if let error = error {
@@ -691,7 +677,7 @@ fileprivate extension RaceDetailViewController {
     func duplicateRace() {
         guard let chapters = APIServices.shared.myManagedChapters, chapters.count > 0 else { return }
 
-        let data = RaceData(with: race, id: raceId)
+        let data = RaceData(with: race)
 
         let vc = RaceFormViewController(with: chapters, raceData: data, section: .general)
         vc.editMode = .new
@@ -703,7 +689,7 @@ fileprivate extension RaceDetailViewController {
     }
 
     func deleteRace() {
-        raceApi.deleteRace(with: raceId) { status, error in
+        raceApi.deleteRace(with: race.id) { status, error in
             if status == true {
                 self.navigationController?.popViewController(animated: true)
             } else if let error = error {
@@ -796,7 +782,7 @@ fileprivate extension RaceDetailViewController {
         guard canInteract(with: cell) else { return }
         setLoading(cell, loading: true)
 
-        raceApi.open(race: raceId) { [weak self] (status, error) in
+        raceApi.open(race: race.id) { [weak self] (status, error) in
             if status {
                 self?.race.status = .open
                 self?.reloadRaceView()
@@ -809,7 +795,7 @@ fileprivate extension RaceDetailViewController {
         guard canInteract(with: cell) else { return }
         setLoading(cell, loading: true)
 
-        raceApi.close(race: raceId) { [weak self] (status, error) in
+        raceApi.close(race: race.id) { [weak self] (status, error) in
             if status {
                 self?.race.status = .closed
                 self?.reloadRaceView()
@@ -820,7 +806,7 @@ fileprivate extension RaceDetailViewController {
     }
 
     func openZippyQSchedule(_ cell: FormTableViewCell) {
-        let zippyqUrl = MGPWeb.getUrl(for: .zippyqView, value: raceId)
+        let zippyqUrl = MGPWeb.getUrl(for: .zippyqView, value: race.id)
         WebViewController.openUrl(zippyqUrl)
     }
 
@@ -875,7 +861,7 @@ extension RaceDetailViewController: UITableViewDataSource {
         if row == .chapter {
             cell.detailTextLabel?.text = raceViewModel.chapterLabel
         } else if row == .owner {
-            cell.detailTextLabel?.text = raceOwnerName
+            cell.detailTextLabel?.text = race.ownerUserName
         } else if row == .season {
             cell.detailTextLabel?.text = raceViewModel.seasonLabel
         } else if row == .zippyQ {

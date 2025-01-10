@@ -21,7 +21,6 @@ class RaceTabBarController: UITabBarController {
 
     var raceId: ObjectId
     var race: Race?
-    var raceOwnerName: String?
 
     var isDismissable: Bool = false {
         didSet {
@@ -74,16 +73,14 @@ class RaceTabBarController: UITabBarController {
 
     // MARK: - Initialization
 
-    init(with raceId: ObjectId, ownerName: String? = nil) {
+    init(with raceId: ObjectId) {
         self.raceId = raceId
-        self.raceOwnerName = ownerName
         super.init(nibName: nil, bundle: nil)
     }
 
     init(with race: Race) {
         self.race = race
         self.raceId = race.id
-        self.raceOwnerName = race.ownerUserName
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -216,7 +213,13 @@ extension RaceTabBarController {
         raceApi.view(race: raceId) { [weak self] (race, error) in
             self?.isLoading = false
 
-            if let race = race {
+            if let race = race, let raceId = self?.raceId {
+
+                // TODO: Temporary hack since race/view API doesn't include the raceId & raceOwnerName attributes just yet
+                // See issue https://github.com/MultiGP/multigp-com/issues/88
+                race.id = raceId
+                race.ownerUserName = self?.race?.ownerUserName ?? ""
+
                 self?.race = race
                 self?.configureViewControllers(with: race)
             } else if let error = error {
@@ -229,7 +232,12 @@ extension RaceTabBarController {
         guard !isLoading else { return }
 
         raceApi.view(race: raceId) { [weak self] (race, error) in
-            guard let race = race, let vcs = self?.viewControllers else { return }
+            guard let race = race, let raceId = self?.raceId , let vcs = self?.viewControllers else { return }
+
+            // TODO: Temporary hack since race/view API doesn't include the raceId & raceOwnerName attributes just yet
+            // See issue https://github.com/MultiGP/multigp-com/issues/88
+            race.id = raceId
+            race.ownerUserName = self?.race?.ownerUserName ?? ""
 
             self?.race = race
 
@@ -242,9 +250,6 @@ extension RaceTabBarController {
     }
 
     @objc public func didPressShareButton() {
-
-        //TODO: hacking the race url, since race.id is missing from Race/View API
-//        guard let raceURL = URL(string: race.url) else { return }
 
         guard  let raceURL = MGPWeb.getURL(for: .raceView, value: raceId) else { return }
 

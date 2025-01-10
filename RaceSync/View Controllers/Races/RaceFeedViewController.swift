@@ -410,7 +410,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
     }
 
     fileprivate func openRaceDetail(_ viewModel: RaceViewModel) {
-        let vc = RaceTabBarController(with: viewModel.race.id, ownerName: viewModel.race.ownerUserName)
+        let vc = RaceTabBarController(with: viewModel.race.id)
         vc.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(vc, animated: true)
     }
