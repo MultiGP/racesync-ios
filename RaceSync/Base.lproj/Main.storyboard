@@ -20,13 +20,13 @@
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                             </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="multigp_logo_splash" translatesAutoresizingMaskIntoConstraints="NO" id="f4o-uc-HAl">
-                                <rect key="frame" x="141" y="761" width="132" height="101"/>
+                                <rect key="frame" x="141" y="736" width="132" height="101"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="101" id="gJP-Ax-u2j"/>
                                 </constraints>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="POWERED BY" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FDW-Yv-sbc">
-                                <rect key="frame" x="168" y="736" width="78" height="15"/>
+                                <rect key="frame" x="168" y="711" width="78" height="15"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                 <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
@@ -37,6 +37,12 @@
                                     <constraint firstAttribute="height" constant="87" id="FVy-Do-BIx"/>
                                 </constraints>
                             </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" alpha="0.25" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Photo: Wayne Ho @ MultiGP IO 2024" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hke-7r-Tfr">
+                                <rect key="frame" x="0.0" y="862" width="414" height="15"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="IAM-58-XBf"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -44,9 +50,12 @@
                             <constraint firstAttribute="top" relation="lessThanOrEqual" secondItem="tRQ-h2-aIV" secondAttribute="top" id="20K-im-dI2"/>
                             <constraint firstItem="tRQ-h2-aIV" firstAttribute="leading" secondItem="H1y-xF-zMX" secondAttribute="leading" id="8Zb-dD-kSt"/>
                             <constraint firstAttribute="trailing" secondItem="tRQ-h2-aIV" secondAttribute="trailing" id="Bnf-mj-Dss"/>
-                            <constraint firstItem="f4o-uc-HAl" firstAttribute="bottom" secondItem="IAM-58-XBf" secondAttribute="bottom" id="EpD-MK-TQF"/>
+                            <constraint firstItem="Hke-7r-Tfr" firstAttribute="trailing" secondItem="tRQ-h2-aIV" secondAttribute="trailing" id="EY1-5H-csb"/>
+                            <constraint firstItem="f4o-uc-HAl" firstAttribute="bottom" secondItem="IAM-58-XBf" secondAttribute="bottom" constant="-25" id="EpD-MK-TQF"/>
+                            <constraint firstItem="Hke-7r-Tfr" firstAttribute="bottom" secondItem="IAM-58-XBf" secondAttribute="bottom" constant="15" id="Ohr-YM-lEm"/>
                             <constraint firstItem="f4o-uc-HAl" firstAttribute="top" secondItem="FDW-Yv-sbc" secondAttribute="bottom" constant="10" id="Wgp-Cu-WAb"/>
                             <constraint firstItem="HUg-Wc-UcN" firstAttribute="leading" secondItem="IAM-58-XBf" secondAttribute="leading" constant="27" id="XDS-ct-j20"/>
+                            <constraint firstItem="Hke-7r-Tfr" firstAttribute="leading" secondItem="tRQ-h2-aIV" secondAttribute="leading" id="cE6-rQ-aFk"/>
                             <constraint firstItem="HUg-Wc-UcN" firstAttribute="top" secondItem="IAM-58-XBf" secondAttribute="top" constant="308" id="hDm-1O-Dgg"/>
                             <constraint firstItem="tRQ-h2-aIV" firstAttribute="bottom" relation="lessThanOrEqual" secondItem="H1y-xF-zMX" secondAttribute="bottom" id="ndv-QD-cbg"/>
                             <constraint firstItem="f4o-uc-HAl" firstAttribute="leading" secondItem="IAM-58-XBf" secondAttribute="leading" constant="141" id="nvR-Fi-m98"/>
