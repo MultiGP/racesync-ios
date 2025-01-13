@@ -4,16 +4,16 @@
 
 <table style="border-collapse: collapse; width: auto;">
   <tr>
-    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_0.png" style="display: block; width: auto; height: auto;"></th>
-    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_1.png" style="display: block; width: auto; height: auto;"></th>
-    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_2.png" style="display: block; width: auto; height: auto;"></th>
-    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_3.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.5_screenshots_1.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.5_screenshots_2.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.5_screenshots_3.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.5_screenshots_4.png" style="display: block; width: auto; height: auto;"></th>
   </tr>
   <tr>
-    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_4.png" style="display: block; width: auto; height: auto;"></th>
-    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_5.png" style="display: block; width: auto; height: auto;"></th>
-    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_6.png" style="display: block; width: auto; height: auto;"></th>
-    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.9_screenshot_7.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.5_screenshots_5.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.5_screenshots_6.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.5_screenshots_7.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.5_screenshots_9.png" style="display: block; width: auto; height: auto;"></th>
   </tr>
 </table>
 
