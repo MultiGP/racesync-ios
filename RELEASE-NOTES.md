@@ -4,23 +4,23 @@
 ## 1.6
 
 New Features:
-- Race results are now available on the race detail screen, when applicable.
-- Simplifying race creation for Chapter owners, with only 1 description field and a few default values.
-- Showing LiveFPV & FPVScores logos on the results row of a race detail, when applicable
-- Updating app icon and launch screen visually
-- Displaying associated races to track designs
-- Updated the race classes to match the recent changes in MGP (Pro Spec, Micro, Whoop, etc.)
-- Allowing chapter owners to finalize a race from the race detail screen.
+   * Race Results: View race result standings directly on the race detail screen (when available).
+   * Personalized Race Filters: Customize the race feed on the main screen to your preferences by filtering specific race classes, or yearly GQ races.
+   * Updated Race Classes: Reflecting the latest MultiGP changes (Pro Spec, E-Sport, Micro, Whoop, etc.)
+   * Races Quick Access: Display a race's ZippyQ web schedule as well as the LiveFPV or FPVScore pages for detailed live results.
+   * Enhanced Visuals: Updated app icon and launch screen for a refreshed look.
 
-Hot Fixes
-- Displaying only the upcoming races when filtered by class/spec (more relevant to the user)
-- Fixing date related issues when creating and editing a race
-- Removing duplicated managed chapters, if any, and sorting alphabetically
-- GQ races can't be duplicated anymore
+For Chapter Organizers:
+   * Simplified Race Creation: Streamlined the experience with a single description field and improved default values.
+   * Finalize Races: You can now finalize a race directly from the race detail screen.
 
-Internal
-- Drop iOS 13 support. Make iOS 14 the minimum deployment target.
-- Uninstalled unused libraries (Sentry) and attempt make app load faster and lighter bundle to download
+Hot Fixes:
+   * Show only upcoming races when filtering by class/spec for better relevance.
+   * Removed duplicate managed chapters and sorted them alphabetically.
+   * Prevented duplication of GQ races.
+   * Fixed a few old crashes and smaller bugs
+
+Update now to enjoy these improvements!
 
 
 ---

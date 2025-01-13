@@ -90,7 +90,7 @@ class RaceFormViewController: UIViewController {
     // Needs to be computed each time, since there are dynamic values
     fileprivate var sections: [RaceFormSection: [RaceFormRow]] {
         get {
-            var general: [RaceFormRow] = [.name, .startDate, .endDate, .chapter, .class, .format, .schedule, .privacy, .status]
+            let general: [RaceFormRow] = [.name, .startDate, .endDate, .chapter, .class, .format, .schedule, .privacy, .status]
             var specific: [RaceFormRow] = [.scoring, .timing, .rounds, .season, .location]
 
             if !shouldHideShortDescription { specific += [.shortDesc] } // hide Short Description row if it isn't set already. This is used to be backwards compatible.

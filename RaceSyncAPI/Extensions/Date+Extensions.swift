@@ -10,6 +10,8 @@ import Foundation
 
 public extension Date {
 
+    static let currentYear: Int = Calendar.current.component(.year, from: Date())
+
     func isInSameWeek(date: Date) -> Bool {
         return Calendar.current.isDate(self, equalTo: date, toGranularity: .weekOfYear)
     }

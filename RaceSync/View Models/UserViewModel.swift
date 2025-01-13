@@ -20,6 +20,9 @@ class UserViewModel: Descriptable {
     let displayName: String
     let fullName: String
     let pictureUrl: String?
+    let channelLabel: String?
+
+    var score: Int32? = nil
 
     init(with user: User) {
         self.userId = user.id
@@ -31,6 +34,7 @@ class UserViewModel: Descriptable {
         self.displayName = ViewModelHelper.titleLabel(for: user.userName, country: user.country)
         self.fullName = "\(user.firstName.capitalized) \(user.lastName.capitalized)"
         self.pictureUrl = user.profilePictureUrl
+        self.channelLabel = nil
     }
 
     static func viewModels(with objects:[User]) -> [UserViewModel] {
@@ -51,6 +55,12 @@ class UserViewModel: Descriptable {
         self.displayName = entry.displayName
         self.fullName = "\(entry.firstName.capitalized) \(entry.lastName.capitalized)"
         self.pictureUrl = entry.profilePictureUrl
+
+        if let band = entry.band, let channel = entry.channel {
+            channelLabel = "\(band)\(channel)"
+        } else {
+            channelLabel = nil
+        }
     }
 
     init(with entry: ResultEntry) {
@@ -63,6 +73,12 @@ class UserViewModel: Descriptable {
         self.displayName = entry.displayName
         self.fullName = "\(entry.firstName.capitalized) \(entry.lastName.capitalized)"
         self.pictureUrl = entry.profilePictureUrl
+
+        if let band = entry.band, let channel = entry.channel {
+            channelLabel = "\(band)\(channel)"
+        } else {
+            channelLabel = nil
+        }
     }
 
     static func viewModelsFromEntries(_ entries: [RaceEntry]) -> [UserViewModel] {

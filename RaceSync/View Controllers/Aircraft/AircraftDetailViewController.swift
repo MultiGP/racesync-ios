@@ -30,6 +30,7 @@ class AircraftDetailViewController: UIViewController {
 
     fileprivate lazy var headerView: ProfileHeaderView = {
         let view = ProfileHeaderView()
+        view.locationButton.isHidden = true
         view.delegate = self
         return view
     }()
@@ -54,7 +55,7 @@ class AircraftDetailViewController: UIViewController {
         let button = ActionButton(type: .system)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 21, weight: .regular)
         button.setTitleColor(Color.red, for: .normal)
-        button.setTitle("Delete", for: .normal)
+        button.setTitle("Retire Aircraft", for: .normal)
         button.backgroundColor = Color.white
         button.layer.cornerRadius = Constants.padding/2
         button.layer.borderColor = Color.gray100.cgColor
@@ -174,7 +175,7 @@ class AircraftDetailViewController: UIViewController {
     // MARK: - Actions
 
     @objc func didPressDeleteButton() {
-        ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Are you sure you want to delete \"\(aircraftViewModel.displayName)\"?", destructiveTitle: "Yes, delete", completion: { (action) in
+        ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Are you sure you want to retire \"\(aircraftViewModel.displayName)\"?", destructiveTitle: "Yes, retire", completion: { (action) in
             self.deleteAircraft()
         }, cancel: nil)
     }

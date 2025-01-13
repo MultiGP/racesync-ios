@@ -179,7 +179,7 @@ class ChapterViewController: ProfileViewController, ViewJoinable {
 
     override func didSelectRow(at indexPath: IndexPath) {
         if selectedSegment == .left, let viewModel = raceViewModel(for: indexPath.row) {
-            let vc = RaceTabBarController(with: viewModel.race.id) // TODO: Pass the actual model object instead
+            let vc = RaceTabBarController(with: viewModel.race)
             navigationController?.pushViewController(vc, animated: true)
         } else if selectedSegment == .right, let viewModel = userViewModel(for: indexPath.row), let user = viewModel.user {
             let vc = UserViewController(with: user)
@@ -218,7 +218,7 @@ fileprivate extension ChapterViewController {
     }
 
     func fetchRaces(_ completion: VoidCompletionBlock? = nil) {
-        raceApi.getRaces(forChapter: chapter.id) { (races, error) in
+        raceApi.getRaces(chapterIds: [chapter.id]) { (races, error) in
             if let races = races {
                 // skip parent races for now
                 let childRaces = races.filter({ (race) -> Bool in

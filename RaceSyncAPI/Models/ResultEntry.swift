@@ -30,6 +30,10 @@ public class ResultEntry: Mappable, Descriptable {
     public var fastest2Laps: String?
     public var fastestLap: String?
 
+    public var frequency: String?
+    public var band: String?
+    public var channel: String?
+
     public var roundName: String?
 
     fileprivate static let requiredProperties = [ParamKey.id, ParamKey.raceEntryId, ParamKey.pilotId]
@@ -62,6 +66,10 @@ public class ResultEntry: Mappable, Descriptable {
         fastest3Laps <- map[ParamKey.fastest3Laps]
         fastest2Laps <- map[ParamKey.fastest2Laps]
         fastestLap <- map[ParamKey.fastestLap]
+
+        frequency <- map[ParamKey.frequency]
+        band <- map[ParamKey.band]
+        channel <- map[ParamKey.channel]
     }
 }
 

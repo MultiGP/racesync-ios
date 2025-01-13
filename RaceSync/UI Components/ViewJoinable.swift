@@ -51,12 +51,7 @@ extension ViewJoinable {
 
         if state == .join {
             if let endDate = race.endDate, endDate.isPassed {
-                
-                var message = "Cannot join or resign a race from the past."
-                if race.ownerUserName.count > 0 {
-                    message += "If you think this is a mistake, contact the race coordinator \"\(race.ownerUserName)\""
-                }
-                AlertUtil.presentAlertMessage(message,
+                AlertUtil.presentAlertMessage("Cannot join a passed race.",
                                               title: "Uh Oh",
                                               delay: 0.5,
                                               completion: { _ in button.isLoading = false })

@@ -497,7 +497,7 @@ fileprivate extension TrackDetailViewController {
     func showRaces(for query: String, with cell: FormTableViewCell) {
         setLoading(cell, loading: true)
 
-        raceApi.getRaces(by: query) { [weak self] (races, error) in
+        raceApi.getRaces(name: query) { [weak self] (races, error) in
             if let races = races {
                 let sortedViewModels = RaceViewModel.sortedViewModels(with: races, sorting: .ascending)
                 let vc = RaceListViewController(sortedViewModels, raceName: query)

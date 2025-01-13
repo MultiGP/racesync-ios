@@ -25,15 +25,6 @@ class AvatarTableViewCell: UITableViewCell {
         }
     }
 
-    lazy var rankLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 19, weight: .medium)
-        label.textColor = Color.gray300
-        label.textAlignment = .center
-        label.isHidden = true
-        return label
-    }()
-
     lazy var avatarImageView: AvatarImageView = {
         return AvatarImageView(withHeight: Constants.imageHeight)
     }()
@@ -52,6 +43,18 @@ class AvatarTableViewCell: UITableViewCell {
         return label
     }()
 
+    lazy var rankView: RankView = {
+        let view = RankView()
+        view.isHidden = true
+        return view
+    }()
+
+    lazy var textPill: TextPill = {
+        let pill = TextPill(style: .badge)
+        pill.isHidden = true
+        return pill
+    }()
+
     // MARK: - Private Variables
 
     fileprivate lazy var textStackView: UIStackView = {
@@ -59,7 +62,7 @@ class AvatarTableViewCell: UITableViewCell {
         stackView.axis = .vertical
         stackView.distribution = .fillEqually
         stackView.alignment = .leading
-        stackView.spacing = 2
+        stackView.spacing = 5
         return stackView
     }()
 
@@ -74,6 +77,7 @@ class AvatarTableViewCell: UITableViewCell {
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
         static let imageHeight: CGFloat = UniversalConstants.cellAvatarHeight
+        static let buttonSpacing: CGFloat = 8
     }
 
     // MARK: - Initializatiom
@@ -96,8 +100,14 @@ class AvatarTableViewCell: UITableViewCell {
 
         accessoryType = .disclosureIndicator
 
-        contentView.addSubview(rankLabel)
-        rankLabel.snp.makeConstraints {
+        contentView.addSubview(textPill)
+        textPill.snp.makeConstraints {
+            $0.trailing.equalToSuperview().offset(-Constants.buttonSpacing)
+            $0.centerY.equalToSuperview()
+        }
+
+        contentView.addSubview(rankView)
+        rankView.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(Constants.padding)
             $0.centerY.equalToSuperview()
             rankLabelWidthConstraint = $0.width.equalTo(Constants.imageHeight/2).constraint
@@ -108,22 +118,21 @@ class AvatarTableViewCell: UITableViewCell {
         avatarImageView.snp.makeConstraints {
             $0.height.width.equalTo(Constants.imageHeight)
             $0.centerY.equalToSuperview()
-            leftSpacingConstraint = $0.leading.equalTo(rankLabel.snp.trailing).offset(Constants.padding/2).constraint
+            leftSpacingConstraint = $0.leading.equalTo(rankView.snp.trailing).offset(Constants.padding/2).constraint
             leftSpacingConstraint?.activate()
         }
 
         contentView.addSubview(textStackView)
         textStackView.snp.makeConstraints {
             $0.leading.equalTo(avatarImageView.snp.trailing).offset(Constants.padding)
-            $0.trailing.equalToSuperview().offset(-Constants.padding)
+            $0.trailing.equalTo(textPill.snp.leading).offset(-Constants.padding).priority(.high)
             $0.centerY.equalToSuperview()
         }
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        leftSpacingConstraint?.update(offset: rankLabel.isHidden ? 0 : Constants.padding/2)
-        rankLabelWidthConstraint?.update(offset: rankLabel.isHidden ? 0 : Constants.imageHeight/2)
+        leftSpacingConstraint?.update(offset: rankView.isHidden ? 0 : Constants.padding/2)
+        rankLabelWidthConstraint?.update(offset: rankView.isHidden ? 0 : Constants.imageHeight/2)
     }
-
 }

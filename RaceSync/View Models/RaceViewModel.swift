@@ -46,11 +46,17 @@ class RaceViewModel: Descriptable {
         self.distance = Self.distance(for: race)
         self.joinState = Self.joinState(for: race)
         self.participantCount = Int(race.participantCount) ?? 0
-        self.classLabel = "\(race.raceClassString) Class"
         self.chapterLabel = race.chapterName
         self.ownerLabel = race.ownerUserName
         self.seasonLabel = race.seasonName
         self.imageUrl = Self.imageUrl(for: race)
+
+        switch race.raceClass {
+        case .prospec, .freedom, .spec5in, .spec7in:
+            self.classLabel = "\(race.raceClass.title) Spec"
+        default:
+            self.classLabel = "\(race.raceClass.title) Class"
+        }
     }
 
     static func viewModels(with objects:[Race]) -> [RaceViewModel] {
@@ -81,6 +87,26 @@ class RaceViewModel: Descriptable {
 
             return false
         })
+    }
+
+    func raceClassImage() -> UIImage? {
+
+        let classImageMap: [RaceClass: String] = [
+                .open: "badge_class_open",
+                .whoop: "badge_class_whoop",
+                .micro: "badge_class_micro",
+                .freedom: "badge_class_freedom",
+                .spec7in: "badge_class_spec7in",
+                .esport: "badge_class_esport",
+                .spec5in: "badge_class_spec5in",
+                .prospec: "badge_class_prospec"
+         ]
+
+         if let imageName = classImageMap[race.raceClass] {
+             return UIImage(named: imageName)
+         }
+
+         return nil
     }
 }
 

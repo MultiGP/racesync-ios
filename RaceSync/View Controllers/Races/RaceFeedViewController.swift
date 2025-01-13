@@ -30,7 +30,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
         tableView.register(cellType: RaceTableViewCell.self)
         tableView.refreshControl = self.refreshControl
         tableView.tableFooterView = UIView()
-        tableView.contentInsetAdjustmentBehavior = .never
+        tableView.contentInsetAdjustmentBehavior = .always
 
         for direction in [UISwipeGestureRecognizer.Direction.left, UISwipeGestureRecognizer.Direction.right] {
             let gesture = UISwipeGestureRecognizer(target: self, action: #selector(didSwipeHorizontally(_:)))
@@ -172,7 +172,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
     fileprivate var selectedRaceFilter: RaceFilter {
         get {
             let title: String = segmentedControl.titleForSelectedSegment()!
-            return RaceFilter(title: title)!
+            return RaceFilter.filters(with: [title]).first!
         }
     }
 
@@ -410,7 +410,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
     }
 
     fileprivate func openRaceDetail(_ viewModel: RaceViewModel) {
-        let vc = RaceTabBarController(with: viewModel.race.id, ownerName: viewModel.race.ownerUserName)
+        let vc = RaceTabBarController(with: viewModel.race)
         vc.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(vc, animated: true)
     }
@@ -580,10 +580,10 @@ extension RaceFeedViewController: UITableViewDataSource {
 
         if selectedRaceFilter == .joined {
             cell.subtitleLabel.text = viewModel.locationLabel
-        } else if selectedRaceFilter == .chapters || selectedRaceFilter == .series {
-            cell.subtitleLabel.text = viewModel.chapterLabel
-        } else {
+        } else if selectedRaceFilter == .nearby {
             cell.subtitleLabel.text = viewModel.distanceLabel
+        } else {
+            cell.subtitleLabel.text = viewModel.chapterLabel
         }
 
         return cell
@@ -613,6 +613,10 @@ extension RaceFeedViewController: APISettingsDelegate {
     func didUpdate(settings: APISettingsType, with value: Any) {
 
         switch settings {
+        case .raceFeedFilters:
+            updateSegmentedControl()
+            unloadRaces() // invalidates collection
+            loadRaces(forceReload: true)
         case .showPastEvents, .searchRadius:
             unloadRaces() // invalidates collection
             loadRaces(forceReload: true)
@@ -621,6 +625,13 @@ extension RaceFeedViewController: APISettingsDelegate {
         default:
             break
         }
+    }
+
+    func updateSegmentedControl() {
+        let settings = APIServices.shared.settings
+        self.segmentedControl.removeAllSegments()
+        self.segmentedControl.setItems(settings.raceFeedFilters.compactMap { $0.title })
+        self.segmentedControl.selectedSegmentIndex = 0
     }
 }
 
@@ -632,6 +643,7 @@ extension RaceFeedViewController: EmptyDataSetSource {
         case .nearby:       return emptyStateNearbyRaces
         case .chapters:     return emptyStateChapterRaces
         case .series:       return emptyStateSeriesRaces
+        default:            return EmptyStateViewModel(.noRaceResults)
         }
     }
 

@@ -10,19 +10,6 @@ import UIKit
 import RaceSyncAPI
 import CoreLocation
 
-enum RaceFilter: Int, EnumTitle {
-    case joined, nearby, chapters, series
-
-    var title: String {
-        switch self {
-        case .joined:           return "Joined"
-        case .nearby:           return "Nearby"
-        case .chapters:         return "Chapters"
-        case .series:           return "GQ"
-        }
-    }
-}
-
 // 
 class RaceFeedController {
 
@@ -56,9 +43,9 @@ class RaceFeedController {
     }
 
     func shouldShowShimmer(for filter: RaceFilter) -> Bool {
-        if filter == .series, raceCollection[filter]?.count == 0 {
-            return true
-        }
+//        if filter == .series, raceCollection[filter]?.count == 0 {
+//            return true
+//        }
         return raceCollection[filter] == nil
     }
 
@@ -70,8 +57,10 @@ class RaceFeedController {
             getNearbydRaces(forceFetch, completion)
         case .chapters:
             getChapterRaces(forceFetch, completion)
-        case .series:
-            getSeriesRaces(forceFetch, completion)
+        case .classes(let raceClass):
+            getRaces(for: raceClass, forceFetch, completion)
+        case .series(let series):
+            getRaces(for: series, forceFetch, completion)
         }
     }
 
@@ -83,8 +72,10 @@ class RaceFeedController {
 fileprivate extension RaceFeedController {
 
     func getJoinedRaces(_ forceFetch: Bool = false, _ completion: @escaping ObjectCompletionBlock<[RaceViewModel]>) {
+
         if let viewModels = raceCollection[.joined], !forceFetch {
             completion(viewModels, nil)
+            return
         }
 
         let filters = remoteFilters(with: .joined)
@@ -102,8 +93,10 @@ fileprivate extension RaceFeedController {
     }
 
     func getNearbydRaces(_ forceFetch: Bool = false, _ completion: @escaping ObjectCompletionBlock<[RaceViewModel]>) {
+
         if let viewModels = raceCollection[.nearby], !forceFetch {
             completion(viewModels, nil)
+            return
         }
 
         let filters = remoteFilters(with: .nearby)
@@ -128,12 +121,13 @@ fileprivate extension RaceFeedController {
 
         if let viewModels = raceCollection[.chapters], !forceFetch {
             completion(viewModels, nil)
+            return
         }
 
         let filters = remoteFilters()
         let sorting: RaceViewSorting = settings.showPastEvents ? .ascending : .descending
 
-        raceApi.getRaces(forChapters: user.chapterIds, filters: filters) { [weak self] races, error in
+        raceApi.getRaces(with: filters, chapterIds: user.chapterIds) { [weak self] races, error in
             if let filteredRaces = self?.locallyFilteredRaces(races) {
                 let sortedViewModels = RaceViewModel.sortedViewModels(with: filteredRaces, sorting: sorting)
                 self?.raceCollection[.chapters] = sortedViewModels
@@ -144,22 +138,40 @@ fileprivate extension RaceFeedController {
         }
     }
 
-    func getSeriesRaces(_ forceFetch: Bool = false, _ completion: @escaping ObjectCompletionBlock<[RaceViewModel]>) {
-        if let viewModels = raceCollection[.series], !forceFetch {
+    func getRaces(for class: RaceClass, _ forceFetch: Bool = false, _ completion: @escaping ObjectCompletionBlock<[RaceViewModel]>) {
+
+        if let viewModels = raceCollection[.classes(`class`)], !forceFetch {
             completion(viewModels, nil)
+            return
         }
 
-        let filters: [RaceListFilters] = [.series, .upcoming]
+        let filters: [RaceListFilters] = [.upcoming]
+        let sorting: RaceViewSorting = settings.showPastEvents ? .ascending : .descending
 
-        // One day, the API will support pagination
-        // TODO: The race/list API should accept a year parameter, so only specific year's series races are returned
-        raceApi.getRaces(filters: filters, pageSize: 150) { (races, error) in
-            if let seriesRaces = races?.filter({ (race) -> Bool in
-                guard let startDate = race.startDate else { return false }
-                return startDate.isInThisYear
-            }) {
-                let sortedViewModels = RaceViewModel.sortedViewModels(with: seriesRaces, sorting: .descending)
-                self.raceCollection[.series] = sortedViewModels
+        raceApi.getRaces(with: filters, raceClass: `class`) { [weak self] (races, error) in
+            if let filteredRaces = self?.locallyFilteredRaces(races) {
+                let sortedViewModels = RaceViewModel.sortedViewModels(with: filteredRaces, sorting: sorting)
+                self?.raceCollection[.classes(`class`)] = sortedViewModels
+                completion(sortedViewModels, nil)
+            } else {
+                completion(nil, error)
+            }
+        }
+    }
+
+    func getRaces(for series: GQSeries, _ forceFetch: Bool = false, _ completion: @escaping ObjectCompletionBlock<[RaceViewModel]>) {
+
+        if let viewModels = raceCollection[.series(series)], !forceFetch {
+            completion(viewModels, nil)
+            return
+        }
+
+        let filters: [RaceListFilters] = [.series]
+
+        raceApi.getRaces(with: filters, startDate: "\(series.year)", pageSize: 150) { [weak self]  (races, error) in
+            if let seriesRaces = races {
+                let sortedViewModels = RaceViewModel.sortedViewModels(with: seriesRaces, sorting: .ascending)
+                self?.raceCollection[.series(series)] = sortedViewModels
                 completion(sortedViewModels, nil)
             } else {
                 completion(nil, error)

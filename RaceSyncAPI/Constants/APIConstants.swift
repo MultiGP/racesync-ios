@@ -143,6 +143,7 @@ enum ParamKey {
     static let raceType = "raceType"
     static let startDate = "startDate"
     static let endDate = "endDate"
+    static let entryCount = "entryCount"
     static let childRaceCount = "childRaceCount"
     static let raceEntryCount = "raceEntryCount"
     static let participantCount = "participantCount"

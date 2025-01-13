@@ -19,25 +19,19 @@ public class RaceEntry: Mappable, Descriptable {
     public var displayName: String = ""
     public var firstName: String = ""
     public var lastName: String = ""
-    public var score: String?
+    public var score: Int32?
     public var profilePictureUrl: String?
 
-    public var frequency: String = ""
-    public var group: String = ""
-    public var groupSlot: String = ""
-    public var band: String = ""
-    public var channel: String = ""
-    public var videoTxType: VideoTxType = .´5800mhz´ // Analog 5.8GHz default
-
-    public var aircraftId: String = ""
-    public var aircraftName: String = ""
+    public var frequency: String?
+    public var band: String?
+    public var channel: String?
 
     public var dateAdded: Date?
     public var dateModified: Date?
 
     // MARK: - Initialization
 
-    fileprivate static let requiredProperties = [ParamKey.id, ParamKey.pilotId, ParamKey.aircraftId]
+    fileprivate static let requiredProperties = [ParamKey.id, ParamKey.pilotId]
 
     public required convenience init?(map: Map) {
         for requiredProperty in Self.requiredProperties {
@@ -57,18 +51,12 @@ public class RaceEntry: Mappable, Descriptable {
         displayName <- (map[ParamKey.displayName], MapperUtil.stringTransform)
         firstName <- (map[ParamKey.firstName], MapperUtil.stringTransform)
         lastName <- (map[ParamKey.lastName], MapperUtil.stringTransform)
-        score <- map[ParamKey.score]
+        score <- (map[ParamKey.score], IntegerTransform())
         profilePictureUrl <- map[ParamKey.profilePictureUrl]
 
         frequency <- map[ParamKey.frequency]
-        group <- map[ParamKey.group]
-        groupSlot <- map[ParamKey.groupSlot]
         band <- map[ParamKey.band]
         channel <- map[ParamKey.channel]
-        videoTxType <- (map[ParamKey.videoTransmitter],EnumTransform<VideoTxType>())
-
-        aircraftId <- map[ParamKey.aircraftId]
-        aircraftName <- (map[ParamKey.aircraftName], MapperUtil.stringTransform)
 
         dateAdded <- (map[ParamKey.dateAdded], MapperUtil.dateTransform)
         dateModified <- (map[ParamKey.dateModified], MapperUtil.dateTransform)

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SnapKit
 
 class FormTableViewCell: UITableViewCell {
 
@@ -24,6 +25,15 @@ class FormTableViewCell: UITableViewCell {
         }
     }
 
+    var detailImage: UIImage? {
+        get { return accessoryImageView.image }
+        set {
+            accessoryImageView.image = newValue
+            accessoryImageView.isHidden = (newValue == nil)
+            detailTextLabel?.isHidden = (newValue != nil)
+        }
+    }
+
     // MARK: - Private Variables
 
     fileprivate lazy var spinnerView: UIActivityIndicatorView = {
@@ -31,8 +41,16 @@ class FormTableViewCell: UITableViewCell {
         return view
     }()
 
+    fileprivate lazy var accessoryImageView: UIImageView = {
+        let view = UIImageView()
+        view.isUserInteractionEnabled = false
+        view.isHidden = true
+        return view
+    }()
+
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
+        static let buttonSpacing: CGFloat = 8
     }
 
     // MARK: - Initializatiom
@@ -54,5 +72,11 @@ class FormTableViewCell: UITableViewCell {
         self.selectedBackgroundView = selectedBackgroundView
 
         accessoryType = .disclosureIndicator
+
+        addSubview(accessoryImageView)
+        accessoryImageView.snp.makeConstraints {
+            $0.trailing.equalTo(contentView.snp.trailing).offset(-Constants.buttonSpacing)
+            $0.centerY.equalToSuperview()
+        }
     }
 }

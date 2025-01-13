@@ -81,7 +81,6 @@ public enum ScoringFormat: String, EnumTitle {
     }
 }
 
-//RACE_CLASS = array(0 =>'Open', 1 =>'Tiny Whoop', 2 =>'Micro (Tiny Trainer)', 3 =>'Freedom Spec', 4 =>'Street League', 5 =>'Mega', 6 =>'Velocidrone')
 //See https://github.com/MultiGP/multigp-com/blob/main/public_html/mgp/protected/modules/multigp/models/Race.php#L114-L122
 // TODO: Pull these values from the server instead of hardcoding them on the app, since they may change depending on agreements
 public enum RaceClass: String, EnumTitle {
@@ -90,8 +89,8 @@ public enum RaceClass: String, EnumTitle {
     case micro = "2"
     case freedom = "3"
     case `spec7in` = "4"
-    case mega = "5"
-    case velo = "6"
+    //case mega = "5"
+    case esport = "6"
     case `spec5in` = "7"
     case prospec = "8"
 
@@ -100,11 +99,11 @@ public enum RaceClass: String, EnumTitle {
         case .open:         return "Open"
         case .whoop:        return "Whoop"
         case .micro:        return "Micro"
-        case .freedom:      return "Freedom Spec"
-        case .spec7in:      return "7 Inch Spec"
-        case .mega:         return "Mega"
-        case .velo:         return "Velocidrone"
-        case .spec5in:      return "5 Inch Spec"
+        case .freedom:      return "Freedom"
+        case .spec7in:      return "7 Inch"
+        //case .mega:         return "Mega"
+        case .esport:       return "E-Sport"
+        case .spec5in:      return "5 Inch"
         case .prospec:      return "Pro Spec"
         }
     }

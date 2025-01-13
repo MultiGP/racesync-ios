@@ -47,9 +47,8 @@ public struct RaceData: Descriptable {
         self.chapterName = chapterName
     }
 
-    public init(with race: Race, id: ObjectId) {
-        self.raceId = id
-
+    public init(with race: Race) {
+        self.raceId = race.id
         self.name = race.name
         self.chapterId = race.chapterId
         self.chapterName = race.chapterName

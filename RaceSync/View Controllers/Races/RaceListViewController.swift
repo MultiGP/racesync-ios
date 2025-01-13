@@ -119,14 +119,14 @@ class RaceListViewController: UIViewController, ViewJoinable {
     }
 
     fileprivate func openRaceDetail(_ viewModel: RaceViewModel) {
-        let vc = RaceTabBarController(with: viewModel.race.id)
+        let vc = RaceTabBarController(with: viewModel.race)
         vc.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(vc, animated: true)
     }
 
     @objc func reloadRaces() {
         if let seasonId = seasonId {
-            raceApi.getRaces(forSeason: seasonId) { [weak self] (races, error) in
+            raceApi.getRaces(seasonId: seasonId) { [weak self] (races, error) in
                 if let races = races {
                     self?.raceList = RaceViewModel.sortedViewModels(with: races)
                     self?.tableView.reloadData()
@@ -135,7 +135,7 @@ class RaceListViewController: UIViewController, ViewJoinable {
                 }
             }
         } else if let raceClass = raceClass {
-            raceApi.getRaces(forClass: raceClass, filters: [.upcoming]) { [weak self] (races, error) in
+            raceApi.getRaces(with: [.upcoming], raceClass: raceClass) { [weak self] (races, error) in
                 if let races = races {
                     self?.raceList = RaceViewModel.sortedViewModels(with: races, sorting: .descending)
                     self?.tableView.reloadData()
@@ -144,7 +144,7 @@ class RaceListViewController: UIViewController, ViewJoinable {
                 }
             }
         } else if let raceName = raceName {
-            raceApi.getRaces(by: raceName) { [weak self] (races, error) in
+            raceApi.getRaces(name: raceName) { [weak self] (races, error) in
                 if let races = races {
                     self?.raceList = RaceViewModel.sortedViewModels(with: races)
                     self?.tableView.reloadData()

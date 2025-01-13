@@ -21,6 +21,7 @@ class RaceFeedMenuViewController: UIViewController {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.register(cellType: FormTableViewCell.self)
         tableView.contentInsetAdjustmentBehavior = .always
+        tableView.tableHeaderView = headerView
         tableView.tableFooterView = UIView()
         tableView.dataSource = self
         tableView.delegate = self
@@ -32,13 +33,52 @@ class RaceFeedMenuViewController: UIViewController {
         return tableView
     }()
 
+    fileprivate lazy var headerView: UIView = {
+        let view = UIView()
+
+        let imageView = UIImageView(image: UIImage(named: "icn_settings_header"))
+        view.addSubview(imageView)
+        imageView.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalToSuperview().offset(-120)
+        }
+        UIView.addParallaxToView(imageView)
+
+        let label1 = UILabel()
+        label1.text = "Keep scrolling to unlock the secret\nto become the fastest FPV pilot."
+        label1.font = UIFont.systemFont(ofSize: 13, weight: .medium)
+        label1.textColor = Color.gray100
+        label1.textAlignment = .center
+        label1.numberOfLines = 0
+        view.addSubview(label1)
+        label1.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalToSuperview().offset(-300)
+        }
+
+        let label2 = UILabel()
+        label2.text = "YOU MUST BE A SHIT PILOT!"
+        label2.font = UIFont.systemFont(ofSize: 13, weight: .medium)
+        label2.textColor = Color.gray200
+        label2.textAlignment = .center
+        view.addSubview(label2)
+        label2.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalToSuperview().offset(-400)
+        }
+
+        return view
+    }()
+
     fileprivate lazy var rows: [Row] = {
         var rows = [Row]()
-        if isPastEventsEnabled { rows += [.showPastEvents]}
+        if isRaceFiltersEnabled { rows += [.raceFeedFilters]}
         rows += [.searchRadius, .measurement]
+        if isPastEventsEnabled { rows += [.showPastEvents]}
         return rows
     }()
 
+    fileprivate let isRaceFiltersEnabled: Bool = true
     fileprivate let isPastEventsEnabled: Bool = false
 
     fileprivate enum Constants {
@@ -47,10 +87,6 @@ class RaceFeedMenuViewController: UIViewController {
     }
 
     // MARK: - Initialization
-
-//    required init?(coder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
 
     // MARK: - Lifecycle Methods
 
@@ -108,51 +144,87 @@ extension RaceFeedMenuViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
 
         let row = rows[indexPath.row]
+
+        switch row {
+        case .raceFeedFilters:
+            pushToFilterOptions()
+        case .searchRadius:
+            pushToRadiusOptions()
+        case .measurement:
+            pushToMeasurementOptions()
+        default:
+            return
+        }
+    }
+
+    fileprivate func pushToFilterOptions() {
         let settings = APIServices.shared.settings
 
-        if row == .searchRadius {
-            let items = settings.lengthUnit.supportedValues
-            let selectedItem = settings.searchRadius
+        let items = RaceFilter.allCases.compactMap { $0.subtitle }
+        let selectedItems = settings.raceFeedFilters.compactMap { $0.title }
+        let withItems = [RaceClass.groupTitle : RaceClass.allCases.compactMap { $0.title }.sorted(by: >),
+                         GQSeries.groupTitle : GQSeries.allCases.compactMap { $0.title }.sorted(by: >)]
 
-            let vc = TextPickerViewController(with: items, selectedItem: selectedItem)
-            vc.title = "\(row.title) (\(settings.lengthUnit.symbol))"
+        let vc = MultiTextPickerViewController(with: items, selectedItems: selectedItems)
+        vc.itemWithItems = withItems
+        vc.title = Row.raceFeedFilters.title
 
-            navigationController?.pushViewController(vc, animated: true)
+        navigationController?.pushViewController(vc, animated: true)
 
-            vc.didSelectItem = { item in
-                let settings = APIServices.shared.settings
-                settings.searchRadius = item
+        vc.didUpdateItems = { items in
+            let settings = APIServices.shared.settings
+            settings.raceFeedFilters = RaceFilter.filters(with: items)
 
-                self.tableView.reloadData()
-                self.navigationController?.popViewController(animated: true)
-            }
-
-        } else if row == .measurement {
-            let items = APIMeasurementSystem.allCases.compactMap { $0.title }
-            let selectedItem = settings.measurementSystem.title
-
-            let vc = TextPickerViewController(with: items, selectedItem: selectedItem)
-            vc.title = row.title
-            navigationController?.pushViewController(vc, animated: true)
-
-            vc.didSelectItem = { item in
-                guard let system = APIMeasurementSystem(title: item) else { return }
-
-                let previousUnit = settings.lengthUnit
-                settings.measurementSystem = system
-                let newUnit = settings.lengthUnit
-
-                // To make values compatible, we user similar lenghts instead of converting and having values with decimals
-                if let idx = previousUnit.supportedValues.firstIndex(of: settings.searchRadius) {
-                    let value = newUnit.supportedValues[idx]
-                    settings.update(searchRadius: value)
-                }
-
-                self.tableView.reloadData()
-                self.navigationController?.popViewController(animated: true)
-            }
+            self.tableView.reloadData()
         }
+    }
 
+    fileprivate func pushToRadiusOptions() {
+        let settings = APIServices.shared.settings
+
+        let items = settings.lengthUnit.supportedValues
+        let selectedItem = settings.searchRadius
+
+        let vc = TextPickerViewController(with: items, selectedItem: selectedItem)
+        vc.title = "\(Row.searchRadius.title) (\(settings.lengthUnit.symbol))"
+
+        navigationController?.pushViewController(vc, animated: true)
+
+        vc.didSelectItem = { item in
+            let settings = APIServices.shared.settings
+            settings.searchRadius = item
+
+            self.tableView.reloadData()
+            self.navigationController?.popViewController(animated: true)
+        }
+    }
+
+    fileprivate func pushToMeasurementOptions() {
+        let settings = APIServices.shared.settings
+
+        let items = APIMeasurementSystem.allCases.compactMap { $0.title }
+        let selectedItem = settings.measurementSystem.title
+
+        let vc = TextPickerViewController(with: items, selectedItem: selectedItem)
+        vc.title = Row.measurement.title
+        navigationController?.pushViewController(vc, animated: true)
+
+        vc.didSelectItem = { item in
+            guard let system = APIMeasurementSystem(title: item) else { return }
+
+            let previousUnit = settings.lengthUnit
+            settings.measurementSystem = system
+            let newUnit = settings.lengthUnit
+
+            // To make values compatible, we user similar lenghts instead of converting and having values with decimals
+            if let idx = previousUnit.supportedValues.firstIndex(of: settings.searchRadius) {
+                let value = newUnit.supportedValues[idx]
+                settings.update(searchRadius: value)
+            }
+
+            self.tableView.reloadData()
+            self.navigationController?.popViewController(animated: true)
+        }
     }
 }
 
@@ -174,7 +246,14 @@ extension RaceFeedMenuViewController: UITableViewDataSource {
 
         let settings = APIServices.shared.settings
 
-        if row == .showPastEvents {
+        if row == .raceFeedFilters {
+            let filterTitles = settings.raceFeedFilters.compactMap { $0.title }
+            cell.detailTextLabel?.text = filterTitles.joined(separator: ", ")
+        } else if row == .searchRadius {
+            cell.detailTextLabel?.text = "\(settings.searchRadius) \(settings.lengthUnit.symbol)"
+        } else if row == .measurement {
+            cell.detailTextLabel?.text = settings.measurementSystem.title
+        } else if row == .showPastEvents {
             cell.accessoryType = .none
             let accessory = UISwitch()
 
@@ -182,10 +261,6 @@ extension RaceFeedMenuViewController: UITableViewDataSource {
             accessory.addTarget(self, action: #selector(didChangeSwitchValue(_:)), for: .valueChanged)
             accessory.isOn = settings.showPastEvents
             cell.accessoryView = accessory
-        } else if row == .searchRadius {
-            cell.detailTextLabel?.text = "\(settings.searchRadius) \(settings.lengthUnit.symbol)"
-        } else if row == .measurement {
-            cell.detailTextLabel?.text = settings.measurementSystem.title
         }
 
         return cell
@@ -213,6 +288,7 @@ private extension APISettingsType {
     // For including icons to each row. Look for icons at https://thenounproject.com/
     var imageName: String {
         switch self {
+        case .raceFeedFilters:  return "icn_settings_search"
         case .searchRadius:     return "icn_settings_radius"
         case .measurement:      return "icn_settings_ruler"
         default:                return ""

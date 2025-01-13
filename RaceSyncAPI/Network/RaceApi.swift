@@ -12,14 +12,6 @@ import SwiftyJSON
 
 // MARK: - Interface
 
-public enum RaceListFilters: String {
-    case upcoming = "upcoming"
-    case past = "past"
-    case nearby = "nearby"
-    case series = "qualifier"
-    case joined = "joined"
-}
-
 public protocol RaceApiInterface {
 
     /**
@@ -38,90 +30,31 @@ public protocol RaceApiInterface {
     /**
     Gets a filtered set of races related to a specific User.
 
-    - parameter userId: The User id (Optional)
     - parameter filters: The list of compounding filters to compose the race query
+    - parameter userId: The User id (Optional)
+    - parameter name: The race name. (Optional)
+    - parameter startDate: The race start date. This value can be a full date, or month, or year. (Optional)
+    - parameter chapterIds: The Chapter's ids. (Optional)
+    - parameter seasonId: The Season id the race belongs to. (Optional)
+    - parameter raceClass: The race class type. (Optional)
     - parameter latitude: The coordinate longitude (Optional)
     - parameter longitude: The coordinate longitude (Optional)
     - parameter currentPage: The current page cursor position. Default is 0
     - parameter pageSize: The amount of objects to be returned by page. Default is 25.
     - parameter completion: The closure to be called upon completion. Returns a transcient list of Race objects.
     */
-    func getRaces(forUser userId: ObjectId,
-                  filters: [RaceListFilters],
+    func getRaces(with filters: [RaceListFilters],
+                  userId: ObjectId,
+                  name: String?,
+                  startDate: String?,
+                  chapterIds: [ObjectId]?,
+                  seasonId: ObjectId?,
+                  raceClass: RaceClass?,
                   latitude: String?,
                   longitude: String?,
                   currentPage: Int,
                   pageSize: Int,
                   completion: @escaping ObjectCompletionBlock<[Race]>)
-
-    /**
-    Gets the races belonging to a specific chapter.
-
-    - parameter chapterId: The Chapter id.
-    - parameter currentPage: The current page cursor position. Default is 0
-    - parameter pageSize: The amount of objects to be returned by page. Default is 25.
-    - parameter completion: The closure to be called upon completion. Returns a transcient list of Race objects.
-    */
-    func getRaces(forChapter chapterId: ObjectId,
-                  currentPage: Int,
-                  pageSize: Int,
-                  completion: @escaping ObjectCompletionBlock<[Race]>)
-
-    /**
-    Gets the races belonging to a list of chapters.
-
-    - parameter chapterIds: The Chapter's ids.
-    - parameter filters: The list of compounding filters to compose the race query
-    - parameter currentPage: The current page cursor position. Default is 0
-    - parameter pageSize: The amount of objects to be returned by page. Default is 25.
-    - parameter completion: The closure to be called upon completion. Returns a transcient list of Race objects.
-    */
-    func getRaces(forChapters chapterIds: [ObjectId],
-                  filters: [RaceListFilters],
-                  currentPage: Int,
-                  pageSize: Int,
-                  completion: @escaping ObjectCompletionBlock<[Race]>)
-
-    /**
-    Gets the races belonging to a specific season.
-
-    - parameter seasonId: The Season id.
-    - parameter currentPage: The current page cursor position. Default is 0
-    - parameter pageSize: The amount of objects to be returned by page. Default is 25.
-    - parameter completion: The closure to be called upon completion. Returns a transcient list of Race objects.
-    */
-    func getRaces(forSeason seasonId: ObjectId,
-                  currentPage: Int,
-                  pageSize: Int,
-                  completion: @escaping ObjectCompletionBlock<[Race]>)
-
-    /**
-    Gets the races belonging to a specific class.
-
-    - parameter raceClass: The race class type.
-    - parameter filters: The list of compounding filters to compose the race query
-    - parameter currentPage: The current page cursor position. Default is 0
-    - parameter pageSize: The amount of objects to be returned by page. Default is 25.
-    - parameter completion: The closure to be called upon completion. Returns a transcient list of Race objects.
-    */
-    func getRaces(forClass raceClass: RaceClass,
-                  filters: [RaceListFilters],
-                  currentPage: Int,
-                  pageSize: Int,
-                  completion: @escaping ObjectCompletionBlock<[Race]>)
-
-    /**
-    Gets the all races matching the title attribute.
-
-    - parameter name: The race name.
-    - parameter currentPage: The current page cursor position. Default is 0
-    - parameter pageSize: The amount of objects to be returned by page. Default is 25.
-    - parameter completion: The closure to be called upon completion. Returns a transcient list of Race objects.
-    */
-    func getRaces(by name: String,
-                  currentPage: Int,
-                  pageSize: Int,
-                     completion: @escaping ObjectCompletionBlock<[Race]>)
 
     /**
     Gets a full Race object, including pilot entries and schedule
@@ -233,70 +166,42 @@ public class RaceApi: RaceApiInterface {
         let lat = latitude ?? user.latitude
         let long = longitude ?? user.longitude
 
-        getRaces(forUser: user.id, filters: filters, latitude: lat, longitude: long, completion: completion)
+        getRaces(with: filters, userId: user.id, latitude: lat, longitude: long, completion: completion)
     }
 
-    public func getRaces(forUser userId: ObjectId = "",
-                         filters: [RaceListFilters],
+    public func getRaces(with filters: [RaceListFilters] = [RaceListFilters](),
+                         userId: ObjectId = "",
+                         name: String? = nil,
+                         startDate: String? = nil,
+                         chapterIds: [ObjectId]? = nil,
+                         seasonId: ObjectId? = nil,
+                         raceClass: RaceClass? = nil,
                          latitude: String? = nil, longitude: String? = nil,
                          currentPage: Int = 0, pageSize: Int = StandardPageSize,
                          completion: @escaping ObjectCompletionBlock<[Race]>) {
 
         let endpoint = EndPoint.raceList
-        let parameters = parametersForRaces(with: userId, filters: filters, latitude: latitude, longitude: longitude, pageSize: pageSize)
+        var params = parametersForRaces(with: filters, userId: userId, latitude: latitude, longitude: longitude, pageSize: pageSize)
 
-        repositoryAdapter.getObjects(endpoint, parameters: parameters, currentPage: currentPage, pageSize: pageSize, type: Race.self, completion)
-    }
+        if let name = name, name.count > 0 {
+            params[ParamKey.name] = name
+        }
 
-    public func getRaces(forChapter chapterId: ObjectId,
-                         currentPage: Int = 0, pageSize: Int = StandardPageSize,
-                         completion: @escaping ObjectCompletionBlock<[Race]>) {
+        if let date = startDate, date.count > 0 {
+            params[ParamKey.startDate] = date
+        }
 
-        let endpoint = EndPoint.raceList
-        let parameters = parametersForRaces(filters: [RaceListFilters](), chapterIds: [chapterId])
+        if let chapterIds = chapterIds, chapterIds.count > 0 {
+            params[ParamKey.chapterId] = chapterIds
+        }
 
-        repositoryAdapter.getObjects(endpoint, parameters: parameters, currentPage: currentPage, pageSize: pageSize, type: Race.self, completion)
-    }
+        if let seasonId = seasonId, seasonId.count > 0 {
+            params[ParamKey.seasonId] = seasonId
+        }
 
-    public func getRaces(forChapters chapterIds: [ObjectId],
-                         filters: [RaceListFilters],
-                         currentPage: Int = 0, pageSize: Int = StandardPageSize,
-                         completion: @escaping ObjectCompletionBlock<[Race]>) {
-
-        let endpoint = EndPoint.raceList
-        let parameters = parametersForRaces(filters: filters, chapterIds: chapterIds)
-
-        repositoryAdapter.getObjects(endpoint, parameters: parameters, currentPage: currentPage, pageSize: pageSize, type: Race.self, completion)
-    }
-
-    public func getRaces(forSeason seasonId: ObjectId,
-                         currentPage: Int = 0, pageSize: Int = StandardPageSize,
-                         completion: @escaping ObjectCompletionBlock<[Race]>) {
-
-        let endpoint = EndPoint.raceList
-        let parameters = [ParamKey.seasonId: seasonId]
-
-        repositoryAdapter.getObjects(endpoint, parameters: parameters, currentPage: currentPage, pageSize: pageSize, type: Race.self, completion)
-    }
-
-    public func getRaces(forClass raceClass: RaceClass,
-                         filters: [RaceListFilters],
-                         currentPage: Int = 0, pageSize: Int = StandardPageSize,
-                         completion: @escaping ObjectCompletionBlock<[Race]>) {
-
-        let endpoint = EndPoint.raceList
-        var params = parametersForRaces(filters: filters)
-        params[ParamKey.raceClass] = raceClass.rawValue
-
-        repositoryAdapter.getObjects(endpoint, parameters: params, currentPage: currentPage, pageSize: pageSize, type: Race.self, completion)
-    }
-
-    public func getRaces(by name: String,
-                         currentPage: Int = 0, pageSize: Int = StandardPageSize,
-                         completion: @escaping ObjectCompletionBlock<[Race]>) {
-
-        let endpoint = EndPoint.raceList
-        let params = [ParamKey.name: name]
+        if let raceClass = raceClass {
+            params[ParamKey.raceClass] = raceClass.rawValue
+        }
 
         repositoryAdapter.getObjects(endpoint, parameters: params, currentPage: currentPage, pageSize: pageSize, type: Race.self, completion)
     }
@@ -421,9 +326,8 @@ public class RaceApi: RaceApiInterface {
 
 fileprivate extension RaceApi {
 
-    func parametersForRaces(with userId: ObjectId = "",
-                            filters: [RaceListFilters],
-                            chapterIds: [ObjectId] = [ObjectId](),
+    func parametersForRaces(with filters: [RaceListFilters],
+                            userId: ObjectId = "",
                             latitude: String? = nil, longitude: String? = nil,
                             pageSize: Int = StandardPageSize) -> Params {
 
@@ -455,10 +359,6 @@ fileprivate extension RaceApi {
             parameters[ParamKey.upcoming] = [ParamKey.limit: pageSize]
         } else if filters.contains(.past) {
             parameters[ParamKey.past] = [ParamKey.limit: pageSize]
-        }
-
-        if chapterIds.count > 0 {
-            parameters[ParamKey.chapterId] = chapterIds
         }
 
         return parameters

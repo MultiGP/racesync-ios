@@ -27,6 +27,8 @@ public class Aircraft: Mappable, Descriptable {
     public var videoRxChannels: VideoChannels?
     public var antenna: AntennaPolarization = .both
 
+    public var entryCount: Int32 = 0
+
     public static let nameMinLength: Int = 3
     public static let nameMaxLength: Int = 20
 
@@ -59,5 +61,7 @@ public class Aircraft: Mappable, Descriptable {
         videoTxChannels <- (map[ParamKey.videoTransmitterChannels],EnumTransform<VideoChannels>())
         videoRxChannels <- (map[ParamKey.videoReceiverChannels],EnumTransform<VideoChannels>())
         antenna <- (map[ParamKey.antenna],EnumTransform<AntennaPolarization>())
+
+        entryCount <- (map[ParamKey.entryCount], IntegerTransform())
     }
 }

@@ -11,13 +11,25 @@ import RaceSyncAPI
 
 extension Race {
 
-    var calendarEvent: CalendarEvent? {
-        guard let startDate = startDate, let address = address, let raceUrl = URL(string: url) else {
+    func canCreateCalendarEvent() -> Bool {
+
+        guard let startDate = startDate, startDate.timeIntervalSinceNow.sign == .plus else {
+            return false
+        }
+
+        return true
+    }
+
+    func createCalendarEvent(with raceId: ObjectId) -> CalendarEvent? {
+
+        let raceURL = URL(string: MGPWeb.getUrl(for: .raceView, value: raceId))
+
+        guard canCreateCalendarEvent(), let startDate = startDate, let address = address else {
             return nil
         }
-        guard startDate.timeIntervalSinceNow.sign == .plus else {
-            return nil
-        }
-        return CalendarEvent(title: name, location: address, description: description, startDate: startDate, endDate: endDate, url: raceUrl)
+
+        let content = content.stripHTML()
+
+        return CalendarEvent(title: name, location: address, description: content, startDate: startDate, endDate: endDate, url: raceURL)
     }
 }

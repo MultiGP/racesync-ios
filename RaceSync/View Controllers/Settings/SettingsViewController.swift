@@ -20,7 +20,7 @@ class SettingsViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.tableHeaderView = headerView
-       tableView.tableFooterView = UIView()
+        tableView.tableFooterView = UIView()
         tableView.register(cellType: FormTableViewCell.self)
 
         let backgroundView = UIView()
@@ -37,10 +37,10 @@ class SettingsViewController: UIViewController {
         view.addSubview(imageView)
         imageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(-100)
+            $0.top.equalToSuperview().offset(-120)
         }
 
-        UIView.addParallaxToView(view)
+        UIView.addParallaxToView(imageView)
 
         return view
     }()
