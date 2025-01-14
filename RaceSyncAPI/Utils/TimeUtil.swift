@@ -24,8 +24,8 @@ public class TimeUtil {
             // Format into "SS.mmm"
             return String(format: "%02d.%03d", seconds, milliseconds)
         } else {
-            // Format into "MM:SS.mmm"
-            return String(format: "%02d:%02d.%03d", minutes, seconds, milliseconds)
+            // Format into "M:SS.mmm"
+            return String(format: "%2d:%02d.%03d", minutes, seconds, milliseconds)
         }
     }
 }

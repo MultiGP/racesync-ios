@@ -265,9 +265,9 @@ extension RacePilotsViewController: UITableViewDataSource {
         cell.avatarImageView.imageView.setImage(with: userVM.pictureUrl, placeholderImage: PlaceholderImg.medium)
         cell.titleLabel.text = userVM.displayName
         cell.subtitleLabel.text = ResultEntryViewModel.noResultPlaceholder
-        cell.textPill.text = showingResults ? nil : userVM.channelLabel // hidden when results visible
-        cell.textPill.style = .badge
         cell.rankView.rank = nil
+        cell.textPill.text = nil
+        cell.textPill.style = .badge
 
         if showingResults {
             if let resultEntry = userVM.resultEntry {
@@ -285,6 +285,8 @@ extension RacePilotsViewController: UITableViewDataSource {
                 cell.textPill.style = .text
                 cell.rankView.rank = Int32(indexPath.row+1)
             }
+        } else if race.raceClass != .esport {
+            cell.textPill.text = userVM.channelLabel // only real races have frequencies
         }
 
         return cell

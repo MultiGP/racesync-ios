@@ -82,6 +82,7 @@ class LoginViewController: UIViewController {
         button.setTitleColor(Color.red, for: .normal)
         button.setTitle("Create an account", for: .normal)
         button.addTarget(self, action:#selector(didPressCreateAccountButton), for: .touchUpInside)
+        button.isHidden = true
         return button
     }()
 
