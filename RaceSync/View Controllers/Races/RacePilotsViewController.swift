@@ -30,6 +30,61 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
         return tableView
     }()
 
+    lazy var tableHeaderView: UIView = {
+
+        let view = UIView()
+        let padding = Constants.padding
+        let spacing = Constants.buttonSpacing
+
+        let titleLabel = UILabel()
+        titleLabel.text = race.scoringFormat.title.uppercased()
+        titleLabel.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+        titleLabel.textColor = Color.gray400
+        titleLabel.textAlignment = .right
+        titleLabel.numberOfLines = 1
+        view.addSubview(titleLabel)
+        titleLabel.snp.makeConstraints {
+            $0.bottom.equalToSuperview().offset(-Constants.buttonSpacing)
+            $0.leading.equalToSuperview().offset(Constants.padding)
+        }
+
+        if let url = race.liveTimeEventUrl, let web = AppWeb(url: url) {
+
+            let button = UIButton(type: .system)
+            button.addTarget(self, action: #selector(didTapResultsButton(_:)), for: .touchUpInside)
+
+            var image: UIImage?
+
+            if web == .livefpv {
+                image = UIImage(named: "logo_livefpv")?.withRenderingMode(.alwaysOriginal)
+            } else if web == .fpvscores {
+                image = UIImage(named: "logo_fpvscores")?.withRenderingMode(.alwaysOriginal)
+            }
+
+            button.setImage(image, for: .normal)
+            button.setTitleColor(#colorLiteral(red: 0.2392156863, green: 0.2392156863, blue: 0.2588235294, alpha: 0.6), for: .normal)
+
+            button.setTitle("Results on", for: .normal)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 13, weight: .medium)
+            button.semanticContentAttribute = .forceRightToLeft
+
+            button.titleEdgeInsets = UIEdgeInsets(top: 0, left: -spacing/2, bottom: 0, right: spacing/2)
+            button.contentEdgeInsets = UIEdgeInsets(top: spacing/2, left: padding, bottom: spacing/2, right: padding)
+
+            let capInsets = UIEdgeInsets(top: 0, left: padding, bottom: 0, right: padding)
+            let bkgdImage = UIImage(named: "btn_arrow_bkgd")?.resizableImage(withCapInsets: capInsets, resizingMode: .tile).withTintColor(Color.white)
+            button.setBackgroundImage(bkgdImage, for: .normal)
+
+            view.addSubview(button)
+            button.snp.makeConstraints {
+                $0.centerY.equalToSuperview()
+                $0.trailing.equalToSuperview().offset(-Constants.padding)
+            }
+        }
+
+        return view
+    }()
+
     fileprivate var isLoading: Bool {
         get { return tabBarController.isLoading }
         set { }
@@ -184,6 +239,11 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
 
 fileprivate extension RacePilotsViewController {
 
+    @objc func didTapResultsButton(_ sender: Any) {
+        guard let url = race.liveTimeEventUrl, let web = AppWeb(url: url) else { return }
+        WebViewController.openUrl(url)
+    }
+
     func setLoading(_ cell: AvatarTableViewCell, loading: Bool) {
         cell.isLoading = loading
         didTapCell = loading
@@ -222,21 +282,14 @@ extension RacePilotsViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if showingResults {
-            if race.isGQ {
-                return "GQ Results: \(ScoringFormat.fastest3Laps.title)"
-            } else {
-                return race.scoringFormat.title
-            }
-        } else {
-            return nil
-        }
+    func tableView(_ tableview: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        guard userViewModels.count > 0 && showingResults else { return nil }
+        return tableHeaderView
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        guard userViewModels.count > 0 else { return 0 }
-        return UITableView.automaticDimension
+        guard userViewModels.count > 0 && showingResults else { return 36 }
+        return 60
     }
 }
 

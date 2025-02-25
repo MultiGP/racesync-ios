@@ -810,7 +810,7 @@ fileprivate extension RaceDetailViewController {
         WebViewController.openUrl(zippyqUrl)
     }
 
-    func openLiveFPV(_ cell: FormTableViewCell) {
+    func openExternalResults(_ cell: FormTableViewCell) {
         guard let url = race.liveTimeEventUrl else { return }
         WebViewController.openUrl(url)
     }
@@ -835,7 +835,7 @@ extension RaceDetailViewController: UITableViewDelegate {
         } else if row == .zippyQ {
             openZippyQSchedule(cell)
         } else if row == .results {
-            openLiveFPV(cell)
+            openExternalResults(cell)
         }
 
         tableView.deselectRow(at: indexPath, animated: true)
