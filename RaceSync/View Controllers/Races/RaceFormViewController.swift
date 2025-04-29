@@ -657,8 +657,8 @@ extension RaceFormViewController: FormBaseViewControllerDelegate {
         guard let row = selectedRow else { return false }
 
         if row.formType == .textfield {
-            guard item.count >= Race.nameMinLength else { return false }
-            guard item.count < Race.nameMaxLength else { return false }
+            guard item.count >= 3 else { return false }
+            guard item.count < 50 else { return false }
         }
 
         if row.isRowRequired {

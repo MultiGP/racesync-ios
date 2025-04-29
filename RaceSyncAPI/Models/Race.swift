@@ -74,9 +74,6 @@ public class Race: Mappable, Joinable, Descriptable {
     public var schedule: RaceSchedule? = nil
     public var results: [ResultEntry]? = nil
 
-    public static let nameMinLength: Int = 3
-    public static let nameMaxLength: Int = 50
-
     // MARK: - Initialization
 
     fileprivate static let requiredProperties = [/*ParamKey.id, */ParamKey.name, ParamKey.chapterId, ParamKey.ownerId]

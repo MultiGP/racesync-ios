@@ -82,7 +82,7 @@ class LoginViewController: UIViewController {
         button.setTitleColor(Color.red, for: .normal)
         button.setTitle("Create an account", for: .normal)
         button.addTarget(self, action:#selector(didPressCreateAccountButton), for: .touchUpInside)
-        button.isHidden = true
+        button.isHidden = false
         return button
     }()
 
@@ -294,7 +294,11 @@ class LoginViewController: UIViewController {
     }
 
     @objc func didPressCreateAccountButton() {
-        WebViewController.openUrl(AppWebConstants.accountRegistration)
+
+        let vc = SignupViewController()
+        let nc = UINavigationController(rootViewController: vc)
+
+        present(nc, animated: true)
     }
 
     @objc func didPressLoginButton() {

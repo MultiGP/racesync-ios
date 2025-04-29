@@ -288,8 +288,8 @@ extension AircraftDetailViewController: FormBaseViewControllerDelegate {
 
     func formViewController(_ viewController: FormBaseViewController, enableSelectionWithItem item: String) -> Bool {
         guard let row = selectedRow else { return false }
-        guard item.count >= Aircraft.nameMinLength else { return false }
-        guard item.count < Aircraft.nameMaxLength else { return false }
+        guard item.count >= 3 else { return false }
+        guard item.count < 30 else { return false }
         
         if row.isRowRequired {
             return !item.isEmpty

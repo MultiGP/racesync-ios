@@ -78,6 +78,7 @@
 		4F65D8E02574F6CF00C506C3 /* TrackListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F65D8DF2574F6CF00C506C3 /* TrackListViewController.swift */; };
 		4F65D8EE257869AD00C506C3 /* TrackViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F65D8ED257869AD00C506C3 /* TrackViewModel.swift */; };
 		4F65D908257B134700C506C3 /* TrackDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F65D907257B134700C506C3 /* TrackDetailViewController.swift */; };
+		4F6649542D714A92004B5F90 /* SignupForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6649532D714A92004B5F90 /* SignupForm.swift */; };
 		4F6881B2257ECAE500D33672 /* track-images in Resources */ = {isa = PBXBuildFile; fileRef = 4F6881B1257ECAE500D33672 /* track-images */; };
 		4F68BE692399CEB5009D44F7 /* AlertUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F68BE682399CEB5009D44F7 /* AlertUtil.swift */; };
 		4F68BE6B2399CF07009D44F7 /* ActionSheetUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F68BE6A2399CF07009D44F7 /* ActionSheetUtil.swift */; };
@@ -182,6 +183,8 @@
 		4FA26831237A58E1008970AC /* ApiError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA26830237A58E1008970AC /* ApiError.swift */; };
 		4FA26833237A5983008970AC /* ObjectMapper+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA26832237A5983008970AC /* ObjectMapper+Extensions.swift */; };
 		4FA26835237A80B9008970AC /* ActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA26834237A80B9008970AC /* ActionButton.swift */; };
+		4FA3066B2D7147A700DF13D7 /* SignupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA3066A2D7147A600DF13D7 /* SignupViewController.swift */; };
+		4FA3066D2D7147F700DF13D7 /* UnregisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA3066C2D7147F700DF13D7 /* UnregisterViewController.swift */; };
 		4FAAA88523AA15EA00A004DC /* MapKit+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAAA88423AA15EA00A004DC /* MapKit+Extensions.swift */; };
 		4FAC24A823DC3E06009AD585 /* UILabel+LinesCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAC24A723DC3E06009AD585 /* UILabel+LinesCount.swift */; };
 		4FB06AB3296B521000F14E59 /* AppIcon-MGP1@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4FB06AAF296B521000F14E59 /* AppIcon-MGP1@3x.png */; };
@@ -394,6 +397,7 @@
 		4F65D8DF2574F6CF00C506C3 /* TrackListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackListViewController.swift; sourceTree = "<group>"; };
 		4F65D8ED257869AD00C506C3 /* TrackViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackViewModel.swift; sourceTree = "<group>"; };
 		4F65D907257B134700C506C3 /* TrackDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackDetailViewController.swift; sourceTree = "<group>"; };
+		4F6649532D714A92004B5F90 /* SignupForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupForm.swift; sourceTree = "<group>"; };
 		4F6881B1257ECAE500D33672 /* track-images */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = folder; name = "track-images"; path = "RaceSync/track-images"; sourceTree = SOURCE_ROOT; };
 		4F68BE682399CEB5009D44F7 /* AlertUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertUtil.swift; sourceTree = "<group>"; };
 		4F68BE6A2399CF07009D44F7 /* ActionSheetUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetUtil.swift; sourceTree = "<group>"; };
@@ -504,6 +508,8 @@
 		4FA26830237A58E1008970AC /* ApiError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiError.swift; sourceTree = "<group>"; };
 		4FA26832237A5983008970AC /* ObjectMapper+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ObjectMapper+Extensions.swift"; sourceTree = "<group>"; };
 		4FA26834237A80B9008970AC /* ActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButton.swift; sourceTree = "<group>"; };
+		4FA3066A2D7147A600DF13D7 /* SignupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupViewController.swift; sourceTree = "<group>"; };
+		4FA3066C2D7147F700DF13D7 /* UnregisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnregisterViewController.swift; sourceTree = "<group>"; };
 		4FAAA88423AA15EA00A004DC /* MapKit+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MapKit+Extensions.swift"; sourceTree = "<group>"; };
 		4FAC24A723DC3E06009AD585 /* UILabel+LinesCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+LinesCount.swift"; sourceTree = "<group>"; };
 		4FB06AAF296B521000F14E59 /* AppIcon-MGP1@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-MGP1@3x.png"; sourceTree = "<group>"; };
@@ -717,6 +723,9 @@
 			isa = PBXGroup;
 			children = (
 				4F13428B2360DAD100A9DBDE /* LoginViewController.swift */,
+				4FA3066A2D7147A600DF13D7 /* SignupViewController.swift */,
+				4F6649532D714A92004B5F90 /* SignupForm.swift */,
+				4FA3066C2D7147F700DF13D7 /* UnregisterViewController.swift */,
 			);
 			path = Login;
 			sourceTree = "<group>";
@@ -1625,6 +1634,7 @@
 				4F0B61432385EEFF00930D91 /* ViewModelHelper.swift in Sources */,
 				4F8175A52411DDB900685F83 /* HomeController.swift in Sources */,
 				4F8376DC23EE87CC00256AEC /* RotatingIconView.swift in Sources */,
+				4FA3066D2D7147F700DF13D7 /* UnregisterViewController.swift in Sources */,
 				4F0B613C238528C300930D91 /* PasteboardLabel.swift in Sources */,
 				4FD4E1DD237FBE8B008816B3 /* MemberBadgeView.swift in Sources */,
 				4FC50258242700DC0088320B /* RacePilotsPickerController.swift in Sources */,
@@ -1658,6 +1668,7 @@
 				4FDC05D823CDB16E00B10881 /* CalendarUtil.swift in Sources */,
 				4F605603258C9FB4008AF93F /* UIScrollView+Extensions.swift in Sources */,
 				4F004EA7295B83F6009C46AA /* RaceForm.swift in Sources */,
+				4FA3066B2D7147A700DF13D7 /* SignupViewController.swift in Sources */,
 				4FC57C33258E1362006E210F /* AppUtil.swift in Sources */,
 				4F80A660296F9951008B19AF /* RichEditorToolbar.swift in Sources */,
 				4FDF005725902D6D006964DB /* TrackElementViewCell.swift in Sources */,
@@ -1699,6 +1710,7 @@
 				4FE4C0A22945E0EF00F47F0A /* RaceListViewController.swift in Sources */,
 				4F00E076242932F2001DCFC4 /* RateMeConstants.swift in Sources */,
 				4FC1797D24B0801900D2EA2D /* ImagePickerController.swift in Sources */,
+				4F6649542D714A92004B5F90 /* SignupForm.swift in Sources */,
 				4F9DB7B023D618D100570483 /* UISegmentedControl+Extensions.swift in Sources */,
 				4F65D908257B134700C506C3 /* TrackDetailViewController.swift in Sources */,
 				4F6AE78D2D2DCD4B008636B7 /* RankView.swift in Sources */,

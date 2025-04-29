@@ -55,7 +55,7 @@ class DatePickerViewController: FormBaseViewController {
 
     // MARK: - Initialization
 
-    init(with date: Date, minDate: Date?) {
+    init(with date: Date, minDate: Date? = nil) {
         selectedDate = date
 
         super.init(nibName: nil, bundle: nil)

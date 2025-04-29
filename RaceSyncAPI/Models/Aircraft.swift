@@ -29,9 +29,6 @@ public class Aircraft: Mappable, Descriptable {
 
     public var entryCount: Int32 = 0
 
-    public static let nameMinLength: Int = 3
-    public static let nameMaxLength: Int = 20
-
     // MARK: - Initialization
 
     fileprivate static let requiredProperties = [ParamKey.id, ParamKey.name]

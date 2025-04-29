@@ -321,8 +321,8 @@ extension AircraftFormViewController: FormBaseViewControllerDelegate {
         guard let currentRow = selectedRow else { return false }
 
         if viewController is TextFieldViewController {
-            guard item.count >= Aircraft.nameMinLength else { return false }
-            guard item.count < Aircraft.nameMaxLength else { return false }
+            guard item.count >= 3 else { return false }
+            guard item.count < 30 else { return false }
         }
 
         if !isFormEnabled && currentRow.isRowRequired {
