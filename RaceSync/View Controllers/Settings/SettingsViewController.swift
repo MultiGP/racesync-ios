@@ -57,7 +57,7 @@ class SettingsViewController: UIViewController {
             auth += [.switchEnv] //, .featureFlags
         }
 
-        return [.resources: resources, .about: about, .auth: auth]
+        return [.notifications: [Row.notifications], .resources: resources, .about: about, .auth: auth]
     }()
 
     fileprivate func nextEnvironment() -> APIEnvironment {
@@ -109,6 +109,11 @@ class SettingsViewController: UIViewController {
         dismiss(animated: true)
     }
 
+    fileprivate func togglePushNotifications() {
+        guard let delegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        delegate.registerForAPNs()
+    }
+
     fileprivate func logout() {
         ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Are you sure you want to log out?", destructiveTitle: "Yes, log out", completion: { (action) in
             ApplicationControl.shared.logout(forced: true)
@@ -135,6 +140,8 @@ extension SettingsViewController: UITableViewDelegate {
         guard let section = Section(rawValue: indexPath.section), let row = sections[section]?[indexPath.row] else { return }
 
         switch row {
+        case .notifications:
+            togglePushNotifications()
         case .tracksGuide:
             WebViewController.openUrl(AppWebConstants.tracks)
         case .buildGuide:
@@ -189,7 +196,10 @@ extension SettingsViewController: UITableViewDataSource {
         cell.imageView?.image = UIImage.init(named: row.imageName)
         cell.accessoryType = .disclosureIndicator
 
-        if row == .appicon {
+        if row == .notifications {
+            cell.detailTextLabel?.text = "Click Me!"
+            cell.imageView?.image = UIImage(systemName: "app.badge")?.image(withColor: Color.black)
+        } else if row == .appicon {
             let icon = AppIconManager.selectedIcon()
             cell.detailTextLabel?.text = icon.title
         } else if row == .joinBeta {
@@ -218,21 +228,23 @@ extension SettingsViewController: UITableViewDataSource {
 }
 
 fileprivate enum Section: Int, EnumTitle {
-    case resources, about, auth
+    case notifications, resources, about, auth
 
     var title: String {
         switch self {
-        case .resources:    return "Resources"
-        case .about:        return "About \(Bundle.main.releaseDescriptionPretty)"
-        case .auth:         return ""
+        case .notifications:    return ""
+        case .resources:        return "Resources"
+        case .about:            return "About \(Bundle.main.releaseDescriptionPretty)"
+        case .auth:             return ""
         }
     }
 }
 
 fileprivate enum Row: Int, EnumTitle {
+    case notifications
     case tracksGuide
-    case seasonRules
     case buildGuide
+    case seasonRules
     case appicon
     case joinBeta
     case visitSite
@@ -242,6 +254,7 @@ fileprivate enum Row: Int, EnumTitle {
 
     var title: String {
         switch self {
+        case .notifications:        return "Push Notifications"
         case .tracksGuide:          return "MultiGP Tracks"
         case .seasonRules:          return "Season Rule Books"
         case .buildGuide:           return "Obstacles Build Guide"
@@ -257,7 +270,9 @@ fileprivate enum Row: Int, EnumTitle {
     // For including icons to each row. Look for icons at https://thenounproject.com/
     var imageName: String {
         switch self {
-        case .tracksGuide:         return "icn_settings_tracks"
+        case .notifications:        return ""
+        case .tracksGuide:          return "icn_settings_tracks"
+        case .buildGuide:           return "icn_settings_buildguide"
         case .seasonRules:          return "icn_settings_handbook"
         case .buildGuide:           return "icn_settings_buildguide"
         case .visitSite:            return "icn_settings_mgp"
