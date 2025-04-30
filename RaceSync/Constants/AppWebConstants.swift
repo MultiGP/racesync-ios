@@ -8,6 +8,7 @@
 
 import Foundation
 import RaceSyncAPI
+import UIKit
 
 public class AppWebConstants {
     static let homepage = "https://www.multigp.com/"
@@ -111,5 +112,15 @@ enum AppWeb: Int {
         }
 
         return nil
+    }
+
+    var image: UIImage? {
+        if self == .livefpv {
+            return UIImage(named: "logo_livefpv")
+        } else if self == .fpvscores {
+            return UIImage(named: "logo_fpvscores")
+        } else {
+            return nil
+        }
     }
 }

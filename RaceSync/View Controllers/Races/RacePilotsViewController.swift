@@ -27,6 +27,7 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
         tableView.tableFooterView = UIView()
         tableView.backgroundColor = Color.gray50
         tableView.register(cellType: AvatarTableViewCell.self)
+        tableView.register(cellType: FormTableViewCell.self)
         return tableView
     }()
 
@@ -45,11 +46,16 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate var emptyStateRaceRegisters = EmptyStateViewModel(.noRaceRegisters)
     fileprivate var didTapCell: Bool = false
+    fileprivate var externalResultSection: Int = 0
 
     fileprivate var showingResults: Bool {
         guard let results = race.results, results.count > 0 else { return false }
         guard let startDate = race.startDate else { return false }
         return startDate.isPassed
+    }
+
+    func showingExternalResults() -> Bool {
+        return showingResults && race.liveTimeEventUrl != nil
     }
 
     fileprivate enum Constants {
@@ -218,17 +224,20 @@ fileprivate extension RacePilotsViewController {
 extension RacePilotsViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        showUserProfile(forUserAt: indexPath)
+
+        if showingExternalResults(), indexPath.section == externalResultSection {
+            guard let url = race.liveTimeEventUrl else { return }
+            WebViewController.openUrl(url)
+        } else {
+            showUserProfile(forUserAt: indexPath)
+        }
+
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if showingResults {
-            if race.isGQ {
-                return "GQ Results: \(ScoringFormat.fastest3Laps.title)"
-            } else {
-                return race.scoringFormat.title
-            }
+            return section == externalResultSection ? nil : race.scoringFormat.title
         } else {
             return nil
         }
@@ -243,19 +252,31 @@ extension RacePilotsViewController: UITableViewDelegate {
 extension RacePilotsViewController: UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return showingExternalResults() ? 2 : 1
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return userViewModels.count
+        if showingExternalResults(), section == externalResultSection {
+            return 1
+        } else {
+            return userViewModels.count
+        }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return avatarTableViewCell(for: indexPath)
+        if showingExternalResults(), indexPath.section == externalResultSection {
+            return formTableViewCell(for: indexPath)
+        } else {
+            return avatarTableViewCell(for: indexPath)
+        }
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UniversalConstants.cellHeight
+        if showingExternalResults(), indexPath.section == externalResultSection {
+            return UniversalConstants.cellFormHeight
+        } else {
+            return UniversalConstants.cellHeight
+        }
     }
 
     func avatarTableViewCell(for indexPath: IndexPath) -> AvatarTableViewCell {
@@ -287,6 +308,24 @@ extension RacePilotsViewController: UITableViewDataSource {
             }
         } else if race.raceClass != .esport {
             cell.textPill.text = userVM.channelLabel // only real races have frequencies
+        }
+
+        return cell
+    }
+
+    func formTableViewCell(for indexPath: IndexPath) -> FormTableViewCell {
+        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as FormTableViewCell
+
+        cell.textLabel?.text = nil
+        cell.detailImage = nil
+
+        guard let url = race.liveTimeEventUrl, let web = AppWeb(url: url) else { return cell }
+
+        cell.textLabel?.text = "View full results on"
+        cell.detailImage = web.image
+        
+        if cell.detailImage == nil {
+            cell.detailTextLabel?.text = URL(string: url)?.rootDomain ?? ""
         }
 
         return cell

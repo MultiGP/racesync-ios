@@ -851,6 +851,14 @@ extension RaceDetailViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        return formTableViewCell(for: indexPath)
+    }
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return Constants.cellHeight
+    }
+
+    func formTableViewCell(for indexPath: IndexPath) -> FormTableViewCell {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as FormTableViewCell
 
         let row = tableViewRows[indexPath.row]
@@ -870,21 +878,15 @@ extension RaceDetailViewController: UITableViewDataSource {
             cell.detailImage = raceViewModel.raceClassImage()
         } else if row == .results, let url = race.liveTimeEventUrl {
             if let web = AppWeb(url: url) {
-                if web == .livefpv {
-                    cell.detailImage = UIImage(named: "logo_livefpv")
-                } else if web == .fpvscores {
-                    cell.detailImage = UIImage(named: "logo_fpvscores")
-                } else {
+                cell.detailImage = web.image
+
+                if cell.detailImage == nil {
                     cell.detailTextLabel?.text = URL(string: url)?.rootDomain ?? ""
                 }
             }
         }
 
         return cell
-    }
-
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return Constants.cellHeight
     }
 }
 
