@@ -186,7 +186,7 @@ class LoginViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        print("Login Did Appear") // used to detect whenever the sim launched but they keyboard isn't visible
+        print("Login Did Appear") // used to detect whenever the sim launched but the keyboard isn't visible
 
         // Skip login if there's a persisted sessionId
         if APIServices.shared.isLoggedIn {

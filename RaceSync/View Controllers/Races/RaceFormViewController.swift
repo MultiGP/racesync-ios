@@ -83,15 +83,19 @@ class RaceFormViewController: UIViewController {
     fileprivate let presenter = Appearance.defaultPresenter()
     fileprivate var formNavigationController: NavigationController?
     fileprivate var isFormEnabled: Bool
+
     fileprivate var shouldHideShortDescription: Bool {
         get {
-            guard let text = data.shortDesc else { return false }
+            guard let raceData = initialData else { return true } // on new race creation
+            guard let text = raceData.shortDesc else { return true }
             return text.isEmpty
         }
     }
+
     fileprivate var shouldHideItineraryDescription: Bool {
         get {
-            guard let text = data.itinerary else { return false }
+            guard let raceData = initialData else { return true } // on new race creation
+            guard let text = raceData.itinerary else { return true }
             return text.isEmpty
         }
     }
