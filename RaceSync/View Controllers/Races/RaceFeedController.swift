@@ -43,9 +43,6 @@ class RaceFeedController {
     }
 
     func shouldShowShimmer(for filter: RaceFilter) -> Bool {
-//        if filter == .series, raceCollection[filter]?.count == 0 {
-//            return true
-//        }
         return raceCollection[filter] == nil
     }
 
@@ -73,9 +70,9 @@ fileprivate extension RaceFeedController {
 
     func getJoinedRaces(_ forceFetch: Bool = false, _ completion: @escaping ObjectCompletionBlock<[RaceViewModel]>) {
 
-        if let viewModels = raceCollection[.joined], !forceFetch {
+        if let viewModels = raceCollection[.joined] {
             completion(viewModels, nil)
-            return
+            guard forceFetch else { return }
         }
 
         let filters = remoteFilters(with: .joined)
@@ -94,9 +91,9 @@ fileprivate extension RaceFeedController {
 
     func getNearbydRaces(_ forceFetch: Bool = false, _ completion: @escaping ObjectCompletionBlock<[RaceViewModel]>) {
 
-        if let viewModels = raceCollection[.nearby], !forceFetch {
+        if let viewModels = raceCollection[.nearby] {
             completion(viewModels, nil)
-            return
+            guard forceFetch else { return }
         }
 
         let filters = remoteFilters(with: .nearby)
@@ -119,9 +116,9 @@ fileprivate extension RaceFeedController {
     func getChapterRaces(_ forceFetch: Bool = false, _ completion: @escaping ObjectCompletionBlock<[RaceViewModel]>) {
         guard let user = APIServices.shared.myUser else { return }
 
-        if let viewModels = raceCollection[.chapters], !forceFetch {
+        if let viewModels = raceCollection[.chapters] {
             completion(viewModels, nil)
-            return
+            guard forceFetch else { return }
         }
 
         let filters = remoteFilters()
@@ -140,9 +137,9 @@ fileprivate extension RaceFeedController {
 
     func getRaces(for class: RaceClass, _ forceFetch: Bool = false, _ completion: @escaping ObjectCompletionBlock<[RaceViewModel]>) {
 
-        if let viewModels = raceCollection[.classes(`class`)], !forceFetch {
+        if let viewModels = raceCollection[.classes(`class`)] {
             completion(viewModels, nil)
-            return
+            guard forceFetch else { return }
         }
 
         let filters: [RaceListFilters] = [.upcoming]
@@ -161,9 +158,9 @@ fileprivate extension RaceFeedController {
 
     func getRaces(for series: GQSeries, _ forceFetch: Bool = false, _ completion: @escaping ObjectCompletionBlock<[RaceViewModel]>) {
 
-        if let viewModels = raceCollection[.series(series)], !forceFetch {
+        if let viewModels = raceCollection[.series(series)] {
             completion(viewModels, nil)
-            return
+            guard forceFetch else { return }
         }
 
         let filters: [RaceListFilters] = [.series]

@@ -340,7 +340,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
                 self?.loadRaces()
             }
         } else {
-            loadRaces()
+            loadRaces(forceReload: true)
         }
     }
 
