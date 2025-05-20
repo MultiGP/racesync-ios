@@ -46,14 +46,12 @@ class SettingsViewController: UIViewController {
     }()
 
     fileprivate lazy var sections: [Section: [Row]] = {
-        let resources: [Row] = [.trackLayouts, .buildGuide, .seasonRules, .visitStore]
+        let resources: [Row] = [.tracksGuide, .buildGuide, .seasonRules, .visitSite]
         var about: [Row] = []
         var auth: [Row] = [.logout]
 
-        if UIApplication.shared.supportsAlternateIcons {
-            about += [.appicon]
-        }
-        about += [.submitFeedback, .joinBeta, .visitSite]
+        if UIApplication.shared.supportsAlternateIcons { about += [.appicon] }
+        about += [.joinBeta]
 
         if let user = APIServices.shared.myUser, user.isDevTeam {
             auth += [.switchEnv] //, .featureFlags
@@ -137,23 +135,16 @@ extension SettingsViewController: UITableViewDelegate {
         guard let section = Section(rawValue: indexPath.section), let row = sections[section]?[indexPath.row] else { return }
 
         switch row {
-        case .trackLayouts:
-            let vc = TrackListViewController()
-            vc.title = row.title
-            navigationController?.pushViewController(vc, animated: true)
+        case .tracksGuide:
+            WebViewController.openUrl(AppWebConstants.tracks)
         case .buildGuide:
-            WebViewController.openUrl(AppWebConstants.courseObstaclesDoc)
+            WebViewController.openUrl(AppWebConstants.obstaclesDoc)
         case .seasonRules:
             WebViewController.openUrl(AppWebConstants.seasonRulesDoc)
-        case .visitStore:
-            WebViewController.openUrl(AppWebConstants.shop)
         case .appicon:
             let vc = AppIconViewController()
             vc.title = row.title
             navigationController?.pushViewController(vc, animated: true)
-        case .submitFeedback:
-            guard let url = AppWebConstants.getPrefilledFeedbackFormUrl() else { return }
-            WebViewController.openUrl(url)
         case .joinBeta:
             WebViewController.openUrl(AppWebConstants.betaSignup)
         case .visitSite:
@@ -201,8 +192,6 @@ extension SettingsViewController: UITableViewDataSource {
         if row == .appicon {
             let icon = AppIconManager.selectedIcon()
             cell.detailTextLabel?.text = icon.title
-        } else if row == .submitFeedback {
-            cell.detailTextLabel?.text = "\(Bundle.main.releaseDescriptionPretty)"
         } else if row == .joinBeta {
             cell.detailTextLabel?.text = "Testflight"
         } else if row == .logout {
@@ -215,10 +204,11 @@ extension SettingsViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        if let section = Section(rawValue: section), section == .auth {
-            return StringConstants.copyright
-        } else {
-            return nil
+        guard let section = Section(rawValue: section) else { return nil }
+
+        switch section {
+        case .auth:     return "\(StringConstants.copyright)\n\(StringConstants.developedBy)"
+        default:        return ""
         }
     }
 
@@ -233,20 +223,18 @@ fileprivate enum Section: Int, EnumTitle {
     var title: String {
         switch self {
         case .resources:    return "Resources"
-        case .about:        return "About"
+        case .about:        return "About \(Bundle.main.releaseDescriptionPretty)"
         case .auth:         return ""
         }
     }
 }
 
 fileprivate enum Row: Int, EnumTitle {
-    case trackLayouts
-    case buildGuide
+    case tracksGuide
     case seasonRules
+    case buildGuide
     case appicon
-    case submitFeedback
     case joinBeta
-    case visitStore
     case visitSite
     case logout
     case featureFlags
@@ -254,14 +242,12 @@ fileprivate enum Row: Int, EnumTitle {
 
     var title: String {
         switch self {
-        case .trackLayouts:         return "MultiGP Track Designs"
+        case .tracksGuide:          return "MultiGP Tracks"
+        case .seasonRules:          return "Season Rule Books"
         case .buildGuide:           return "Obstacles Build Guide"
-        case .seasonRules:          return "MultiGP Rule Books"
-        case .visitStore:           return "Visit the MultiGP Shop"
-        case .appicon:              return "App Icon"
-        case .submitFeedback:       return "Send Feedback"
+        case .visitSite:            return "Visit MultiGP.com"
+        case .appicon:              return "Change App Icon"
         case .joinBeta:             return "Join the Beta"
-        case .visitSite:            return "Go to MultiGP.com"
         case .logout:               return "Logout"
         case .featureFlags:         return "Feature Flags"
         case .switchEnv:            return "Switch to"
@@ -271,14 +257,12 @@ fileprivate enum Row: Int, EnumTitle {
     // For including icons to each row. Look for icons at https://thenounproject.com/
     var imageName: String {
         switch self {
-        case .trackLayouts:         return "icn_settings_tracks"
-        case .buildGuide:           return "icn_settings_buildguide"
+        case .tracksGuide:         return "icn_settings_tracks"
         case .seasonRules:          return "icn_settings_handbook"
-        case .visitStore:           return "icn_settings_store"
-        case .appicon:              return "icn_settings_appicn"
-        case .submitFeedback:       return "icn_settings_feedback"
-        case .joinBeta:             return "icn_settings_beta"
+        case .buildGuide:           return "icn_settings_buildguide"
         case .visitSite:            return "icn_settings_mgp"
+        case .appicon:              return "icn_settings_appicn"
+        case .joinBeta:             return "icn_settings_beta"
         case .logout:               return "icn_settings_logout"
         case .featureFlags:         return "icn_settings_logout"
         case .switchEnv:            return "icn_settings_logout"

@@ -74,11 +74,6 @@
 		4F64B34B2D22879C00FC5BF1 /* launch_bkgd.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4F64B34A2D22879C00FC5BF1 /* launch_bkgd.jpg */; };
 		4F64B34D2D235EE300FC5BF1 /* UIView+Parallax.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F64B34C2D235EE300FC5BF1 /* UIView+Parallax.swift */; };
 		4F64F680257B97E000574F4D /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F64F67F257B97E000574F4D /* WebViewController.swift */; };
-		4F65D8D82574EA5400C506C3 /* tracks-list.json in Resources */ = {isa = PBXBuildFile; fileRef = 4F65D8D72574EA5400C506C3 /* tracks-list.json */; };
-		4F65D8E02574F6CF00C506C3 /* TrackListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F65D8DF2574F6CF00C506C3 /* TrackListViewController.swift */; };
-		4F65D8EE257869AD00C506C3 /* TrackViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F65D8ED257869AD00C506C3 /* TrackViewModel.swift */; };
-		4F65D908257B134700C506C3 /* TrackDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F65D907257B134700C506C3 /* TrackDetailViewController.swift */; };
-		4F6881B2257ECAE500D33672 /* track-images in Resources */ = {isa = PBXBuildFile; fileRef = 4F6881B1257ECAE500D33672 /* track-images */; };
 		4F68BE692399CEB5009D44F7 /* AlertUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F68BE682399CEB5009D44F7 /* AlertUtil.swift */; };
 		4F68BE6B2399CF07009D44F7 /* ActionSheetUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F68BE6A2399CF07009D44F7 /* ActionSheetUtil.swift */; };
 		4F68BE6D2399DBCF009D44F7 /* UIViewController+Lookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F68BE6C2399DBCF009D44F7 /* UIViewController+Lookup.swift */; };
@@ -239,8 +234,6 @@
 		4FDD499623B0461D009DD2DB /* Season.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDD499523B0461D009DD2DB /* Season.swift */; };
 		4FDD499823B0470E009DD2DB /* ChapterEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDD499723B0470E009DD2DB /* ChapterEnums.swift */; };
 		4FDD499A23B065C9009DD2DB /* RaceEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDD499923B065C9009DD2DB /* RaceEnums.swift */; };
-		4FDF005725902D6D006964DB /* TrackElementViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDF005625902D6D006964DB /* TrackElementViewCell.swift */; };
-		4FDF0062259045C5006964DB /* TrackElementHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDF0061259045C5006964DB /* TrackElementHeaderView.swift */; };
 		4FE272362580A36D00EC121B /* SimpleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE272352580A36D00EC121B /* SimpleTableViewCell.swift */; };
 		4FE4C0A02945619B00F47F0A /* Track.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE271C1258036D100EC121B /* Track.swift */; };
 		4FE4C0A22945E0EF00F47F0A /* RaceListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE4C0A12945E0EF00F47F0A /* RaceListViewController.swift */; };
@@ -252,7 +245,6 @@
 		4FEBB27A23A2DAFF007514B4 /* DescriptableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEBB27923A2DAFF007514B4 /* DescriptableTests.swift */; };
 		4FEBB27D23A30F99007514B4 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEBB27C23A30F99007514B4 /* Date+Extensions.swift */; };
 		4FEBB27F23A310BB007514B4 /* User+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEBB27E23A310BB007514B4 /* User+Extensions.swift */; };
-		4FFF07EE27A0F87100EFC30D /* TrackLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFF07ED27A0F87100EFC30D /* TrackLoader.swift */; };
 		9545A27A3685C3F227C6CCDC /* Pods_RaceSync.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03ADD4F5A98600BFEB5B6C6E /* Pods_RaceSync.framework */; };
 		FA8A945598D582AC78BB26B0 /* Pods_RaceSyncAPITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 912450B59256F98707505DCE /* Pods_RaceSyncAPITests.framework */; };
 /* End PBXBuildFile section */
@@ -390,11 +382,6 @@
 		4F64B34A2D22879C00FC5BF1 /* launch_bkgd.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = launch_bkgd.jpg; sourceTree = "<group>"; };
 		4F64B34C2D235EE300FC5BF1 /* UIView+Parallax.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Parallax.swift"; sourceTree = "<group>"; };
 		4F64F67F257B97E000574F4D /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
-		4F65D8D72574EA5400C506C3 /* tracks-list.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "tracks-list.json"; sourceTree = "<group>"; };
-		4F65D8DF2574F6CF00C506C3 /* TrackListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackListViewController.swift; sourceTree = "<group>"; };
-		4F65D8ED257869AD00C506C3 /* TrackViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackViewModel.swift; sourceTree = "<group>"; };
-		4F65D907257B134700C506C3 /* TrackDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackDetailViewController.swift; sourceTree = "<group>"; };
-		4F6881B1257ECAE500D33672 /* track-images */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = folder; name = "track-images"; path = "RaceSync/track-images"; sourceTree = SOURCE_ROOT; };
 		4F68BE682399CEB5009D44F7 /* AlertUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertUtil.swift; sourceTree = "<group>"; };
 		4F68BE6A2399CF07009D44F7 /* ActionSheetUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetUtil.swift; sourceTree = "<group>"; };
 		4F68BE6C2399DBCF009D44F7 /* UIViewController+Lookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Lookup.swift"; sourceTree = "<group>"; };
@@ -559,8 +546,6 @@
 		4FDD499523B0461D009DD2DB /* Season.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Season.swift; sourceTree = "<group>"; };
 		4FDD499723B0470E009DD2DB /* ChapterEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterEnums.swift; sourceTree = "<group>"; };
 		4FDD499923B065C9009DD2DB /* RaceEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceEnums.swift; sourceTree = "<group>"; };
-		4FDF005625902D6D006964DB /* TrackElementViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackElementViewCell.swift; sourceTree = "<group>"; };
-		4FDF0061259045C5006964DB /* TrackElementHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackElementHeaderView.swift; sourceTree = "<group>"; };
 		4FE271C1258036D100EC121B /* Track.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Track.swift; sourceTree = "<group>"; };
 		4FE272352580A36D00EC121B /* SimpleTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleTableViewCell.swift; sourceTree = "<group>"; };
 		4FE4C0A12945E0EF00F47F0A /* RaceListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceListViewController.swift; sourceTree = "<group>"; };
@@ -572,7 +557,6 @@
 		4FEBB27923A2DAFF007514B4 /* DescriptableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescriptableTests.swift; sourceTree = "<group>"; };
 		4FEBB27C23A30F99007514B4 /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		4FEBB27E23A310BB007514B4 /* User+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Extensions.swift"; sourceTree = "<group>"; };
-		4FFF07ED27A0F87100EFC30D /* TrackLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackLoader.swift; sourceTree = "<group>"; };
 		912450B59256F98707505DCE /* Pods_RaceSyncAPITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RaceSyncAPITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0AD3F0FAC42488B672FD23B /* Pods-RaceSyncAPITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RaceSyncAPITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RaceSyncAPITests/Pods-RaceSyncAPITests.debug.xcconfig"; sourceTree = "<group>"; };
 		D073602CBE253F96567B3B54 /* Pods_RaceSyncAPI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RaceSyncAPI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -829,20 +813,6 @@
 				4F6055F2258C9B5C008AF93F /* GalleryViewCell.swift */,
 			);
 			path = Gallery;
-			sourceTree = "<group>";
-		};
-		4F65D8CD25749E8400C506C3 /* Tracks */ = {
-			isa = PBXGroup;
-			children = (
-				4F65D8DF2574F6CF00C506C3 /* TrackListViewController.swift */,
-				4F65D907257B134700C506C3 /* TrackDetailViewController.swift */,
-				4FDF005625902D6D006964DB /* TrackElementViewCell.swift */,
-				4FDF0061259045C5006964DB /* TrackElementHeaderView.swift */,
-				4FE4C09E2945613600F47F0A /* Models */,
-				4F65D8D72574EA5400C506C3 /* tracks-list.json */,
-				4F6881B1257ECAE500D33672 /* track-images */,
-			);
-			path = Tracks;
 			sourceTree = "<group>";
 		};
 		4F6C8A94236A9D2B0017FD78 /* UI Utils */ = {
@@ -1146,7 +1116,6 @@
 				4F81759E2411C2CA00685F83 /* Leaderboards */,
 				4F5C1E41238CF68F00D756EB /* Profiles */,
 				4FA1AB3123C6ACFD007CF389 /* Aircraft */,
-				4F65D8CD25749E8400C506C3 /* Tracks */,
 				4F714DE423CD769F000C4036 /* Map */,
 				4FD4E1D2237F9DEF008816B3 /* Search */,
 				4F6055F0258C9B5C008AF93F /* Gallery */,
@@ -1211,15 +1180,6 @@
 				4FA26826237A4079008970AC /* MGPWebConstants.swift */,
 			);
 			path = Constants;
-			sourceTree = "<group>";
-		};
-		4FE4C09E2945613600F47F0A /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				4F65D8ED257869AD00C506C3 /* TrackViewModel.swift */,
-				4FFF07ED27A0F87100EFC30D /* TrackLoader.swift */,
-			);
-			path = Models;
 			sourceTree = "<group>";
 		};
 		4FEBB27B23A30F7D007514B4 /* Extensions */ = {
@@ -1409,7 +1369,6 @@
 			files = (
 				4F64B34B2D22879C00FC5BF1 /* launch_bkgd.jpg in Resources */,
 				4FB06AB6296B521000F14E59 /* AppIcon-MGP1@2x.png in Resources */,
-				4F6881B2257ECAE500D33672 /* track-images in Resources */,
 				4FA213F72947AB5900C8E45A /* AppIcon-FMR@2x.png in Resources */,
 				4F80A65F296F9951008B19AF /* Assets.xcassets in Resources */,
 				4FB06AB4296B521000F14E59 /* AppIcon-MGP2@2x.png in Resources */,
@@ -1426,7 +1385,6 @@
 				4FB06AB3296B521000F14E59 /* AppIcon-MGP1@3x.png in Resources */,
 				4FA213F32947A7C700C8E45A /* AppIcon-CFPV@2x.png in Resources */,
 				4FA213EA2946B11E00C8E45A /* icons-list.json in Resources */,
-				4F65D8D82574EA5400C506C3 /* tracks-list.json in Resources */,
 				4FBE7608259B348200312B66 /* Assets.xcassets in Resources */,
 				4F80A65C296F9951008B19AF /* rich_editor.html in Resources */,
 				4FA213E72946ADD400C8E45A /* AppIcon-OTTFPV@2x.png in Resources */,
@@ -1642,7 +1600,6 @@
 				4FE272362580A36D00EC121B /* SimpleTableViewCell.swift in Sources */,
 				4FCD99B62976242A0094C562 /* RaceFeedMenuViewController.swift in Sources */,
 				4F68BE692399CEB5009D44F7 /* AlertUtil.swift in Sources */,
-				4F65D8EE257869AD00C506C3 /* TrackViewModel.swift in Sources */,
 				4F6C8A96236A9D580017FD78 /* UIColor+Extensions.swift in Sources */,
 				4F2724402517DC5B000C7408 /* UIActivityViewController+Extensions.swift in Sources */,
 				4FA1AB3D23C94F5F007CF389 /* UIEdgeInsets+Extensions.swift in Sources */,
@@ -1660,17 +1617,14 @@
 				4F004EA7295B83F6009C46AA /* RaceForm.swift in Sources */,
 				4FC57C33258E1362006E210F /* AppUtil.swift in Sources */,
 				4F80A660296F9951008B19AF /* RichEditorToolbar.swift in Sources */,
-				4FDF005725902D6D006964DB /* TrackElementViewCell.swift in Sources */,
 				4F7BE2672722354F00592297 /* UIViewController+Navigation.swift in Sources */,
 				4F60562A258D59EC008AF93F /* GalleryViewController.swift in Sources */,
 				4F64290E24019090005E8036 /* AircraftFormViewController.swift in Sources */,
 				4F9DB7B223D68EB200570483 /* NavigationController.swift in Sources */,
-				4F65D8E02574F6CF00C506C3 /* TrackListViewController.swift in Sources */,
 				4F9DB7AC23D5A1DE00570483 /* EmptyStateViewModel.swift in Sources */,
 				4F0B61452385F66300930D91 /* ProfileHeaderView.swift in Sources */,
 				4FD4E1C9237F987C008816B3 /* RacePilotsViewController.swift in Sources */,
 				4F9A888F2975E6D700B52092 /* Race+UIExtensions.swift in Sources */,
-				4FDF0062259045C5006964DB /* TrackElementHeaderView.swift in Sources */,
 				4F8668FC23870E1E005E310A /* SegmentedTableViewHeaderView.swift in Sources */,
 				4FBE760F259B387E00312B66 /* User+UIExtensions.swift in Sources */,
 				4F8175A12411C35A00685F83 /* LeaderboardViewController.swift in Sources */,
@@ -1680,7 +1634,6 @@
 				4F3D640723FB0A4800DE6DF2 /* AircraftPickerViewController.swift in Sources */,
 				4FCAF9FE23AC8B8400ACE7D3 /* Shimmable.swift in Sources */,
 				4F9A88912975F30C00B52092 /* Season+UIExtensions.swift in Sources */,
-				4FFF07EE27A0F87100EFC30D /* TrackLoader.swift in Sources */,
 				4F3D640923FB0A9D00DE6DF2 /* AircraftDetailViewController.swift in Sources */,
 				4FCD99B829788F720094C562 /* AppWebConstants.swift in Sources */,
 				4FCAF9FC23AC803700ACE7D3 /* TableViewCellShimmerView.swift in Sources */,
@@ -1700,7 +1653,6 @@
 				4F00E076242932F2001DCFC4 /* RateMeConstants.swift in Sources */,
 				4FC1797D24B0801900D2EA2D /* ImagePickerController.swift in Sources */,
 				4F9DB7B023D618D100570483 /* UISegmentedControl+Extensions.swift in Sources */,
-				4F65D908257B134700C506C3 /* TrackDetailViewController.swift in Sources */,
 				4F6AE78D2D2DCD4B008636B7 /* RankView.swift in Sources */,
 				4F5C1E45238D1BD200D756EB /* PasteboardButton.swift in Sources */,
 				4FD53FB323A0E9B700158206 /* AvatarImageView.swift in Sources */,

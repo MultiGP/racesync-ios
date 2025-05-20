@@ -330,12 +330,6 @@ extension AircraftListViewController: EmptyDataSetDelegate {
     }
 
     func emptyDataSet(_ scrollView: UIScrollView, didTapButton button: UIButton) {
-
-        if emptyStateError != nil {
-            guard let url = AppWebConstants.getPrefilledFeedbackFormUrl() else { return }
-            WebViewController.openUrl(url)
-        } else {
-            didPressCreateButton()
-        }
+        didPressCreateButton()
     }
 }

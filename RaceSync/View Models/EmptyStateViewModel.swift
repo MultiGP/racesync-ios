@@ -165,8 +165,6 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "Join Race"
         case .noMyAircraft, .noMatchingAircraft:
             text = "Add Aircraft"
-        case .errorRaces, .errorAircraft:
-            text = "Send Bug Report"
         default:
             return nil
         }

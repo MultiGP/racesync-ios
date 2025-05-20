@@ -280,11 +280,6 @@ extension RaceTabBarController: EmptyDataSetDelegate {
     func emptyDataSetShouldAllowScroll(_ scrollView: UIScrollView) -> Bool {
         return false
     }
-
-    func emptyDataSet(_ scrollView: UIScrollView, didTapButton button: UIButton) {
-        guard let url = AppWebConstants.getPrefilledFeedbackFormUrl() else { return }
-        WebViewController.openUrl(url)
-    }
 }
 
 extension RaceTabBarController: UITabBarControllerDelegate {
