@@ -117,6 +117,10 @@ public struct GQSeries: EnumTitle, Hashable, Equatable {
         return (startYear...Date.currentYear).map { GQSeries(year: $0) }
     }
 
+    public func isThisYear() -> Bool {
+        return year == Date.currentYear
+    }
+
     private static let startYear: Int = 2017
 
     private static func isValidYear(_ year: Int) -> Bool {

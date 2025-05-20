@@ -97,6 +97,7 @@ fileprivate extension RaceFeedController {
         }
 
         let filters = remoteFilters(with: .nearby)
+        let sorting: RaceViewSorting = settings.showPastEvents ? .ascending : .descending
 
         let coordinate = LocationManager.shared.location?.coordinate
         let lat = coordinate?.latitude.string
@@ -104,7 +105,7 @@ fileprivate extension RaceFeedController {
 
         raceApi.getMyRaces(filters: filters, latitude: lat, longitude: long) { [weak self] (races, error) in
             if let filteredRaces = self?.locallyFilteredRaces(races) {
-                let sortedViewModels = RaceViewModel.sortedViewModels(with: filteredRaces, sorting: .distance)
+                let sortedViewModels = RaceViewModel.sortedViewModels(with: filteredRaces, sorting: sorting)
                 self?.raceCollection[.nearby] = sortedViewModels
                 completion(sortedViewModels, nil)
             } else {
@@ -164,10 +165,12 @@ fileprivate extension RaceFeedController {
         }
 
         let filters: [RaceListFilters] = [.series]
+        let sorting: RaceViewSorting = (settings.showPastEvents || !series.isThisYear()) ? .ascending : .descending
 
         raceApi.getRaces(with: filters, startDate: "\(series.year)", pageSize: 150) { [weak self]  (races, error) in
-            if let seriesRaces = races {
-                let sortedViewModels = RaceViewModel.sortedViewModels(with: seriesRaces, sorting: .ascending)
+
+            if let filteredRaces = series.isThisYear() ? self?.locallyFilteredRaces(races) : races {
+                let sortedViewModels = RaceViewModel.sortedViewModels(with: filteredRaces, sorting: sorting)
                 self?.raceCollection[.series(series)] = sortedViewModels
                 completion(sortedViewModels, nil)
             } else {
