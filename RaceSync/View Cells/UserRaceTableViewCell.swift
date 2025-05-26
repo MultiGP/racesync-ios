@@ -63,7 +63,7 @@ class UserRaceTableViewCell: UITableViewCell {
         static let minButtonSize: CGFloat = 25
     }
 
-    // MARK: - Initializatiom
+    // MARK: - Initialization
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)

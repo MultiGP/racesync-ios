@@ -91,4 +91,13 @@ public extension DateUtil {
         formatter.dateFormat = "@ h:mm a"
         return formatter
     }()
+
+    static func ordinalSuffix(for day: Int) -> String {
+        // let calendar = Calendar.current
+        // let day = calendar.component(.day, from: date)
+
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .ordinal
+        return formatter.string(from: NSNumber(value: day)) ?? "\(day)"
+    }
 }

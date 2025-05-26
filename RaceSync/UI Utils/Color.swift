@@ -10,11 +10,14 @@ import UIKit
 
 // Color Palette
 public struct Color {
-    // RGB
+    // Main colors
     public static let red: UIColor =            #colorLiteral(red: 0.5529411765, green: 0.09411764706, blue: 0.1058823529, alpha: 1) // #8d181b         // Links and text action items
     public static let blue: UIColor =           #colorLiteral(red: 0.1333333333, green: 0.168627451, blue: 0.3568627451, alpha: 1) // #222b5b         // UI buttons and interactive elements
     public static let green: UIColor =          #colorLiteral(red: 0.2196078431, green: 0.4941176471, blue: 0.1607843137, alpha: 1) // #387e29
     public static let yellow: UIColor =         #colorLiteral(red: 0.9764705882, green: 0.8431372549, blue: 0.2862745098, alpha: 1) // #f9d749         // Special elements (GQ Trophee)
+
+    // Secondary Colors
+    public static let lightRed: UIColor =       #colorLiteral(red: 0.9764705882, green: 0.2705882353, blue: 0.231372549, alpha: 1) // #f9453b         // badges
     public static let lightBlue: UIColor =      #colorLiteral(red: 0.4588235294, green: 0.7450980392, blue: 0.8588235294, alpha: 1) // #75bedb
 
     // Grayscale

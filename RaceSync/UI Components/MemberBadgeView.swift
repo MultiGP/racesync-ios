@@ -16,7 +16,7 @@ class MemberBadgeView: CustomButton {
         }
     }
 
-    // MARK: - Initializatiom
+    // MARK: - Initialization
 
     override init(frame: CGRect) {
         super.init(frame: frame)

@@ -19,7 +19,7 @@ class AppIcon: ImmutableMappable, Descriptable {
     let filename: String?
     let preview: UIImage?
 
-    // MARK: - Initializatiom
+    // MARK: - Initialization
 
     required init(map: Map) throws {
         title = try map.value("title")

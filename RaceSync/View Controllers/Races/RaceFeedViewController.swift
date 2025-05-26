@@ -62,8 +62,8 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
 
         let spacing = 10
 
-        view.addSubview(mapButton)
-        mapButton.snp.makeConstraints {
+        view.addSubview(searchButton)
+        searchButton.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.leading.equalToSuperview().offset(Constants.padding)
             $0.width.equalTo(30)
@@ -79,7 +79,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
         view.addSubview(segmentedControl)
         segmentedControl.snp.makeConstraints {
             $0.top.equalToSuperview().offset(spacing)
-            $0.leading.equalTo(mapButton.snp.trailing).offset(spacing)
+            $0.leading.equalTo(searchButton.snp.trailing).offset(spacing)
             $0.trailing.equalTo(filterButton.snp.leading).offset(-spacing)
             $0.bottom.equalToSuperview().offset(-spacing)
         }
@@ -108,10 +108,18 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
         return button
     }()
 
+    fileprivate lazy var notificationsButton: CustomButton = {
+        let button = CustomButton(type: .system)
+        button.addTarget(self, action: #selector(didPressNotificationsButton), for: .touchUpInside)
+        button.setImage(ButtonImg.notifications, for: .normal)
+        return button
+    }()
+
     fileprivate lazy var searchButton: CustomButton = {
         let button = CustomButton(type: .system)
         button.addTarget(self, action: #selector(didPressSearchButton), for: .touchUpInside)
         button.setImage(ButtonImg.search, for: .normal)
+        button.isHidden = true
         return button
     }()
 
@@ -119,14 +127,6 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
         let button = CustomButton(type: .system)
         button.addTarget(self, action: #selector(didPressFilterButton), for: .touchUpInside)
         button.setImage(ButtonImg.filter, for: .normal)
-        return button
-    }()
-
-    fileprivate lazy var mapButton: CustomButton = {
-        let button = CustomButton(type: .system)
-        button.addTarget(self, action: #selector(didPressMapButton), for: .touchUpInside)
-        button.setImage(ButtonImg.map, for: .normal)
-        button.isHidden = !isMapViewEnabled
         return button
     }()
 
@@ -169,6 +169,16 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
         return refreshControl
     }()
 
+    fileprivate lazy var badgeHub: BadgeHub = {
+        let hub = BadgeHub(view: notificationsButton)
+        hub.setCircleColor(Color.lightRed, label: Color.white)
+        hub.setCircleBorderColor(Color.white, borderWidth: 1)
+        hub.setMaxCount(to: 100)
+        hub.scaleCircleSize(by: 0.7)
+        hub.moveCircleBy(x: 35.0, y: 0)
+        return hub
+    }()
+
     fileprivate var selectedRaceFilter: RaceFilter {
         get {
             let title: String = segmentedControl.titleForSelectedSegment()!
@@ -195,10 +205,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
 
     fileprivate let presenter = Appearance.defaultPresenter()
     fileprivate var formNavigationController: NavigationController?
-
     fileprivate let hidesNavigationShadowAtRoot: Bool = true
-    fileprivate let isSearchEnabled: Bool = false
-    fileprivate let isMapViewEnabled: Bool = false
 
     fileprivate var emptyStateJoinedRaces = EmptyStateViewModel(.noJoinedRaces)
     fileprivate var emptyStateChapterRaces = EmptyStateViewModel(.noJoinedRaces)
@@ -276,10 +283,8 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
             hideNavigationShadow()
         }
 
-        var leftStackSubviews = [settingsButton]
-        if isSearchEnabled {
-            leftStackSubviews += [searchButton]
-        }
+        let leftStackSubviews = [settingsButton, notificationsButton]
+        badgeHub.setCount(UIApplication.shared.applicationIconBadgeNumber)
 
         let leftStackView = UIStackView(arrangedSubviews: leftStackSubviews)
         leftStackView.axis = .horizontal
@@ -378,6 +383,12 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
         present(nc, animated: true)
     }
 
+    @objc fileprivate func didPressNotificationsButton(_ sender: Any) {
+        let vc = PushMessagesViewController()
+        let nc = NavigationController(rootViewController: vc)
+        present(nc, animated: true)
+    }
+
     @objc fileprivate func didPressSearchButton(_ sender: Any) {
         Clog.log("didPressSearchButton")
     }
@@ -387,10 +398,6 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
         let nc = NavigationController(rootViewController: vc)
 
         customPresentViewController(presenter, viewController: nc, animated: true)
-    }
-
-    @objc fileprivate func didPressMapButton(_ sender: Any) {
-        Clog.log("didPressMapButton")
     }
 
     @objc fileprivate func didPressJoinButton(_ sender: JoinButton) {

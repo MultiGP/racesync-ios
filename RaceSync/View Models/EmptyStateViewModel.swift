@@ -37,6 +37,9 @@ enum EmptyState {
     case noMyAircraft
     case noMatchingAircraft
 
+    case noPushMessages
+    case noPushEnabled
+
     case commingSoon
 
     case noSearchResults
@@ -80,6 +83,10 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "No Aircraft"
         case .noMatchingAircraft:
             text = "No Matching Aircraft"
+        case .noPushMessages:
+            text = "No Push Notifications"
+        case .noPushEnabled:
+            text = "Push Notifications Disabled"
         case .commingSoon:
             text = "Coming Soon"
         case .noSearchResults:
@@ -131,6 +138,10 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "You don't have any aircraft yet."
         case .noMatchingAircraft:
             text = "You don't have any aircraft matching the race requirements."
+        case .noPushMessages:
+            text = "You don't have any push notifications."
+        case .noPushEnabled:
+            text = "Push Notifications are not enabled."
         case .commingSoon:
             text = "This section is under development."
         case .errorRaces:
@@ -165,6 +176,8 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "Join Race"
         case .noMyAircraft, .noMatchingAircraft:
             text = "Add Aircraft"
+        case .noPushEnabled:
+            text = "Allow Push Notifications"
         default:
             return nil
         }

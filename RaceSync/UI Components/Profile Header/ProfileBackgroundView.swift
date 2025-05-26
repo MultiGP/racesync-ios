@@ -35,7 +35,7 @@ class ProfileBackgroundView: DimmableView {
     }()
 
 
-    // MARK: - Initializatiom
+    // MARK: - Initialization
 
     override init(frame: CGRect) {
         super.init(frame: frame)

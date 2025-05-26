@@ -38,6 +38,10 @@ public protocol UserApiInterface {
     /**
      */
     func getUsers(forChapter chapterId: String, _ completion: @escaping ObjectCompletionBlock<[User]>)
+
+    /**
+     */
+    func registerPushNotification(forAction action: PushAction, deviceToken: String?, _ completion: @escaping StatusCompletionBlock)
 }
 
 public class UserApi: UserApiInterface {
@@ -85,5 +89,14 @@ public class UserApi: UserApiInterface {
     @available(*, deprecated, message: "Not implemented by the API yet. See https://github.com/mainedrones/racesync-api/issues/16")
     public func getUsers(forChapter chapterId: String, _ completion: @escaping ObjectCompletionBlock<[User]>) {
         //
+    }
+
+    public func registerPushNotification(forAction action: PushAction, deviceToken: String? = nil, _ completion: @escaping StatusCompletionBlock) {
+
+        let endpoint = EndPoint.userSetPushNotification
+        var parameters: Params = [ParamKey.action: action.rawValue]
+        if let token = deviceToken { parameters += [ParamKey.devicetoken: token] }
+
+        repositoryAdapter.performAction(endpoint, parameters: parameters, completion: completion)
     }
 }

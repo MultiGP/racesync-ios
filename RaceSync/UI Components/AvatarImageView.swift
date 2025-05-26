@@ -31,7 +31,7 @@ class AvatarImageView: UIView {
 
     fileprivate let height: CGFloat
 
-    // MARK: - Initializatiom
+    // MARK: - Initialization
 
     init(withHeight height: CGFloat = 30, showShadow: Bool = true) {
         self.height = height

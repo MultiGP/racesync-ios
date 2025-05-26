@@ -83,10 +83,8 @@ class SettingsViewController: UIViewController {
     }
 
     override func viewWillAppear(_ animated: Bool) {
-
-        tableView.reloadData()
-
         super.viewWillAppear(animated)
+        tableView.reloadData()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -110,8 +108,14 @@ class SettingsViewController: UIViewController {
     }
 
     fileprivate func togglePushNotifications() {
-        guard let delegate = UIApplication.shared.delegate as? AppDelegate else { return }
-        delegate.registerForAPNs()
+
+        PushNotificationController.shared.registerForNotifications()
+
+//        if PushNotificationController.isRegisteredForNotifications() {
+//            PushNotificationController.registerForNotifications()
+//        } else {
+//            PushNotificationController.unregisterForNotifications(nil)
+//        }
     }
 
     fileprivate func logout() {
@@ -197,8 +201,7 @@ extension SettingsViewController: UITableViewDataSource {
         cell.accessoryType = .disclosureIndicator
 
         if row == .notifications {
-            cell.detailTextLabel?.text = "Click Me!"
-            cell.imageView?.image = UIImage(systemName: "app.badge")?.image(withColor: Color.black)
+            cell.detailTextLabel?.text = UIApplication.shared.isRegisteredForRemoteNotifications ? "Enabled" : "Disabled"
         } else if row == .appicon {
             let icon = AppIconManager.selectedIcon()
             cell.detailTextLabel?.text = icon.title
@@ -270,11 +273,10 @@ fileprivate enum Row: Int, EnumTitle {
     // For including icons to each row. Look for icons at https://thenounproject.com/
     var imageName: String {
         switch self {
-        case .notifications:        return ""
+        case .notifications:        return "icn_settings_apns"
         case .tracksGuide:          return "icn_settings_tracks"
         case .buildGuide:           return "icn_settings_buildguide"
         case .seasonRules:          return "icn_settings_handbook"
-        case .buildGuide:           return "icn_settings_buildguide"
         case .visitSite:            return "icn_settings_mgp"
         case .appicon:              return "icn_settings_appicn"
         case .joinBeta:             return "icn_settings_beta"
