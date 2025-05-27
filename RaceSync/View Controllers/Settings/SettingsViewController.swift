@@ -237,7 +237,7 @@ fileprivate enum Section: Int, EnumTitle {
         switch self {
         case .notifications:    return ""
         case .resources:        return "Resources"
-        case .about:            return "About \(Bundle.main.releaseDescriptionPretty)"
+        case .about:            return "RaceSync iOS \(Bundle.main.releaseDescriptionPretty)"
         case .auth:             return ""
         }
     }

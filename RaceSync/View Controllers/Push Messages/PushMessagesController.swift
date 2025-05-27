@@ -68,7 +68,7 @@ class PushMessagesController: NSObject {
            }
     }
 
-    func didRegisterForNotifications(with deviceToken: Data, completion: StatusCompletionBlock?) {
+    func didRegisterForNotifications(with deviceToken: Data, completion: StatusCompletionBlock? = nil) {
 
         let parts = deviceToken.map { String(format: "%02.2hhx", $0) }
         let token = parts.joined()
@@ -107,7 +107,7 @@ class PushMessagesController: NSObject {
         }
     }
 
-    func unregisterForNotifications(_ completion: StatusCompletionBlock?) {
+    func unregisterForNotifications(_ completion: StatusCompletionBlock? = nil) {
 
         notificationCenter.removeAllPendingNotificationRequests()
         notificationCenter.removeAllDeliveredNotifications()

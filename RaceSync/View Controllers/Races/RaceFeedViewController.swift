@@ -529,11 +529,7 @@ fileprivate extension RaceFeedViewController {
         
         userProfileButton.isHidden = false
         userProfileButton.setImage(with: imageUrl, placeholderImage: placeholder, forState: .normal, size: Constants.miniProfileSize) { (image) in
-
-            // We do this here, to be guaranteed a user profile's image
-            DispatchQueue.main.async {
-                ApplicationControl.shared.startWatchConnection()
-            }
+            //
         }
     }
 

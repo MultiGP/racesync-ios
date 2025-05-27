@@ -132,17 +132,6 @@
 		4F8F2C112384903F00DC4907 /* RaceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8F2C102384903F00DC4907 /* RaceViewModel.swift */; };
 		4F8F2C132385136300DC4907 /* NumberUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8F2C122385136300DC4907 /* NumberUtil.swift */; };
 		4F91BC8A2398FBCE00539E95 /* ViewJoinable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F91BC892398FBCE00539E95 /* ViewJoinable.swift */; };
-		4F95B74C2596967E00631A27 /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4F95B74A2596967E00631A27 /* Interface.storyboard */; };
-		4F95B74E2596968100631A27 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4F95B74D2596968100631A27 /* Assets.xcassets */; };
-		4F95B75A2596968100631A27 /* MainInterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F95B7592596968100631A27 /* MainInterfaceController.swift */; };
-		4F95B75C2596968100631A27 /* ExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F95B75B2596968100631A27 /* ExtensionDelegate.swift */; };
-		4F95B75E2596968100631A27 /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F95B75D2596968100631A27 /* NotificationController.swift */; };
-		4F95B7602596968100631A27 /* ComplicationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F95B75F2596968100631A27 /* ComplicationController.swift */; };
-		4F95B7622596968200631A27 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4F95B7612596968200631A27 /* Assets.xcassets */; };
-		4F95B7672596968200631A27 /* RaceSyncWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 4F95B7482596967E00631A27 /* RaceSyncWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		4F95B7C62596DBDF00631A27 /* WatchSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F95B7C52596DBDF00631A27 /* WatchSessionManager.swift */; };
-		4F95B7E825972E0900631A27 /* WatchUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F95B7E725972E0900631A27 /* WatchUser.swift */; };
-		4F95B7EF2598232400631A27 /* OnboardInterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F95B7EE2598232400631A27 /* OnboardInterfaceController.swift */; };
 		4F9979BE26D57CFF00496451 /* AppIcon-KRU@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F9979BA26D57CFF00496451 /* AppIcon-KRU@2x.png */; };
 		4F9979BF26D57CFF00496451 /* AppIcon-KRU@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F9979BB26D57CFF00496451 /* AppIcon-KRU@3x.png */; };
 		4F9A886B297473AF00B52092 /* Parameters+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9A886A297473AF00B52092 /* Parameters+Extensions.swift */; };
@@ -195,8 +184,6 @@
 		4FBADDF624D4E2DB00A7D291 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FBADDF524D4E2DB00A7D291 /* Array+Extensions.swift */; };
 		4FBE7608259B348200312B66 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4F13424E2360B67D00A9DBDE /* Assets.xcassets */; };
 		4FBE760F259B387E00312B66 /* User+UIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FBE760E259B387E00312B66 /* User+UIExtensions.swift */; };
-		4FBE761E259BBA6100312B66 /* WatchSessionConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FBE761D259BBA6100312B66 /* WatchSessionConstants.swift */; };
-		4FBE7624259BBD9A00312B66 /* WatchSessionConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FBE761D259BBA6100312B66 /* WatchSessionConstants.swift */; };
 		4FC1797D24B0801900D2EA2D /* ImagePickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC1797C24B0801900D2EA2D /* ImagePickerController.swift */; };
 		4FC3F17725A7AB3B0039B94C /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC3F17625A7AB3B0039B94C /* String+Extensions.swift */; };
 		4FC4C59C24D8F3F2007D3B71 /* DimmableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC4C59B24D8F3F2007D3B71 /* DimmableView.swift */; };
@@ -273,13 +260,6 @@
 			remoteGlobalIDString = 4F13426C2360DA4B00A9DBDE;
 			remoteInfo = RaceSyncAPI;
 		};
-		4F95B7652596968200631A27 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4F13423C2360B67D00A9DBDE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 4F95B7472596967E00631A27;
-			remoteInfo = RaceSyncWatch;
-		};
 		4F9A888A29747EC000B52092 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4F13423C2360B67D00A9DBDE /* Project object */;
@@ -307,7 +287,6 @@
 			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
 			dstSubfolderSpec = 16;
 			files = (
-				4F95B7672596968200631A27 /* RaceSyncWatch.app in Embed Watch Content */,
 			);
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -450,19 +429,6 @@
 		4F8F2C102384903F00DC4907 /* RaceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceViewModel.swift; sourceTree = "<group>"; };
 		4F8F2C122385136300DC4907 /* NumberUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberUtil.swift; sourceTree = "<group>"; };
 		4F91BC892398FBCE00539E95 /* ViewJoinable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewJoinable.swift; sourceTree = "<group>"; };
-		4F95B7482596967E00631A27 /* RaceSyncWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RaceSyncWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		4F95B74B2596967E00631A27 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
-		4F95B74D2596968100631A27 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		4F95B74F2596968100631A27 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4F95B7592596968100631A27 /* MainInterfaceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainInterfaceController.swift; sourceTree = "<group>"; };
-		4F95B75B2596968100631A27 /* ExtensionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionDelegate.swift; sourceTree = "<group>"; };
-		4F95B75D2596968100631A27 /* NotificationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationController.swift; sourceTree = "<group>"; };
-		4F95B75F2596968100631A27 /* ComplicationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComplicationController.swift; sourceTree = "<group>"; };
-		4F95B7612596968200631A27 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		4F95B7632596968200631A27 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4F95B7C52596DBDF00631A27 /* WatchSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionManager.swift; sourceTree = "<group>"; };
-		4F95B7E725972E0900631A27 /* WatchUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchUser.swift; sourceTree = "<group>"; };
-		4F95B7EE2598232400631A27 /* OnboardInterfaceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardInterfaceController.swift; sourceTree = "<group>"; };
 		4F9979BA26D57CFF00496451 /* AppIcon-KRU@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-KRU@2x.png"; sourceTree = "<group>"; };
 		4F9979BB26D57CFF00496451 /* AppIcon-KRU@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-KRU@3x.png"; sourceTree = "<group>"; };
 		4F9A886A297473AF00B52092 /* Parameters+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Parameters+Extensions.swift"; sourceTree = "<group>"; };
@@ -518,7 +484,6 @@
 		4FBA7464298EF14D007A9E90 /* RELEASE-NOTES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "RELEASE-NOTES.md"; sourceTree = SOURCE_ROOT; };
 		4FBADDF524D4E2DB00A7D291 /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
 		4FBE760E259B387E00312B66 /* User+UIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+UIExtensions.swift"; sourceTree = "<group>"; };
-		4FBE761D259BBA6100312B66 /* WatchSessionConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionConstants.swift; sourceTree = "<group>"; };
 		4FC1797C24B0801900D2EA2D /* ImagePickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerController.swift; sourceTree = "<group>"; };
 		4FC3F17625A7AB3B0039B94C /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		4FC4C59B24D8F3F2007D3B71 /* DimmableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DimmableView.swift; sourceTree = "<group>"; };
@@ -581,13 +546,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		370DB022DF98C379304057AE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		4F1342412360B67D00A9DBDE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -669,8 +627,6 @@
 				4F1342462360B67D00A9DBDE /* RaceSync */,
 				4F13426E2360DA4B00A9DBDE /* RaceSyncAPI */,
 				4F13427B2360DA4C00A9DBDE /* RaceSyncAPITests */,
-				4F95B7492596967E00631A27 /* RaceSyncWatch */,
-				4F95B7582596968100631A27 /* RaceSyncWatch Extension */,
 				4F1342452360B67D00A9DBDE /* Products */,
 				8CA907F11021D980864A2634 /* Pods */,
 				630E12C4F78138F076CDB368 /* Frameworks */,
@@ -683,7 +639,6 @@
 				4F1342442360B67D00A9DBDE /* RaceSync.app */,
 				4F13426D2360DA4B00A9DBDE /* RaceSyncAPI.framework */,
 				4F1342752360DA4C00A9DBDE /* RaceSyncAPITests.xctest */,
-				4F95B7482596967E00631A27 /* RaceSyncWatch.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -949,28 +904,6 @@
 			path = "View Models";
 			sourceTree = "<group>";
 		};
-		4F95B7492596967E00631A27 /* RaceSyncWatch */ = {
-			isa = PBXGroup;
-			children = (
-				4F95B74A2596967E00631A27 /* Interface.storyboard */,
-				4F95B74D2596968100631A27 /* Assets.xcassets */,
-				4F95B74F2596968100631A27 /* Info.plist */,
-			);
-			path = RaceSyncWatch;
-			sourceTree = "<group>";
-		};
-		4F95B7582596968100631A27 /* RaceSyncWatch Extension */ = {
-			isa = PBXGroup;
-			children = (
-				4FBE7615259BB9C700312B66 /* Interfaces */,
-				4FBE7616259BB9DC00312B66 /* Notifications */,
-				4FBE7617259BB9E800312B66 /* Complications */,
-				4F95B7612596968200631A27 /* Assets.xcassets */,
-				4F95B7632596968200631A27 /* Info.plist */,
-			);
-			path = "RaceSyncWatch Extension";
-			sourceTree = "<group>";
-		};
 		4F9DB7B323D6BAA000570483 /* Tools */ = {
 			isa = PBXGroup;
 			children = (
@@ -1073,43 +1006,6 @@
 				4F77D21A29940E5D009DEB41 /* Extensions */,
 			);
 			path = Models;
-			sourceTree = "<group>";
-		};
-		4FBE7615259BB9C700312B66 /* Interfaces */ = {
-			isa = PBXGroup;
-			children = (
-				4F95B75B2596968100631A27 /* ExtensionDelegate.swift */,
-				4F95B7592596968100631A27 /* MainInterfaceController.swift */,
-				4F95B7EE2598232400631A27 /* OnboardInterfaceController.swift */,
-				4FBE7634259BBEA100312B66 /* Connectivity */,
-			);
-			path = Interfaces;
-			sourceTree = "<group>";
-		};
-		4FBE7616259BB9DC00312B66 /* Notifications */ = {
-			isa = PBXGroup;
-			children = (
-				4F95B75D2596968100631A27 /* NotificationController.swift */,
-			);
-			path = Notifications;
-			sourceTree = "<group>";
-		};
-		4FBE7617259BB9E800312B66 /* Complications */ = {
-			isa = PBXGroup;
-			children = (
-				4F95B75F2596968100631A27 /* ComplicationController.swift */,
-			);
-			path = Complications;
-			sourceTree = "<group>";
-		};
-		4FBE7634259BBEA100312B66 /* Connectivity */ = {
-			isa = PBXGroup;
-			children = (
-				4F95B7E725972E0900631A27 /* WatchUser.swift */,
-				4F95B7C52596DBDF00631A27 /* WatchSessionManager.swift */,
-				4FBE761D259BBA6100312B66 /* WatchSessionConstants.swift */,
-			);
-			path = Connectivity;
 			sourceTree = "<group>";
 		};
 		4FD4E1D2237F9DEF008816B3 /* Search */ = {
@@ -1284,7 +1180,6 @@
 			);
 			dependencies = (
 				4F1342812360DA4C00A9DBDE /* PBXTargetDependency */,
-				4F95B7662596968200631A27 /* PBXTargetDependency */,
 			);
 			name = RaceSync;
 			productName = RaceSync;
@@ -1332,23 +1227,6 @@
 			productReference = 4F1342752360DA4C00A9DBDE /* RaceSyncAPITests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		4F95B7472596967E00631A27 /* RaceSyncWatch */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 4F95B76F2596968200631A27 /* Build configuration list for PBXNativeTarget "RaceSyncWatch" */;
-			buildPhases = (
-				4F95B7462596967E00631A27 /* Resources */,
-				370DB022DF98C379304057AE /* Frameworks */,
-				4F95B7502596968100631A27 /* Sources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = RaceSyncWatch;
-			productName = RaceSyncWatch;
-			productReference = 4F95B7482596967E00631A27 /* RaceSyncWatch.app */;
-			productType = "com.apple.product-type.application";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1371,9 +1249,6 @@
 					4F1342742360DA4C00A9DBDE = {
 						CreatedOnToolsVersion = 10.3;
 					};
-					4F95B7472596967E00631A27 = {
-						CreatedOnToolsVersion = 12.3;
-					};
 				};
 			};
 			buildConfigurationList = 4F13423F2360B67D00A9DBDE /* Build configuration list for PBXProject "RaceSync" */;
@@ -1392,7 +1267,6 @@
 				4F1342432360B67D00A9DBDE /* RaceSync */,
 				4F13426C2360DA4B00A9DBDE /* RaceSyncAPI */,
 				4F1342742360DA4C00A9DBDE /* RaceSyncAPITests */,
-				4F95B7472596967E00631A27 /* RaceSyncWatch */,
 			);
 		};
 /* End PBXProject section */
@@ -1441,16 +1315,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		4F95B7462596967E00631A27 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4F95B74E2596968100631A27 /* Assets.xcassets in Resources */,
-				4F95B7622596968200631A27 /* Assets.xcassets in Resources */,
-				4F95B74C2596967E00631A27 /* Interface.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1609,7 +1473,6 @@
 				4FD4E1C3237F960A008816B3 /* CustomButton.swift in Sources */,
 				4F5C1E3E238A770B00D756EB /* UITableViewCell+Reuse.swift in Sources */,
 				4FA1FC8B23D6D7C0006D4704 /* ApplicationControl.swift in Sources */,
-				4FBE7624259BBD9A00312B66 /* WatchSessionConstants.swift in Sources */,
 				4F714DE123CD4906000C4036 /* CalendarActivity.swift in Sources */,
 				4F714DE323CD5EAA000C4036 /* SafariActivity.swift in Sources */,
 				4F004EA0295AA641009C46AA /* RaceFormViewController.swift in Sources */,
@@ -1792,21 +1655,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4F95B7502596968100631A27 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4F95B75E2596968100631A27 /* NotificationController.swift in Sources */,
-				4F95B7E825972E0900631A27 /* WatchUser.swift in Sources */,
-				4F95B7EF2598232400631A27 /* OnboardInterfaceController.swift in Sources */,
-				4F95B7602596968100631A27 /* ComplicationController.swift in Sources */,
-				4F95B75C2596968100631A27 /* ExtensionDelegate.swift in Sources */,
-				4F95B75A2596968100631A27 /* MainInterfaceController.swift in Sources */,
-				4FBE761E259BBA6100312B66 /* WatchSessionConstants.swift in Sources */,
-				4F95B7C62596DBDF00631A27 /* WatchSessionManager.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1819,11 +1667,6 @@
 			isa = PBXTargetDependency;
 			target = 4F13426C2360DA4B00A9DBDE /* RaceSyncAPI */;
 			targetProxy = 4F1342802360DA4C00A9DBDE /* PBXContainerItemProxy */;
-		};
-		4F95B7662596968200631A27 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 4F95B7472596967E00631A27 /* RaceSyncWatch */;
-			targetProxy = 4F95B7652596968200631A27 /* PBXContainerItemProxy */;
 		};
 		4F9A888B29747EC000B52092 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1847,14 +1690,6 @@
 				4F1342512360B67D00A9DBDE /* Base */,
 			);
 			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-		4F95B74A2596967E00631A27 /* Interface.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				4F95B74B2596967E00631A27 /* Base */,
-			);
-			name = Interface.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -2178,60 +2013,6 @@
 			};
 			name = Release;
 		};
-		4F95B7692596968200631A27 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 61;
-				DEVELOPMENT_TEAM = TJ4PB66YQS;
-				INFOPLIST_FILE = RaceSyncWatch/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.6;
-				PRODUCT_BUNDLE_IDENTIFIER = com.multigp.RaceSyncApp.watchkitapp;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 7.0;
-			};
-			name = Debug;
-		};
-		4F95B76A2596968200631A27 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 61;
-				DEVELOPMENT_TEAM = TJ4PB66YQS;
-				INFOPLIST_FILE = RaceSyncWatch/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.6;
-				PRODUCT_BUNDLE_IDENTIFIER = com.multigp.RaceSyncApp.watchkitapp;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 7.0;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2267,15 +2048,6 @@
 			buildConfigurations = (
 				4F1342892360DA4C00A9DBDE /* Debug */,
 				4F13428A2360DA4C00A9DBDE /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		4F95B76F2596968200631A27 /* Build configuration list for PBXNativeTarget "RaceSyncWatch" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				4F95B7692596968200631A27 /* Debug */,
-				4F95B76A2596968200631A27 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
