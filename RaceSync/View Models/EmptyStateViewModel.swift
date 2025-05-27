@@ -84,7 +84,7 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
         case .noMatchingAircraft:
             text = "No Matching Aircraft"
         case .noPushMessages:
-            text = "No Push Notifications"
+            text = "No Messages"
         case .noPushEnabled:
             text = "Push Notifications Disabled"
         case .commingSoon:
@@ -139,7 +139,7 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
         case .noMatchingAircraft:
             text = "You don't have any aircraft matching the race requirements."
         case .noPushMessages:
-            text = "You don't have any push notifications."
+            text = "You don't have any messages."
         case .noPushEnabled:
             text = "Push Notifications are not enabled."
         case .commingSoon:

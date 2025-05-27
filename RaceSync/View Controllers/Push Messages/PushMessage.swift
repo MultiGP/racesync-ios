@@ -7,11 +7,14 @@
 //
 
 import Foundation
+import RaceSyncAPI
 
-struct PushMessage: Codable {
+struct PushMessage: Codable, Descriptable {
 
-    let apnsId: String?
     let title: String
     let detail: String
     let timestamp: TimeInterval
+
+    let raceId: String?
+    let type: String?
 }

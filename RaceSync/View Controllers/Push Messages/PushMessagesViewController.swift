@@ -11,11 +11,11 @@ import SnapKit
 import EmptyDataSet_Swift
 import ShimmerSwift
 
-class PushMessagesViewController: UIViewController, Shimmable {
+class PushMessagesViewController: UIViewController {
 
     // MARK: - Private Variables
 
-    lazy var tableView: UITableView = {
+    fileprivate lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.dataSource = self
         tableView.delegate = self
@@ -26,9 +26,6 @@ class PushMessagesViewController: UIViewController, Shimmable {
         return tableView
     }()
 
-    var shimmeringView: ShimmeringView = defaultShimmeringView()
-
-    fileprivate var messages = [PushMessage]()
     fileprivate var messageViewModels = [PushMessageViewModel]()
 
     fileprivate var emptyStateNoMessages = EmptyStateViewModel(.noPushMessages)
@@ -44,13 +41,15 @@ class PushMessagesViewController: UIViewController, Shimmable {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = "Notifications"
+        title = "Messages"
 
         let closeBtn = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
         navigationItem.leftBarButtonItem = closeBtn
 
-        let clearBtn = UIBarButtonItem(title: "Clear", style: .done, target: self, action: #selector(didPressClearButton))
+        let clearBtn = UIBarButtonItem(title: "Clear All", style: .done, target: self, action: #selector(didPressClearButton))
         navigationItem.rightBarButtonItem = clearBtn
+
+        NotificationCenter.default.addObserver( self, selector: #selector(handleNewPushMessage(_:)), name: .newPushMessageReceived, object: nil)
 
         populateDataSource()
         setupLayout()
@@ -60,41 +59,40 @@ class PushMessagesViewController: UIViewController, Shimmable {
         super.viewWillAppear(animated)
 
         tableView.reloadData()
+        PushMessagesController.shared.clearNotificationsCount()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }
 
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
     // MARK: - Layout
 
     fileprivate func populateDataSource() {
 
-        isLoadingList(true)
-
-        PushNotificationController.shared.getNotificationMessages { [weak self] messages in
-            DispatchQueue.main.async {
-                self?.messageViewModels = PushMessageViewModel.viewModels(with: messages)
-                self?.isLoadingList(false)
-                self?.tableView.reloadData()
-            }
-        }
+        let messages = PushMessagesController.shared.store.getAllMessages()
+        messageViewModels = PushMessageViewModel.viewModels(with: messages)
+        tableView.reloadData()
     }
 
     fileprivate func populateDummySource() {
 
-        messages += [
-            PushMessage(apnsId: nil, title: "📣 Round 28 is up next", detail: "Get ready to race on round 28. Your channel is R1 LHCP.", timestamp: 1747793038),
-            PushMessage(apnsId: nil, title: "📣 Round 17 is up next", detail: "Get ready to race on round 17. Your channel is R5 LHCP.", timestamp: 1747790038),
-            PushMessage(apnsId: nil, title: "📣 Round 7 is up next", detail: "Get ready to race on round 7. Your channel is R2 RHCP.", timestamp: 1747779532),
-            PushMessage(apnsId: nil, title: "📣 Round 2 is up next", detail: "Get ready to race on round 2. Your channel is R1 LHCP.", timestamp: 1747778078),
-            PushMessage(apnsId: nil, title: "📌 NERDs published a new race!", detail: "Save the date! July 22nd NERDs will host '2025 MultiGP Summer Global Qualifier'.", timestamp: 1747774078),
-            PushMessage(apnsId: nil, title: "💸 Payment received!", detail: "HeadsupFPV paid $23.00 USD for '2025 MultiGP Spring GQ - Last Chance'. 6 pilots have paid so far.", timestamp: 1747772048),
-            PushMessage(apnsId: nil, title: "✅ HeadsupFPV joing your race", detail: "HeadsupFPV joined '2025 MultiGP Spring GQ - Last Chance'. 12 pilots have joined so far!", timestamp: 1747773038)
-        ]
-
-        messageViewModels = PushMessageViewModel.viewModels(with: messages)
-        tableView.reloadData()
+//        messages += [
+//            PushMessage(title: "📣 Round 28 is up next", detail: "Get ready to race on round 28. Your channel is R1 LHCP.", timestamp: 1747793038),
+//            PushMessage(title: "📣 Round 17 is up next", detail: "Get ready to race on round 17. Your channel is R5 LHCP.", timestamp: 1747790038),
+//            PushMessage(title: "📣 Round 7 is up next", detail: "Get ready to race on round 7. Your channel is R2 RHCP.", timestamp: 1747779532),
+//            PushMessage(title: "📣 Round 2 is up next", detail: "Get ready to race on round 2. Your channel is R1 LHCP.", timestamp: 1747778078),
+//            PushMessage(title: "📌 NERDs published a new race!", detail: "Save the date! July 22nd NERDs will host '2025 MultiGP Summer Global Qualifier'.", timestamp: 1747774078),
+//            PushMessage(title: "💸 Payment received!", detail: "HeadsupFPV paid $23.00 USD for '2025 MultiGP Spring GQ - Last Chance'. 6 pilots have paid so far.", timestamp: 1747772048),
+//            PushMessage(title: "✅ HeadsupFPV joing your race", detail: "HeadsupFPV joined '2025 MultiGP Spring GQ - Last Chance'. 12 pilots have joined so far!", timestamp: 1747773038)
+//        ]
+//
+//        messageViewModels = PushMessageViewModel.viewModels(with: messages)
+//        tableView.reloadData()
     }
 
     fileprivate func setupLayout() {
@@ -109,12 +107,25 @@ class PushMessagesViewController: UIViewController, Shimmable {
 
     // MARK: - Actions
 
+    @objc private func handleNewPushMessage(_ notification: Notification)  {
+        guard let newMessage = notification.object as? PushMessage else { return }
+
+        let viewModel = PushMessageViewModel(with: newMessage)
+        messageViewModels.insert(viewModel, at: 0)
+
+        DispatchQueue.main.async {
+            self.tableView.beginUpdates()
+            self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+            self.tableView.endUpdates()
+        }
+    }
+
     @objc func didPressCloseButton() {
         dismiss(animated: true)
     }
 
     @objc func didPressClearButton() {
-        PushNotificationController.shared.clearAllNotificationMessages()
+        PushMessagesController.shared.clearAllNotificationMessages()
         populateDataSource()
     }
 
@@ -129,7 +140,36 @@ class PushMessagesViewController: UIViewController, Shimmable {
 extension PushMessagesViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+
+        let viewModel = messageViewModels[indexPath.row]
+
+        if let raceId = viewModel.message.raceId {
+            let vc = RaceTabBarController(with: raceId)
+            navigationController?.pushViewController(vc, animated: true)
+        }
+
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        
+        if editingStyle == .delete {
+
+            let viewModel = messageViewModels[indexPath.row]
+
+            // Remove from storage
+            PushMessagesController.shared.store.remove(viewModel.message)
+
+            messageViewModels.remove(at: indexPath.row)
+
+            tableView.beginUpdates()
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+            tableView.endUpdates()
+        }
+    }
+
+    func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
+        return "Delete"
     }
 }
 
@@ -160,7 +200,7 @@ extension PushMessagesViewController: EmptyDataSetSource {
 
     func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
 
-        if PushNotificationController.shared.isRegisteredForNotifications() {
+        if PushMessagesController.shared.isRegisteredForNotifications() {
             return emptyStateNoMessages.title
         } else {
             return emptyStateNoPushEnabled.title
@@ -169,7 +209,7 @@ extension PushMessagesViewController: EmptyDataSetSource {
 
     func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
 
-        if PushNotificationController.shared.isRegisteredForNotifications() {
+        if PushMessagesController.shared.isRegisteredForNotifications() {
             return emptyStateNoMessages.description
         } else {
             return emptyStateNoPushEnabled.description
@@ -178,7 +218,7 @@ extension PushMessagesViewController: EmptyDataSetSource {
 
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
 
-        if !PushNotificationController.shared.isRegisteredForNotifications() {
+        if !PushMessagesController.shared.isRegisteredForNotifications() {
             return emptyStateNoPushEnabled.buttonTitle(state)
         }
         return nil
@@ -191,13 +231,17 @@ extension PushMessagesViewController: EmptyDataSetSource {
 
 extension PushMessagesViewController: EmptyDataSetDelegate {
 
+    func emptyDataSetShouldDisplay(_ scrollView: UIScrollView) -> Bool {
+        return true
+    }
+
     func emptyDataSetShouldAllowScroll(_ scrollView: UIScrollView) -> Bool {
         return true
     }
 
     func emptyDataSet(_ scrollView: UIScrollView, didTapButton button: UIButton) {
 
-        if !PushNotificationController.shared.isRegisteredForNotifications() {
+        if !PushMessagesController.shared.isRegisteredForNotifications() {
             didPressEnableNotificationsButton()
         }
     }

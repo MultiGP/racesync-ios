@@ -1,5 +1,5 @@
 //
-//  PushNotificationController.swift
+//  PushMessagesController.swift
 //  RaceSync
 //
 //  Created by Ignacio Romero Zurbuchen on 2025-05-20.
@@ -11,51 +11,57 @@
 import UIKit
 import RaceSyncAPI
 
-class PushNotificationController: NSObject {
+class PushMessagesController: NSObject {
 
-    public static let shared = PushNotificationController()
+    public static let shared = PushMessagesController()
+    public let store = PushMessagesStore()
 
     fileprivate let userApi = UserApi()
     fileprivate let notificationCenter = UNUserNotificationCenter.current()
 
     typealias ObjectCompletionBlock<T> = (_ result: [T]) -> Void
 
+    override init() {
+        super.init()
+        notificationCenter.delegate = self
+        preloadDeliveredNotifications()
+    }
+
     // MARK: - Public Variables
 
-    var notificationCount: Int {
+    var notificationsCount: Int {
         get { return UIApplication.shared.applicationIconBadgeNumber }
         set { UIApplication.shared.applicationIconBadgeNumber = newValue}
     }
 
     // MARK: - Stored Notification Fetching
 
-    func getNotificationMessages(_ completion: @escaping ObjectCompletionBlock<PushMessage>) {
+//    func getNotificationMessages(_ completion: @escaping ObjectCompletionBlock<PushMessage>) {
+//
+//        notificationCenter.getDeliveredNotifications { notifications in
+//                let messages: [PushMessage] = notifications.map { notification in
+//                    let content = notification.request.content
+//
+//                    let title = content.title
+//                    let detail = content.body
+//                    let timestamp = notification.date.timeIntervalSince1970
+//
+//                    return PushMessage(title: title, detail: detail, timestamp: timestamp)
+//                }
+//
+//                completion(messages)
+//            }
+//    }
 
-        notificationCenter.getDeliveredNotifications { notifications in
-                let messages: [PushMessage] = notifications.map { notification in
-                    let content = notification.request.content
-
-                    let apnsId = notification.request.identifier
-                    let title = content.title
-                    let detail = content.body
-                    let timestamp = notification.date.timeIntervalSince1970
-
-                    return PushMessage(apnsId: apnsId, title: title, detail: detail, timestamp: timestamp)
-                }
-
-                completion(messages)
-            }
-    }
-
-    func clearNotificationMessage(_ message: PushMessage) {
-
-        guard let identifier = message.apnsId else { return }
-        notificationCenter.removeDeliveredNotifications(withIdentifiers: [identifier])
+    func clearNotificationsCount() {
+        notificationsCount = 0
     }
 
     func clearAllNotificationMessages() {
-        
+
+        clearNotificationsCount()
         notificationCenter.removeAllDeliveredNotifications()
+        store.removeAll()
     }
 
     // MARK: - Remote Notification Registration
@@ -66,9 +72,8 @@ class PushNotificationController: NSObject {
 
     func registerForNotifications() {
 
-        notificationCenter.delegate = self
         notificationCenter.requestAuthorization(
-               options: [.alert, .sound, .badge]
+            options: [.alert, .sound, .badge, .providesAppNotificationSettings]
            ) { granted, error in
                if granted {
                    DispatchQueue.main.async {
@@ -101,6 +106,13 @@ class PushNotificationController: NSObject {
         }
     }
 
+    func didReceiveRemoteNotification(with userInfo: [AnyHashable : Any]) {
+
+        print("Push notification in background : \(userInfo)")
+
+        store.parseNotification(userInfo)
+    }
+
     func unregisterForNotifications(_ completion: @escaping StatusCompletionBlock) {
 
         notificationCenter.removeAllPendingNotificationRequests()
@@ -115,14 +127,15 @@ class PushNotificationController: NSObject {
     }
 }
 
-extension PushNotificationController: UNUserNotificationCenterDelegate {
+extension PushMessagesController: UNUserNotificationCenterDelegate {
 
     // Called when a notification is received while app is in the foreground
-    func userNotificationCenter( _ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler:
-        @escaping (UNNotificationPresentationOptions) -> Void
-    ) {
-        let userInfo = notification.request.content.userInfo
-        print("Push notification foreground: \(userInfo)")
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+
+        let content = notification.request.content
+        print("Push notification in foreground : \(content.userInfo)")
+
+        store.parseNotification(content.userInfo)
 
         // Show the notification (banner, sound, etc.)
         completionHandler([.banner, .sound])
@@ -130,50 +143,32 @@ extension PushNotificationController: UNUserNotificationCenterDelegate {
 
     // Called when the user tapped on the notification
     // Triggered whether the app is in background, foreground, or terminated
-    fileprivate func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler:
-        @escaping (UNNotificationPresentationOptions) -> Void
-    ) {
-        let userInfo = response.notification.request.content.userInfo
-        print("Push notification tapped: \(userInfo)")
+    private func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+
+        let content = response.notification.request.content
+        print("Push notification tapped : \(content.userInfo)")
+        store.parseNotification(content.userInfo)
 
         // Show the notification (banner, sound, etc.)
         completionHandler([.banner, .sound])
     }
 
-    func application(_ application: UIApplication,
-                     didReceiveRemoteNotification userInfo: [AnyHashable : Any],
-                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        print("Push notification background: \(userInfo)")
+    // Called when the application is launched in response to the user's request to view in-app notification settings.
+    func userNotificationCenter(_ center: UNUserNotificationCenter, openSettingsFor notification: UNNotification?) {
 
-        completionHandler(.newData)
+        print("Push notification in-app notification settings")
     }
 }
 
-fileprivate class PushNotificationStore {
+extension PushMessagesController {
 
-    private static let key = "storedMessages"
+    fileprivate func preloadDeliveredNotifications() {
 
-    static func save(_ messages: [PushMessage]) {
-        if let data = try? JSONEncoder().encode(messages) {
-            UserDefaults.standard.set(data, forKey: key)
+        notificationCenter.getDeliveredNotifications { notifications in
+            for notification in notifications {
+                let content = notification.request.content
+                self.store.parseNotification(content.userInfo)
+            }
         }
-    }
-
-    static func load() -> [PushMessage] {
-        guard let data = UserDefaults.standard.data(forKey: key),
-              let messages = try? JSONDecoder().decode([PushMessage].self, from: data) else {
-            return []
-        }
-        return messages
-    }
-
-    static func add(_ message: PushMessage) {
-        var current = load()
-        current.append(message)
-        save(current)
-    }
-
-    static func clear() {
-        UserDefaults.standard.removeObject(forKey: key)
     }
 }

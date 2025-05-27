@@ -119,8 +119,7 @@
 		4F8669062388D3BC005E310A /* AuthApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8669052388D3BC005E310A /* AuthApi.swift */; };
 		4F87E4352727976E0061425B /* NetworkProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F87E4342727976E0061425B /* NetworkProxy.swift */; };
 		4F8B4A0A2DDC7AEF00B735DA /* PushMessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8B4A092DDC7AEF00B735DA /* PushMessagesViewController.swift */; };
-		4F8B4A0C2DDCECD200B735DA /* PushSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8B4A0B2DDCECD200B735DA /* PushSettingsViewController.swift */; };
-		4F8B4A0E2DDCECE900B735DA /* PushNotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8B4A0D2DDCECE900B735DA /* PushNotificationController.swift */; };
+		4F8B4A0E2DDCECE900B735DA /* PushMessagesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8B4A0D2DDCECE900B735DA /* PushMessagesController.swift */; };
 		4F8B4A102DDCEECD00B735DA /* BadgeHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8B4A0F2DDCEECD00B735DA /* BadgeHub.swift */; };
 		4F8B4A122DDD155100B735DA /* PushMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8B4A112DDD155100B735DA /* PushMessage.swift */; };
 		4F8B4A142DDD15B100B735DA /* PushMessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8B4A132DDD15B100B735DA /* PushMessageViewModel.swift */; };
@@ -210,6 +209,7 @@
 		4FC57C33258E1362006E210F /* AppUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC57C32258E1362006E210F /* AppUtil.swift */; };
 		4FC86BA32D274B8C004297E7 /* APIRaceFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC86BA22D274B8C004297E7 /* APIRaceFilters.swift */; };
 		4FC86BA52D27E00E004297E7 /* MultiTextPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC86BA42D27E00E004297E7 /* MultiTextPickerViewController.swift */; };
+		4FC98DF32DE55AE2006F99B4 /* PushMessagesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC98DF22DE55AE2006F99B4 /* PushMessagesStore.swift */; };
 		4FC9A1B623D7CFBC00069FDE /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA1FC8C23D74A39006D4704 /* Bundle+Extensions.swift */; };
 		4FCAF9FA23AB226500ACE7D3 /* MapperUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCAF9F923AB226500ACE7D3 /* MapperUtil.swift */; };
 		4FCAF9FC23AC803700ACE7D3 /* TableViewCellShimmerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCAF9FB23AC803700ACE7D3 /* TableViewCellShimmerView.swift */; };
@@ -437,8 +437,7 @@
 		4F8669052388D3BC005E310A /* AuthApi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthApi.swift; sourceTree = "<group>"; };
 		4F87E4342727976E0061425B /* NetworkProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkProxy.swift; sourceTree = "<group>"; };
 		4F8B4A092DDC7AEF00B735DA /* PushMessagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushMessagesViewController.swift; sourceTree = "<group>"; };
-		4F8B4A0B2DDCECD200B735DA /* PushSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushSettingsViewController.swift; sourceTree = "<group>"; };
-		4F8B4A0D2DDCECE900B735DA /* PushNotificationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationController.swift; sourceTree = "<group>"; };
+		4F8B4A0D2DDCECE900B735DA /* PushMessagesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushMessagesController.swift; sourceTree = "<group>"; };
 		4F8B4A0F2DDCEECD00B735DA /* BadgeHub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeHub.swift; sourceTree = "<group>"; };
 		4F8B4A112DDD155100B735DA /* PushMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushMessage.swift; sourceTree = "<group>"; };
 		4F8B4A132DDD15B100B735DA /* PushMessageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushMessageViewModel.swift; sourceTree = "<group>"; };
@@ -532,6 +531,7 @@
 		4FC57C32258E1362006E210F /* AppUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUtil.swift; sourceTree = "<group>"; };
 		4FC86BA22D274B8C004297E7 /* APIRaceFilters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRaceFilters.swift; sourceTree = "<group>"; };
 		4FC86BA42D27E00E004297E7 /* MultiTextPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiTextPickerViewController.swift; sourceTree = "<group>"; };
+		4FC98DF22DE55AE2006F99B4 /* PushMessagesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushMessagesStore.swift; sourceTree = "<group>"; };
 		4FCAF9F923AB226500ACE7D3 /* MapperUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapperUtil.swift; sourceTree = "<group>"; };
 		4FCAF9FB23AC803700ACE7D3 /* TableViewCellShimmerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCellShimmerView.swift; sourceTree = "<group>"; };
 		4FCAF9FD23AC8B8400ACE7D3 /* Shimmable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shimmable.swift; sourceTree = "<group>"; };
@@ -926,9 +926,9 @@
 			isa = PBXGroup;
 			children = (
 				4F8B4A092DDC7AEF00B735DA /* PushMessagesViewController.swift */,
-				4F8B4A0B2DDCECD200B735DA /* PushSettingsViewController.swift */,
-				4F8B4A0D2DDCECE900B735DA /* PushNotificationController.swift */,
 				4F8B4A132DDD15B100B735DA /* PushMessageViewModel.swift */,
+				4F8B4A0D2DDCECE900B735DA /* PushMessagesController.swift */,
+				4FC98DF22DE55AE2006F99B4 /* PushMessagesStore.swift */,
 				4F8B4A112DDD155100B735DA /* PushMessage.swift */,
 			);
 			path = "Push Messages";
@@ -1601,7 +1601,7 @@
 				4F80A661296F9951008B19AF /* RichEditorOptionItem.swift in Sources */,
 				4F9DB7A323D397B700570483 /* SettingsViewController.swift in Sources */,
 				4F80A655296F9951008B19AF /* RichEditorView.swift in Sources */,
-				4F8B4A0E2DDCECE900B735DA /* PushNotificationController.swift in Sources */,
+				4F8B4A0E2DDCECE900B735DA /* PushMessagesController.swift in Sources */,
 				4F27243B2517DB1C000C7408 /* CopyLinkActivity.swift in Sources */,
 				4FE96E9224E3E687009A7F53 /* HeaderStretchable.swift in Sources */,
 				4FEADB742416B3D400F82F0D /* EventTracker.swift in Sources */,
@@ -1614,6 +1614,7 @@
 				4F714DE323CD5EAA000C4036 /* SafariActivity.swift in Sources */,
 				4F004EA0295AA641009C46AA /* RaceFormViewController.swift in Sources */,
 				4F6CAD8D2983040100E80B5F /* ChapterPickerViewController.swift in Sources */,
+				4FC98DF32DE55AE2006F99B4 /* PushMessagesStore.swift in Sources */,
 				4F5C1E47238D1C3200D756EB /* TextCopiable.swift in Sources */,
 				4F6429142403AE9A005E8036 /* FormBaseViewController.swift in Sources */,
 				4FC86BA52D27E00E004297E7 /* MultiTextPickerViewController.swift in Sources */,
@@ -1640,7 +1641,6 @@
 				4F6C8A96236A9D580017FD78 /* UIColor+Extensions.swift in Sources */,
 				4F2724402517DC5B000C7408 /* UIActivityViewController+Extensions.swift in Sources */,
 				4FA1AB3D23C94F5F007CF389 /* UIEdgeInsets+Extensions.swift in Sources */,
-				4F8B4A0C2DDCECD200B735DA /* PushSettingsViewController.swift in Sources */,
 				4FA1AB3723C7149D007CF389 /* AircraftCollectionViewCell.swift in Sources */,
 				4F6429122402DB00005E8036 /* ImageConstants.swift in Sources */,
 				4FD4E1C5237F9746008816B3 /* UserViewController.swift in Sources */,

@@ -91,7 +91,7 @@ class LoginViewController: UIViewController {
         button.titleLabel?.font = UIFont.systemFont(ofSize: 21, weight: .regular)
         button.setTitleColor(Color.blue, for: .normal)
         button.setTitle("Login", for: .normal)
-        button.backgroundColor = Color.white.withAlphaComponent(0.7)
+        button.backgroundColor = Color.white.withAlphaComponent(0.8)
         button.layer.cornerRadius = Constants.padding/2
         button.layer.borderColor = Color.gray100.cgColor
         button.layer.borderWidth = 0.5

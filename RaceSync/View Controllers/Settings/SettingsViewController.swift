@@ -109,7 +109,7 @@ class SettingsViewController: UIViewController {
 
     fileprivate func togglePushNotifications() {
 
-        PushNotificationController.shared.registerForNotifications()
+        PushMessagesController.shared.registerForNotifications()
 
 //        if PushNotificationController.isRegisteredForNotifications() {
 //            PushNotificationController.registerForNotifications()

@@ -78,7 +78,13 @@ class RaceTabBarController: UITabBarController {
         self.race = race
         super.init(nibName: nil, bundle: nil)
     }
-    
+
+    init(with raceId: ObjectId) {
+        self.raceId = raceId
+        self.race = nil
+        super.init(nibName: nil, bundle: nil)
+    }
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
