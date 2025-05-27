@@ -201,7 +201,6 @@
 		4FCAF9FA23AB226500ACE7D3 /* MapperUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCAF9F923AB226500ACE7D3 /* MapperUtil.swift */; };
 		4FCAF9FC23AC803700ACE7D3 /* TableViewCellShimmerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCAF9FB23AC803700ACE7D3 /* TableViewCellShimmerView.swift */; };
 		4FCAF9FE23AC8B8400ACE7D3 /* Shimmable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCAF9FD23AC8B8400ACE7D3 /* Shimmable.swift */; };
-		4FCAFA0023AED59D00ACE7D3 /* preview.pkpass in Resources */ = {isa = PBXBuildFile; fileRef = 4FCAF9FF23AED59D00ACE7D3 /* preview.pkpass */; };
 		4FCD99B62976242A0094C562 /* RaceFeedMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCD99B52976242A0094C562 /* RaceFeedMenuViewController.swift */; };
 		4FCD99B829788F720094C562 /* AppWebConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCD99B729788F720094C562 /* AppWebConstants.swift */; };
 		4FD4E1BC237DCAA3008816B3 /* UserApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1BB237DCAA3008816B3 /* UserApi.swift */; };
@@ -500,7 +499,6 @@
 		4FCAF9F923AB226500ACE7D3 /* MapperUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapperUtil.swift; sourceTree = "<group>"; };
 		4FCAF9FB23AC803700ACE7D3 /* TableViewCellShimmerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCellShimmerView.swift; sourceTree = "<group>"; };
 		4FCAF9FD23AC8B8400ACE7D3 /* Shimmable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shimmable.swift; sourceTree = "<group>"; };
-		4FCAF9FF23AED59D00ACE7D3 /* preview.pkpass */ = {isa = PBXFileReference; lastKnownFileType = file; path = preview.pkpass; sourceTree = "<group>"; };
 		4FCD99B52976242A0094C562 /* RaceFeedMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceFeedMenuViewController.swift; sourceTree = "<group>"; };
 		4FCD99B729788F720094C562 /* AppWebConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppWebConstants.swift; sourceTree = "<group>"; };
 		4FD4E1BB237DCAA3008816B3 /* UserApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserApi.swift; sourceTree = "<group>"; };
@@ -662,7 +660,6 @@
 				4F64B34A2D22879C00FC5BF1 /* launch_bkgd.jpg */,
 				4F9DB79F23D3816800570483 /* RaceSync.entitlements */,
 				4F8175A82412F82900685F83 /* RaceSync-Bridging-Header.h */,
-				4FCAF9FF23AED59D00ACE7D3 /* preview.pkpass */,
 				4FA213F92947E1F900C8E45A /* README.md */,
 				4FBA7464298EF14D007A9E90 /* RELEASE-NOTES.md */,
 				4F1342532360B67D00A9DBDE /* Info.plist */,
@@ -1297,7 +1294,6 @@
 				4FBE7608259B348200312B66 /* Assets.xcassets in Resources */,
 				4F80A65C296F9951008B19AF /* rich_editor.html in Resources */,
 				4FA213E72946ADD400C8E45A /* AppIcon-OTTFPV@2x.png in Resources */,
-				4FCAFA0023AED59D00ACE7D3 /* preview.pkpass in Resources */,
 				4F13424D2360B67D00A9DBDE /* Main.storyboard in Resources */,
 				4F9979BF26D57CFF00496451 /* AppIcon-KRU@3x.png in Resources */,
 				4FA213F42947A7C700C8E45A /* AppIcon-CFPV@3x.png in Resources */,

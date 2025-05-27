@@ -10,13 +10,8 @@ import UIKit
 import RaceSyncAPI
 import SnapKit
 import QRCode
-import PassKit
 
 class QRViewController: UIViewController {
-
-    // MARK: - Feature Flags
-    
-    fileprivate var isPassKitEnabled: Bool = false
 
     // MARK: - Private Variables
 
@@ -46,12 +41,6 @@ class QRViewController: UIViewController {
         return label
     }()
 
-    fileprivate lazy var walletButton: UIButton = {
-        let button = PKAddPassButton(addPassButtonStyle: .black)
-        button.addTarget(self, action: #selector(didPressWalletButton), for: .touchUpInside)
-        return button
-    }()
-
     fileprivate lazy var photosButton: UIButton = {
         let image = UIImage(named: "icn_apple_photos")?.withRenderingMode(.alwaysOriginal)
         let button = UIButton(type: .system)
@@ -79,14 +68,10 @@ class QRViewController: UIViewController {
     }()
 
     fileprivate func actionButtons() -> [UIView] {
-        var subviews = [UIView]()
-        if isPassKitEnabled { subviews += [walletButton] }
-        subviews += [photosButton]
-        return subviews
+        return [photosButton]
     }
 
     fileprivate let userId: String
-    fileprivate var pass: PKPass?
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -147,19 +132,7 @@ class QRViewController: UIViewController {
             $0.top.equalTo(qrImageView.snp.bottom).offset(Constants.padding*3)
             $0.centerX.equalToSuperview()
             $0.width.equalTo(Constants.imageSize.width)
-
-            if isPassKitEnabled {
-                $0.height.greaterThanOrEqualTo(Constants.buttonHeight*2)
-            } else {
-                $0.height.greaterThanOrEqualTo(Constants.buttonHeight)
-            }
-        }
-
-        if walletButton.superview != nil {
-            walletButton.snp.makeConstraints {
-                $0.width.equalTo(Constants.imageSize.width)
-                $0.height.equalTo(Constants.buttonHeight)
-            }
+            $0.height.greaterThanOrEqualTo(Constants.buttonHeight)
         }
 
         photosButton.snp.makeConstraints {
@@ -186,38 +159,6 @@ class QRViewController: UIViewController {
         dismiss(animated: true)
     }
 
-    @objc func didPressWalletButton() {
-        // Skip if not allowed / supported
-        guard PKAddPassesViewController.canAddPasses() else {
-            AlertUtil.presentAlertMessage("This device doesn't support adding passes to the Wallet app.", title: "Device Not Supported")
-            return
-        }
-
-        guard let filepath = Bundle.main.path(forResource: "preview", ofType: "pkpass") else { return }
-
-        do {
-            let content = try Data(contentsOf: URL(fileURLWithPath: filepath))
-            let pass = try PKPass(data: content)
-
-            // Offer to open Wallet if the pass is already present
-            if PKPassLibrary().containsPass(pass) {
-                AlertUtil.presentAlertMessage("This pass is already in the Wallet app. Do you wish to open wallet?", title: "Pass Already Saved", buttonTitle: "Show Pass") { (action) in
-                    guard let url = URL(string: ExternalAppSchemes.WalletScheme) else { return }
-                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                }
-                return
-            }
-
-            guard let viewController = PKAddPassesViewController(pass: pass) else { return }
-            viewController.delegate = self
-            UIViewController.topMostViewController()?.present(viewController, animated: true)
-
-            self.pass = pass
-        }  catch {
-            Clog.log("error showing pass \(error.localizedDescription)")
-        }
-    }
-
     @objc func didPressPhotosButton() {
         guard let image = qrImageView.image else { return }
         UIImageWriteToSavedPhotosAlbum(image, self, #selector(image(_:didFinishSavingWithError:contextInfo:)), nil)
@@ -228,20 +169,6 @@ class QRViewController: UIViewController {
             AlertUtil.presentAlertMessage(error.localizedDescription, title: "Save error")
         } else {
             AlertUtil.presentAlertMessage("Your MultiGP QR code has been saved to the Photos app!", title: "Saved Image")
-        }
-    }
-}
-
-extension QRViewController: PKAddPassesViewControllerDelegate {
-
-    func addPassesViewControllerDidFinish(_ controller: PKAddPassesViewController) {
-
-        controller.dismiss(animated: true) { [weak self] in
-            if let pass = self?.pass {
-                if PKPassLibrary().containsPass(pass) {
-                    AlertUtil.presentAlertMessage("Your MultiGP Pilot Pass has been saved to the Wallet app!", title: "Saved Pass")
-                }
-            }
         }
     }
 }
