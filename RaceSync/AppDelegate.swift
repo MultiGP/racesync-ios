@@ -21,6 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         Appearance.configureUIAppearance()
+        UNUserNotificationCenter.current().delegate = PushMessagesController.shared
         return true
     }
 
@@ -67,4 +68,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         completionHandler(.newData)
     }
 }
-

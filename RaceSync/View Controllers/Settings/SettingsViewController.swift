@@ -109,13 +109,13 @@ class SettingsViewController: UIViewController {
 
     fileprivate func togglePushNotifications() {
 
-        PushMessagesController.shared.registerForNotifications()
-
-//        if PushNotificationController.isRegisteredForNotifications() {
-//            PushNotificationController.registerForNotifications()
-//        } else {
-//            PushNotificationController.unregisterForNotifications(nil)
-//        }
+        if PushMessagesController.shared.isRegisteredForNotifications() {
+            PushMessagesController.shared.registerForNotifications()
+        } else {
+            PushMessagesController.shared.unregisterForNotifications { status, error in
+                //
+            }
+        }
     }
 
     fileprivate func logout() {
@@ -201,7 +201,7 @@ extension SettingsViewController: UITableViewDataSource {
         cell.accessoryType = .disclosureIndicator
 
         if row == .notifications {
-            cell.detailTextLabel?.text = UIApplication.shared.isRegisteredForRemoteNotifications ? "Enabled" : "Disabled"
+            cell.detailTextLabel?.text = PushMessagesController.shared.isRegisteredForNotifications() ? "Enabled" : "Disabled"
         } else if row == .appicon {
             let icon = AppIconManager.selectedIcon()
             cell.detailTextLabel?.text = icon.title

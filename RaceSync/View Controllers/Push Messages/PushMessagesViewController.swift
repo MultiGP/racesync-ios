@@ -58,12 +58,20 @@ class PushMessagesViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
+        PushMessagesController.shared.clearPushMessagesCount()
+        PushMessagesController.shared.isMessagesViewShowing = true
+
         tableView.reloadData()
-        PushMessagesController.shared.clearNotificationsCount()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        PushMessagesController.shared.isMessagesViewShowing = false
     }
 
     deinit {
@@ -113,11 +121,9 @@ class PushMessagesViewController: UIViewController {
         let viewModel = PushMessageViewModel(with: newMessage)
         messageViewModels.insert(viewModel, at: 0)
 
-        DispatchQueue.main.async {
-            self.tableView.beginUpdates()
-            self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
-            self.tableView.endUpdates()
-        }
+        tableView.beginUpdates()
+        tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+        tableView.endUpdates()
     }
 
     @objc func didPressCloseButton() {
@@ -125,7 +131,7 @@ class PushMessagesViewController: UIViewController {
     }
 
     @objc func didPressClearButton() {
-        PushMessagesController.shared.clearAllNotificationMessages()
+        PushMessagesController.shared.clearAllPushMessages()
         populateDataSource()
     }
 

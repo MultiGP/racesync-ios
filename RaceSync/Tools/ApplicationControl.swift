@@ -42,6 +42,13 @@ class ApplicationControl: NSObject {
 
     // Default environment value is based on the existing environment
     func logout(switchTo environment: APIEnvironment = APIServices.shared.settings.environment, forced: Bool = false) {
+
+        // Unregister from push notifications, on the device and on the server
+        PushMessagesController.shared.unregisterForNotifications { status, error in
+            PushMessagesController.shared.store.removeAll() // clear all saved messages
+        }
+
+        // Logs out from RaceSync and invalidates session
         authApi.logout { [weak self] (status, error) in
             if error == nil {
                 self?.invalidateSession(forced: forced)

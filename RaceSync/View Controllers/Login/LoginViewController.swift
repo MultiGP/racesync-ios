@@ -18,7 +18,7 @@ class LoginViewController: UIViewController {
 
     fileprivate lazy var loginFormView: UIView = {
         let view = UIView()
-        view.alpha = 0.5
+        view.alpha = 0
         view.backgroundColor = Color.clear
         view.addSubview(self.titleLabel)
         view.addSubview(self.emailField)

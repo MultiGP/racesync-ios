@@ -20,13 +20,6 @@ class PushMessagesStore {
         return messages.sorted { $0.timestamp > $1.timestamp }
     }
 
-    func add(_ message: PushMessage) {
-        messages.append(message)
-        saveMessages()
-
-        NotificationCenter.default.post(name: .newPushMessageReceived, object: message)
-    }
-
     func remove(_ message: PushMessage) {
         messages.removeAll { $0.timestamp == message.timestamp } // TODO: Make PushMessage Equatable
         saveMessages()
@@ -37,7 +30,9 @@ class PushMessagesStore {
         saveMessages()
     }
 
-    func parseNotification(_ userInfo: [AnyHashable : Any]) {
+    // MARK: - Parsing
+
+    func parseNotification(_ userInfo: [AnyHashable : Any], broadcast: Bool = false) {
         guard let aps = userInfo["aps"] as? [String: Any], let alert = aps["alert"] as? [String: Any] else {
             return
         }
@@ -47,7 +42,7 @@ class PushMessagesStore {
 
         let data = userInfo["customData"] as? [String: Any]
         let raceId = data?["raceId"] as? String ?? ""
-        let type = data?["type"] as? String ?? ""
+        let type = data?["type"] as? String ?? "" // ie: "zippyq_next_round"
 
         let message = PushMessage(
             title: title,
@@ -59,6 +54,12 @@ class PushMessagesStore {
 
         messages.append(message)
         saveMessages()
+
+        if broadcast {
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: .newPushMessageReceived, object: message)
+            }
+        }
     }
 
     // MARK: - Private

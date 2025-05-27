@@ -13,55 +13,38 @@ import RaceSyncAPI
 
 class PushMessagesController: NSObject {
 
-    public static let shared = PushMessagesController()
-    public let store = PushMessagesStore()
-
-    fileprivate let userApi = UserApi()
-    fileprivate let notificationCenter = UNUserNotificationCenter.current()
-
-    typealias ObjectCompletionBlock<T> = (_ result: [T]) -> Void
-
     override init() {
         super.init()
         notificationCenter.delegate = self
         preloadDeliveredNotifications()
+
+        notificationCenter.getNotificationSettings { settings in
+            print("🔍 Notification settings: \(settings)")
+        }
     }
 
-    // MARK: - Public Variables
+    // MARK: - Public
+
+    static let shared = PushMessagesController()
+    let store = PushMessagesStore()
+
+    var isMessagesViewShowing: Bool = false
 
     var notificationsCount: Int {
         get { return UIApplication.shared.applicationIconBadgeNumber }
         set { UIApplication.shared.applicationIconBadgeNumber = newValue}
     }
 
-    // MARK: - Stored Notification Fetching
+    // MARK: - Badge Count
 
-//    func getNotificationMessages(_ completion: @escaping ObjectCompletionBlock<PushMessage>) {
-//
-//        notificationCenter.getDeliveredNotifications { notifications in
-//                let messages: [PushMessage] = notifications.map { notification in
-//                    let content = notification.request.content
-//
-//                    let title = content.title
-//                    let detail = content.body
-//                    let timestamp = notification.date.timeIntervalSince1970
-//
-//                    return PushMessage(title: title, detail: detail, timestamp: timestamp)
-//                }
-//
-//                completion(messages)
-//            }
-//    }
-
-    func clearNotificationsCount() {
+    func clearPushMessagesCount() {
         notificationsCount = 0
     }
 
-    func clearAllNotificationMessages() {
-
-        clearNotificationsCount()
-        notificationCenter.removeAllDeliveredNotifications()
+    func clearAllPushMessages() {
+        clearPushMessagesCount()
         store.removeAll()
+        notificationCenter.removeAllDeliveredNotifications()
     }
 
     // MARK: - Remote Notification Registration
@@ -85,7 +68,7 @@ class PushMessagesController: NSObject {
            }
     }
 
-    func didRegisterForNotifications(with deviceToken: Data) {
+    func didRegisterForNotifications(with deviceToken: Data, completion: StatusCompletionBlock?) {
 
         let parts = deviceToken.map { String(format: "%02.2hhx", $0) }
         let token = parts.joined()
@@ -103,72 +86,106 @@ class PushMessagesController: NSObject {
                     print("Failed to register device with API")
                 }
             }
+
+            completion?(status, error)
         }
     }
 
+    // Called when the user tapped on the notification
     func didReceiveRemoteNotification(with userInfo: [AnyHashable : Any]) {
 
         print("Push notification in background : \(userInfo)")
 
-        store.parseNotification(userInfo)
+        if isMessagesViewShowing {
+            store.parseNotification(userInfo, broadcast: true)
+        } else {
+            store.parseNotification(userInfo)
+
+            let vc = NavigationController(rootViewController: PushMessagesViewController())
+            let animated = UIApplication.shared.applicationState == .active ? true : false
+            UIViewController.topMostViewController()?.present(vc, animated: animated)
+        }
     }
 
-    func unregisterForNotifications(_ completion: @escaping StatusCompletionBlock) {
+    func unregisterForNotifications(_ completion: StatusCompletionBlock?) {
 
         notificationCenter.removeAllPendingNotificationRequests()
         notificationCenter.removeAllDeliveredNotifications()
         UIApplication.shared.unregisterForRemoteNotifications()
 
-        userApi.registerPushNotification(forAction: .delete, completion)
+        userApi.registerPushNotification(forAction: .delete) { (status, error) in
+            if let error = error {
+                print("Failed to register device with API. Error: \(error.localizedDescription)")
+            } else {
+                if status {
+                    print("Unregister device with API!")
+                } else {
+                    print("Failed to register device with API")
+                }
+            }
+
+            completion?(status, error)
+        }
     }
 
     func failedToRegisterForNotifications(with error: Error) {
         print("Failed to register for remote notifications: \(error.localizedDescription)")
     }
-}
 
-extension PushMessagesController: UNUserNotificationCenterDelegate {
+    // MARK: - Private
 
-    // Called when a notification is received while app is in the foreground
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-
-        let content = notification.request.content
-        print("Push notification in foreground : \(content.userInfo)")
-
-        store.parseNotification(content.userInfo)
-
-        // Show the notification (banner, sound, etc.)
-        completionHandler([.banner, .sound])
-    }
-
-    // Called when the user tapped on the notification
-    // Triggered whether the app is in background, foreground, or terminated
-    private func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-
-        let content = response.notification.request.content
-        print("Push notification tapped : \(content.userInfo)")
-        store.parseNotification(content.userInfo)
-
-        // Show the notification (banner, sound, etc.)
-        completionHandler([.banner, .sound])
-    }
-
-    // Called when the application is launched in response to the user's request to view in-app notification settings.
-    func userNotificationCenter(_ center: UNUserNotificationCenter, openSettingsFor notification: UNNotification?) {
-
-        print("Push notification in-app notification settings")
-    }
-}
-
-extension PushMessagesController {
+    fileprivate let userApi = UserApi()
+    fileprivate let notificationCenter = UNUserNotificationCenter.current()
 
     fileprivate func preloadDeliveredNotifications() {
 
         notificationCenter.getDeliveredNotifications { notifications in
             for notification in notifications {
                 let content = notification.request.content
-                self.store.parseNotification(content.userInfo)
+                self.store.parseNotification(content.userInfo) // no need to broadcast this event
             }
         }
+    }
+
+    fileprivate func handleNotificationPresentation(completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+
+        if !isMessagesViewShowing {
+            completionHandler([.banner, .sound])
+        } else {
+            completionHandler([])
+        }
+    }
+}
+
+extension PushMessagesController: UNUserNotificationCenterDelegate {
+
+    // Called when a notification is received while app is in the foreground
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                    willPresent notification: UNNotification,
+                                    withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+
+        let content = notification.request.content
+        print("Push notification in foreground : \(content.userInfo)")
+        store.parseNotification(content.userInfo, broadcast: isMessagesViewShowing)
+
+        handleNotificationPresentation(completionHandler: completionHandler)
+    }
+
+    // Triggered whether the app is in background, foreground, or terminated
+    private func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                        didReceive response: UNNotificationResponse,
+                                        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+
+        let content = response.notification.request.content
+        print("Push notification tapped : \(content.userInfo)")
+        store.parseNotification(content.userInfo, broadcast: isMessagesViewShowing)
+
+        handleNotificationPresentation(completionHandler: completionHandler)
+    }
+
+    // Called when the application is launched in response to the user's request to view in-app notification settings.
+    func userNotificationCenter(_ center: UNUserNotificationCenter, openSettingsFor notification: UNNotification?) {
+
+        print("Push notification in-app notification settings")
     }
 }
