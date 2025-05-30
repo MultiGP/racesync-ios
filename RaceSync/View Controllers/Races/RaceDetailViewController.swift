@@ -385,7 +385,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             !race.ownerUserName.isEmpty && !race.ownerId.isEmpty ? Row.owner : nil,
             raceViewModel.chapterLabel.isEmpty ? nil : Row.chapter,
             raceViewModel.seasonLabel.isEmpty ? nil : Row.season,
-            (race.maxZippyqDepth > 0 && race.disableSlotAutoPopulation == .open) ? Row.zippyQ : nil,
+            race.isZippyQEnabled ? Row.zippyQ : nil,
             raceViewModel.classLabel.isEmpty ? nil : Row.class,
             race.liveTimeEventUrl != nil ? Row.results : nil
         ].compactMap { $0 }

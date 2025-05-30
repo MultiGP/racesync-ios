@@ -58,13 +58,13 @@ class PushMessagesViewController: UIViewController {
 
         title = "Messages"
 
-        let closeBtn = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
-        navigationItem.leftBarButtonItem = closeBtn
+        let leftBtnItem = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
+        navigationItem.leftBarButtonItem = leftBtnItem
 
-        let clearBtn = UIBarButtonItem(title: "Clear All", style: .done, target: self, action: #selector(didPressClearButton))
-        clearBtn.isEnabled = false
-        if #available(iOS 16.0, *) { clearBtn.isHidden = true }
-        navigationItem.rightBarButtonItem = clearBtn
+        let rightBtnItem = UIBarButtonItem(title: "Clear All", style: .done, target: self, action: #selector(didPressClearButton))
+        rightBtnItem.isEnabled = false
+        if #available(iOS 16.0, *) { rightBtnItem.isHidden = true }
+        navigationItem.rightBarButtonItem = rightBtnItem
 
         NotificationCenter.default.addObserver(self, selector: #selector(handlePushMessageRegistration(_:)), name: .registeredForPushMessages, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleNewPushMessage(_:)), name: .newPushMessageReceived, object: nil)
@@ -148,8 +148,9 @@ class PushMessagesViewController: UIViewController {
 
     fileprivate func presentContent(from message: PushMessage, animated: Bool) {
 
-        if message.type == "zippyq_next_round", !message.raceId.isEmpty {
-            let vc = RaceTabBarController(with: message.raceId) // TODO: Select schedule tab
+        if message.type == "zippyq_next_round" {
+            guard !message.raceId.isEmpty else { return }
+            let vc = RaceTabBarController(with: message.raceId, raceTab: .schedule)
             navigationController?.pushViewController(vc, animated: animated)
         }
     }

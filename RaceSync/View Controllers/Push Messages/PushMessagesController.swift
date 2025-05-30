@@ -88,7 +88,7 @@ class PushMessagesController: NSObject {
                     NotificationCenter.default.post(name: .registeredForPushMessages, object: status)
                 }
 
-                Clog.log(status ? "Unregister device with API!" : "Failed to register device with API")
+                Clog.log(status ? "Registered device with API!" : "Failed to register device with API")
             }
 
             completion?(status, error)
@@ -126,7 +126,7 @@ class PushMessagesController: NSObject {
                     NotificationCenter.default.post(name: .registeredForPushMessages, object: status)
                 }
                 
-                Clog.log(status ? "Unregister device with API!" : "Failed to unregister device with API")
+                Clog.log(status ? "Unregistered device with API!" : "Failed to unregister device with API")
             }
 
             completion?(status, error)

@@ -67,7 +67,6 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     init(with race: Race) {
         self.race = race
-
         super.init(nibName: nil, bundle: nil)
     }
 
