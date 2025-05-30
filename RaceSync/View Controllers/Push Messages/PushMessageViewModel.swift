@@ -38,6 +38,8 @@ class PushMessageViewModel: Descriptable {
 extension PushMessageViewModel {
 
     static func formatTimestamp(_ timestamp: TimeInterval) -> String {
+        guard timestamp > 0  else { return "" }
+        
         let date = Date(timeIntervalSince1970: timestamp/1000)
         let timeString = DateUtil.displayTimeFormatter.string(from: date)
 

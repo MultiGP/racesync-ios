@@ -33,6 +33,19 @@ class PushMessagesStore {
     // MARK: - Parsing
 
     @discardableResult
+    func addEphemeralMessage(with title: String, body: String, type: String, broadcast: Bool = false) -> PushMessage? {
+        let object: [String: Any] = [
+            "aps": [
+                "alert": ["title": title, "body": body]
+            ],
+            "customData": [
+                "type": type
+            ]
+        ]
+        return parseNotification(object, broadcast: broadcast)
+    }
+
+    @discardableResult
     func parseNotification(_ userInfo: [AnyHashable : Any], broadcast: Bool = false) -> PushMessage? {
         guard let aps = userInfo["aps"] as? [String: Any], let alert = aps["alert"] as? [String: Any] else {
             return nil

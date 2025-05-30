@@ -145,7 +145,7 @@ class RaceScheduleViewController: UIViewController {
 
     @objc fileprivate func openZippyQSchedule() {
         let zippyqUrl = MGPWeb.getUrl(for: .zippyqView, value: race.id)
-        if let url = URL(string: zippyqUrl) {
+        if let url = URL(string: zippyqUrl), UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url)
         }
     }

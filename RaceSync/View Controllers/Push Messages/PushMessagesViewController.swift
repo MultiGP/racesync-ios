@@ -16,7 +16,6 @@ class PushMessagesViewController: UIViewController {
 
     // MARK: - Private Variables
 
-
     fileprivate lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.dataSource = self
@@ -152,12 +151,22 @@ class PushMessagesViewController: UIViewController {
             guard !message.raceId.isEmpty else { return }
             let vc = RaceTabBarController(with: message.raceId, raceTab: .schedule)
             navigationController?.pushViewController(vc, animated: animated)
+            
+        } else if message.type == "app_store_review" {
+            let storeUrl = StringConstants.appstoreReviewUrl
+            if let url = URL(string: storeUrl), UIApplication.shared.canOpenURL(url) {
+                UIApplication.shared.open(url)
+            }
         }
     }
 
     @objc fileprivate func handlePushMessageRegistration(_ notification: Notification)  {
-        updateClearButton()
-        tableView.reloadData()
+
+        let title = "📲 Welcome to RaceSync iOS \(Bundle.main.releaseDescriptionPretty)"
+        let body = "Please take a moment to rate and review the app on the App Store. Thank you for your support!"
+        let type = "app_store_review"
+
+        PushMessagesController.shared.store.addEphemeralMessage(with: title, body: body, type: type, broadcast: true)
     }
 
     @objc fileprivate func handleNewPushMessage(_ notification: Notification)  {
