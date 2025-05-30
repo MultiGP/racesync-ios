@@ -5,13 +5,14 @@
 
 ### New Features:
 
-- We’re excited to introduce push notifications for RaceSync on iOS. In this initial release, pilots will receive alerts when their next round is approaching via ZippyQ. All notifications are stored locally on your device for added reliability in case any are missed. Expanded push notification features are planned for future releases.
-- A quick-access link to full race results (via FPVLive or FPVScores) has been added to the Results tab within the race details.
-- Race listings are now consistently sorted by most recent across all relevant sections.
+   * Introducing push notifications for RaceSync on iOS. In this initial release, pilots will receive alerts when their next race round is approaching when using ZippyQ. All notifications are stored locally on your device for added reliability in case any are missed.
+   * A quick-access link to full race results (via FPVLive or FPVScores) has been added to the Results tab within the race details.
+   * Race listings are now consistently sorted by most recent across all relevant sections.
 
 ### Fixes and enhancements:
 
-- Deprecating RaceSync WatchOS companion app
+   * Deprecating RaceSync WatchOS companion app
+   * Fixed a few smaller UI bugs
 
 ---
 
@@ -35,7 +36,6 @@ Hot Fixes:
    * Fixed a few old crashes and smaller bugs
 
 Update now to enjoy these improvements!
-
 
 ---
 

@@ -284,8 +284,6 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
         }
 
         let leftStackSubviews = [settingsButton, notificationsButton]
-        badgeHub.setCount(UIApplication.shared.applicationIconBadgeNumber)
-
         let leftStackView = UIStackView(arrangedSubviews: leftStackSubviews)
         leftStackView.axis = .horizontal
         leftStackView.distribution = .fillEqually

@@ -173,17 +173,16 @@ class PushMessagesViewController: UIViewController {
         updateClearButton()
     }
 
-    @objc fileprivate func appDidBecomeActive() {
-        tableView.reloadData()
+    @objc fileprivate func didPressClearButton() {
+
+        ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Clear all messages?", destructiveTitle: "Yes", completion: { (action) in
+            PushMessagesController.shared.clearAllPushMessages()
+            self.populateDataSource()
+        }, cancel: nil)
     }
 
     @objc fileprivate func didPressCloseButton() {
         dismiss(animated: true)
-    }
-
-    @objc fileprivate func didPressClearButton() {
-        PushMessagesController.shared.clearAllPushMessages()
-        populateDataSource()
     }
 
     @objc fileprivate func didPressAllowNotificationsButton() {
@@ -192,6 +191,10 @@ class PushMessagesViewController: UIViewController {
 
     @objc fileprivate func didPressShowSettingsButton() {
         ApplicationControl.shared.openAppSettings()
+    }
+
+    @objc fileprivate func appDidBecomeActive() {
+        tableView.reloadData()
     }
 }
 

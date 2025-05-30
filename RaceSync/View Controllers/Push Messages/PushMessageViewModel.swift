@@ -38,7 +38,7 @@ class PushMessageViewModel: Descriptable {
 extension PushMessageViewModel {
 
     static func formatTimestamp(_ timestamp: TimeInterval) -> String {
-        let date = Date(timeIntervalSince1970: 1727038753 ) // timestamp/1000
+        let date = Date(timeIntervalSince1970: timestamp/1000)
         let timeString = DateUtil.displayTimeFormatter.string(from: date)
 
         if date.isInToday {

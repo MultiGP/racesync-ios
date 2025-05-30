@@ -108,7 +108,9 @@
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Browse and save images</string>
 	<key>UIBackgroundModes</key>
-	<array/>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen.storyboard</string>
 	<key>UIMainStoryboardFile</key>

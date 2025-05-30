@@ -27,19 +27,9 @@ class PushMessagesController: NSObject {
 
     var isMessagesViewShowing: Bool = false
 
-    var notificationsCount: Int {
-        get { return UIApplication.shared.applicationIconBadgeNumber }
-        set { UIApplication.shared.applicationIconBadgeNumber = newValue}
-    }
-
     // MARK: - Badge Count
 
-    func clearPushMessagesCount() {
-        notificationsCount = 0
-    }
-
     func clearAllPushMessages() {
-        clearPushMessagesCount()
         store.removeAll()
         notificationCenter.removeAllDeliveredNotifications()
     }
@@ -75,7 +65,7 @@ class PushMessagesController: NSObject {
                        UIApplication.shared.registerForRemoteNotifications()
                    }
                } else {
-                   print("Notification permission denied: \(error?.localizedDescription ?? "No error info")")
+                   Clog.log("Notification permission denied: \(error?.localizedDescription ?? "No error info")")
                }
            }
     }
@@ -92,18 +82,13 @@ class PushMessagesController: NSObject {
 
         userApi.registerPushNotification(forAction: action, deviceToken: token) { (status, error) in
             if let error = error {
-                print("Failed to register device with API. Error: \(error.localizedDescription)")
+                Clog.log("Failed to register device with API. Error: \(error.localizedDescription)")
             } else {
                 DispatchQueue.main.async {
                     NotificationCenter.default.post(name: .registeredForPushMessages, object: status)
                 }
 
-                if status {
-                    print("Register device with API!")
-
-                } else {
-                    print("Failed to register device with API")
-                }
+                Clog.log(status ? "Unregister device with API!" : "Failed to register device with API")
             }
 
             completion?(status, error)
@@ -113,7 +98,7 @@ class PushMessagesController: NSObject {
     // Called when the user tapped on the notification
     func didReceivePushNotification(with userInfo: [AnyHashable : Any]) {
 
-        print("Push notification in background : \(userInfo)")
+        Clog.log("Push notification in background : \(userInfo)")
 
         if isMessagesViewShowing {
             store.parseNotification(userInfo, broadcast: true)
@@ -135,17 +120,13 @@ class PushMessagesController: NSObject {
 
         userApi.registerPushNotification(forAction: .delete) { (status, error) in
             if let error = error {
-                print("Failed to register device with API. Error: \(error.localizedDescription)")
+                Clog.log("Failed to register device with API. Error: \(error.localizedDescription)")
             } else {
                 DispatchQueue.main.async {
                     NotificationCenter.default.post(name: .registeredForPushMessages, object: status)
                 }
                 
-                if status {
-                    print("Unregister device with API!")
-                } else {
-                    print("Failed to register device with API")
-                }
+                Clog.log(status ? "Unregister device with API!" : "Failed to unregister device with API")
             }
 
             completion?(status, error)
@@ -153,15 +134,10 @@ class PushMessagesController: NSObject {
     }
 
     func failedToRegisterForPushNotifications(with error: Error) {
-        print("Failed to register for remote notifications: \(error.localizedDescription)")
+        Clog.log("Failed to register for remote notifications: \(error.localizedDescription)")
     }
 
-    // MARK: - Private
-
-    fileprivate let userApi = UserApi()
-    fileprivate let notificationCenter = UNUserNotificationCenter.current()
-
-    fileprivate func preloadDeliveredNotifications() {
+    func preloadDeliveredNotifications() {
 
         notificationCenter.getDeliveredNotifications { notifications in
             for notification in notifications {
@@ -170,6 +146,11 @@ class PushMessagesController: NSObject {
             }
         }
     }
+
+    // MARK: - Private
+
+    fileprivate let userApi = UserApi()
+    fileprivate let notificationCenter = UNUserNotificationCenter.current()
 
     fileprivate func handleNotificationPresentation(completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
 
@@ -189,7 +170,7 @@ extension PushMessagesController: UNUserNotificationCenterDelegate {
                                     withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
 
         let content = notification.request.content
-        print("Push notification in foreground : \(content.userInfo)")
+        Clog.log("Push notification in foreground : \(content.userInfo)")
         store.parseNotification(content.userInfo, broadcast: isMessagesViewShowing)
 
         handleNotificationPresentation(completionHandler: completionHandler)
@@ -201,7 +182,7 @@ extension PushMessagesController: UNUserNotificationCenterDelegate {
                                         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
 
         let content = response.notification.request.content
-        print("Push notification tapped : \(content.userInfo)")
+        Clog.log("Push notification tapped : \(content.userInfo)")
         store.parseNotification(content.userInfo, broadcast: isMessagesViewShowing)
 
         handleNotificationPresentation(completionHandler: completionHandler)
@@ -210,7 +191,7 @@ extension PushMessagesController: UNUserNotificationCenterDelegate {
     // Called when the application is launched in response to the user's request to view in-app notification settings.
     func userNotificationCenter(_ center: UNUserNotificationCenter, openSettingsFor notification: UNNotification?) {
 
-        print("Push notification in-app notification settings")
+        Clog.log("Push notification in-app notification settings")
     }
 }
 
