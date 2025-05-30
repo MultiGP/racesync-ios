@@ -88,7 +88,9 @@ class RaceScheduleViewController: UIViewController {
         setupLayout()
         configureNavigationItems()
 
-        initializeWebview()
+        if race.isZippyQEnabled {
+            initializeWebview()
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -118,10 +120,10 @@ class RaceScheduleViewController: UIViewController {
 
         title = "Race Schedule"
         let itemTitle = "Schedule"
-        tabBarItem = UITabBarItem(title: itemTitle, image: UIImage(systemName: "flag.checkered"), selectedImage: nil)
+        tabBarItem = UITabBarItem(title: itemTitle, image: UIImage(systemName:"flag.checkered"), selectedImage: nil)
         tabBarItem.isEnabled = race.isZippyQEnabled
 
-        let rightBtnItem = UIBarButtonItem(image: UIImage(systemName: "safari"), style: .plain, target: self, action: #selector(openZippyQSchedule))
+        let rightBtnItem = UIBarButtonItem(image: UIImage(systemName:"safari"), style: .plain, target: self, action: #selector(openZippyQSchedule))
         navigationItem.rightBarButtonItem = rightBtnItem
     }
 

@@ -6,7 +6,8 @@
 ### New Features:
 
    * Introducing push notifications for RaceSync on iOS. In this initial release, pilots will receive alerts when their next race round is approaching when using ZippyQ. All notifications are stored locally on your device for added reliability in case any are missed.
-   * A quick-access link to full race results (via FPVLive or FPVScores) has been added to the Results tab within the race details.
+   * Displaying ZippyQ web schedule (read-only) from a race detail screen.
+   * A quick-access link to full race results (via FPVLive or FPVScores) has been added to the Results tab within the race detail screen.
    * Race listings are now consistently sorted by most recent across all relevant sections.
    
 For Chapter Organizers:
