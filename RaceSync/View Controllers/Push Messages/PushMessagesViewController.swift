@@ -81,7 +81,6 @@ class PushMessagesViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        PushMessagesController.shared.clearPushMessagesCount()
         PushMessagesController.shared.isMessagesViewShowing = true
     }
 
