@@ -145,6 +145,13 @@ class PushMessagesController: NSObject {
                 self.store.parseNotification(content.userInfo) // no need to broadcast this event
             }
         }
+
+        // reset the badge count
+        if #available(iOS 16.0, *) {
+            notificationCenter.setBadgeCount(0)
+        } else {
+            UIApplication.shared.applicationIconBadgeNumber = 0
+        }
     }
 
     // MARK: - Private
