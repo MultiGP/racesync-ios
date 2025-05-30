@@ -229,5 +229,7 @@ enum ParamKey {
     static let dateAdded = "dateAdded"
     static let dateModified = "dateModified"
     static let action = "action"
+    static let platform = "platform"
+    static let ios = "ios"
     static let devicetoken = "devicetoken"
 }

@@ -54,7 +54,7 @@ class SettingsViewController: UIViewController {
         about += [.joinBeta]
 
         if let user = APIServices.shared.myUser, user.isDevTeam {
-            auth += [.switchEnv] //, .featureFlags
+            auth += [.switchEnv]
         }
 
         return [.notifications: [Row.notifications], .resources: resources, .about: about, .auth: auth]
@@ -79,6 +79,8 @@ class SettingsViewController: UIViewController {
         let closeBtn = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
         navigationItem.leftBarButtonItem = closeBtn
 
+        NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+
         setupLayout()
     }
 
@@ -89,6 +91,10 @@ class SettingsViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     // MARK: - Layout
@@ -103,23 +109,23 @@ class SettingsViewController: UIViewController {
 
     // MARK: - Actions
 
-    @objc func didPressCloseButton() {
+    @objc fileprivate func appDidBecomeActive() {
+        tableView.reloadData()
+    }
+
+    @objc fileprivate func didPressCloseButton() {
         dismiss(animated: true)
     }
 
     fileprivate func togglePushNotifications() {
 
-        if PushMessagesController.shared.isRegisteredForNotifications() {
-            PushMessagesController.shared.registerForNotifications()
-        } else {
-            PushMessagesController.shared.unregisterForNotifications { status, error in
-                //
-            }
+        if !PushMessagesController.shared.isRegisteredForNotifications() {
+            ApplicationControl.shared.openAppSettings()
         }
     }
 
     fileprivate func logout() {
-        ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Are you sure you want to log out?", destructiveTitle: "Yes, log out", completion: { (action) in
+        ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Logout from RaceSync?", destructiveTitle: "Yes, log out", completion: { (action) in
             ApplicationControl.shared.logout(forced: true)
         }, cancel: nil)
     }
@@ -128,7 +134,7 @@ class SettingsViewController: UIViewController {
         // inverted environment
         let environment = nextEnvironment()
 
-        ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Are you sure you want to switch to \(environment.title)?", destructiveTitle: "Yes, switch", completion: { (action) in
+        ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Switch to \(environment.title)?", destructiveTitle: "Yes, switch", completion: { (action) in
             ApplicationControl.shared.logout(switchTo: environment)
         }, cancel: nil)
     }

@@ -18,7 +18,7 @@ class EventTracker {
     // MARK: - AppStore Rater
 
     fileprivate static func configureRater() {
-        let rater = RateMe.sharedInstance
+        let rater = RateMe.shared
         rater.debug = false
         rater.showPreview = false
 
@@ -27,7 +27,7 @@ class EventTracker {
         rater.daysUntilPrompt = 5
         rater.eventsUntilPrompt = 3
         rater.daysBeforeReminding = 7
-        rater.shouldPromptIfRated = true
+        rater.shouldPromptIfRated = false
         rater.showNeverRemindButton = false
         rater.shouldPrompAtLaunch = false
 

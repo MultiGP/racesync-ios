@@ -391,7 +391,7 @@ extension AircraftDetailViewController: FormBaseViewControllerDelegate {
         delegate?.aircraftDetailViewController(self, didEditAircraft: aircraft.id)
         viewController.dismiss(animated: true)
 
-        RateMe.sharedInstance.userDidPerformEvent(showPrompt: true)
+        RateMe.shared.userDidPerformEvent()
     }
 
     func updateAircraftImageUrl(_ url: String, for imageType: ImageType) {

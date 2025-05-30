@@ -15,18 +15,15 @@ class PushMessagesController: NSObject {
 
     override init() {
         super.init()
-        notificationCenter.delegate = self
         preloadDeliveredNotifications()
-
-        notificationCenter.getNotificationSettings { settings in
-            print("🔍 Notification settings: \(settings)")
-        }
+        refreshPushNotificationSettings()
     }
 
     // MARK: - Public
 
     static let shared = PushMessagesController()
     let store = PushMessagesStore()
+    var authorizationStatus: UNAuthorizationStatus?
 
     var isMessagesViewShowing: Bool = false
 
@@ -49,11 +46,26 @@ class PushMessagesController: NSObject {
 
     // MARK: - Remote Notification Registration
 
+    func refreshPushNotificationSettings() {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            self.authorizationStatus = settings.authorizationStatus
+        }
+    }
+
+    func isPushNotificationsEnabled() -> Bool {
+        return isAllowingNotifications() && isRegisteredForNotifications()
+    }
+
+    func isAllowingNotifications() -> Bool {
+        guard let status = self.authorizationStatus else { return false }
+        return (status == .authorized || status == .provisional)
+    }
+
     func isRegisteredForNotifications() -> Bool {
         return UIApplication.shared.isRegisteredForRemoteNotifications
     }
 
-    func registerForNotifications() {
+    func requestAuthorizationPushNotifications() {
 
         notificationCenter.requestAuthorization(
             options: [.alert, .sound, .badge, .providesAppNotificationSettings]
@@ -68,7 +80,7 @@ class PushMessagesController: NSObject {
            }
     }
 
-    func didRegisterForNotifications(with deviceToken: Data, completion: StatusCompletionBlock? = nil) {
+    func didRegisterForPushNotifications(with deviceToken: Data, completion: StatusCompletionBlock? = nil) {
 
         let parts = deviceToken.map { String(format: "%02.2hhx", $0) }
         let token = parts.joined()
@@ -76,12 +88,19 @@ class PushMessagesController: NSObject {
         // Call 'update' if the device was already registered
         let action: PushAction = isRegisteredForNotifications() ? .update : .create
 
+        refreshPushNotificationSettings()
+
         userApi.registerPushNotification(forAction: action, deviceToken: token) { (status, error) in
             if let error = error {
                 print("Failed to register device with API. Error: \(error.localizedDescription)")
             } else {
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(name: .registeredForPushMessages, object: status)
+                }
+
                 if status {
                     print("Register device with API!")
+
                 } else {
                     print("Failed to register device with API")
                 }
@@ -92,31 +111,36 @@ class PushMessagesController: NSObject {
     }
 
     // Called when the user tapped on the notification
-    func didReceiveRemoteNotification(with userInfo: [AnyHashable : Any]) {
+    func didReceivePushNotification(with userInfo: [AnyHashable : Any]) {
 
         print("Push notification in background : \(userInfo)")
 
         if isMessagesViewShowing {
             store.parseNotification(userInfo, broadcast: true)
-        } else {
-            store.parseNotification(userInfo)
-
-            let vc = NavigationController(rootViewController: PushMessagesViewController())
+        } else if let message = store.parseNotification(userInfo) {
+            let vc = PushMessagesViewController(with: message)
+            let nc = NavigationController(rootViewController: vc)
             let animated = UIApplication.shared.applicationState == .active ? true : false
-            UIViewController.topMostViewController()?.present(vc, animated: animated)
+            UIViewController.topMostViewController()?.present(nc, animated: animated)
         }
     }
 
-    func unregisterForNotifications(_ completion: StatusCompletionBlock? = nil) {
+    func unregisterForPushNotifications(_ completion: StatusCompletionBlock? = nil) {
 
         notificationCenter.removeAllPendingNotificationRequests()
         notificationCenter.removeAllDeliveredNotifications()
-        UIApplication.shared.unregisterForRemoteNotifications()
+        UIApplication.shared.unregisterForRemoteNotifications() // TODO: is this really required?
+
+        refreshPushNotificationSettings()
 
         userApi.registerPushNotification(forAction: .delete) { (status, error) in
             if let error = error {
                 print("Failed to register device with API. Error: \(error.localizedDescription)")
             } else {
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(name: .registeredForPushMessages, object: status)
+                }
+                
                 if status {
                     print("Unregister device with API!")
                 } else {
@@ -128,7 +152,7 @@ class PushMessagesController: NSObject {
         }
     }
 
-    func failedToRegisterForNotifications(with error: Error) {
+    func failedToRegisterForPushNotifications(with error: Error) {
         print("Failed to register for remote notifications: \(error.localizedDescription)")
     }
 
@@ -188,4 +212,8 @@ extension PushMessagesController: UNUserNotificationCenterDelegate {
 
         print("Push notification in-app notification settings")
     }
+}
+
+extension Notification.Name {
+    static let registeredForPushMessages = Notification.Name("com.racecync.registeredForPushMessages")
 }

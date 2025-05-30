@@ -51,20 +51,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-
-        PushMessagesController.shared.didRegisterForNotifications(with: deviceToken)
+        PushMessagesController.shared.didRegisterForPushNotifications(with: deviceToken)
     }
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-
-        PushMessagesController.shared.failedToRegisterForNotifications(with: error)
+        PushMessagesController.shared.failedToRegisterForPushNotifications(with: error)
     }
 
     func application(_ application: UIApplication,
                      didReceiveRemoteNotification userInfo: [AnyHashable : Any],
                      fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-
-        PushMessagesController.shared.didReceiveRemoteNotification(with: userInfo)
+        PushMessagesController.shared.didReceivePushNotification(with: userInfo)
         completionHandler(.newData)
     }
 }

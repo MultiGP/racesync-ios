@@ -170,7 +170,7 @@ class RacePilotsPickerController: UIViewController, Shimmable {
                         self.joinedIds = self.joinedIds.filter { $0 != userId }
                         self.didForceJoin = true
 
-                        RateMe.sharedInstance.userDidPerformEvent(showPrompt: true)
+                        RateMe.shared.userDidPerformEvent()
                     }
                 }
             }) { (action) in
@@ -186,7 +186,7 @@ class RacePilotsPickerController: UIViewController, Shimmable {
                         self.joinedIds += [userId]
                         self.didForceJoin = true
 
-                        RateMe.sharedInstance.userDidPerformEvent(showPrompt: true)
+                        RateMe.shared.userDidPerformEvent()
                     }
                 }
             }) { (action) in

@@ -38,7 +38,7 @@ class PushMessageViewModel: Descriptable {
 extension PushMessageViewModel {
 
     static func formatTimestamp(_ timestamp: TimeInterval) -> String {
-        let date = Date(timeIntervalSince1970: timestamp)
+        let date = Date(timeIntervalSince1970: 1727038753 ) // timestamp/1000
         let timeString = DateUtil.displayTimeFormatter.string(from: date)
 
         if date.isInToday {
@@ -47,10 +47,8 @@ extension PushMessageViewModel {
             return "Yesterday \(timeString)"
         } else {
             let formatter = DateFormatter()
-            formatter.dateFormat = "MMMM d @ h:mm a"
-            formatter.amSymbol = "AM"
-            formatter.pmSymbol = "PM"
-            return DateUtil.displayDateTimeFormatter.string(from: date)
+            formatter.dateFormat = "MMM d"
+            return formatter.string(from: date)
         }
     }
 }

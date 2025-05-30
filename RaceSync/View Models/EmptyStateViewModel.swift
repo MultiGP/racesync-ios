@@ -38,6 +38,7 @@ enum EmptyState {
     case noMatchingAircraft
 
     case noPushMessages
+    case noPushAuthorized
     case noPushEnabled
 
     case commingSoon
@@ -85,6 +86,8 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "No Matching Aircraft"
         case .noPushMessages:
             text = "No Messages"
+        case .noPushAuthorized:
+            text = "Push Notifications"
         case .noPushEnabled:
             text = "Push Notifications Disabled"
         case .commingSoon:
@@ -139,9 +142,11 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
         case .noMatchingAircraft:
             text = "You don't have any aircraft matching the race requirements."
         case .noPushMessages:
-            text = "You don't have any messages."
+            text = "You don't have any messages yet."
+        case .noPushAuthorized:
+            text = "Want race updates sent to you?\nTurn on Push Notifications to stay updated!"
         case .noPushEnabled:
-            text = "Push Notifications are not enabled."
+            text = "Please enable Push Notifications to continue."
         case .commingSoon:
             text = "This section is under development."
         case .errorRaces:
@@ -176,8 +181,10 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "Join Race"
         case .noMyAircraft, .noMatchingAircraft:
             text = "Add Aircraft"
-        case .noPushEnabled:
+        case .noPushAuthorized:
             text = "Allow Push Notifications"
+        case .noPushEnabled:
+            text = "Open Settings"
         default:
             return nil
         }
@@ -188,9 +195,9 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
         attributes[NSAttributedString.Key.font] = UIFont.boldSystemFont(ofSize: 19)
 
         if state == .highlighted {
-            attributes[NSAttributedString.Key.foregroundColor] = Color.red.withAlphaComponent(0.5)
+            attributes[NSAttributedString.Key.foregroundColor] = Color.blue.withAlphaComponent(0.5)
         } else {
-            attributes[NSAttributedString.Key.foregroundColor] = Color.red
+            attributes[NSAttributedString.Key.foregroundColor] = Color.blue
         }
 
         return NSAttributedString.init(string: title, attributes: attributes)

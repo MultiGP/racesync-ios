@@ -94,7 +94,7 @@ public class UserApi: UserApiInterface {
     public func registerPushNotification(forAction action: PushAction, deviceToken: String? = nil, _ completion: @escaping StatusCompletionBlock) {
 
         let endpoint = EndPoint.userSetPushNotification
-        var parameters: Params = [ParamKey.action: action.rawValue]
+        var parameters: Params = [ParamKey.action: action.rawValue, ParamKey.platform: ParamKey.ios]
         if let token = deviceToken { parameters += [ParamKey.devicetoken: token] }
 
         repositoryAdapter.performAction(endpoint, parameters: parameters, completion: completion)

@@ -13,7 +13,7 @@ class MessageViewCell: UITableViewCell {
 
     // MARK: - Public Variables
 
-    static var height: CGFloat {
+    static var estimatedHeight: CGFloat {
         return Constants.cellHeight
     }
 
@@ -21,6 +21,7 @@ class MessageViewCell: UITableViewCell {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
         label.textColor = Color.gray500
+        label.lineBreakMode = .byTruncatingTail
         label.numberOfLines = 1
         return label
     }()
@@ -29,6 +30,7 @@ class MessageViewCell: UITableViewCell {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         label.textColor = Color.black
+        label.lineBreakMode = .byTruncatingTail
         label.numberOfLines = 5
         return label
     }()
@@ -64,7 +66,8 @@ class MessageViewCell: UITableViewCell {
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
         static let margin: CGFloat = 12
-        static let cellHeight: CGFloat = UniversalConstants.cellHeight
+        static let vPadding: CGFloat = margin*2
+        static let cellHeight: CGFloat = 100
     }
 
     // MARK: - Initialization
@@ -89,22 +92,23 @@ class MessageViewCell: UITableViewCell {
 
         addSubview(timeLabel)
         timeLabel.snp.makeConstraints {
-            $0.trailing.equalToSuperview().offset(-Constants.padding*1.5)
-            $0.top.equalToSuperview().offset(Constants.padding)
+            $0.top.equalToSuperview().offset(Constants.vPadding)
+            $0.trailing.equalToSuperview().offset(-Constants.padding)
         }
 
         addSubview(titleLabel)
         titleLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(Constants.vPadding)
             $0.leading.equalToSuperview().offset(Constants.padding*2)
-            $0.trailing.equalTo(timeLabel.snp.leading).offset(-Constants.padding*2)
-            $0.top.equalToSuperview().offset(Constants.padding)
+            $0.trailing.equalTo(timeLabel.snp.leading).offset(-Constants.padding*4)
         }
 
         addSubview(detailLabel)
         detailLabel.snp.makeConstraints {
+            $0.top.equalTo(titleLabel.snp.bottom).offset(Constants.margin)
             $0.leading.equalToSuperview().offset(Constants.padding*2)
             $0.trailing.equalToSuperview().offset(-Constants.padding*3)
-            $0.top.equalTo(titleLabel.snp.bottom).offset(Constants.margin/2)
+            $0.bottom.equalToSuperview().offset(-Constants.vPadding)
         }
     }
 }

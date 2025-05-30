@@ -15,6 +15,6 @@ struct PushMessage: Codable, Descriptable {
     let detail: String
     let timestamp: TimeInterval
 
-    let raceId: String?
-    let type: String?
+    let raceId: String
+    let type: String
 }

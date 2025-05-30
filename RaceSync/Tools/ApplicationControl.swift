@@ -42,7 +42,7 @@ class ApplicationControl: NSObject {
     func logout(switchTo environment: APIEnvironment = APIServices.shared.settings.environment, forced: Bool = false) {
 
         // Unregister from push notifications, on the device and on the server
-        PushMessagesController.shared.unregisterForNotifications { status, error in
+        PushMessagesController.shared.unregisterForPushNotifications { status, error in
             PushMessagesController.shared.store.removeAll() // clear all saved messages
         }
 
@@ -56,5 +56,10 @@ class ApplicationControl: NSObject {
                 APIServices.shared.settings.environment = environment
             }
         }
+    }
+
+    func openAppSettings() {
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+        UIApplication.shared.open(url)
     }
 }

@@ -32,25 +32,32 @@ class PushMessagesStore {
 
     // MARK: - Parsing
 
-    func parseNotification(_ userInfo: [AnyHashable : Any], broadcast: Bool = false) {
+    @discardableResult
+    func parseNotification(_ userInfo: [AnyHashable : Any], broadcast: Bool = false) -> PushMessage? {
         guard let aps = userInfo["aps"] as? [String: Any], let alert = aps["alert"] as? [String: Any] else {
-            return
+            return nil
         }
 
         let title = alert["title"] as? String ?? ""
         let body = alert["body"] as? String ?? ""
 
         let data = userInfo["customData"] as? [String: Any]
+        let timestamp = data?["timestamp"] as? Double ?? 0
         let raceId = data?["raceId"] as? String ?? ""
         let type = data?["type"] as? String ?? "" // ie: "zippyq_next_round"
 
         let message = PushMessage(
             title: title,
             detail: body,
-            timestamp: Date().timeIntervalSince1970,
+            timestamp: timestamp,
             raceId: raceId,
             type: type
         )
+
+        // Avoid dupes
+        if let existing = messages.first(where: { $0.timestamp == message.timestamp }) {
+            return existing
+        }
 
         messages.append(message)
         saveMessages()
@@ -60,6 +67,8 @@ class PushMessagesStore {
                 NotificationCenter.default.post(name: .newPushMessageReceived, object: message)
             }
         }
+
+        return message
     }
 
     // MARK: - Private
@@ -88,5 +97,5 @@ class PushMessagesStore {
 }
 
 extension Notification.Name {
-    static let newPushMessageReceived = Notification.Name("newPushMessageReceived")
+    static let newPushMessageReceived = Notification.Name("com.racecync.newPushMessageReceived")
 }

@@ -9,7 +9,7 @@
 //
 
 import UIKit
-import WebKit
+@preconcurrency import WebKit
 
 /// RichEditorDelegate defines callbacks for the delegate of the RichEditorView
 @objc protocol RichEditorDelegate {
