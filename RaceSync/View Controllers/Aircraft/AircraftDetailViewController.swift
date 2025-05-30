@@ -54,7 +54,7 @@ class AircraftDetailViewController: UIViewController {
     fileprivate lazy var deleteButton: ActionButton = {
         let button = ActionButton(type: .system)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 21, weight: .regular)
-        button.setTitleColor(Color.red, for: .normal)
+        button.setTitleColor(Color.blue, for: .normal)
         button.setTitle("Retire Aircraft", for: .normal)
         button.backgroundColor = Color.white
         button.layer.cornerRadius = Constants.padding/2
