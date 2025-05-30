@@ -240,7 +240,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate var htmlViewHeightConstraint: Constraint?
     fileprivate let ignoreFinalizingError: Bool = true // The API finalize(id) still returns 500 error. Reported https://github.com/MultiGP/multigp-com/issues/93
-    fileprivate let isEnrollmentTogglingEnabled: Bool = false // The API open(id)/close(id) returns 400 error.
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -538,7 +537,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             alert.addAction(action)
         }
 
-        if race.canChangeEnrollment, isEnrollmentTogglingEnabled {
+        if race.canChangeEnrollment {
             let isClose = (race.status == .closed)
             let title = isClose ? "Open Enrollment" : "Close Enrollment"
             let message = isClose ? "Are you sure you want to open race enrollment?" : "Are you sure you want to close race enrollment?"
