@@ -12,8 +12,6 @@ import RaceSyncAPI
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    // MARK: - Public Variables
-
     var window: UIWindow?
     var orientationLock: UIInterfaceOrientationMask = .portrait
 

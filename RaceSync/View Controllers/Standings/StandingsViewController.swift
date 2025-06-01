@@ -81,7 +81,8 @@ class StandingsViewController: UIViewController, Shimmable {
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
-        static let cellHeight: CGFloat = 78 // UniversalConstants.cellHeight
+        static let cellHeight: CGFloat = 80 // UniversalConstants.cellHeight
+        static let headerViewHeight: CGFloat = 51
         static let searchBarHeight: CGFloat = 56
     }
 
@@ -117,7 +118,7 @@ class StandingsViewController: UIViewController, Shimmable {
         view.addSubview(headerView)
         headerView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            $0.height.equalTo(51)
+            $0.height.equalTo(Constants.headerViewHeight)
             $0.leading.trailing.equalToSuperview()
         }
 
