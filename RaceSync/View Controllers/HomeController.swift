@@ -13,15 +13,8 @@ class HomeController {
 
     static func homeViewController() -> UIViewController {
 
-        let api = StandingApi()
-        api.getStandings(forSeason: "2025") { (standings, error) in
-
-        }
-
-        let settings = APIServices.shared.settings
-        let filters = settings.raceFeedFilters
-
-        let vc = RaceFeedViewController(filters, selectedFilter: filters.first!)
+        let vc = HomeTabBarController()
+        vc.hidesBottomBarWhenPushed = true
         return NavigationController(rootViewController: vc)
     }
 }

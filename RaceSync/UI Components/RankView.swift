@@ -34,7 +34,7 @@ class RankView: UIView {
 
     // MARK: - Private Variables
 
-    func rankString(for rank: Int32?) -> String? {
+    fileprivate func rankString(for rank: Int32?) -> String? {
         guard let rank = rank, rank >= 0 else { return nil }
 
         if rank == 1 {
@@ -67,5 +67,4 @@ class RankView: UIView {
             $0.top.leading.trailing.bottom.equalToSuperview()
         }
     }
-
 }

@@ -17,14 +17,12 @@ public class Standing: Mappable, Descriptable {
     public var lastName: String = ""
     public var userId: ObjectId = ""
     public var chapterName: String = ""
-    public var email: String = ""
     public var country: String = ""
 
     public var season1: String = ""
-    public var season1Score: String = ""
-
+    public var season1Score: Double = 0
     public var season2: String = ""
-    public var season2Score: String = ""
+    public var season2Score: Double = 0
 
     // MARK: - Initialization
 
@@ -40,12 +38,11 @@ public class Standing: Mappable, Descriptable {
         userName <- (map[ParamKey.userName], MapperUtil.stringTransform)
         userId <- map["userId"]
         chapterName <- (map[ParamKey.chapterName], MapperUtil.stringTransform)
-        email <- (map["email"], MapperUtil.stringTransform)
         country <- map[ParamKey.country]
 
         season1 <- map["season1"]
-        season1Score <- map["season1Score"]
+        season1Score <- (map["season1Score"], MapperUtil.doubleTransform)
         season2 <- map["season2"]
-        season2Score <- map["season2Score"]
+        season2Score <- (map["season2Score"], MapperUtil.doubleTransform)
     }
 }

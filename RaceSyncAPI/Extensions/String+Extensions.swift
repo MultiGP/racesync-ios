@@ -10,6 +10,10 @@ import Foundation
 
 public extension String {
 
+    var containsEmoji: Bool {
+        return self.unicodeScalars.contains { $0.properties.isEmoji && ($0.value > 0x238C || $0.properties.isEmojiPresentation) }
+    }
+
     func lowercasedWords() -> [String] {
         return self.lowercased().components(separatedBy: " ")
     }

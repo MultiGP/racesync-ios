@@ -9,35 +9,47 @@
 import Foundation
 import ObjectMapper
 
+public enum StandingSeason: String, CaseIterable {
+    case y2025 = "2025"
+    case y2024 = "2024"
+    case y2023 = "2023"
+}
+
+//enum RaceTabs: Int {
+//    case details, results, schedule
+//}
+
 // MARK: - Interface
 public protocol StandingApiInterface {
 
     /**
      */
-    func getStandings(forSeason season: String, _ completion: @escaping ObjectCompletionBlock<[Standing]>)
+    func getStandings(for season: StandingSeason, _ completion: @escaping ObjectCompletionBlock<[Standing]>)
 }
 
 public class StandingApi: StandingApiInterface {
 
-
     public init() {}
 
-    public func getStandings(forSeason season: String, _ completion: @escaping ObjectCompletionBlock<[Standing]>) {
+    public func getStandings(for season: StandingSeason, _ completion: @escaping ObjectCompletionBlock<[Standing]>) {
 
-        guard let baseUrl = getStandingsUrl(forSeason: season) else { return }
+        guard let baseUrl = getStandingsUrl(for: season) else { return }
 
         // This is too fragile but no choice for now
         let headers = ["position", "firstName", "userName", "lastName", "userId", "chapterName",
                        "email", "country", "season1", "season1Score", "season2", "season2Score"]
 
         fetchCSVAndConvertToJSON(from: baseUrl, knownHeaders: headers) { result in
-            switch result {
-                case .success(let jsonArray):
-                    let models = Mapper<Standing>().mapArray(JSONArray: jsonArray)
-                    completion(models, nil)
-                case .failure(let error):
-                    completion(nil, error as NSError)
-                }
+            DispatchQueue.main.async {
+                switch result {
+                    case .success(let jsonArray):
+                        let models = Mapper<Standing>().mapArray(JSONArray: jsonArray)
+                        completion(models, nil)
+
+                    case .failure(let error):
+                        completion(nil, error as NSError)
+                    }
+            }
         }
     }
 }
@@ -100,12 +112,12 @@ fileprivate extension StandingApi {
         return .success(jsonArray)
     }
 
-    func getStandingsUrl(forSeason season: String) -> URL? {
+    func getStandingsUrl(for season: StandingSeason) -> URL? {
 
         let baseURLString = MGPWebConstant.viewZipperSeasonResults
         let params: [String: String] = [
-            "season1": "\(season)Spring",
-            "season2": "\(season)Summer",
+            "season1": "\(season.rawValue)Spring",
+            "season2": "\(season.rawValue)Summer",
             "exportcsv": "true"
         ]
 

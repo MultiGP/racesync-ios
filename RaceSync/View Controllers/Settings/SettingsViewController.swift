@@ -15,11 +15,27 @@ class SettingsViewController: UIViewController {
 
     // MARK: - Private Variables
 
+    fileprivate lazy var headerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = Color.navigationBarColor
+        view.tintColor = Color.blue
+
+        let separatorLine = UIView()
+        separatorLine.backgroundColor = Color.gray100
+        view.addSubview(separatorLine)
+        separatorLine.snp.makeConstraints {
+            $0.height.equalTo(0.5)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.snp.bottom)
+        }
+        return view
+    }()
+
    fileprivate lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.tableHeaderView = headerView
+        tableView.tableHeaderView = tableHeaderView
         tableView.tableFooterView = UIView()
         tableView.register(cellType: FormTableViewCell.self)
 
@@ -30,7 +46,7 @@ class SettingsViewController: UIViewController {
         return tableView
     }()
 
-    fileprivate lazy var headerView: UIView = {
+    fileprivate lazy var tableHeaderView: UIView = {
         let view = UIView()
 
         let imageView = UIImageView(image: UIImage(named: "icn_settings_header"))
@@ -74,14 +90,10 @@ class SettingsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = "Settings"
-
-        let closeBtn = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
-        navigationItem.leftBarButtonItem = closeBtn
+        configureNavigationItems()
+        setupLayout()
 
         NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
-
-        setupLayout()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -101,10 +113,23 @@ class SettingsViewController: UIViewController {
 
     fileprivate func setupLayout() {
 
+        view.addSubview(headerView)
+        headerView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.height.equalTo(51)
+            $0.leading.trailing.equalToSuperview()
+        }
+
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
-            $0.top.leading.trailing.bottom.equalToSuperview()
+            $0.top.equalTo(headerView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.snp.bottom)
         }
+    }
+
+    fileprivate func configureNavigationItems() {
+        tabBarItem = UITabBarItem(title: "Settings", image: UIImage(systemName:"gearshape"), selectedImage: UIImage(systemName:"gearshape.fill"))
     }
 
     // MARK: - Actions
