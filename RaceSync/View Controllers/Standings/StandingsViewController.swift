@@ -49,6 +49,7 @@ class StandingsViewController: UIViewController, Shimmable {
         tableView.tableFooterView = UIView()
         tableView.register(cellType: AvatarTableViewCell.self)
         tableView.keyboardDismissMode = .onDrag
+        tableView.verticalScrollIndicatorInsets = UIEdgeInsets(top: -1, left: 0, bottom: 0, right: 0)
 
         let backgroundView = UIView()
         backgroundView.backgroundColor = Color.gray20
@@ -79,9 +80,12 @@ class StandingsViewController: UIViewController, Shimmable {
     fileprivate var standingViewModels = [StandingViewModel]()
     fileprivate var searchResult = [StandingViewModel]()
 
+    fileprivate var pinnedCellIndexPath: IndexPath?
+    fileprivate var pinnedView: UIView?
+
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
-        static let cellHeight: CGFloat = 80 // UniversalConstants.cellHeight
+        static let cellHeight: CGFloat = 80
         static let headerViewHeight: CGFloat = 51
         static let searchBarHeight: CGFloat = 56
     }
@@ -152,13 +156,21 @@ class StandingsViewController: UIViewController, Shimmable {
             if let objects = objects {
                 self.standingViewModels = StandingViewModel.viewModels(with: objects)
                 self.enableSearchBar(objects.count > 0)
+
+                if let myUser = APIServices.shared.myUser,
+                   let index = objects.firstIndex(where: { $0.userId == myUser.id }) {
+                    self.pinnedCellIndexPath = IndexPath(row: index, section: 0)
+                }
             }
 
             self.isLoadingList(false)
             self.tableView.reloadData()
 
+            // This is not doing anything. The idea was to hide the header view
             let indexPath = IndexPath(row: 0, section: 0)
             self.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
+
+            self.layoutPinnedCell()
         }
     }
 
@@ -202,6 +214,96 @@ class StandingsViewController: UIViewController, Shimmable {
             }
         }
     }
+
+    // MARK: - Cell Pinning
+
+    func layoutPinnedCell() {
+        guard let indexPath = pinnedCellIndexPath else { return }
+        guard let _ = tableView.superview else { return }
+
+        let cellRect = tableView.rectForRow(at: indexPath)
+        let topInset = tableView.contentInset.top
+        let bottomInset = tableView.contentInset.bottom
+        let contentOffsetY = tableView.contentOffset.y
+        let visibleHeight = tableView.bounds.height - topInset - bottomInset
+        let tabBarHeight = tabBarController?.tabBar.frame.size.height ?? 0
+
+        let targetTopOffsetY = cellRect.minY - topInset
+        let targetBottomOffsetY = cellRect.maxY + tabBarHeight - visibleHeight
+
+        let cellHeight = tableView.delegate?.tableView?(tableView, heightForRowAt: indexPath) ?? cellRect.height
+        let cellWidth = tableView.frame.width
+
+        let topPinY = tableView.frame.minY
+        let bottomPinY = tableView.frame.maxY - bottomInset - cellHeight - tabBarHeight
+
+        // Determine whether we’re above, within, or below the cell
+        if contentOffsetY >= targetTopOffsetY {
+            // Pin to top
+            showPinnedCell(at: topPinY, indexPath: indexPath, size: CGSize(width: cellWidth, height: cellHeight))
+
+        } else if contentOffsetY <= targetBottomOffsetY {
+            // Pin to bottom
+            showPinnedCell(at: bottomPinY, indexPath: indexPath, size: CGSize(width: cellWidth, height: cellHeight))
+
+        } else {
+            removePinnedCell()
+        }
+    }
+
+    fileprivate func showPinnedCell(at y: CGFloat, indexPath: IndexPath, size: CGSize) {
+
+        if pinnedView == nil {
+            let snapshot = createSnapshotFromCell(forRowAt: indexPath)
+            pinnedView = snapshot
+            pinnedView?.frame = CGRect(origin: CGPoint(x: 0, y: y), size: size)
+            pinnedView?.layer.zPosition = 999
+        } else {
+            pinnedView?.frame.origin.y = y
+        }
+
+        if let pinnedView = pinnedView, pinnedView.superview == nil {
+            view.insertSubview(pinnedView, aboveSubview: tableView)
+        }
+    }
+
+    fileprivate func createSnapshotFromCell(forRowAt indexPath: IndexPath) -> UIView? {
+        let cell = AvatarTableViewCell(style: .default, reuseIdentifier: nil)
+        configure(tableViewCell: cell, forRowAt: indexPath)
+
+        let cellWidth = tableView.bounds.width
+        let cellHeight = tableView.delegate?.tableView?(tableView, heightForRowAt: indexPath) ?? tableView.rowHeight
+        cell.frame = CGRect(x: 0, y: 0, width: cellWidth, height: cellHeight)
+
+        cell.contentView.setNeedsLayout()
+        cell.contentView.layoutIfNeeded()
+
+        cell.setNeedsLayout()
+        cell.layoutIfNeeded()
+
+        // Create a snapshot of the cell’s current rendered content
+        let snapshot = cell.snapshotView(afterScreenUpdates: true)
+        snapshot?.clipsToBounds = true
+        snapshot?.tag = indexPath.row
+
+        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapPinnedCell(_:)))
+        snapshot?.addGestureRecognizer(tap)
+
+        return snapshot
+    }
+
+    @objc fileprivate func didTapPinnedCell(_ gesture: UITapGestureRecognizer) {
+        guard let indexPath = pinnedCellIndexPath else { return }
+        tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
+    }
+
+    fileprivate func removePinnedCell() {
+        guard let view = pinnedView else { return }
+
+        if view.superview != nil {
+            view.removeFromSuperview()
+        }
+    }
 }
 
 extension StandingsViewController: UITableViewDelegate {
@@ -228,8 +330,12 @@ extension StandingsViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection sectionIdx: Int) -> String? {
-        guard !isSearching || standingViewModels.count > 0 else { return nil }
-        return "2025 Global Qualifier (Mar 29 - Aug 25)"
+        guard standingViewModels.count > 0 else { return nil }
+        return "2025 MultiGP Global Qualifier (Mar 29 - Aug 25)"
+    }
+
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 35
     }
 }
 
@@ -242,19 +348,47 @@ extension StandingsViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as AvatarTableViewCell
+        configure(tableViewCell: cell, forRowAt: indexPath)
+        return cell
+    }
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return Constants.cellHeight
+    }
+
+    func configure(tableViewCell cell: AvatarTableViewCell, forRowAt indexPath: IndexPath) {
+
         cell.avatarImageView.isHidden = true
-        cell.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : UIColor(hex: "f2f5f7")
 
         let viewModels = isSearching ? searchResult : standingViewModels
         let viewModel = viewModels[indexPath.row]
         cell.rankView.rank = viewModel.rank
         cell.titleLabel.text = viewModel.titleLabel
         cell.subtitleLabel.text = viewModel.subtitleLabel
-        return cell
-    }
 
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return Constants.cellHeight
+        if let myUser = APIServices.shared.myUser, viewModel.standing.userId == myUser.id {
+            cell.backgroundColor = UIColor(hex: "898b8c")
+            cell.titleLabel.textColor = Color.white
+            cell.subtitleLabel.textColor = Color.gray20
+            cell.rankView.titleLabel.textColor = Color.gray20
+        } else {
+            cell.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : UIColor(hex: "f7f9fa")
+            cell.titleLabel.textColor = Color.black
+            cell.subtitleLabel.textColor = Color.gray300
+            cell.rankView.titleLabel.textColor = Color.gray300
+        }
+    }
+}
+
+extension StandingsViewController: UIScrollViewDelegate {
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+
+        if !isSearching {
+            layoutPinnedCell()
+        } else {
+            removePinnedCell()
+        }
     }
 }
 
@@ -281,7 +415,14 @@ extension StandingsViewController: UISearchBarDelegate {
 
         // Matches leading parts of any word, with robust tokenization and several insensitive cases
         searchResult = filterResults(query: searchText)
+        tableView.setContentOffset(.zero, animated: false)
         tableView.reloadData()
+
+        if searchText.count >= 2 {
+            removePinnedCell()
+        } else {
+            layoutPinnedCell()
+        }
     }
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
