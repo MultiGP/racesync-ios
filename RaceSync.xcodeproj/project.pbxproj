@@ -48,6 +48,7 @@
 		4F3D640D23FB253900DE6DF2 /* UICollectionView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3D640C23FB253900DE6DF2 /* UICollectionView+Extensions.swift */; };
 		4F3D640F23FC65F700DE6DF2 /* TextPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3D640E23FC65F700DE6DF2 /* TextPickerViewController.swift */; };
 		4F3D641123FE664A00DE6DF2 /* TextFieldViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3D641023FE664A00DE6DF2 /* TextFieldViewController.swift */; };
+		4F3E2D022DEE23D900A6646C /* ImageExportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3E2D012DEE23D900A6646C /* ImageExportViewController.swift */; };
 		4F4129DB2DC0AE32006A2763 /* NotificationsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F4129DA2DC0AE32006A2763 /* NotificationsController.swift */; };
 		4F482EFB251158FF00DBA0DF /* SocialActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F482EFA251158FF00DBA0DF /* SocialActivity.swift */; };
 		4F5001E523823C940025A593 /* FlagEmojiGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5001E423823C940025A593 /* FlagEmojiGenerator.swift */; };
@@ -346,6 +347,7 @@
 		4F3D640C23FB253900DE6DF2 /* UICollectionView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Extensions.swift"; sourceTree = "<group>"; };
 		4F3D640E23FC65F700DE6DF2 /* TextPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPickerViewController.swift; sourceTree = "<group>"; };
 		4F3D641023FE664A00DE6DF2 /* TextFieldViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldViewController.swift; sourceTree = "<group>"; };
+		4F3E2D012DEE23D900A6646C /* ImageExportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageExportViewController.swift; sourceTree = "<group>"; };
 		4F4129DA2DC0AE32006A2763 /* NotificationsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NotificationsController.swift; path = "RaceSync/UI Utils/NotificationsController.swift"; sourceTree = SOURCE_ROOT; };
 		4F482EFA251158FF00DBA0DF /* SocialActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialActivity.swift; sourceTree = "<group>"; };
 		4F5001E423823C940025A593 /* FlagEmojiGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagEmojiGenerator.swift; sourceTree = "<group>"; };
@@ -778,6 +780,7 @@
 				4FD4E1C4237F9746008816B3 /* UserViewController.swift */,
 				4FD4E1C6237F97AD008816B3 /* ChapterViewController.swift */,
 				4FD4E1CE237F992B008816B3 /* QRViewController.swift */,
+				4F3E2D012DEE23D900A6646C /* ImageExportViewController.swift */,
 			);
 			path = Profiles;
 			sourceTree = "<group>";
@@ -1483,6 +1486,7 @@
 				4F714DE323CD5EAA000C4036 /* SafariActivity.swift in Sources */,
 				4F004EA0295AA641009C46AA /* RaceFormViewController.swift in Sources */,
 				4F6CAD8D2983040100E80B5F /* ChapterPickerViewController.swift in Sources */,
+				4F3E2D022DEE23D900A6646C /* ImageExportViewController.swift in Sources */,
 				4FC98DF32DE55AE2006F99B4 /* PushMessagesStore.swift in Sources */,
 				4F5C1E47238D1C3200D756EB /* TextCopiable.swift in Sources */,
 				4F6429142403AE9A005E8036 /* FormBaseViewController.swift in Sources */,
