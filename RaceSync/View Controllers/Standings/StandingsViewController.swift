@@ -48,7 +48,7 @@ class StandingsViewController: UIViewController, Shimmable {
 
     fileprivate lazy var refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
-        refreshControl.backgroundColor = Color.white
+        refreshControl.backgroundColor = Color.gray20
         refreshControl.tintColor = Color.blue
         refreshControl.addTarget(self, action: #selector(didPullRefreshControl), for: .valueChanged)
         return refreshControl
@@ -357,11 +357,11 @@ extension StandingsViewController: UITableViewDelegate {
         guard !(isSearching && searchResult.isEmpty), !standingViewModels.isEmpty else {
             return nil
         }
-        return "2025 MultiGP Global Qualifier (Mar 29 - Aug 25)"
+        return "2025 MultiGP Global Qualifier (Mar 29 – Aug 25)\nFastest 3 Consecutive Laps"
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 35
+        return 50
     }
 }
 
