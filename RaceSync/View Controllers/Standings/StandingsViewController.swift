@@ -16,30 +16,6 @@ class StandingsViewController: UIViewController, Shimmable {
 
     // MARK: - Public Variables
 
-    fileprivate lazy var headerView: UIView = {
-        let view = UIView()
-        view.backgroundColor = Color.navigationBarColor
-        view.tintColor = Color.blue
-
-        view.addSubview(searchBar)
-        searchBar.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.leading.equalToSuperview().offset(Constants.padding)
-            $0.trailing.equalToSuperview().offset(-Constants.padding)
-            $0.height.equalTo(Constants.searchBarHeight)
-        }
-
-        let separatorLine = UIView()
-        separatorLine.backgroundColor = Color.gray100
-        view.addSubview(separatorLine)
-        separatorLine.snp.makeConstraints {
-            $0.height.equalTo(0.5)
-            $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(view.snp.bottom)
-        }
-        return view
-    }()
-
     lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.dataSource = self
@@ -79,6 +55,30 @@ class StandingsViewController: UIViewController, Shimmable {
         return refreshControl
     }()
 
+    fileprivate lazy var headerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = Color.navigationBarColor
+        view.tintColor = Color.blue
+
+        view.addSubview(searchBar)
+        searchBar.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview().offset(Constants.padding)
+            $0.trailing.equalToSuperview().offset(-Constants.padding)
+            $0.height.equalTo(Constants.searchBarHeight)
+        }
+
+        let separatorLine = UIView()
+        separatorLine.backgroundColor = Color.gray100
+        view.addSubview(separatorLine)
+        separatorLine.snp.makeConstraints {
+            $0.height.equalTo(0.5)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.snp.bottom)
+        }
+        return view
+    }()
+
     var shimmeringView: ShimmeringView = defaultShimmeringView()
 
     // MARK: - Private Variables
@@ -88,9 +88,9 @@ class StandingsViewController: UIViewController, Shimmable {
 
     fileprivate var standingViewModels = [StandingViewModel]()
     fileprivate var searchResult = [StandingViewModel]()
-
-    fileprivate var pinnedCellIndexPath: IndexPath?
     fileprivate var pinnedView: UIView?
+
+    fileprivate let minQuery: Int = 2
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -167,11 +167,6 @@ class StandingsViewController: UIViewController, Shimmable {
             if let objects = objects {
                 self.standingViewModels = StandingViewModel.viewModels(with: objects)
                 self.enableSearchBar(objects.count > 0)
-
-                if let myUser = APIServices.shared.myUser,
-                   let index = objects.firstIndex(where: { $0.userId == myUser.id }) {
-                    self.pinnedCellIndexPath = IndexPath(row: index, section: 0)
-                }
             }
 
             if self.refreshControl.isRefreshing {
@@ -181,17 +176,28 @@ class StandingsViewController: UIViewController, Shimmable {
             }
 
             self.tableView.reloadData()
-
-            // This is not doing anything. The idea was to hide the header view
-            let indexPath = IndexPath(row: 0, section: 0)
-            self.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
-
             self.layoutPinnedCell()
         }
     }
 
-    @objc fileprivate func didPullRefreshControl() {
+    fileprivate var pinnedCellIndexPath: IndexPath? {
+        get {
+            guard let myUser = APIServices.shared.myUser else { return nil }
 
+            if isSearching, searchResult.count > 0 {
+                if let index = searchResult.firstIndex(where: { $0.standing.userId == myUser.id }) {
+                    return IndexPath(row: index, section: 0)
+                }
+            } else if !isSearching, standingViewModels.count > 0 {
+                if let index = standingViewModels.firstIndex(where: { $0.standing.userId == myUser.id }) {
+                    return IndexPath(row: index, section: 0)
+                }
+            }
+            return nil
+        }
+    }
+
+    @objc fileprivate func didPullRefreshControl() {
         loadStandings()
     }
 
@@ -208,29 +214,26 @@ class StandingsViewController: UIViewController, Shimmable {
 
     fileprivate var isSearching: Bool {
         guard let text = searchBar.text else { return false }
-        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        return trimmed.count >= 2 || trimmed.containsEmoji
+        let query = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        return query.count >= minQuery || query.containsEmoji
     }
 
-    func filterResults(query: String) -> [StandingViewModel] {
-        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard trimmed.count >= 2 || trimmed.containsEmoji else { return [] }
+    func filterResults(with text: String) -> [StandingViewModel] {
+        let query = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard query.count >= minQuery || query.containsEmoji else { return [] }
 
-        let normalizedQuery = trimmed.lowercased().folding(options: .diacriticInsensitive, locale: .current)
+        let normalizedQuery = query.lowercased().folding(options: .diacriticInsensitive, locale: .current)
 
         return standingViewModels.filter { viewModel in
             let label = viewModel.titleLabel
 
-            if trimmed.containsEmoji {
-                // Emoji-based filtering
-                return label.contains(trimmed)
+            if query.containsEmoji {
+                return label.contains(query)
             } else {
-                // Word prefix filtering
                 let words = label.lowercased()
                     .folding(options: .diacriticInsensitive, locale: .current)
                     .components(separatedBy: CharacterSet.alphanumerics.inverted)
                     .filter { !$0.isEmpty }
-
                 return words.contains { $0.hasPrefix(normalizedQuery) }
             }
         }
@@ -258,22 +261,19 @@ class StandingsViewController: UIViewController, Shimmable {
         let topPinY = tableView.frame.minY
         let bottomPinY = tableView.frame.maxY - bottomInset - cellHeight - tabBarHeight
 
-        // Determine whether we’re above, within, or below the cell
+        // Pin to top
         if contentOffsetY >= targetTopOffsetY {
-            // Pin to top
             showPinnedCell(at: topPinY, indexPath: indexPath, size: CGSize(width: cellWidth, height: cellHeight))
 
+        // Pin to bottom
         } else if contentOffsetY <= targetBottomOffsetY {
-            // Pin to bottom
             showPinnedCell(at: bottomPinY, indexPath: indexPath, size: CGSize(width: cellWidth, height: cellHeight))
-
         } else {
             removePinnedCell()
         }
     }
 
     fileprivate func showPinnedCell(at y: CGFloat, indexPath: IndexPath, size: CGSize) {
-
         if pinnedView == nil {
             let snapshot = createSnapshotFromCell(forRowAt: indexPath)
             pinnedView = snapshot
@@ -350,8 +350,10 @@ extension StandingsViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
-    func tableView(_ tableView: UITableView, titleForHeaderInSection sectionIdx: Int) -> String? {
-        guard standingViewModels.count > 0 else { return nil }
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        guard !(isSearching && searchResult.isEmpty), !standingViewModels.isEmpty else {
+            return nil
+        }
         return "2025 MultiGP Global Qualifier (Mar 29 - Aug 25)"
     }
 
@@ -404,12 +406,7 @@ extension StandingsViewController: UITableViewDataSource {
 extension StandingsViewController: UIScrollViewDelegate {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-
-        if !isSearching {
-            layoutPinnedCell()
-        } else {
-            removePinnedCell()
-        }
+        layoutPinnedCell()
     }
 }
 
@@ -435,21 +432,18 @@ extension StandingsViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
 
         // Matches leading parts of any word, with robust tokenization and several insensitive cases
-        searchResult = filterResults(query: searchText)
+        searchResult = filterResults(with: searchText)
+
         tableView.setContentOffset(.zero, animated: false)
         tableView.reloadData()
-
-        if searchText.count >= 2 {
-            removePinnedCell()
-        } else {
-            layoutPinnedCell()
-        }
+        layoutPinnedCell()
     }
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = nil
         searchBar.resignFirstResponder()
         tableView.reloadData()
+        layoutPinnedCell()
     }
 }
 
