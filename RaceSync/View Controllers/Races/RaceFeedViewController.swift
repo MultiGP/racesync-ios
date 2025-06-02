@@ -394,6 +394,13 @@ extension RaceFeedViewController: APISettingsDelegate {
     }
 }
 
+extension RaceFeedViewController: ScrollToTop {
+
+    func scrollToTop() {
+        tableView.setContentOffset(.zero, animated: true)
+    }
+}
+
 extension RaceFeedViewController: EmptyDataSetSource {
 
     func getEmptyStateViewModel() -> EmptyStateViewModel {

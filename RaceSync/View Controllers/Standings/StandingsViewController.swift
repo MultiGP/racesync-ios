@@ -413,6 +413,13 @@ extension StandingsViewController: UIScrollViewDelegate {
     }
 }
 
+extension StandingsViewController: ScrollToTop {
+    
+    func scrollToTop() {
+        tableView.setContentOffset(.zero, animated: true)
+    }
+}
+
 extension StandingsViewController: UISearchBarDelegate {
 
     func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {

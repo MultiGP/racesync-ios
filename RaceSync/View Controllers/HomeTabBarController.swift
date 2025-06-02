@@ -10,6 +10,10 @@ import UIKit
 import SnapKit
 import RaceSyncAPI
 
+protocol ScrollToTop {
+    func scrollToTop()
+}
+
 class HomeTabBarController: UITabBarController {
 
     // MARK: - Private Variables
@@ -319,6 +323,13 @@ extension HomeTabBarController: UITabBarControllerDelegate {
             hideNavigationShadow()
         } else {
             hideNavigationShadow(false)
+        }
+
+        if tabBarController.selectedViewController == viewController {
+            // Notify the currently visible VC to scroll to top
+            if let topVC = viewController as? ScrollToTop {
+                topVC.scrollToTop()
+            }
         }
     }
 }
