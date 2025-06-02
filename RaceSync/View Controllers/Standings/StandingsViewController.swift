@@ -21,7 +21,6 @@ class StandingsViewController: UIViewController, Shimmable {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.emptyDataSetSource = self
-        tableView.emptyDataSetDelegate = self
         tableView.tableFooterView = UIView()
         tableView.register(cellType: AvatarTableViewCell.self)
         tableView.keyboardDismissMode = .onDrag
@@ -91,6 +90,8 @@ class StandingsViewController: UIViewController, Shimmable {
     fileprivate var pinnedView: UIView?
 
     fileprivate let minQuery: Int = 2
+    fileprivate let emptyStateSearch = EmptyStateViewModel(.noSearchResults)
+    fileprivate var emptyStateError: EmptyStateViewModel? = nil
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -167,6 +168,8 @@ class StandingsViewController: UIViewController, Shimmable {
             if let objects = objects {
                 self.standingViewModels = StandingViewModel.viewModels(with: objects)
                 self.enableSearchBar(objects.count > 0)
+            } else if error != nil {
+                self.emptyStateError = EmptyStateViewModel(.errorStandings)
             }
 
             if self.refreshControl.isRefreshing {
@@ -449,37 +452,29 @@ extension StandingsViewController: UISearchBarDelegate {
 
 extension StandingsViewController: EmptyDataSetSource {
 
-//    func getEmptyStateViewModel() -> EmptyStateViewModel {
-//        switch selectedRaceFilter {
-//        case .joined:       return emptyStateJoinedRaces
-//        case .nearby:       return emptyStateNearbyRaces
-//        case .chapters:     return emptyStateChapterRaces
-//        case .series:       return emptyStateSeriesRaces
-//        default:            return EmptyStateViewModel(.noRaceResults)
-//        }
-//    }
-//
-//    func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
-//        return getEmptyStateViewModel().title
-//    }
-//
-//    func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
-//        return getEmptyStateViewModel().description
-//    }
-//
-//    func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
-//        return nil
-//    }
-//
-//    func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
-//        return getEmptyStateViewModel().buttonTitle(state)
-//    }
-//
-//    func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
-//        return -(navigationController?.navigationBar.frame.height ?? 0)
-//    }
-}
+    func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        guard !shimmeringView.isShimmering else { return nil }
 
-extension StandingsViewController: EmptyDataSetDelegate {
+        if emptyStateError != nil {
+            return emptyStateError?.title
+        } else if isSearching {
+            return emptyStateSearch.title
+        }
+        return nil
+    }
 
+    func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        guard !shimmeringView.isShimmering else { return nil }
+
+        if emptyStateError != nil {
+            return emptyStateError?.description
+        } else if isSearching {
+            return emptyStateSearch.description
+        }
+        return nil
+    }
+
+    func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
+        return -(navigationController?.navigationBar.frame.height ?? 0)
+    }
 }

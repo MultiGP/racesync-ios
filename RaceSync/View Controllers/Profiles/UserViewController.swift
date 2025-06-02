@@ -70,10 +70,10 @@ class UserViewController: ProfileViewController, ViewJoinable {
     fileprivate var presenter: Presentr?
     fileprivate var userCoordinates: CLLocationCoordinate2D?
 
-    fileprivate var emptyStateRaces = EmptyStateViewModel(.noProfileRaces)
-    fileprivate var emptyStateChapters = EmptyStateViewModel(.noProfileChapters)
-    fileprivate var emptyStateMyRaces = EmptyStateViewModel(.noMyProfileRaces)
-    fileprivate var emptyStateMyChapters = EmptyStateViewModel(.noMyProfileChapters)
+    fileprivate let emptyStateRaces = EmptyStateViewModel(.noProfileRaces)
+    fileprivate let emptyStateChapters = EmptyStateViewModel(.noProfileChapters)
+    fileprivate let emptyStateMyRaces = EmptyStateViewModel(.noMyProfileRaces)
+    fileprivate let emptyStateMyChapters = EmptyStateViewModel(.noMyProfileChapters)
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding

@@ -32,9 +32,9 @@ class PushMessagesViewController: UIViewController {
     fileprivate var message: PushMessage?
     fileprivate var messageViewModels = [PushMessageViewModel]()
 
-    fileprivate var emptyStateNoMessages = EmptyStateViewModel(.noPushMessages)
-    fileprivate var emptyStateNoPushAuthorized = EmptyStateViewModel(.noPushAuthorized)
-    fileprivate var emptyStateNoPushEnabled = EmptyStateViewModel(.noPushEnabled)
+    fileprivate let emptyStateNoMessages = EmptyStateViewModel(.noPushMessages)
+    fileprivate let emptyStateNoPushAuthorized = EmptyStateViewModel(.noPushAuthorized)
+    fileprivate let emptyStateNoPushEnabled = EmptyStateViewModel(.noPushEnabled)
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding

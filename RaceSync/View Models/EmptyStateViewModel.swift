@@ -48,6 +48,7 @@ enum EmptyState {
     case errorChapters
     case errorUsers
     case errorAircraft
+    case errorStandings
 
     case noInternet
 }
@@ -94,7 +95,7 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "Coming Soon"
         case .noSearchResults:
             text = "No Results"
-        case .errorRaces, .errorAircraft:
+        case .errorRaces, .errorAircraft, .errorStandings:
             text = "Error"
         default:
             return nil
@@ -153,6 +154,8 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "Could not load the race details.\nPlease try again later or report a bug."
         case .errorAircraft:
             text = "Could not load the aircraft.\nPlease try again later or report a bug."
+        case .errorStandings:
+            text = "Could not load the season standings.\nPlease try again later or report a bug."
         default:
             return nil
         }

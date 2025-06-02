@@ -44,7 +44,7 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
     fileprivate var userApi = UserApi()
     fileprivate var userViewModels = [UserViewModel]()
 
-    fileprivate var emptyStateRaceRegisters = EmptyStateViewModel(.noRaceRegisters)
+    fileprivate let emptyStateRaceRegisters = EmptyStateViewModel(.noRaceRegisters)
     fileprivate var didTapCell: Bool = false
     fileprivate var externalResultSection: Int = 0
 

@@ -135,10 +135,10 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
     fileprivate let presenter = Appearance.defaultPresenter()
     fileprivate var formNavigationController: NavigationController?
 
-    fileprivate var emptyStateJoinedRaces = EmptyStateViewModel(.noJoinedRaces)
-    fileprivate var emptyStateChapterRaces = EmptyStateViewModel(.noJoinedRaces)
-    fileprivate var emptyStateNearbyRaces = EmptyStateViewModel(.noNearbydRaces)
-    fileprivate var emptyStateSeriesRaces = EmptyStateViewModel(.noSeriesRaces)
+    fileprivate let emptyStateJoinedRaces = EmptyStateViewModel(.noJoinedRaces)
+    fileprivate let emptyStateChapterRaces = EmptyStateViewModel(.noJoinedRaces)
+    fileprivate let emptyStateNearbyRaces = EmptyStateViewModel(.noNearbydRaces)
+    fileprivate let emptyStateSeriesRaces = EmptyStateViewModel(.noSeriesRaces)
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
