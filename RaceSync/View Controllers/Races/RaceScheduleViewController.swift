@@ -124,7 +124,7 @@ class RaceScheduleViewController: UIViewController {
 
         title = "Race Schedule"
         let itemTitle = "Schedule"
-        tabBarItem = UITabBarItem(title: itemTitle, image: UIImage(systemName:"flag.checkered"), selectedImage: nil)
+        tabBarItem = UITabBarItem(title: itemTitle, image: UIImage(named: "icn_tabbar_schedule"), selectedImage: nil)
         tabBarItem.isEnabled = canDisplayZippyQ
 
         let rightBtnItem = UIBarButtonItem(image: UIImage(systemName:"safari"), style: .plain, target: self, action: #selector(openZippyQSchedule))

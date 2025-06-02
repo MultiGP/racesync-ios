@@ -106,9 +106,13 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate func configureNavigationItems() {
 
-        title = showingResults ? "Race Results" : "Pilots Racing"
-        let itemTitle = showingResults ? "Results" : "Pilots"
-        tabBarItem = UITabBarItem(title: itemTitle, image: UIImage(named: "icn_tabbar_roster"), selectedImage: nil)
+        if showingResults {
+            title = "Race Results"
+            tabBarItem = UITabBarItem(title: "Results", image: UIImage(named: "icn_tabbar_results"), selectedImage: UIImage(named: "icn_tabbar_results_filled"))
+        } else {
+            title = "Pilots Racing"
+            tabBarItem = UITabBarItem(title: "Pilots", image: UIImage(systemName: "person.2"), selectedImage: UIImage(systemName: "person.2.fill"))
+        }
 
         var buttons = [UIButton]()
 
