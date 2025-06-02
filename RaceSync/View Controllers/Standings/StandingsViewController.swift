@@ -88,6 +88,7 @@ class StandingsViewController: UIViewController, Shimmable {
     fileprivate var standingViewModels = [StandingViewModel]()
     fileprivate var searchResult = [StandingViewModel]()
     fileprivate var pinnedView: UIView?
+    fileprivate var cachedPinnedIndexPath: IndexPath?
 
     fileprivate let minQuery: Int = 2
     fileprivate let emptyStateSearch = EmptyStateViewModel(.noSearchResults)
@@ -178,25 +179,7 @@ class StandingsViewController: UIViewController, Shimmable {
                 self.isLoadingList(false)
             }
 
-            self.tableView.reloadData()
-            self.layoutPinnedCell()
-        }
-    }
-
-    fileprivate var pinnedCellIndexPath: IndexPath? {
-        get {
-            guard let myUser = APIServices.shared.myUser else { return nil }
-
-            if isSearching, searchResult.count > 0 {
-                if let index = searchResult.firstIndex(where: { $0.standing.userId == myUser.id }) {
-                    return IndexPath(row: index, section: 0)
-                }
-            } else if !isSearching, standingViewModels.count > 0 {
-                if let index = standingViewModels.firstIndex(where: { $0.standing.userId == myUser.id }) {
-                    return IndexPath(row: index, section: 0)
-                }
-            }
-            return nil
+            self.resetTableView()
         }
     }
 
@@ -245,7 +228,7 @@ class StandingsViewController: UIViewController, Shimmable {
     // MARK: - Cell Pinning
 
     func layoutPinnedCell() {
-        guard let indexPath = pinnedCellIndexPath else { return }
+        guard let indexPath = pinnedCellIndexPath() else { return }
         guard let _ = tableView.superview else { return }
 
         let cellRect = tableView.rectForRow(at: indexPath)
@@ -317,7 +300,7 @@ class StandingsViewController: UIViewController, Shimmable {
     }
 
     @objc fileprivate func didTapPinnedCell(_ gesture: UITapGestureRecognizer) {
-        guard let indexPath = pinnedCellIndexPath else { return }
+        guard let indexPath = pinnedCellIndexPath() else { return }
         tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
     }
 
@@ -327,6 +310,22 @@ class StandingsViewController: UIViewController, Shimmable {
         if view.superview != nil {
             view.removeFromSuperview()
         }
+    }
+
+    fileprivate func pinnedCellIndexPath() -> IndexPath? {
+        if let cached = cachedPinnedIndexPath {
+            return cached
+        }
+
+        guard let myUser = APIServices.shared.myUser else { return nil }
+        let source = isSearching ? searchResult : standingViewModels
+
+        if let index = source.firstIndex(where: { $0.standing.userId == myUser.id }) {
+            let indexPath = IndexPath(row: index, section: 0)
+            cachedPinnedIndexPath = indexPath
+            return indexPath
+        }
+        return nil
     }
 }
 
@@ -443,17 +442,25 @@ extension StandingsViewController: UISearchBarDelegate {
 
         // Matches leading parts of any word, with robust tokenization and several insensitive cases
         searchResult = filterResults(with: searchText)
-
-        tableView.setContentOffset(.zero, animated: false)
-        tableView.reloadData()
-        layoutPinnedCell()
+        resetTableView()
     }
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = nil
         searchBar.resignFirstResponder()
+        resetTableView()
+    }
+
+    func resetTableView() {
+        tableView.refreshControl = isSearching ? nil : refreshControl
+        tableView.setContentOffset(.zero, animated: false)
         tableView.reloadData()
-        layoutPinnedCell()
+
+        if pinnedCellIndexPath() != nil {
+            layoutPinnedCell()
+        } else {
+            removePinnedCell()
+        }
     }
 }
 
