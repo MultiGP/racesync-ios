@@ -112,8 +112,7 @@ class AvatarTableViewCell: UITableViewCell {
             $0.leading.equalToSuperview().offset(Constants.padding)
             $0.centerY.equalToSuperview()
 
-            rankLabelWidthConstraint = $0.width.lessThanOrEqualTo(Constants.imageHeight / 2).priority(.medium).constraint
-//            rankLabelWidthConstraint = $0.width.equalTo(Constants.imageHeight/2).constraint
+            rankLabelWidthConstraint = $0.width.greaterThanOrEqualTo(Constants.imageHeight / 2).constraint
             rankLabelWidthConstraint?.activate()
         }
 
@@ -131,16 +130,14 @@ class AvatarTableViewCell: UITableViewCell {
 
         contentView.addSubview(textStackView)
         textStackView.snp.makeConstraints {
-            $0.leading.equalTo(avatarImageView.snp.trailing).offset(Constants.padding)
-            $0.trailing.equalTo(textPill.snp.leading).offset(-Constants.padding).priority(.high)
+            $0.leading.equalTo(avatarImageView.snp.trailing).offset(Constants.padding).priority(.high)
+            $0.trailing.equalTo(textPill.snp.leading).offset(-Constants.padding)
             $0.centerY.equalToSuperview()
         }
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-//        leftSpacingConstraint?.update(offset: rankView.isHidden ? 0 : Constants.padding/2)
-//        rankLabelWidthConstraint?.update(offset: rankView.isHidden ? 0 : Constants.imageHeight/2)
         avatarImageViewWidthConstraint?.update(offset: avatarImageView.isHidden ? 0 : Constants.imageHeight)
 
         if rankView.isHidden {

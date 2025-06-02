@@ -176,20 +176,10 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
-//        if hidesNavigationShadowAtRoot {
-//            hideNavigationShadow()
-//        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-
-//        if let nc = navigationController, nc.viewControllers.count == 2 {
-//            if hidesNavigationShadowAtRoot {
-//                hideNavigationShadow(false)
-//            }
-//        }
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -228,15 +218,6 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
         title = "Race List"
         tabBarItem = UITabBarItem(title: "Races", image: UIImage(systemName:"flag.pattern.checkered.2.crossed"), selectedImage: nil)
     }
-
-//    func hideNavigationShadow(_ hide: Bool = true) {
-//        guard let nc = navigationController else { return }
-//
-//        // By masking to bounds, the shadow of a navigation bar is no longer visible
-//        // This trick only works when the backgroud of view behind the navigation bar is the same color
-//        // It cannot be used for transitioning to more complicated views.
-//        nc.navigationBar.layer.masksToBounds = hide
-//    }
 
     // MARK: - Actions
 
