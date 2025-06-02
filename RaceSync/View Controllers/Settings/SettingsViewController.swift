@@ -61,20 +61,8 @@ class SettingsViewController: UIViewController {
         return view
     }()
 
-    fileprivate lazy var sections: [Section: [Row]] = {
-        let resources: [Row] = [.tracksGuide, .buildGuide, .seasonRules, .visitSite]
-        var about: [Row] = []
-        var auth: [Row] = [.logout]
-
-        if UIApplication.shared.supportsAlternateIcons { about += [.appicon] }
-        about += [.joinBeta]
-
-        if let user = APIServices.shared.myUser, user.isDevTeam {
-            auth += [.switchEnv]
-        }
-
-        return [.notifications: [Row.notifications], .resources: resources, .about: about, .auth: auth]
-    }()
+    fileprivate var sections = [Section: [Row]]()
+    fileprivate let isDevModeEnabled: Bool = false
 
     fileprivate func nextEnvironment() -> APIEnvironment {
         return APIServices.shared.settings.isDev ? APIEnvironment.prod : APIEnvironment.dev
@@ -98,7 +86,12 @@ class SettingsViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        tableView.reloadData()
+
+        if sections.count == 0 {
+            loadSections()
+        } else {
+            tableView.reloadData()
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -133,6 +126,24 @@ class SettingsViewController: UIViewController {
     }
 
     // MARK: - Actions
+
+    func loadSections() {
+
+        sections = {
+           let resources: [Row] = [.tracksGuide, .buildGuide, .seasonRules, .visitSite]
+           var about: [Row] = []
+           var auth: [Row] = [.logout]
+
+           if UIApplication.shared.supportsAlternateIcons { about += [.appicon] }
+           about += [.joinBeta]
+
+           if let user = APIServices.shared.myUser, user.isDevTeam, isDevModeEnabled {
+               auth += [.switchEnv]
+           }
+
+           return [.notifications: [Row.notifications], .resources: resources, .about: about, .auth: auth]
+       }()
+    }
 
     @objc fileprivate func appDidBecomeActive() {
         tableView.reloadData()
