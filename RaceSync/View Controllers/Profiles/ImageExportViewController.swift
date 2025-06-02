@@ -15,7 +15,28 @@ enum ImageExportOptions {
 
 class ImageExportViewController: UIViewController {
 
-    open var exportOptions: [ImageExportOptions] = [.cameraroll]
+    // MARK: - Initialization
+
+    init(with caption: String?, image: UIImage, exportOptions: [ImageExportOptions]? = nil) {
+        self.caption = caption
+        self.image = image
+
+        if let options = exportOptions {
+            self.exportOptions = options
+        }
+
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: - Private Variables
+
+    fileprivate let caption: String?
+    fileprivate let image: UIImage
+    fileprivate var exportOptions: [ImageExportOptions] = [.cameraroll]
 
     lazy var imageView: UIImageView = {
         let imageView = UIImageView()
@@ -41,8 +62,6 @@ class ImageExportViewController: UIViewController {
         label.textAlignment = .center
         return label
     }()
-
-    // MARK: - Private Variables
 
     fileprivate lazy var photosButton: UIButton = {
         let image = UIImage(named: "icn_apple_photos")?.withRenderingMode(.alwaysOriginal)
@@ -106,6 +125,9 @@ class ImageExportViewController: UIViewController {
     // MARK: - Layout
 
     open func setupLayout() {
+
+        imageView.image = image
+        captionLabel.text = caption
 
         view.backgroundColor = Color.black.withAlphaComponent(0.7)
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapView)))

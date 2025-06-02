@@ -213,7 +213,6 @@
 		4FD4E1C9237F987C008816B3 /* RacePilotsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1C8237F987C008816B3 /* RacePilotsViewController.swift */; };
 		4FD4E1CB237F98A0008816B3 /* RaceDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1CA237F98A0008816B3 /* RaceDetailViewController.swift */; };
 		4FD4E1CD237F98E7008816B3 /* RaceTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1CC237F98E7008816B3 /* RaceTabBarController.swift */; };
-		4FD4E1CF237F992B008816B3 /* QRViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1CE237F992B008816B3 /* QRViewController.swift */; };
 		4FD4E1D1237F9DC8008816B3 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1D0237F9DC8008816B3 /* SearchViewController.swift */; };
 		4FD4E1D9237FB1EA008816B3 /* RaceTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1D8237FB1EA008816B3 /* RaceTableViewCell.swift */; };
 		4FD4E1DB237FBE36008816B3 /* JoinButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1DA237FBE36008816B3 /* JoinButton.swift */; };
@@ -515,7 +514,6 @@
 		4FD4E1C8237F987C008816B3 /* RacePilotsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RacePilotsViewController.swift; sourceTree = "<group>"; };
 		4FD4E1CA237F98A0008816B3 /* RaceDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceDetailViewController.swift; sourceTree = "<group>"; };
 		4FD4E1CC237F98E7008816B3 /* RaceTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceTabBarController.swift; sourceTree = "<group>"; };
-		4FD4E1CE237F992B008816B3 /* QRViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRViewController.swift; sourceTree = "<group>"; };
 		4FD4E1D0237F9DC8008816B3 /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		4FD4E1D8237FB1EA008816B3 /* RaceTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceTableViewCell.swift; sourceTree = "<group>"; };
 		4FD4E1DA237FBE36008816B3 /* JoinButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinButton.swift; sourceTree = "<group>"; };
@@ -779,7 +777,6 @@
 				4F5C1E42238CF6BD00D756EB /* ProfileViewController.swift */,
 				4FD4E1C4237F9746008816B3 /* UserViewController.swift */,
 				4FD4E1C6237F97AD008816B3 /* ChapterViewController.swift */,
-				4FD4E1CE237F992B008816B3 /* QRViewController.swift */,
 				4F3E2D012DEE23D900A6646C /* ImageExportViewController.swift */,
 			);
 			path = Profiles;
@@ -1460,7 +1457,6 @@
 				4F91BC8A2398FBCE00539E95 /* ViewJoinable.swift in Sources */,
 				4F13428C2360DAD100A9DBDE /* LoginViewController.swift in Sources */,
 				4F6C8A98236A9E840017FD78 /* Color.swift in Sources */,
-				4FD4E1CF237F992B008816B3 /* QRViewController.swift in Sources */,
 				4F0B613F2385DA8F00930D91 /* UIImage+Extensions.swift in Sources */,
 				4FA1AB4323CAF803007CF389 /* AircraftPickerController.swift in Sources */,
 				4F68BE6D2399DBCF009D44F7 /* UIViewController+Lookup.swift in Sources */,
