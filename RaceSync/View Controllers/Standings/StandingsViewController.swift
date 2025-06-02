@@ -50,6 +50,7 @@ class StandingsViewController: UIViewController, Shimmable {
         tableView.register(cellType: AvatarTableViewCell.self)
         tableView.keyboardDismissMode = .onDrag
         tableView.verticalScrollIndicatorInsets = UIEdgeInsets(top: -1, left: 0, bottom: 0, right: 0)
+        tableView.refreshControl = self.refreshControl
 
         let backgroundView = UIView()
         backgroundView.backgroundColor = Color.gray20
@@ -68,6 +69,14 @@ class StandingsViewController: UIViewController, Shimmable {
         searchBar.backgroundImage = UIImage()
         searchBar.tintColor = Color.blue
         return searchBar
+    }()
+
+    fileprivate lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.backgroundColor = Color.white
+        refreshControl.tintColor = Color.blue
+        refreshControl.addTarget(self, action: #selector(didPullRefreshControl), for: .valueChanged)
+        return refreshControl
     }()
 
     var shimmeringView: ShimmeringView = defaultShimmeringView()
@@ -150,7 +159,9 @@ class StandingsViewController: UIViewController, Shimmable {
 
     func loadStandings() {
 
-        isLoadingList(true)
+        if !refreshControl.isRefreshing {
+            isLoadingList(true)
+        }
 
         standinApi.getStandings(for: .y2025) { (objects, error) in
             if let objects = objects {
@@ -163,7 +174,12 @@ class StandingsViewController: UIViewController, Shimmable {
                 }
             }
 
-            self.isLoadingList(false)
+            if self.refreshControl.isRefreshing {
+                self.refreshControl.endRefreshing()
+            } else {
+                self.isLoadingList(false)
+            }
+
             self.tableView.reloadData()
 
             // This is not doing anything. The idea was to hide the header view
@@ -172,6 +188,11 @@ class StandingsViewController: UIViewController, Shimmable {
 
             self.layoutPinnedCell()
         }
+    }
+
+    @objc fileprivate func didPullRefreshControl() {
+
+        loadStandings()
     }
 
     // MARK: - Search
