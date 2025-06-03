@@ -32,6 +32,12 @@ class PushMessagesViewController: UIViewController {
     fileprivate var message: PushMessage?
     fileprivate var messageViewModels = [PushMessageViewModel]()
 
+    fileprivate var isLoading: Bool = false {
+        didSet {
+            tableView.reloadData()
+        }
+    }
+
     fileprivate let emptyStateNoMessages = EmptyStateViewModel(.noPushMessages)
     fileprivate let emptyStateNoPushAuthorized = EmptyStateViewModel(.noPushAuthorized)
     fileprivate let emptyStateNoPushEnabled = EmptyStateViewModel(.noPushEnabled)
@@ -161,8 +167,9 @@ class PushMessagesViewController: UIViewController {
     }
 
     @objc fileprivate func handlePushMessageRegistration(_ notification: Notification)  {
+        isLoading = false
 
-        let title = "📲 Welcome to RaceSync iOS \(Bundle.main.releaseDescriptionPretty)"
+        let title = "📲 Welcome to \(Bundle.main.applicationName) iOS \(Bundle.main.releaseVersionNumber)"
         let body = "Please take a moment to rate and review the app on the App Store. Thank you for your support!"
         let type = "app_store_review"
 
@@ -195,6 +202,7 @@ class PushMessagesViewController: UIViewController {
     }
 
     @objc fileprivate func didPressAllowNotificationsButton() {
+        isLoading = true
         PushMessagesController.shared.requestAuthorizationPushNotifications()
     }
 
@@ -262,6 +270,7 @@ extension PushMessagesViewController: UITableViewDataSource {
 extension PushMessagesViewController: EmptyDataSetSource {
 
     func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        guard !isLoading else { return nil }
 
         if !PushMessagesController.shared.isPushNotificationsEnabled() {
             let emptyState = !PushMessagesController.shared.isAllowingNotifications()
@@ -274,6 +283,7 @@ extension PushMessagesViewController: EmptyDataSetSource {
     }
 
     func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        guard !isLoading else { return nil }
 
         if !PushMessagesController.shared.isPushNotificationsEnabled() {
             let emptyState = !PushMessagesController.shared.isAllowingNotifications()
@@ -286,6 +296,7 @@ extension PushMessagesViewController: EmptyDataSetSource {
     }
 
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
+        guard !isLoading else { return nil }
 
         if !PushMessagesController.shared.isPushNotificationsEnabled() {
             let emptyState = !PushMessagesController.shared.isAllowingNotifications()
@@ -294,6 +305,14 @@ extension PushMessagesViewController: EmptyDataSetSource {
             return emptyState.buttonTitle(state)
         }
         return nil
+    }
+
+    func customView(forEmptyDataSet scrollView: UIScrollView) -> UIView? {
+        guard isLoading else { return nil }
+
+        let view = UIActivityIndicatorView(style: .large)
+        view.color = Color.gray300
+        return view
     }
 
     func backgroundColor(forEmptyDataSet scrollView: UIScrollView) -> UIColor? {
@@ -308,11 +327,11 @@ extension PushMessagesViewController: EmptyDataSetDelegate {
     }
 
     func emptyDataSetShouldDisplay(_ scrollView: UIScrollView) -> Bool {
-        return true
+        return (!isLoading)
     }
 
     func emptyDataSetShouldAllowScroll(_ scrollView: UIScrollView) -> Bool {
-        return true
+        return (!isLoading)
     }
 
     func emptyDataSet(_ scrollView: UIScrollView, didTapButton button: UIButton) {
