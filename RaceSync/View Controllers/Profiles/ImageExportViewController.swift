@@ -92,13 +92,11 @@ class ImageExportViewController: UIViewController {
         let image = UIImage(named: "icn_apple_share")?.withRenderingMode(.alwaysOriginal)
         let button = UIButton(type: .system)
         button.setImage(image, for: .normal)
-        button.setTitle("Share to...", for: .normal)
-        button.addTarget(self, action: #selector(didPressInstagramButton), for: .touchUpInside)
+        button.setTitle("Share Image to...", for: .normal)
+        button.addTarget(self, action: #selector(didPressShareButton), for: .touchUpInside)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 19, weight: .regular)
         button.tintColor = Color.black
         button.backgroundColor = Color.white
-        button.imageEdgeInsets = UIEdgeInsets(left: -20)
-        button.titleEdgeInsets = UIEdgeInsets(left: 0)
         button.layer.cornerRadius = Constants.cornerRadius/2
         button.layer.masksToBounds = true
         return button
@@ -216,7 +214,7 @@ class ImageExportViewController: UIViewController {
     }
 
     @objc func didPressShareButton() {
-        shareToInstagramStory(image: image)
+        shareToApps(image: image)
     }
 
     @objc func didPressInstagramButton() {
@@ -226,8 +224,10 @@ class ImageExportViewController: UIViewController {
 
 extension ImageExportViewController {
 
-    func shareToActivity(image: UIImage) {
-
+    func shareToApps(image: UIImage) {
+        let vc = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+        vc.excludedActivityTypes = [.addToReadingList, .assignToContact, .openInIBooks, .markupAsPDF]
+        present(vc, animated: true)
     }
 
     func shareToInstagramStory(image: UIImage) {
