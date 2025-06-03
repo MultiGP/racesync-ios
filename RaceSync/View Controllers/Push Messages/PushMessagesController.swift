@@ -110,11 +110,15 @@ class PushMessagesController: NSObject {
         }
     }
 
-    func unregisterForPushNotifications(_ completion: StatusCompletionBlock? = nil) {
+    func unregisterForPushNotifications(_ fromDevice: Bool = true, _ completion: StatusCompletionBlock? = nil) {
 
         notificationCenter.removeAllPendingNotificationRequests()
         notificationCenter.removeAllDeliveredNotifications()
-        UIApplication.shared.unregisterForRemoteNotifications() // TODO: is this really required?
+
+        // To be used mainly whe logging out
+        if fromDevice {
+            UIApplication.shared.unregisterForRemoteNotifications()
+        }
 
         refreshPushNotificationSettings()
 
