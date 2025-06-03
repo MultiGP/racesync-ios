@@ -135,7 +135,7 @@ class SettingsViewController: UIViewController {
             var auth: [Row] = [.logout]
 
             // show calendar only until after IO (16/06/2025)
-            if let ioDate = Date.date(for: 16, month: 6, year: 2025), Date() < ioDate {
+            if let ioDate = Date.date(for: 16, month: 6, year: 2025), Date() <= ioDate {
                 resources += [.ioschedule]
             }
             resources += [.tracksGuide, .buildGuide, .seasonRules, .visitSite]
