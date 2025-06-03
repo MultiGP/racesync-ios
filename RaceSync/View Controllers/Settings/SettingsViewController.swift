@@ -62,6 +62,7 @@ class SettingsViewController: UIViewController {
     }()
 
     fileprivate var sections = [Section: [Row]]()
+    fileprivate var isTogglingPush: Bool = false
     fileprivate let isDevModeEnabled: Bool = false
 
     fileprivate func nextEnvironment() -> APIEnvironment {
@@ -155,7 +156,7 @@ class SettingsViewController: UIViewController {
     }
 
     @objc fileprivate func appDidBecomeActive() {
-        tableView.reloadData()
+        resetTableViewForPushStatus()
     }
 
     @objc fileprivate func didPressCloseButton() {
@@ -163,28 +164,40 @@ class SettingsViewController: UIViewController {
     }
 
     fileprivate func togglePushNotifications() {
+        guard !isTogglingPush else { return }
 
         let controller = PushMessagesController.shared
 
         if !controller.isPushNotificationsEnabled() {
             if (controller.authorizationStatus == .notDetermined || controller.authorizationStatus == .authorized) {
                 controller.requestAuthorizationPushNotifications()
+                isTogglingPush = true
             } else {
                 ApplicationControl.shared.openAppSettings()
             }
         } else {
             ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Do you want to stop receiving push notifications?", destructiveTitle: "Yes, stop", completion: { (action) in
+                self.isTogglingPush = true
+                self.tableView.reloadData()
+
                 controller.unregisterForPushNotifications(fromDevice: false) { status, error in
                     controller.store.removeAll() // clear all saved messages
-                    self.tableView.reloadData()
+                    self.resetTableViewForPushStatus()
                 }
 
             }, cancel: nil)
         }
     }
 
+    fileprivate func resetTableViewForPushStatus() {
+        PushMessagesController.shared.refreshPushNotificationSettings { status in
+            self.isTogglingPush = false
+            self.tableView.reloadData()
+        }
+    }
+
     @objc fileprivate func handlePushMessageRegistration(_ notification: Notification)  {
-        tableView.reloadData()
+        resetTableViewForPushStatus()
     }
 
     fileprivate func logout() {
@@ -210,11 +223,14 @@ class SettingsViewController: UIViewController {
 extension SettingsViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let cell = tableView.cellForRow(at: indexPath) as? FormTableViewCell else { return }
+        tableView.deselectRow(at: indexPath, animated: true)
         guard let section = Section(rawValue: indexPath.section), let row = sections[section]?[indexPath.row] else { return }
 
         switch row {
         case .notifications:
             togglePushNotifications()
+            cell.isLoading = isTogglingPush
         case .tracksGuide:
             WebViewController.openUrl(AppWebConstants.tracks)
         case .buildGuide:
@@ -238,8 +254,6 @@ extension SettingsViewController: UITableViewDelegate {
         case .ioschedule:
             WebViewController.openUrl(AppWebConstants.io25schedule)
         }
-
-        tableView.deselectRow(at: indexPath, animated: true)
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection sectionIdx: Int) -> String? {
@@ -261,18 +275,18 @@ extension SettingsViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as FormTableViewCell
-
-        guard let section = Section(rawValue: indexPath.section), let rows = sections[section] else { return cell }
-        let row = rows[indexPath.row]
+        guard let section = Section(rawValue: indexPath.section), let row = sections[section]?[indexPath.row] else { return cell }
 
         cell.textLabel?.text = row.title
         cell.textLabel?.textColor = Color.black
         cell.detailTextLabel?.text = nil
         cell.imageView?.image = UIImage.init(named: row.imageName)
         cell.accessoryType = .disclosureIndicator
+        cell.isLoading = false
 
         if row == .notifications {
             cell.detailTextLabel?.text = PushMessagesController.shared.isPushNotificationsEnabled() ? "Enabled" : "Disabled"
+            cell.isLoading = isTogglingPush
         } else if row == .appicon {
             let icon = AppIconManager.selectedIcon()
             cell.detailTextLabel?.text = icon.title

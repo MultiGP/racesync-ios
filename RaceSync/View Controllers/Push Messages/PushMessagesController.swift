@@ -36,9 +36,13 @@ class PushMessagesController: NSObject {
 
     // MARK: - Remote Notification Registration
 
-    func refreshPushNotificationSettings() {
+    func refreshPushNotificationSettings(_ completionHandler: ((UNAuthorizationStatus) -> Void)? = nil) {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             self.authorizationStatus = settings.authorizationStatus
+
+            DispatchQueue.main.async {
+                completionHandler?(settings.authorizationStatus)
+            }
         }
     }
 

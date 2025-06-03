@@ -116,7 +116,6 @@ class PushMessagesViewController: UIViewController {
     }
 
     fileprivate func populateDataSource() {
-
         let messages = PushMessagesController.shared.store.getAllMessages()
         messageViewModels = PushMessageViewModel.viewModels(with: messages)
 
@@ -163,6 +162,12 @@ class PushMessagesViewController: UIViewController {
             if let url = URL(string: storeUrl), UIApplication.shared.canOpenURL(url) {
                 UIApplication.shared.open(url)
             }
+        }
+    }
+
+    fileprivate func resetTableViewForPushStatus() {
+        PushMessagesController.shared.refreshPushNotificationSettings { status in
+            self.tableView.reloadData()
         }
     }
 
@@ -215,7 +220,7 @@ class PushMessagesViewController: UIViewController {
     }
 
     @objc fileprivate func appDidBecomeActive() {
-        tableView.reloadData()
+        resetTableViewForPushStatus()
     }
 }
 
@@ -256,11 +261,11 @@ extension PushMessagesViewController: UITableViewDelegate {
 extension PushMessagesViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        guard PushMessagesController.shared.isPushNotificationsEnabled() else { return 0 }
         return messageViewModels.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
         let viewModel = messageViewModels[indexPath.row]
 
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as MessageViewCell
