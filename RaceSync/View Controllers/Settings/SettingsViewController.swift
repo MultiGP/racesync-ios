@@ -82,6 +82,7 @@ class SettingsViewController: UIViewController {
         setupLayout()
 
         NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handlePushMessageRegistration(_:)), name: .registeredForPushMessages, object: nil)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -161,9 +162,28 @@ class SettingsViewController: UIViewController {
 
     fileprivate func togglePushNotifications() {
 
-        if !PushMessagesController.shared.isRegisteredForNotifications() {
-            ApplicationControl.shared.openAppSettings()
+        let controller = PushMessagesController.shared
+
+        if !controller.isPushNotificationsEnabled() {
+            if (controller.authorizationStatus == .notDetermined || controller.authorizationStatus == .authorized) {
+                controller.requestAuthorizationPushNotifications()
+            } else {
+                ApplicationControl.shared.openAppSettings()
+            }
+        } else {
+            ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Do you wish to disable push notifications?", destructiveTitle: "Yes, disable", completion: { (action) in
+                controller.unregisterForPushNotifications(fromDevice: false) { status, error in
+                    controller.store.removeAll() // clear all saved messages
+                    self.tableView.reloadData()
+                }
+
+            }, cancel: nil)
         }
+    }
+
+    @objc fileprivate func handlePushMessageRegistration(_ notification: Notification)  {
+        guard let status = notification.object as? Bool else { return }
+        tableView.reloadData()
     }
 
     fileprivate func logout() {
@@ -251,7 +271,7 @@ extension SettingsViewController: UITableViewDataSource {
         cell.accessoryType = .disclosureIndicator
 
         if row == .notifications {
-            cell.detailTextLabel?.text = PushMessagesController.shared.isRegisteredForNotifications() ? "Enabled" : "Disabled"
+            cell.detailTextLabel?.text = PushMessagesController.shared.isPushNotificationsEnabled() ? "Enabled" : "Disabled"
         } else if row == .appicon {
             let icon = AppIconManager.selectedIcon()
             cell.detailTextLabel?.text = icon.title

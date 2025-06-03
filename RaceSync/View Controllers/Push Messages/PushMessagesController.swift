@@ -92,11 +92,13 @@ class PushMessagesController: NSObject {
                 Clog.log(status ? "Registered device with API!" : "Failed to register device with API...")
             }
 
-            DispatchQueue.main.async {
-                NotificationCenter.default.post(name: .registeredForPushMessages, object: status)
-            }
-
-            completion?(status, error)
+            // updating my user's data
+            self.userApi.getMyUser(forceUpdate: true, completion: { user, error2 in
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(name: .registeredForPushMessages, object: status)
+                    completion?(status, error)
+                }
+            })
         }
     }
 
@@ -115,12 +117,12 @@ class PushMessagesController: NSObject {
         }
     }
 
-    func unregisterForPushNotifications(_ fromDevice: Bool = true, _ completion: StatusCompletionBlock? = nil) {
+    func unregisterForPushNotifications(fromDevice: Bool = true, _ completion: StatusCompletionBlock? = nil) {
 
         notificationCenter.removeAllPendingNotificationRequests()
         notificationCenter.removeAllDeliveredNotifications()
 
-        // To be used mainly whe logging out
+        // To be used mainly when logging out
         if fromDevice {
             UIApplication.shared.unregisterForRemoteNotifications()
             refreshPushNotificationSettings()
@@ -133,11 +135,13 @@ class PushMessagesController: NSObject {
                 Clog.log(status ? "Unregistered device with API!" : "Failed to unregister device with API...")
             }
 
-            DispatchQueue.main.async {
-                NotificationCenter.default.post(name: .registeredForPushMessages, object: status)
-            }
-
-            completion?(status, error)
+            // updating my user's data
+            self.userApi.getMyUser(forceUpdate: true, completion: { user, error2 in
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(name: .registeredForPushMessages, object: status)
+                    completion?(status, error)
+                }
+            })
         }
     }
 

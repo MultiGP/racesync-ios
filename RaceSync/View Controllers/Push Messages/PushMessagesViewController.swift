@@ -276,8 +276,9 @@ extension PushMessagesViewController: EmptyDataSetSource {
     func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
         guard !isLoading else { return nil }
 
-        if !PushMessagesController.shared.isPushNotificationsEnabled() {
-            let emptyState = !PushMessagesController.shared.isAllowingNotifications()
+        let controller = PushMessagesController.shared
+        if !controller.isPushNotificationsEnabled() {
+            let emptyState = (controller.authorizationStatus == .notDetermined || controller.authorizationStatus == .authorized)
                 ? emptyStateNoPushAuthorized
                 : emptyStateNoPushEnabled
             return emptyState.title
@@ -289,8 +290,9 @@ extension PushMessagesViewController: EmptyDataSetSource {
     func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
         guard !isLoading else { return nil }
 
-        if !PushMessagesController.shared.isPushNotificationsEnabled() {
-            let emptyState = (PushMessagesController.shared.authorizationStatus == .notDetermined)
+        let controller = PushMessagesController.shared
+        if !controller.isPushNotificationsEnabled() {
+            let emptyState = (controller.authorizationStatus == .notDetermined || controller.authorizationStatus == .authorized)
                 ? emptyStateNoPushAuthorized
                 : emptyStateNoPushEnabled
             return emptyState.description
@@ -302,8 +304,9 @@ extension PushMessagesViewController: EmptyDataSetSource {
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
         guard !isLoading else { return nil }
 
-        if !PushMessagesController.shared.isPushNotificationsEnabled() {
-            let emptyState = (PushMessagesController.shared.authorizationStatus == .notDetermined)
+        let controller = PushMessagesController.shared
+        if !controller.isPushNotificationsEnabled() {
+            let emptyState = (controller.authorizationStatus == .notDetermined || controller.authorizationStatus == .authorized)
                 ? emptyStateNoPushAuthorized
                 : emptyStateNoPushEnabled
             return emptyState.buttonTitle(state)
@@ -341,8 +344,9 @@ extension PushMessagesViewController: EmptyDataSetDelegate {
 
     func emptyDataSet(_ scrollView: UIScrollView, didTapButton button: UIButton) {
 
-        if !PushMessagesController.shared.isPushNotificationsEnabled() {
-            if (PushMessagesController.shared.authorizationStatus == .notDetermined) {
+        let controller = PushMessagesController.shared
+        if !controller.isPushNotificationsEnabled() {
+            if (controller.authorizationStatus == .notDetermined || controller.authorizationStatus == .authorized) {
                 didPressRequestNotificationsButton()
             } else {
                 didPressShowSettingsButton()

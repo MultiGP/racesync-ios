@@ -15,9 +15,10 @@ public protocol UserApiInterface {
     /**
      Gets the authenticated User's profile information.
 
+     - parameter forceUpdate: Forces updating the user object. Default is false.
      - parameter completion: The closure to be called upon completion. Returns a transcient object containing the profile information of the authenticated User.
      */
-    func getMyUser(_ completion: @escaping ObjectCompletionBlock<User>)
+    func getMyUser(forceUpdate: Bool, completion: @escaping ObjectCompletionBlock<User>)
 
     /**
      Updates the home chapter on the authenticated User's profile.
@@ -49,12 +50,12 @@ public class UserApi: UserApiInterface {
     public init() {}
     fileprivate let repositoryAdapter = RepositoryAdapter()
 
-    public func getMyUser(_ completion: @escaping ObjectCompletionBlock<User>) {
+    public func getMyUser(forceUpdate: Bool = false, completion: @escaping ObjectCompletionBlock<User>) {
 
         let endpoint = EndPoint.userProfile
 
         repositoryAdapter.getObject(endpoint, type: User.self) { (user, error) in
-            if user != nil { APIServices.shared.myUser = user }
+            if user != nil || forceUpdate { APIServices.shared.myUser = user }
             completion(user, error)
         }
     }
