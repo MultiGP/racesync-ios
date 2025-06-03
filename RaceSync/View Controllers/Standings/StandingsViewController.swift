@@ -374,7 +374,7 @@ class StandingsViewController: UIViewController, Shimmable {
     fileprivate func presentMyStandingBadge(with image: UIImage) {
         let size = CGSize(width: 360, height: 480)
         let options: [ImageExportOptions] = [.shareto]
-        let vc = ImageExportViewController(with: image, size: size, options: options)
+        let vc = ImageExportViewController(with: image, size: size, contentMode: .scaleAspectFit, options: options)
 
         let presenter = Presentr(presentationType: .fullScreen)
         presenter.blurBackground = false

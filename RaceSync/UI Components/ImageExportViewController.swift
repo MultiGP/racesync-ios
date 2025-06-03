@@ -17,7 +17,7 @@ class ImageExportViewController: UIViewController {
 
     // MARK: - Initialization
 
-    init(with image: UIImage, size: CGSize = .zero, caption: String? = nil, options: [ImageExportOptions]? = nil) {
+    init(with image: UIImage, size: CGSize = .zero, caption: String? = nil, contentMode: UIView.ContentMode? = nil, options: [ImageExportOptions]? = nil) {
         self.image = image
         self.caption = caption
 
@@ -26,6 +26,9 @@ class ImageExportViewController: UIViewController {
         }
         if let options = options {
             self.exportOptions = options
+        }
+        if let contentMode = contentMode {
+            self.imageContentMode = contentMode
         }
 
         super.init(nibName: nil, bundle: nil)
@@ -41,11 +44,11 @@ class ImageExportViewController: UIViewController {
     fileprivate let image: UIImage
     fileprivate var exportOptions: [ImageExportOptions] = [.cameraroll]
     fileprivate var imageSize: CGSize = CGSize(width: 320, height: 320)
+    fileprivate var imageContentMode: UIView.ContentMode = .center
 
     lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.backgroundColor = Color.white
-        imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = Constants.cornerRadius/2
         imageView.layer.masksToBounds = true
         imageView.isUserInteractionEnabled = true
@@ -96,7 +99,7 @@ class ImageExportViewController: UIViewController {
         let image = UIImage(named: "icn_apple_share")?.withRenderingMode(.alwaysOriginal)
         let button = UIButton(type: .system)
         button.setImage(image, for: .normal)
-        button.setTitle("Share Image to...", for: .normal)
+        button.setTitle("Share to...", for: .normal)
         button.addTarget(self, action: #selector(didPressShareButton), for: .touchUpInside)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 19, weight: .regular)
         button.tintColor = Color.black
@@ -167,6 +170,8 @@ class ImageExportViewController: UIViewController {
 
     open func setupLayout() {
         imageView.image = image
+        imageView.contentMode = imageContentMode
+
         captionLabel.text = caption
 
         view.backgroundColor = Color.black.withAlphaComponent(0.7)

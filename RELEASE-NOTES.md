@@ -12,7 +12,7 @@
    * Race listings are now consistently sorted by most recent across all relevant sections.
    
 For Chapter Organizers:
-   * Easily open or close race enrollment when editing a race via the Edit button, in a race detail screen.
+   * Easily open or close race enrolment when editing a race, in a race detail screen.
 
 ### Fixes and enhancements:
 

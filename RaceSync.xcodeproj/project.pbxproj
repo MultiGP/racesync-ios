@@ -784,7 +784,6 @@
 				4F5C1E42238CF6BD00D756EB /* ProfileViewController.swift */,
 				4FD4E1C4237F9746008816B3 /* UserViewController.swift */,
 				4FD4E1C6237F97AD008816B3 /* ChapterViewController.swift */,
-				4F3E2D012DEE23D900A6646C /* ImageExportViewController.swift */,
 			);
 			path = Profiles;
 			sourceTree = "<group>";
@@ -1104,6 +1103,7 @@
 				4F8B866B296583EB00EAF695 /* TextEditorViewController.swift */,
 				4F6429132403AE9A005E8036 /* FormBaseViewController.swift */,
 				4FC1797C24B0801900D2EA2D /* ImagePickerController.swift */,
+				4F3E2D012DEE23D900A6646C /* ImageExportViewController.swift */,
 			);
 			path = "UI Components";
 			sourceTree = "<group>";
