@@ -130,9 +130,15 @@ class SettingsViewController: UIViewController {
     func loadSections() {
 
         sections = {
-           let resources: [Row] = [.tracksGuide, .buildGuide, .seasonRules, .visitSite]
-           var about: [Row] = []
-           var auth: [Row] = [.logout]
+           var resources: [Row] = []
+            var about: [Row] = []
+            var auth: [Row] = [.logout]
+
+            // show calendar only until after IO (16/06/2025)
+            if let ioDate = Date.date(for: 16, month: 6, year: 2025), Date() <= ioDate {
+                resources += [.ioschedule]
+            }
+            resources += [.tracksGuide, .buildGuide, .seasonRules, .visitSite]
 
            if UIApplication.shared.supportsAlternateIcons { about += [.appicon] }
            about += [.joinBeta]
@@ -208,6 +214,8 @@ extension SettingsViewController: UITableViewDelegate {
             switchEnvironment()
         case .featureFlags:
             showFeatureFlags()
+        case .ioschedule:
+            WebViewController.openUrl(AppWebConstants.io25schedule)
         }
 
         tableView.deselectRow(at: indexPath, animated: true)
@@ -296,6 +304,7 @@ fileprivate enum Row: Int, EnumTitle {
     case logout
     case featureFlags
     case switchEnv
+    case ioschedule
 
     var title: String {
         switch self {
@@ -309,6 +318,7 @@ fileprivate enum Row: Int, EnumTitle {
         case .logout:               return "Logout"
         case .featureFlags:         return "Feature Flags"
         case .switchEnv:            return "Switch to"
+        case .ioschedule:           return "IO 2025 Schedule"
         }
     }
 
@@ -325,6 +335,7 @@ fileprivate enum Row: Int, EnumTitle {
         case .logout:               return "icn_settings_logout"
         case .featureFlags:         return "icn_settings_logout"
         case .switchEnv:            return "icn_settings_logout"
+        case .ioschedule:           return "icn_settings_io"
         }
     }
 }

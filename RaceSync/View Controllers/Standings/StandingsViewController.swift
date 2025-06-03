@@ -11,6 +11,7 @@ import SnapKit
 import RaceSyncAPI
 import ShimmerSwift
 import EmptyDataSet_Swift
+import Presentr
 
 class StandingsViewController: UIViewController, Shimmable {
 
@@ -93,6 +94,21 @@ class StandingsViewController: UIViewController, Shimmable {
     fileprivate let minQuery: Int = 2
     fileprivate let emptyStateSearch = EmptyStateViewModel(.noSearchResults)
     fileprivate var emptyStateError: EmptyStateViewModel? = nil
+    fileprivate var presenter: Presentr?
+
+    fileprivate var myUserId: ObjectId? {
+        get {
+//            return "9649"
+            return APIServices.shared.myUser?.id
+        }
+    }
+
+    fileprivate var myProfileUrl: String? {
+        get {
+//            return "https://multigp-storage-new.s3.us-east-2.amazonaws.com/user/9649/profileImage-64.png"
+            return APIServices.shared.myUser?.profilePictureUrl
+        }
+    }
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -105,7 +121,6 @@ class StandingsViewController: UIViewController, Shimmable {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         setupLayout()
     }
 
@@ -281,20 +296,20 @@ class StandingsViewController: UIViewController, Shimmable {
         let cellWidth = tableView.bounds.width
         let cellHeight = tableView.delegate?.tableView?(tableView, heightForRowAt: indexPath) ?? tableView.rowHeight
         cell.frame = CGRect(x: 0, y: 0, width: cellWidth, height: cellHeight)
-
-        cell.contentView.setNeedsLayout()
-        cell.contentView.layoutIfNeeded()
-
+        
+        // Force the cell to layout its subviews
         cell.setNeedsLayout()
         cell.layoutIfNeeded()
 
         // Create a snapshot of the cell’s current rendered content
-        let snapshot = cell.snapshotView(afterScreenUpdates: true)
-        snapshot?.clipsToBounds = true
-        snapshot?.tag = indexPath.row
+        guard let snapshot = cell.snapshotView(afterScreenUpdates: true) else {
+            return nil
+        }
+        snapshot.tag = indexPath.row
 
+        // Add tap gesture recognizer to the snapshot
         let tap = UITapGestureRecognizer(target: self, action: #selector(didTapPinnedCell(_:)))
-        snapshot?.addGestureRecognizer(tap)
+        snapshot.addGestureRecognizer(tap)
 
         return snapshot
     }
@@ -317,15 +332,50 @@ class StandingsViewController: UIViewController, Shimmable {
             return cached
         }
 
-        guard let myUser = APIServices.shared.myUser else { return nil }
+        guard let userId = myUserId else { return nil }
         let source = isSearching ? searchResult : standingViewModels
 
-        if let index = source.firstIndex(where: { $0.standing.userId == myUser.id }) {
+        if let index = source.firstIndex(where: { $0.standing.userId == userId }) {
             let indexPath = IndexPath(row: index, section: 0)
             cachedPinnedIndexPath = indexPath
             return indexPath
         }
         return nil
+    }
+
+    fileprivate func standingViewModel(at indexPath: IndexPath) -> StandingViewModel? {
+        let viewModels = isSearching ? searchResult : standingViewModels
+        return viewModels[indexPath.row]
+    }
+
+    fileprivate func shouldPresentMyStandingBadge(_ indexPath: IndexPath) {
+        guard let viewModel = standingViewModel(at: indexPath) else { return }
+
+        let frame = CGRect(origin: .zero, size: CGSize(width: 540, height: 720))
+        let badgeView = StandingBadgeView(frame: frame)
+
+        badgeView.configureView(with: viewModel, imageUrl: myProfileUrl) { image in
+            self.presentMyStandingBadge(with: image)
+        }
+    }
+
+    fileprivate func presentMyStandingBadge(with image: UIImage) {
+        let size = CGSize(width: 360, height: 480)
+        let options: [ImageExportOptions] = [.shareto]
+        let vc = ImageExportViewController(with: image, size: size, options: options)
+
+        let presenter = Presentr(presentationType: .fullScreen)
+        presenter.blurBackground = false
+        presenter.backgroundOpacity = 0.65
+        presenter.transitionType = .crossDissolve
+        presenter.dismissTransitionType = .crossDissolve
+        presenter.dismissAnimated = true
+        presenter.dismissOnSwipe = false
+        presenter.backgroundTap = .dismiss
+        presenter.outsideContextTap = .passthrough
+
+        customPresentViewController(presenter, viewController: vc, animated: true)
+        self.presenter = presenter
     }
 }
 
@@ -333,10 +383,17 @@ extension StandingsViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) as? AvatarTableViewCell else { return }
+        tableView.deselectRow(at: indexPath, animated: true)
+
+        // Present the standing badge instead, if it's me
+        if let cachedIndexPath = cachedPinnedIndexPath, indexPath == cachedIndexPath {
+            shouldPresentMyStandingBadge(indexPath)
+            return
+        }
+
         cell.isLoading = true
 
-        let viewModels = isSearching ? searchResult : standingViewModels
-        let viewModel = viewModels[indexPath.row]
+        guard let viewModel = standingViewModel(at: indexPath) else { return }
         guard !viewModel.standing.userId.isEmpty else { return }
 
         userApi.getUser(with: viewModel.standing.userId) { [weak self] (user, error) in
@@ -348,8 +405,6 @@ extension StandingsViewController: UITableViewDelegate {
             }
             cell.isLoading = false
         }
-
-        tableView.deselectRow(at: indexPath, animated: true)
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -382,20 +437,22 @@ extension StandingsViewController: UITableViewDataSource {
     }
 
     func configure(tableViewCell cell: AvatarTableViewCell, forRowAt indexPath: IndexPath) {
-
-        cell.avatarImageView.isHidden = true
-
-        let viewModels = isSearching ? searchResult : standingViewModels
-        let viewModel = viewModels[indexPath.row]
+        guard let viewModel = standingViewModel(at: indexPath) else { return }
         cell.rankView.rank = viewModel.rank
         cell.titleLabel.text = viewModel.titleLabel
         cell.subtitleLabel.text = viewModel.subtitleLabel
+        cell.avatarImageView.isHidden = true
 
-        if let myUser = APIServices.shared.myUser, viewModel.standing.userId == myUser.id {
+        if let userId = myUserId, viewModel.standing.userId == userId {
             cell.backgroundColor = UIColor(hex: "898b8c")
             cell.titleLabel.textColor = Color.white
             cell.subtitleLabel.textColor = Color.gray20
             cell.rankView.titleLabel.textColor = Color.gray20
+
+            let image = UIImage(named: "icn_navbar_share")?.withTintColor(.white)
+            let imageView = UIImageView(image: image)
+            imageView.tintColor = .white
+            cell.accessoryView = imageView
         } else {
             cell.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : UIColor(hex: "f7f9fa")
             cell.titleLabel.textColor = Color.black

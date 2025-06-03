@@ -12,6 +12,7 @@ import RaceSyncAPI
 import Presentr
 import EmptyDataSet_Swift
 import CoreLocation
+import QRCode
 
 class UserViewController: ProfileViewController, ViewJoinable {
 
@@ -197,8 +198,17 @@ class UserViewController: ProfileViewController, ViewJoinable {
         navigationController?.pushViewController(vc, animated: true)
     }
 
+    func getQRImage(with userId: String) -> UIImage? {
+        var qrCode = QRCode(userId)
+        qrCode?.size = CGSize(width: 270, height: 270)
+        qrCode?.color = CIColor(color: Color.black)
+        qrCode?.backgroundColor = CIColor(color: Color.white)
+        return qrCode?.image
+    }
+
     @objc func didPressQRButton() {
-        let vc = QRViewController(with: user.id)
+        guard let qrImage = getQRImage(with: user.id) else { return }
+        let vc = ImageExportViewController(with: qrImage, caption: user.id)
 
         let presenter = Presentr(presentationType: .fullScreen)
         presenter.blurBackground = false
