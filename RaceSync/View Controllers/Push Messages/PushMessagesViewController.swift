@@ -191,11 +191,14 @@ class PushMessagesViewController: UIViewController {
         messageViewModels.insert(viewModel, at: 0)
 
         tableView.beginUpdates()
-        tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+        tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
         tableView.endUpdates()
 
         updateClearButton()
-        isLoading = false
+
+        if isLoading {
+            isLoading = false
+        }
     }
 
     @objc fileprivate func didPressClearButton() {
@@ -227,7 +230,6 @@ class PushMessagesViewController: UIViewController {
 extension PushMessagesViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-
         let viewModel = messageViewModels[indexPath.row]
         presentContent(from: viewModel.message, animated: true)
 
