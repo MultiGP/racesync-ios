@@ -162,7 +162,7 @@ class PushMessagesViewController: UIViewController {
 
     @objc fileprivate func handlePushMessageRegistration(_ notification: Notification)  {
 
-        let title = "📲 Welcome to RaceSync iOS \(Bundle.main.releaseDescriptionPretty)"
+        let title = "📲 Welcome to RaceSync iOS \(Bundle.main.releaseVersionNumber)"
         let body = "Please take a moment to rate and review the app on the App Store. Thank you for your support!"
         let type = "app_store_review"
 

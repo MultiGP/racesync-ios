@@ -92,7 +92,6 @@
 	<array>
 		<string>waze</string>
 		<string>comgooglemaps</string>
-		<string>instagram-stories</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
