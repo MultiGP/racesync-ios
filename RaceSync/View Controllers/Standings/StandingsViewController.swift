@@ -122,6 +122,8 @@ class StandingsViewController: UIViewController, Shimmable {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupLayout()
+
+        NotificationCenter.default.addObserver(self, selector: #selector(userDidTakeScreenshot), name: UIApplication.userDidTakeScreenshotNotification, object: nil )
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -136,6 +138,10 @@ class StandingsViewController: UIViewController, Shimmable {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     // MARK: - Layout
@@ -377,6 +383,11 @@ class StandingsViewController: UIViewController, Shimmable {
         customPresentViewController(presenter, viewController: vc, animated: true)
         self.presenter = presenter
     }
+
+    @objc func userDidTakeScreenshot() {
+        guard let cachedIndexPath = cachedPinnedIndexPath else { return }
+        shouldPresentMyStandingBadge(cachedIndexPath)
+    }
 }
 
 extension StandingsViewController: UITableViewDelegate {
@@ -411,7 +422,7 @@ extension StandingsViewController: UITableViewDelegate {
         guard !(isSearching && searchResult.isEmpty), !standingViewModels.isEmpty else {
             return nil
         }
-        return "2025 MultiGP Global Qualifier (Mar 29 – Aug 25)\nFastest 3 Consecutive Laps"
+        return "2025 MultiGP Global Qualifier - Sponsored by FINZ\nFastest 3 Consecutive Laps"
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
