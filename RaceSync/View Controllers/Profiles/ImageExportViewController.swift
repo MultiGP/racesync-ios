@@ -51,9 +51,13 @@ class ImageExportViewController: UIViewController {
         imageView.isUserInteractionEnabled = true
         imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dissmissView(_:))))
 
-        let swipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(dissmissView(_:)))
-        swipeGesture.direction = [.left,.right,.down,.up]
-        imageView.addGestureRecognizer(swipeGesture)
+        let hSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(dissmissView(_:)))
+        hSwipeGesture.direction = [.left,.right]
+        imageView.addGestureRecognizer(hSwipeGesture)
+
+        let vSwipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(dissmissView(_:)))
+        vSwipeGesture.direction = [.down,.up]
+        imageView.addGestureRecognizer(vSwipeGesture)
 
         imageView.addSubview(captionLabel)
         captionLabel.snp.makeConstraints {
@@ -97,6 +101,8 @@ class ImageExportViewController: UIViewController {
         button.titleLabel?.font = UIFont.systemFont(ofSize: 19, weight: .regular)
         button.tintColor = Color.black
         button.backgroundColor = Color.white
+        button.imageEdgeInsets = UIEdgeInsets(left: -30)
+        button.titleEdgeInsets = UIEdgeInsets(left: 0)
         button.layer.cornerRadius = Constants.cornerRadius/2
         button.layer.masksToBounds = true
         return button

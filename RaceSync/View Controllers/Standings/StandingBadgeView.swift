@@ -42,7 +42,7 @@ class StandingBadgeView: UIView {
         addSubview(loadedView)
     }
 
-    func configureView(with viewModel: StandingViewModel, completion: @escaping RenderBlock) {
+    func configureView(with viewModel: StandingViewModel, imageUrl: String?, completion: @escaping RenderBlock) {
         let positionText = String.stringWithOrdinalSuffix(for: viewModel.rank)
         let suffixText = String.ordinalSuffix(for: viewModel.rank)
 
@@ -66,11 +66,11 @@ class StandingBadgeView: UIView {
         // Helper function to create attributed score labels
         func attributedScore(label: String, score: String) -> NSAttributedString {
             let whiteAttributes: [NSAttributedString.Key: Any] = [
-                .font: UIFont.systemFont(ofSize: 19, weight: .semibold),
+                .font: UIFont.systemFont(ofSize: 20, weight: .semibold),
                 .foregroundColor: UIColor.white
             ]
             let yellowAttributes: [NSAttributedString.Key: Any] = [
-                .font: UIFont.systemFont(ofSize: 19, weight: .semibold),
+                .font: UIFont.systemFont(ofSize: 20, weight: .semibold),
                 .foregroundColor: UIColor.yellow
             ]
 
@@ -93,8 +93,7 @@ class StandingBadgeView: UIView {
         let score2 = StandingViewModel.timeLabel(for: viewModel.standing.season2Score)
         time2Label.attributedText = attributedScore(label: viewModel.score2Label, score: score2)
 
-        // Load my image and render
-        let imageUrl = APIServices.shared.myUser?.profilePictureUrl
+        // Download the image and render
         let placeholder = PlaceholderImg.profileAvatar?.withRenderingMode(.alwaysOriginal)
         imageView.setImage(with: imageUrl, placeholderImage: placeholder) { _ in
             let image = self.asImage()

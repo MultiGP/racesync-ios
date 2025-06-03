@@ -96,6 +96,20 @@ class StandingsViewController: UIViewController, Shimmable {
     fileprivate var emptyStateError: EmptyStateViewModel? = nil
     fileprivate var presenter: Presentr?
 
+    fileprivate var myUserId: ObjectId? {
+        get {
+//            return "9649"
+            return APIServices.shared.myUser?.id
+        }
+    }
+
+    fileprivate var myProfileUrl: String? {
+        get {
+//            return "https://multigp-storage-new.s3.us-east-2.amazonaws.com/user/9649/profileImage-64.png"
+            return APIServices.shared.myUser?.profilePictureUrl
+        }
+    }
+
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
         static let cellHeight: CGFloat = 80
@@ -107,7 +121,6 @@ class StandingsViewController: UIViewController, Shimmable {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         setupLayout()
     }
 
@@ -283,15 +296,20 @@ class StandingsViewController: UIViewController, Shimmable {
         let cellWidth = tableView.bounds.width
         let cellHeight = tableView.delegate?.tableView?(tableView, heightForRowAt: indexPath) ?? tableView.rowHeight
         cell.frame = CGRect(x: 0, y: 0, width: cellWidth, height: cellHeight)
+        
+        // Force the cell to layout its subviews
         cell.setNeedsLayout()
         cell.layoutIfNeeded()
 
         // Create a snapshot of the cell’s current rendered content
-        let snapshot = cell.snapshotView(afterScreenUpdates: true)
-        snapshot?.tag = indexPath.row
+        guard let snapshot = cell.snapshotView(afterScreenUpdates: true) else {
+            return nil
+        }
+        snapshot.tag = indexPath.row
 
+        // Add tap gesture recognizer to the snapshot
         let tap = UITapGestureRecognizer(target: self, action: #selector(didTapPinnedCell(_:)))
-        snapshot?.addGestureRecognizer(tap)
+        snapshot.addGestureRecognizer(tap)
 
         return snapshot
     }
@@ -314,10 +332,10 @@ class StandingsViewController: UIViewController, Shimmable {
             return cached
         }
 
-        guard let myUser = APIServices.shared.myUser else { return nil }
+        guard let userId = myUserId else { return nil }
         let source = isSearching ? searchResult : standingViewModels
 
-        if let index = source.firstIndex(where: { $0.standing.userId == myUser.id }) {
+        if let index = source.firstIndex(where: { $0.standing.userId == userId }) {
             let indexPath = IndexPath(row: index, section: 0)
             cachedPinnedIndexPath = indexPath
             return indexPath
@@ -336,7 +354,7 @@ class StandingsViewController: UIViewController, Shimmable {
         let frame = CGRect(origin: .zero, size: CGSize(width: 540, height: 720))
         let badgeView = StandingBadgeView(frame: frame)
 
-        badgeView.configureView(with: viewModel) { image in
+        badgeView.configureView(with: viewModel, imageUrl: myProfileUrl) { image in
             self.presentMyStandingBadge(with: image)
         }
     }
@@ -425,13 +443,14 @@ extension StandingsViewController: UITableViewDataSource {
         cell.subtitleLabel.text = viewModel.subtitleLabel
         cell.avatarImageView.isHidden = true
 
-        if let myUser = APIServices.shared.myUser, viewModel.standing.userId == myUser.id {
+        if let userId = myUserId, viewModel.standing.userId == userId {
             cell.backgroundColor = UIColor(hex: "898b8c")
             cell.titleLabel.textColor = Color.white
             cell.subtitleLabel.textColor = Color.gray20
             cell.rankView.titleLabel.textColor = Color.gray20
 
-            let imageView = UIImageView(image: UIImage(systemName: "square.and.arrow.up"))
+            let image = UIImage(named: "icn_navbar_share")?.withTintColor(.white)
+            let imageView = UIImageView(image: image)
             imageView.tintColor = .white
             cell.accessoryView = imageView
         } else {
