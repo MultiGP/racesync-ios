@@ -43,7 +43,12 @@ class PushMessagesController: NSObject {
     }
 
     func isPushNotificationsEnabled() -> Bool {
-        return isAllowingNotifications() && isRegisteredForNotifications()
+        return isAllowingNotifications() && isRegisteredForNotifications() && isUserPushNotificationsEnabled()
+    }
+
+    func isUserPushNotificationsEnabled() -> Bool {
+        guard let myUser = APIServices.shared.myUser else { return false }
+        return myUser.pushNotificationEnabled
     }
 
     func isAllowingNotifications() -> Bool {
@@ -60,12 +65,12 @@ class PushMessagesController: NSObject {
         notificationCenter.requestAuthorization(
             options: [.alert, .sound, .badge, .providesAppNotificationSettings]
            ) { granted, error in
-               if granted {
-                   DispatchQueue.main.async {
+               DispatchQueue.main.async {
+                   if granted {
                        UIApplication.shared.registerForRemoteNotifications()
+                   } else {
+                       NotificationCenter.default.post(name: .registeredForPushMessages, object: false)
                    }
-               } else {
-                   Clog.log("Notification permission denied: \(error?.localizedDescription ?? "No error info")")
                }
            }
     }
@@ -84,11 +89,11 @@ class PushMessagesController: NSObject {
             if let error = error {
                 Clog.log("Failed to register device with API. Error: \(error.localizedDescription)")
             } else {
-                DispatchQueue.main.async {
-                    NotificationCenter.default.post(name: .registeredForPushMessages, object: status)
-                }
+                Clog.log(status ? "Registered device with API!" : "Failed to register device with API...")
+            }
 
-                Clog.log(status ? "Registered device with API!" : "Failed to register device with API")
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: .registeredForPushMessages, object: status)
             }
 
             completion?(status, error)
@@ -118,19 +123,18 @@ class PushMessagesController: NSObject {
         // To be used mainly whe logging out
         if fromDevice {
             UIApplication.shared.unregisterForRemoteNotifications()
+            refreshPushNotificationSettings()
         }
-
-        refreshPushNotificationSettings()
 
         userApi.registerPushNotification(forAction: .delete) { (status, error) in
             if let error = error {
                 Clog.log("Failed to register device with API. Error: \(error.localizedDescription)")
             } else {
-                DispatchQueue.main.async {
-                    NotificationCenter.default.post(name: .registeredForPushMessages, object: status)
-                }
-                
-                Clog.log(status ? "Unregistered device with API!" : "Failed to unregister device with API")
+                Clog.log(status ? "Unregistered device with API!" : "Failed to unregister device with API...")
+            }
+
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: .registeredForPushMessages, object: status)
             }
 
             completion?(status, error)
@@ -139,6 +143,10 @@ class PushMessagesController: NSObject {
 
     func failedToRegisterForPushNotifications(with error: Error) {
         Clog.log("Failed to register for remote notifications: \(error.localizedDescription)")
+
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .registeredForPushMessages, object: false)
+        }
     }
 
     func preloadDeliveredNotifications() {

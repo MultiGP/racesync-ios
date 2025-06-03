@@ -167,13 +167,16 @@ class PushMessagesViewController: UIViewController {
     }
 
     @objc fileprivate func handlePushMessageRegistration(_ notification: Notification)  {
-        isLoading = false
+        guard let status = notification.object as? Bool else { return }
 
-        let title = "📲 Welcome to \(Bundle.main.applicationName) iOS \(Bundle.main.releaseVersionNumber)"
-        let body = "Please take a moment to rate and review the app on the App Store. Thank you for your support!"
-        let type = "app_store_review"
-
-        PushMessagesController.shared.store.addEphemeralMessage(with: title, body: body, type: type, broadcast: true)
+        if status == true {
+            let title = "📲 Welcome to \(Bundle.main.applicationName) iOS \(Bundle.main.releaseVersionNumber)"
+            let body = "Please take a moment to rate and review the app on the App Store. Thank you for your support!"
+            let type = "app_store_review"
+            PushMessagesController.shared.store.addEphemeralMessage(with: title, body: body, type: type, broadcast: true)
+        } else {
+            isLoading = false
+        }
     }
 
     @objc fileprivate func handleNewPushMessage(_ notification: Notification)  {
@@ -187,6 +190,7 @@ class PushMessagesViewController: UIViewController {
         tableView.endUpdates()
 
         updateClearButton()
+        isLoading = false
     }
 
     @objc fileprivate func didPressClearButton() {
@@ -201,7 +205,7 @@ class PushMessagesViewController: UIViewController {
         dismiss(animated: true)
     }
 
-    @objc fileprivate func didPressAllowNotificationsButton() {
+    @objc fileprivate func didPressRequestNotificationsButton() {
         isLoading = true
         PushMessagesController.shared.requestAuthorizationPushNotifications()
     }
@@ -286,7 +290,7 @@ extension PushMessagesViewController: EmptyDataSetSource {
         guard !isLoading else { return nil }
 
         if !PushMessagesController.shared.isPushNotificationsEnabled() {
-            let emptyState = !PushMessagesController.shared.isAllowingNotifications()
+            let emptyState = (PushMessagesController.shared.authorizationStatus == .notDetermined)
                 ? emptyStateNoPushAuthorized
                 : emptyStateNoPushEnabled
             return emptyState.description
@@ -299,7 +303,7 @@ extension PushMessagesViewController: EmptyDataSetSource {
         guard !isLoading else { return nil }
 
         if !PushMessagesController.shared.isPushNotificationsEnabled() {
-            let emptyState = !PushMessagesController.shared.isAllowingNotifications()
+            let emptyState = (PushMessagesController.shared.authorizationStatus == .notDetermined)
                 ? emptyStateNoPushAuthorized
                 : emptyStateNoPushEnabled
             return emptyState.buttonTitle(state)
@@ -312,6 +316,7 @@ extension PushMessagesViewController: EmptyDataSetSource {
 
         let view = UIActivityIndicatorView(style: .large)
         view.color = Color.gray300
+        view.startAnimating()
         return view
     }
 
@@ -327,7 +332,7 @@ extension PushMessagesViewController: EmptyDataSetDelegate {
     }
 
     func emptyDataSetShouldDisplay(_ scrollView: UIScrollView) -> Bool {
-        return (!isLoading)
+        return true
     }
 
     func emptyDataSetShouldAllowScroll(_ scrollView: UIScrollView) -> Bool {
@@ -337,8 +342,8 @@ extension PushMessagesViewController: EmptyDataSetDelegate {
     func emptyDataSet(_ scrollView: UIScrollView, didTapButton button: UIButton) {
 
         if !PushMessagesController.shared.isPushNotificationsEnabled() {
-            if !PushMessagesController.shared.isAllowingNotifications() {
-                didPressAllowNotificationsButton()
+            if (PushMessagesController.shared.authorizationStatus == .notDetermined) {
+                didPressRequestNotificationsButton()
             } else {
                 didPressShowSettingsButton()
             }
