@@ -20,6 +20,8 @@ public class AppWebConstants {
     static let obstaclesDoc = "https://www.multigp.com/multigp-drone-race-course-obstacles/"
     static let seasonRulesDoc = "https://www.multigp.com/organizer-resources/rule-book/"
 
+    static let io25schedule = "https://www.multigp.com/io25/schedule/"
+
     static let livefpv = "https://livefpv.com/"
     static let fpvscores = "https://fpvscores.com/"
 
