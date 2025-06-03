@@ -53,7 +53,7 @@ class SettingsViewController: UIViewController {
         view.addSubview(imageView)
         imageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(-120)
+            $0.top.equalToSuperview().offset(-150)
         }
 
         UIView.addParallaxToView(imageView)
@@ -138,8 +138,10 @@ class SettingsViewController: UIViewController {
             // show calendar only until after IO (16/06/2025)
             if let ioDate = Date.date(for: 16, month: 6, year: 2025), Date() <= ioDate {
                 resources += [.ioschedule]
+            } else {
+                resources += [.tracksGuide]
             }
-            resources += [.tracksGuide, .buildGuide, .seasonRules, .visitSite]
+            resources += [.buildGuide, .seasonRules, .visitSite]
 
            if UIApplication.shared.supportsAlternateIcons { about += [.appicon] }
            about += [.joinBeta]
@@ -171,7 +173,7 @@ class SettingsViewController: UIViewController {
                 ApplicationControl.shared.openAppSettings()
             }
         } else {
-            ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Do you wish to disable push notifications?", destructiveTitle: "Yes, disable", completion: { (action) in
+            ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Do you want to stop receiving push notifications?", destructiveTitle: "Yes, stop", completion: { (action) in
                 controller.unregisterForPushNotifications(fromDevice: false) { status, error in
                     controller.store.removeAll() // clear all saved messages
                     self.tableView.reloadData()
@@ -182,7 +184,6 @@ class SettingsViewController: UIViewController {
     }
 
     @objc fileprivate func handlePushMessageRegistration(_ notification: Notification)  {
-        guard let status = notification.object as? Bool else { return }
         tableView.reloadData()
     }
 
@@ -282,7 +283,6 @@ extension SettingsViewController: UITableViewDataSource {
         } else if row == .switchEnv {
             cell.detailTextLabel?.text = nextEnvironment().title
         }
-
         return cell
     }
 
@@ -324,7 +324,7 @@ fileprivate enum Row: Int, EnumTitle {
     case logout
     case featureFlags
     case switchEnv
-    case ioschedule
+    case ioschedule // temporary
 
     var title: String {
         switch self {

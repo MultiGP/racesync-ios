@@ -44,6 +44,12 @@ class StandingsViewController: UIViewController, Shimmable {
         searchBar.isTranslucent = false
         searchBar.backgroundImage = UIImage()
         searchBar.tintColor = Color.blue
+        searchBar.showsSearchResultsButton = false
+
+        if let textField = searchBar.value(forKey: "searchField") as? UITextField {
+            textField.returnKeyType = .done
+        }
+
         return searchBar
     }()
 
@@ -513,6 +519,10 @@ extension StandingsViewController: UISearchBarDelegate {
         resetTableView()
     }
 
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+    }
+
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = nil
         searchBar.resignFirstResponder()
@@ -523,6 +533,9 @@ extension StandingsViewController: UISearchBarDelegate {
         tableView.refreshControl = isSearching ? nil : refreshControl
         tableView.setContentOffset(.zero, animated: false)
         tableView.reloadData()
+
+        // resets it each time, so it can be recalculated
+        cachedPinnedIndexPath = nil
 
         if pinnedCellIndexPath() != nil {
             layoutPinnedCell()
@@ -557,6 +570,7 @@ extension StandingsViewController: EmptyDataSetSource {
     }
 
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
-        return -(navigationController?.navigationBar.frame.height ?? 0)
+        guard let nc = navigationController, let tbc = tabBarController else { return 0 }
+        return -nc.navigationBar.frame.height - tbc.tabBar.frame.height
     }
 }
