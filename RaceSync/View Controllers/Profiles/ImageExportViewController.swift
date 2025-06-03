@@ -10,18 +10,21 @@ import UIKit
 import SnapKit
 
 enum ImageExportOptions {
-    case cameraroll, share
+    case cameraroll, shareto, instagram
 }
 
 class ImageExportViewController: UIViewController {
 
     // MARK: - Initialization
 
-    init(with caption: String?, image: UIImage, exportOptions: [ImageExportOptions]? = nil) {
-        self.caption = caption
+    init(with image: UIImage, size: CGSize = .zero, caption: String? = nil, options: [ImageExportOptions]? = nil) {
         self.image = image
+        self.caption = caption
 
-        if let options = exportOptions {
+        if size != .zero {
+            imageSize = size
+        }
+        if let options = options {
             self.exportOptions = options
         }
 
@@ -37,14 +40,20 @@ class ImageExportViewController: UIViewController {
     fileprivate let caption: String?
     fileprivate let image: UIImage
     fileprivate var exportOptions: [ImageExportOptions] = [.cameraroll]
+    fileprivate var imageSize: CGSize = CGSize(width: 320, height: 320)
 
     lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.backgroundColor = Color.white
-        imageView.contentMode = .center
+        imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = Constants.cornerRadius/2
+        imageView.layer.masksToBounds = true
         imageView.isUserInteractionEnabled = true
-        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapImageView)))
+        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dissmissView(_:))))
+
+        let swipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(dissmissView(_:)))
+        swipeGesture.direction = [.left,.right,.down,.up]
+        imageView.addGestureRecognizer(swipeGesture)
 
         imageView.addSubview(captionLabel)
         captionLabel.snp.makeConstraints {
@@ -79,6 +88,38 @@ class ImageExportViewController: UIViewController {
         return button
     }()
 
+    fileprivate lazy var shareButton: UIButton = {
+        let image = UIImage(named: "icn_apple_share")?.withRenderingMode(.alwaysOriginal)
+        let button = UIButton(type: .system)
+        button.setImage(image, for: .normal)
+        button.setTitle("Share to...", for: .normal)
+        button.addTarget(self, action: #selector(didPressInstagramButton), for: .touchUpInside)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 19, weight: .regular)
+        button.tintColor = Color.black
+        button.backgroundColor = Color.white
+        button.imageEdgeInsets = UIEdgeInsets(left: -20)
+        button.titleEdgeInsets = UIEdgeInsets(left: 0)
+        button.layer.cornerRadius = Constants.cornerRadius/2
+        button.layer.masksToBounds = true
+        return button
+    }()
+
+    fileprivate lazy var instagramButton: UIButton = {
+        let image = UIImage(named: "icn_meta_instagram")?.withRenderingMode(.alwaysOriginal)
+        let button = UIButton(type: .system)
+        button.setImage(image, for: .normal)
+        button.setTitle("Share to Instagram", for: .normal)
+        button.addTarget(self, action: #selector(didPressInstagramButton), for: .touchUpInside)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 19, weight: .regular)
+        button.tintColor = Color.black
+        button.backgroundColor = Color.white
+        button.imageEdgeInsets = UIEdgeInsets(left: -20)
+        button.titleEdgeInsets = UIEdgeInsets(left: 0)
+        button.layer.cornerRadius = Constants.cornerRadius/2
+        button.layer.masksToBounds = true
+        return button
+    }()
+
     fileprivate lazy var buttonStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: actionButtons())
         stackView.backgroundColor = Color.clear
@@ -90,18 +131,15 @@ class ImageExportViewController: UIViewController {
     }()
 
     fileprivate func actionButtons() -> [UIView] {
-        var buttons = [UIButton]()
-
-        if exportOptions.contains(.cameraroll) {
-            buttons += [photosButton]
-        }
-
-        return buttons
+        return [
+            exportOptions.contains(.cameraroll) ? photosButton : nil,
+            exportOptions.contains(.shareto) ? shareButton : nil,
+            exportOptions.contains(.instagram) ? instagramButton : nil
+        ].compactMap { $0 }
     }
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
-        static let imageSize: CGSize = CGSize(width: 320, height: 320)
         static let cornerRadius: CGFloat = 24
         static let buttonHeight: CGFloat = 56
     }
@@ -110,7 +148,6 @@ class ImageExportViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         setupLayout()
     }
 
@@ -125,41 +162,43 @@ class ImageExportViewController: UIViewController {
     // MARK: - Layout
 
     open func setupLayout() {
-
         imageView.image = image
         captionLabel.text = caption
 
         view.backgroundColor = Color.black.withAlphaComponent(0.7)
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapView)))
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dissmissView)))
 
         view.addSubview(imageView)
         imageView.snp.makeConstraints {
             $0.centerY.equalToSuperview().offset(-Constants.padding*2)
             $0.centerX.equalToSuperview()
-            $0.size.equalTo(Constants.imageSize)
+            $0.size.equalTo(imageSize)
         }
 
         view.addSubview(buttonStackView)
         buttonStackView.snp.makeConstraints {
             $0.top.equalTo(imageView.snp.bottom).offset(Constants.padding*3)
             $0.centerX.equalToSuperview()
-            $0.width.equalTo(Constants.imageSize.width)
+            $0.width.equalTo(imageSize.width)
             $0.height.greaterThanOrEqualTo(Constants.buttonHeight)
         }
 
-        photosButton.snp.makeConstraints {
-            $0.width.equalTo(Constants.imageSize.width)
-            $0.height.equalTo(Constants.buttonHeight)
-        }
+        let map: [(ImageExportOptions, UIButton)] = [(.cameraroll, photosButton),
+                                                     (.shareto, shareButton),
+                                                     (.instagram, instagramButton)]
+
+        map.filter { exportOptions.contains($0.0) }
+            .forEach { _, button in
+                button.snp.makeConstraints {
+                    $0.width.equalTo(imageSize.width)
+                    $0.height.equalTo(Constants.buttonHeight)
+                }
+            }
     }
 
     // MARK: - Actions
 
-    @objc func didTapView() {
-        dismiss(animated: true)
-    }
-
-    @objc func didTapImageView() {
+    @objc func dissmissView(_ gesture: UITapGestureRecognizer) {
         dismiss(animated: true)
     }
 
@@ -173,6 +212,42 @@ class ImageExportViewController: UIViewController {
             AlertUtil.presentAlertMessage(error.localizedDescription, title: "Save error")
         } else {
             AlertUtil.presentAlertMessage("The image has been saved to the Photos app!", title: "Saved Image")
+        }
+    }
+
+    @objc func didPressShareButton() {
+        shareToInstagramStory(image: image)
+    }
+
+    @objc func didPressInstagramButton() {
+        shareToInstagramStory(image: image)
+    }
+}
+
+extension ImageExportViewController {
+
+    func shareToActivity(image: UIImage) {
+
+    }
+
+    func shareToInstagramStory(image: UIImage) {
+        guard let imageData = image.pngData() else { return }
+
+        let pasteboardItems: [String: Any] = [
+            "com.instagram.sharedSticker.backgroundImage": imageData
+        ]
+
+        let expirationDate = Date().addingTimeInterval(300)
+        UIPasteboard.general.setItems([pasteboardItems], options: [
+            .expirationDate: expirationDate
+        ])
+
+        let instagramUrl = URL(string: "instagram-stories://share")!
+
+        if UIApplication.shared.canOpenURL(instagramUrl) {
+            UIApplication.shared.open(instagramUrl, options: [:], completionHandler: nil)
+        } else {
+            print("Instagram app not installed.")
         }
     }
 }

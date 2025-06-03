@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "global_qualifier_badge.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

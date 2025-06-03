@@ -208,7 +208,7 @@ class UserViewController: ProfileViewController, ViewJoinable {
 
     @objc func didPressQRButton() {
         guard let qrImage = getQRImage(with: user.id) else { return }
-        let vc = ImageExportViewController(with: user.id, image: qrImage)
+        let vc = ImageExportViewController(with: qrImage, caption: user.id)
 
         let presenter = Presentr(presentationType: .fullScreen)
         presenter.blurBackground = false
