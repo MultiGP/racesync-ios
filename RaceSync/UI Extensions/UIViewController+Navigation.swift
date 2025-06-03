@@ -17,4 +17,6 @@ extension UIViewController {
             return status_height + navi_height
         }
     }
+
+    
 }

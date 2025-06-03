@@ -32,6 +32,7 @@ public class User: Mappable, Descriptable {
     public var chapterCount: Int32 = 0
     public var raceCount: Int32 = 0
     public var isPublic: Bool = false
+    public var pushNotificationEnabled: Bool = false
 
     // MARK: - Initialization
 
@@ -68,5 +69,6 @@ public class User: Mappable, Descriptable {
         chapterCount <- (map[ParamKey.chapterCount], IntegerTransform())
         raceCount <- (map[ParamKey.raceCount], IntegerTransform())
         isPublic <- map[ParamKey.isPublic]
+        pushNotificationEnabled <- map[ParamKey.pushNotificationEnabled]
     }
 }

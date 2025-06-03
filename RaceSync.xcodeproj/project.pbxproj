@@ -105,7 +105,7 @@
 		4F80A660296F9951008B19AF /* RichEditorToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F80A653296F9950008B19AF /* RichEditorToolbar.swift */; };
 		4F80A661296F9951008B19AF /* RichEditorOptionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F80A654296F9950008B19AF /* RichEditorOptionItem.swift */; };
 		4F81759C241192AF00685F83 /* Clog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F81759A2411917900685F83 /* Clog.swift */; };
-		4F8175A12411C35A00685F83 /* LeaderboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8175A02411C35A00685F83 /* LeaderboardViewController.swift */; };
+		4F8175A12411C35A00685F83 /* StandingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8175A02411C35A00685F83 /* StandingsViewController.swift */; };
 		4F8175A32411C39C00685F83 /* RaceFeedController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8175A22411C39C00685F83 /* RaceFeedController.swift */; };
 		4F8175A52411DDB900685F83 /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8175A42411DDB900685F83 /* HomeController.swift */; };
 		4F8376DC23EE87CC00256AEC /* RotatingIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8376DB23EE87CC00256AEC /* RotatingIconView.swift */; };
@@ -229,8 +229,11 @@
 		4FDD499623B0461D009DD2DB /* Season.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDD499523B0461D009DD2DB /* Season.swift */; };
 		4FDD499823B0470E009DD2DB /* ChapterEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDD499723B0470E009DD2DB /* ChapterEnums.swift */; };
 		4FDD499A23B065C9009DD2DB /* RaceEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDD499923B065C9009DD2DB /* RaceEnums.swift */; };
+		4FE1DAD62DEAD225009143C4 /* Standing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE1DAD52DEAD225009143C4 /* Standing.swift */; };
+		4FE1DAD82DEAD443009143C4 /* StandingApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE1DAD72DEAD443009143C4 /* StandingApi.swift */; };
+		4FE1DADD2DEB6F6D009143C4 /* HomeTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE1DADC2DEB6F6D009143C4 /* HomeTabBarController.swift */; };
+		4FE1DADF2DEB9EEF009143C4 /* StandingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE1DADE2DEB9EEF009143C4 /* StandingViewModel.swift */; };
 		4FE272362580A36D00EC121B /* SimpleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE272352580A36D00EC121B /* SimpleTableViewCell.swift */; };
-		4FE4C0A02945619B00F47F0A /* Track.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE271C1258036D100EC121B /* Track.swift */; };
 		4FE4C0A22945E0EF00F47F0A /* RaceListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE4C0A12945E0EF00F47F0A /* RaceListViewController.swift */; };
 		4FE96E9224E3E687009A7F53 /* HeaderStretchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE96E9124E3E687009A7F53 /* HeaderStretchable.swift */; };
 		4FEADB7224147D2D00F82F0D /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEADB7124147D2D00F82F0D /* LocationManager.swift */; };
@@ -400,7 +403,7 @@
 		4F80A653296F9950008B19AF /* RichEditorToolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RichEditorToolbar.swift; sourceTree = "<group>"; };
 		4F80A654296F9950008B19AF /* RichEditorOptionItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RichEditorOptionItem.swift; sourceTree = "<group>"; };
 		4F81759A2411917900685F83 /* Clog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clog.swift; sourceTree = "<group>"; };
-		4F8175A02411C35A00685F83 /* LeaderboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardViewController.swift; sourceTree = "<group>"; };
+		4F8175A02411C35A00685F83 /* StandingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandingsViewController.swift; sourceTree = "<group>"; };
 		4F8175A22411C39C00685F83 /* RaceFeedController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceFeedController.swift; sourceTree = "<group>"; };
 		4F8175A42411DDB900685F83 /* HomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeController.swift; sourceTree = "<group>"; };
 		4F8175A82412F82900685F83 /* RaceSync-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RaceSync-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -527,7 +530,10 @@
 		4FDD499523B0461D009DD2DB /* Season.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Season.swift; sourceTree = "<group>"; };
 		4FDD499723B0470E009DD2DB /* ChapterEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterEnums.swift; sourceTree = "<group>"; };
 		4FDD499923B065C9009DD2DB /* RaceEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceEnums.swift; sourceTree = "<group>"; };
-		4FE271C1258036D100EC121B /* Track.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Track.swift; sourceTree = "<group>"; };
+		4FE1DAD52DEAD225009143C4 /* Standing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Standing.swift; sourceTree = "<group>"; };
+		4FE1DAD72DEAD443009143C4 /* StandingApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandingApi.swift; sourceTree = "<group>"; };
+		4FE1DADC2DEB6F6D009143C4 /* HomeTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTabBarController.swift; sourceTree = "<group>"; };
+		4FE1DADE2DEB9EEF009143C4 /* StandingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandingViewModel.swift; sourceTree = "<group>"; };
 		4FE272352580A36D00EC121B /* SimpleTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleTableViewCell.swift; sourceTree = "<group>"; };
 		4FE4C0A12945E0EF00F47F0A /* RaceListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceListViewController.swift; sourceTree = "<group>"; };
 		4FE96E9124E3E687009A7F53 /* HeaderStretchable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeaderStretchable.swift; sourceTree = "<group>"; };
@@ -866,14 +872,6 @@
 			path = editor;
 			sourceTree = "<group>";
 		};
-		4F81759E2411C2CA00685F83 /* Leaderboards */ = {
-			isa = PBXGroup;
-			children = (
-				4F8175A02411C35A00685F83 /* LeaderboardViewController.swift */,
-			);
-			path = Leaderboards;
-			sourceTree = "<group>";
-		};
 		4F8B4A082DDC7AB900B735DA /* Push Messages */ = {
 			isa = PBXGroup;
 			children = (
@@ -943,6 +941,7 @@
 				4FA1AB3423C6AD5B007CF389 /* AircraftApi.swift */,
 				4F004E9B295A3027009C46AA /* SeasonApi.swift */,
 				4F004E9D295A3066009C46AA /* CourseApi.swift */,
+				4FE1DAD72DEAD443009143C4 /* StandingApi.swift */,
 				4F5C1E3F238A7BAF00D756EB /* RepositoryAdapter.swift */,
 				4FA268232378F9DD008970AC /* NetworkAdapter.swift */,
 				4F87E4342727976E0061425B /* NetworkProxy.swift */,
@@ -995,10 +994,10 @@
 				4F6A28E02D13F38000FF692D /* ResultEntry.swift */,
 				4F8668F523861736005E310A /* Chapter.swift */,
 				4FC51B1E2409EA9B00D654D0 /* ManagedChapter.swift */,
-				4FE271C1258036D100EC121B /* Track.swift */,
 				4FDD499123B045E7009DD2DB /* Aircraft.swift */,
 				4FDD499523B0461D009DD2DB /* Season.swift */,
 				4F004E99295A2CA1009C46AA /* Course.swift */,
+				4FE1DAD52DEAD225009143C4 /* Standing.swift */,
 				4FA26830237A58E1008970AC /* ApiError.swift */,
 				4F77D21A29940E5D009DEB41 /* Extensions */,
 			);
@@ -1037,8 +1036,9 @@
 			isa = PBXGroup;
 			children = (
 				4F8175A42411DDB900685F83 /* HomeController.swift */,
+				4FE1DADC2DEB6F6D009143C4 /* HomeTabBarController.swift */,
 				4FD4E1D3237F9DF8008816B3 /* Races */,
-				4F81759E2411C2CA00685F83 /* Leaderboards */,
+				4FE1DAD92DEB6AE4009143C4 /* Standings */,
 				4F5C1E41238CF68F00D756EB /* Profiles */,
 				4FA1AB3123C6ACFD007CF389 /* Aircraft */,
 				4F714DE423CD769F000C4036 /* Map */,
@@ -1108,6 +1108,15 @@
 				4FA26826237A4079008970AC /* MGPWebConstants.swift */,
 			);
 			path = Constants;
+			sourceTree = "<group>";
+		};
+		4FE1DAD92DEB6AE4009143C4 /* Standings */ = {
+			isa = PBXGroup;
+			children = (
+				4F8175A02411C35A00685F83 /* StandingsViewController.swift */,
+				4FE1DADE2DEB9EEF009143C4 /* StandingViewModel.swift */,
+			);
+			path = Standings;
 			sourceTree = "<group>";
 		};
 		4FEBB27B23A30F7D007514B4 /* Extensions */ = {
@@ -1440,6 +1449,7 @@
 				4F791C9823A6105700F15FD7 /* TextPill.swift in Sources */,
 				4F8B4A162DDD250D00B735DA /* MessageViewCell.swift in Sources */,
 				4F0B61472385F69E00930D91 /* ProfileViewModel.swift in Sources */,
+				4FE1DADF2DEB9EEF009143C4 /* StandingViewModel.swift in Sources */,
 				4F86690223876E71005E310A /* ChapterViewModel.swift in Sources */,
 				4F8F2C112384903F00DC4907 /* RaceViewModel.swift in Sources */,
 				4F791C9A23A66BA900F15FD7 /* NSAttributedString+Extensions.swift in Sources */,
@@ -1525,7 +1535,7 @@
 				4F9A888F2975E6D700B52092 /* Race+UIExtensions.swift in Sources */,
 				4F8668FC23870E1E005E310A /* SegmentedTableViewHeaderView.swift in Sources */,
 				4FBE760F259B387E00312B66 /* User+UIExtensions.swift in Sources */,
-				4F8175A12411C35A00685F83 /* LeaderboardViewController.swift in Sources */,
+				4F8175A12411C35A00685F83 /* StandingsViewController.swift in Sources */,
 				4F8B866C296583EB00EAF695 /* TextEditorViewController.swift in Sources */,
 				4FB0EB6A23BB3B1F009ABAF0 /* FormTableViewCell.swift in Sources */,
 				4FD4E1CD237F98E7008816B3 /* RaceTabBarController.swift in Sources */,
@@ -1540,6 +1550,7 @@
 				4F68BE6B2399CF07009D44F7 /* ActionSheetUtil.swift in Sources */,
 				4F1571AE24D8D74F004A7CEE /* ProfileBackgroundView.swift in Sources */,
 				4FAC24A823DC3E06009AD585 /* UILabel+LinesCount.swift in Sources */,
+				4FE1DADD2DEB6F6D009143C4 /* HomeTabBarController.swift in Sources */,
 				4F5488982D2236950056EA59 /* String+HTML.swift in Sources */,
 				4F5001E523823C940025A593 /* FlagEmojiGenerator.swift in Sources */,
 				4F5C1E4B238EEC5200D756EB /* MapViewController.swift in Sources */,
@@ -1600,13 +1611,13 @@
 				4FEBB27823A2023A007514B4 /* RaceEntry.swift in Sources */,
 				4F87E4352727976E0061425B /* NetworkProxy.swift in Sources */,
 				4FD4E1E32381E175008816B3 /* Random.swift in Sources */,
+				4FE1DAD82DEAD443009143C4 /* StandingApi.swift in Sources */,
 				4FEADB7224147D2D00F82F0D /* LocationManager.swift in Sources */,
 				4F8B8665295C112B00EAF695 /* EnumTitle.swift in Sources */,
 				4F8F2C0E23846AEB00DC4907 /* DateUtil.swift in Sources */,
 				4FA2682F237A5897008970AC /* ErrorUtil.swift in Sources */,
 				4F8F2C132385136300DC4907 /* NumberUtil.swift in Sources */,
 				4F8668F823864389005E310A /* Descriptable.swift in Sources */,
-				4FE4C0A02945619B00F47F0A /* Track.swift in Sources */,
 				4FDD499223B045E7009DD2DB /* Aircraft.swift in Sources */,
 				4FDD499423B045FE009DD2DB /* AircraftEnums.swift in Sources */,
 				4FEBB27D23A30F99007514B4 /* Date+Extensions.swift in Sources */,
@@ -1629,6 +1640,7 @@
 				4F8F2C0C2383DF1E00DC4907 /* RaceApi.swift in Sources */,
 				4F6CAD8F298342DE00E80B5F /* UserData.swift in Sources */,
 				4FA268242378F9DD008970AC /* NetworkAdapter.swift in Sources */,
+				4FE1DAD62DEAD225009143C4 /* Standing.swift in Sources */,
 				4F5C1E4D2390600400D756EB /* APISessionManager.swift in Sources */,
 				4FDD499623B0461D009DD2DB /* Season.swift in Sources */,
 				4F00E078242963F1001DCFC4 /* Joinable.swift in Sources */,
@@ -1820,7 +1832,7 @@
 				CODE_SIGN_ENTITLEMENTS = RaceSync/RaceSync.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 67;
+				CURRENT_PROJECT_VERSION = 69;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = TJ4PB66YQS;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
@@ -1857,7 +1869,7 @@
 				CODE_SIGN_ENTITLEMENTS = RaceSync/RaceSync.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 67;
+				CURRENT_PROJECT_VERSION = 69;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = TJ4PB66YQS;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;

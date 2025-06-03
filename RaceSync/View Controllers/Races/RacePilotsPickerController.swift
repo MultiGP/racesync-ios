@@ -69,8 +69,8 @@ class RacePilotsPickerController: UIViewController, Shimmable {
     fileprivate var joinedIds = [ObjectId]()
     fileprivate var didForceJoin: Bool = false
 
-    fileprivate var emptyStateMembers = EmptyStateViewModel(.noChapterMembers)
-    fileprivate var emptyStateSearch = EmptyStateViewModel(.noSearchResults)
+    fileprivate let emptyStateMembers = EmptyStateViewModel(.noChapterMembers)
+    fileprivate let emptyStateSearch = EmptyStateViewModel(.noSearchResults)
 
     fileprivate var isSearching: Bool {
         guard let text = searchBar.text else { return false }

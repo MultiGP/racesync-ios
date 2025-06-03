@@ -60,6 +60,10 @@ class RaceScheduleViewController: UIViewController {
     fileprivate var reloadTimer: Timer?
     fileprivate let isWebPollEnabled: Bool = true
 
+    fileprivate var canDisplayZippyQ: Bool {
+        get { return race.isZippyQEnabled && !race.isFinalized }
+    }
+
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
         static let cellHeight: CGFloat = UniversalConstants.cellHeight
@@ -85,12 +89,12 @@ class RaceScheduleViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        setupLayout()
-        configureNavigationItems()
-
-        if race.isZippyQEnabled {
+        if canDisplayZippyQ {
+            setupLayout()
             initializeWebview()
         }
+
+        configureNavigationItems()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -120,11 +124,12 @@ class RaceScheduleViewController: UIViewController {
 
         title = "Race Schedule"
         let itemTitle = "Schedule"
-        tabBarItem = UITabBarItem(title: itemTitle, image: UIImage(systemName:"flag.checkered"), selectedImage: nil)
-        tabBarItem.isEnabled = race.isZippyQEnabled
+        tabBarItem = UITabBarItem(title: itemTitle, image: UIImage(named: "icn_tabbar_schedule"), selectedImage: nil)
+        tabBarItem.isEnabled = canDisplayZippyQ
 
         let rightBtnItem = UIBarButtonItem(image: UIImage(systemName:"safari"), style: .plain, target: self, action: #selector(openZippyQSchedule))
         navigationItem.rightBarButtonItem = rightBtnItem
+        navigationItem.rightBarButtonItem?.isEnabled = canDisplayZippyQ
     }
 
     fileprivate func initializeWebview() {
@@ -154,14 +159,6 @@ class RaceScheduleViewController: UIViewController {
 extension RaceScheduleViewController: WKNavigationDelegate {
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        let contentWidth = webView.scrollView.contentSize.width
-        let viewWidth = webView.bounds.width
-
-        if contentWidth > 0 {
-            let zoomScale = viewWidth / contentWidth
-            webView.scrollView.minimumZoomScale = zoomScale
-            webView.scrollView.maximumZoomScale = zoomScale
-            webView.scrollView.zoomScale = zoomScale
-        }
+        
     }
 }

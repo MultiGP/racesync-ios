@@ -81,7 +81,7 @@ fileprivate extension Appearance {
     }
 
     static func configureTabBarAppearance() {
-        let foregroundColor = Color.red
+        let foregroundColor = Color.blue
         let backgroundColor = Color.navigationBarColor
         let unselectedItemTintColor = Color.gray300
         let backgroundImage = UIImage.image(withColor: backgroundColor, imageSize: CGSize(width: 44, height: 44))

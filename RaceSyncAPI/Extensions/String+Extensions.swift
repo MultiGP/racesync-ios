@@ -10,6 +10,10 @@ import Foundation
 
 public extension String {
 
+    var containsEmoji: Bool {
+        return self.unicodeScalars.contains { $0.properties.isEmoji && ($0.value > 0x238C || $0.properties.isEmojiPresentation) }
+    }
+
     func lowercasedWords() -> [String] {
         return self.lowercased().components(separatedBy: " ")
     }
@@ -66,6 +70,7 @@ public extension String {
 
     func stripHTML(_ removeLineBreaks: Bool = false) -> String {
         var str = self.stringByDecodingHTMLEntities
+        str = str.replacingOccurrences(of: "<br/>", with: "\n", options: .regularExpression, range: nil)
         str = str.replacingOccurrences(of: "<br />", with: "\n", options: .regularExpression, range: nil)
         str = str.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression, range: nil)
 

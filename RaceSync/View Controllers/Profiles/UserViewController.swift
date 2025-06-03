@@ -70,13 +70,14 @@ class UserViewController: ProfileViewController, ViewJoinable {
     fileprivate var presenter: Presentr?
     fileprivate var userCoordinates: CLLocationCoordinate2D?
 
-    fileprivate var emptyStateRaces = EmptyStateViewModel(.noProfileRaces)
-    fileprivate var emptyStateChapters = EmptyStateViewModel(.noProfileChapters)
-    fileprivate var emptyStateMyRaces = EmptyStateViewModel(.noMyProfileRaces)
-    fileprivate var emptyStateMyChapters = EmptyStateViewModel(.noMyProfileChapters)
+    fileprivate let emptyStateRaces = EmptyStateViewModel(.noProfileRaces)
+    fileprivate let emptyStateChapters = EmptyStateViewModel(.noProfileChapters)
+    fileprivate let emptyStateMyRaces = EmptyStateViewModel(.noMyProfileRaces)
+    fileprivate let emptyStateMyChapters = EmptyStateViewModel(.noMyProfileChapters)
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
+        static let cellHeight: CGFloat = UniversalConstants.cellHeight
         static let buttonHeight: CGFloat = 32
         static let buttonSpacing: CGFloat = 12
         static let avatarImageSize = CGSize(width: 50, height: 50)
@@ -323,7 +324,7 @@ extension UserViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UniversalConstants.cellHeight
+        return Constants.cellHeight
     }
 
     func userRaceTableViewCell(for indexPath: IndexPath) -> UserRaceTableViewCell {

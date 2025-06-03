@@ -6,7 +6,8 @@
 ### New Features:
 
    * Introducing push notifications for RaceSync on iOS. In this initial release, pilots will receive alerts when their next race round is approaching when using ZippyQ. All notifications are stored locally on your device for added reliability in case any are missed.
-   * Displaying ZippyQ web schedule (read-only) from a race detail screen.
+   * You can now access the 2025 Global Qualifier standings directly in the app. Filter by pilot name or country, and quickly share your personal results to social media.
+   * The ZippyQ web schedule (view-only) is available from the race detail screen, when applicable.
    * A quick-access link to full race results (via FPVLive or FPVScores) has been added to the Results tab within the race detail screen.
    * Race listings are now consistently sorted by most recent across all relevant sections.
    
@@ -15,8 +16,8 @@ For Chapter Organizers:
 
 ### Fixes and enhancements:
 
+   * Various navigation UI enhancements to improve overall user experience.
    * Deprecating RaceSync WatchOS companion app
-   * Fixed a few smaller UI bugs
 
 ---
 

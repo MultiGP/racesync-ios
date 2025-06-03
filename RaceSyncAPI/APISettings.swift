@@ -55,7 +55,7 @@ public class APISettings {
             if let filters = filters(for: .raceFeedFilters), filters.count > 0 {
                 return filters
             } else {
-                return [.joined, .nearby, .chapters] // default values
+                return [.joined, .nearby, .series(GQSeries(year: 2025))] // default values
             }
         } set {
             let stringArray = newValue.map { $0.title }
