@@ -391,6 +391,8 @@ class StandingsViewController: UIViewController, Shimmable {
     }
 
     @objc func userDidTakeScreenshot() {
+        // only trigger when this view is visible
+        guard let view = viewIfLoaded, view.window != nil else { return }
         guard let cachedIndexPath = cachedPinnedIndexPath else { return }
         shouldPresentMyStandingBadge(cachedIndexPath)
     }
