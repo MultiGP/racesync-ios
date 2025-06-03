@@ -43,46 +43,62 @@ class StandingBadgeView: UIView {
     }
 
     func configureView(with viewModel: StandingViewModel, completion: @escaping RenderBlock) {
-
         let positionText = String.stringWithOrdinalSuffix(for: viewModel.rank)
         let suffixText = String.ordinalSuffix(for: viewModel.rank)
 
-        let rankAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 90, weight: .bold),
-                              NSAttributedString.Key.foregroundColor: Color.white]
-        let ordinalAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 50, weight: .medium),
-                          NSAttributedString.Key.foregroundColor: Color.white]
+        // Define attributes
+        let rankAttributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: 90, weight: .bold),
+            .foregroundColor: UIColor.white
+        ]
+        let ordinalAttributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: 50, weight: .medium),
+            .foregroundColor: UIColor.white
+        ]
 
+        // Create attributed rank string
         let rankString = NSMutableAttributedString(string: positionText, attributes: rankAttributes)
-        rankString.setAttributes(ordinalAttributes, range: NSString(string: positionText).range(of: suffixText))
+        if let suffixRange = positionText.range(of: suffixText) {
+            let nsRange = NSRange(suffixRange, in: positionText)
+            rankString.setAttributes(ordinalAttributes, range: nsRange)
+        }
 
+        // Helper function to create attributed score labels
+        func attributedScore(label: String, score: String) -> NSAttributedString {
+            let whiteAttributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont.systemFont(ofSize: 19, weight: .semibold),
+                .foregroundColor: UIColor.white
+            ]
+            let yellowAttributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont.systemFont(ofSize: 19, weight: .semibold),
+                .foregroundColor: UIColor.yellow
+            ]
 
-        func attributedText(for label: String, score: String) -> NSAttributedString {
-            let whiteAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 19, weight: .semibold),
-                                  NSAttributedString.Key.foregroundColor: Color.white]
-            let yellowAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 19, weight: .semibold),
-                                  NSAttributedString.Key.foregroundColor: Color.yellow]
+            let attributedString = NSMutableAttributedString(string: label, attributes: whiteAttributes)
 
-            let attstring = NSMutableAttributedString(string: label, attributes: whiteAttributes)
+            if score != "N/A", let scoreRange = label.range(of: score) {
+                let nsRange = NSRange(scoreRange, in: label)
+                attributedString.setAttributes(yellowAttributes, range: nsRange)
+            }
 
-            attstring.setAttributes(yellowAttributes, range: NSString(string: label).range(of: score))
-            return attstring
+            return attributedString
         }
 
         positionLabel.attributedText = rankString
         titleLabel.text = viewModel.titleLabel
 
         let score1 = StandingViewModel.timeLabel(for: viewModel.standing.season1Score)
-        time1Label.attributedText = attributedText(for: viewModel.score1Label, score: score1)
+        time1Label.attributedText = attributedScore(label: viewModel.score1Label, score: score1)
 
         let score2 = StandingViewModel.timeLabel(for: viewModel.standing.season2Score)
-        time2Label.attributedText = attributedText(for: viewModel.score2Label, score: score2)
+        time2Label.attributedText = attributedScore(label: viewModel.score2Label, score: score2)
 
+        // Load my image and render
         let imageUrl = APIServices.shared.myUser?.profilePictureUrl
         let placeholder = PlaceholderImg.profileAvatar?.withRenderingMode(.alwaysOriginal)
-
-        imageView.setImage(with: imageUrl, placeholderImage: placeholder) { (_) in
-
+        imageView.setImage(with: imageUrl, placeholderImage: placeholder) { _ in
             let image = self.asImage()
+
             DispatchQueue.main.async {
                 completion(image)
             }
