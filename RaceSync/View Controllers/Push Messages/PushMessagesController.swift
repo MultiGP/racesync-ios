@@ -114,6 +114,9 @@ class PushMessagesController: NSObject {
         if isMessagesViewShowing {
             store.parseNotification(userInfo, broadcast: true)
         } else if let message = store.parseNotification(userInfo) {
+            // helps prevent displaying the notification if the UI is not yet ready for it (ie: cold start)
+            guard isUserPushNotificationsEnabled() else { return }
+
             let vc = PushMessagesViewController(with: message)
             let nc = NavigationController(rootViewController: vc)
             let animated = UIApplication.shared.applicationState == .active ? true : false
