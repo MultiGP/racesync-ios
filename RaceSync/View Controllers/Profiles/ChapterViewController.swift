@@ -48,8 +48,8 @@ class ChapterViewController: ProfileViewController, ViewJoinable {
     fileprivate let chapterViewModel: ChapterViewModel
     fileprivate var chapterCoordinates: CLLocationCoordinate2D?
 
-    fileprivate var emptyStateRaces = EmptyStateViewModel(.noRaces)
-    fileprivate var emptyStateUsers = EmptyStateViewModel(.commingSoon)
+    fileprivate let emptyStateRaces = EmptyStateViewModel(.noRaces)
+    fileprivate let emptyStateUsers = EmptyStateViewModel(.noChapterMembers)
 
     fileprivate var canCreateRaces: Bool {
         guard chapter.isMyChapter else { return false }

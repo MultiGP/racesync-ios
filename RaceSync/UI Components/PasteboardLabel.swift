@@ -10,7 +10,7 @@ import UIKit
 
 class PasteboardLabel: UILabel, TextCopiable {
 
-    // MARK: - Initializatiom
+    // MARK: - Initialization
 
     override init(frame: CGRect) {
         super.init(frame: frame)

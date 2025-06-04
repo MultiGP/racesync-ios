@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="xl9-lg-qP6">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="xl9-lg-qP6">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22504"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -32,7 +32,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.80000000000000004" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="racesync_logo_splash" translatesAutoresizingMaskIntoConstraints="NO" id="HUg-Wc-UcN">
-                                <rect key="frame" x="27" y="356" width="360" height="87"/>
+                                <rect key="frame" x="27" y="248" width="360" height="87"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="87" id="FVy-Do-BIx"/>
                                 </constraints>
@@ -56,7 +56,7 @@
                             <constraint firstItem="f4o-uc-HAl" firstAttribute="top" secondItem="FDW-Yv-sbc" secondAttribute="bottom" constant="10" id="Wgp-Cu-WAb"/>
                             <constraint firstItem="HUg-Wc-UcN" firstAttribute="leading" secondItem="IAM-58-XBf" secondAttribute="leading" constant="27" id="XDS-ct-j20"/>
                             <constraint firstItem="Hke-7r-Tfr" firstAttribute="leading" secondItem="tRQ-h2-aIV" secondAttribute="leading" id="cE6-rQ-aFk"/>
-                            <constraint firstItem="HUg-Wc-UcN" firstAttribute="top" secondItem="IAM-58-XBf" secondAttribute="top" constant="308" id="hDm-1O-Dgg"/>
+                            <constraint firstItem="HUg-Wc-UcN" firstAttribute="top" secondItem="IAM-58-XBf" secondAttribute="top" constant="200" id="hDm-1O-Dgg"/>
                             <constraint firstItem="tRQ-h2-aIV" firstAttribute="bottom" relation="lessThanOrEqual" secondItem="H1y-xF-zMX" secondAttribute="bottom" id="ndv-QD-cbg"/>
                             <constraint firstItem="f4o-uc-HAl" firstAttribute="leading" secondItem="IAM-58-XBf" secondAttribute="leading" constant="141" id="nvR-Fi-m98"/>
                             <constraint firstItem="HUg-Wc-UcN" firstAttribute="centerX" secondItem="H1y-xF-zMX" secondAttribute="centerX" id="t5f-9S-VNv"/>

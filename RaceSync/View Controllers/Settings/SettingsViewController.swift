@@ -15,11 +15,27 @@ class SettingsViewController: UIViewController {
 
     // MARK: - Private Variables
 
+    fileprivate lazy var headerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = Color.navigationBarColor
+        view.tintColor = Color.blue
+
+        let separatorLine = UIView()
+        separatorLine.backgroundColor = Color.gray100
+        view.addSubview(separatorLine)
+        separatorLine.snp.makeConstraints {
+            $0.height.equalTo(0.5)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.snp.bottom)
+        }
+        return view
+    }()
+
    fileprivate lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.tableHeaderView = headerView
+        tableView.tableHeaderView = tableHeaderView
         tableView.tableFooterView = UIView()
         tableView.register(cellType: FormTableViewCell.self)
 
@@ -30,14 +46,14 @@ class SettingsViewController: UIViewController {
         return tableView
     }()
 
-    fileprivate lazy var headerView: UIView = {
+    fileprivate lazy var tableHeaderView: UIView = {
         let view = UIView()
 
         let imageView = UIImageView(image: UIImage(named: "icn_settings_header"))
         view.addSubview(imageView)
         imageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(-120)
+            $0.top.equalToSuperview().offset(-150)
         }
 
         UIView.addParallaxToView(imageView)
@@ -45,20 +61,9 @@ class SettingsViewController: UIViewController {
         return view
     }()
 
-    fileprivate lazy var sections: [Section: [Row]] = {
-        let resources: [Row] = [.tracksGuide, .buildGuide, .seasonRules, .visitSite]
-        var about: [Row] = []
-        var auth: [Row] = [.logout]
-
-        if UIApplication.shared.supportsAlternateIcons { about += [.appicon] }
-        about += [.joinBeta]
-
-        if let user = APIServices.shared.myUser, user.isDevTeam {
-            auth += [.switchEnv] //, .featureFlags
-        }
-
-        return [.resources: resources, .about: about, .auth: auth]
-    }()
+    fileprivate var sections = [Section: [Row]]()
+    fileprivate var isTogglingPush: Bool = false
+    fileprivate let isDevModeEnabled: Bool = false
 
     fileprivate func nextEnvironment() -> APIEnvironment {
         return APIServices.shared.settings.isDev ? APIEnvironment.prod : APIEnvironment.dev
@@ -74,43 +79,129 @@ class SettingsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = "Settings"
-
-        let closeBtn = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
-        navigationItem.leftBarButtonItem = closeBtn
-
+        configureNavigationItems()
         setupLayout()
+
+        NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handlePushMessageRegistration(_:)), name: .registeredForPushMessages, object: nil)
     }
 
     override func viewWillAppear(_ animated: Bool) {
-
-        tableView.reloadData()
-
         super.viewWillAppear(animated)
+
+        if sections.count == 0 {
+            loadSections()
+        } else {
+            tableView.reloadData()
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }
 
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
     // MARK: - Layout
 
     fileprivate func setupLayout() {
 
+        view.addSubview(headerView)
+        headerView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.height.equalTo(51)
+            $0.leading.trailing.equalToSuperview()
+        }
+
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
-            $0.top.leading.trailing.bottom.equalToSuperview()
+            $0.top.equalTo(headerView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.snp.bottom)
         }
+    }
+
+    fileprivate func configureNavigationItems() {
+        tabBarItem = UITabBarItem(title: "Settings", image: UIImage(systemName:"gearshape"), selectedImage: UIImage(systemName:"gearshape.fill"))
     }
 
     // MARK: - Actions
 
-    @objc func didPressCloseButton() {
+    func loadSections() {
+
+        sections = {
+           var resources: [Row] = []
+            var about: [Row] = []
+            var auth: [Row] = [.logout]
+
+            // show calendar only until after IO (16/06/2025)
+            if let ioDate = Date.date(for: 16, month: 6, year: 2025), Date() <= ioDate {
+                resources += [.ioschedule]
+            } else {
+                resources += [.tracksGuide]
+            }
+            resources += [.buildGuide, .seasonRules, .visitSite]
+
+           if UIApplication.shared.supportsAlternateIcons { about += [.appicon] }
+           about += [.joinBeta]
+
+           if let user = APIServices.shared.myUser, user.isDevTeam, isDevModeEnabled {
+               auth += [.switchEnv]
+           }
+
+           return [.notifications: [Row.notifications], .resources: resources, .about: about, .auth: auth]
+       }()
+    }
+
+    @objc fileprivate func appDidBecomeActive() {
+        resetTableViewForPushStatus()
+    }
+
+    @objc fileprivate func didPressCloseButton() {
         dismiss(animated: true)
     }
 
+    fileprivate func togglePushNotifications() {
+        guard !isTogglingPush else { return }
+
+        let controller = PushMessagesController.shared
+
+        if !controller.isPushNotificationsEnabled() {
+            if (controller.authorizationStatus == .notDetermined || controller.authorizationStatus == .authorized) {
+                controller.requestAuthorizationPushNotifications()
+                isTogglingPush = true
+            } else {
+                ApplicationControl.shared.openAppSettings()
+            }
+        } else {
+            ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Do you want to stop receiving push notifications?", destructiveTitle: "Yes, stop", completion: { (action) in
+                self.isTogglingPush = true
+                self.tableView.reloadData()
+
+                controller.unregisterForPushNotifications(fromDevice: false) { status, error in
+                    controller.store.removeAll() // clear all saved messages
+                    self.resetTableViewForPushStatus()
+                }
+
+            }, cancel: nil)
+        }
+    }
+
+    fileprivate func resetTableViewForPushStatus() {
+        PushMessagesController.shared.refreshPushNotificationSettings { status in
+            self.isTogglingPush = false
+            self.tableView.reloadData()
+        }
+    }
+
+    @objc fileprivate func handlePushMessageRegistration(_ notification: Notification)  {
+        resetTableViewForPushStatus()
+    }
+
     fileprivate func logout() {
-        ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Are you sure you want to log out?", destructiveTitle: "Yes, log out", completion: { (action) in
+        ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Logout from RaceSync?", destructiveTitle: "Yes, log out", completion: { (action) in
             ApplicationControl.shared.logout(forced: true)
         }, cancel: nil)
     }
@@ -119,7 +210,7 @@ class SettingsViewController: UIViewController {
         // inverted environment
         let environment = nextEnvironment()
 
-        ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Are you sure you want to switch to \(environment.title)?", destructiveTitle: "Yes, switch", completion: { (action) in
+        ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Switch to \(environment.title)?", destructiveTitle: "Yes, switch", completion: { (action) in
             ApplicationControl.shared.logout(switchTo: environment)
         }, cancel: nil)
     }
@@ -132,9 +223,14 @@ class SettingsViewController: UIViewController {
 extension SettingsViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let cell = tableView.cellForRow(at: indexPath) as? FormTableViewCell else { return }
+        tableView.deselectRow(at: indexPath, animated: true)
         guard let section = Section(rawValue: indexPath.section), let row = sections[section]?[indexPath.row] else { return }
 
         switch row {
+        case .notifications:
+            togglePushNotifications()
+            cell.isLoading = isTogglingPush
         case .tracksGuide:
             WebViewController.openUrl(AppWebConstants.tracks)
         case .buildGuide:
@@ -155,9 +251,9 @@ extension SettingsViewController: UITableViewDelegate {
             switchEnvironment()
         case .featureFlags:
             showFeatureFlags()
+        case .ioschedule:
+            WebViewController.openUrl(AppWebConstants.io25schedule)
         }
-
-        tableView.deselectRow(at: indexPath, animated: true)
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection sectionIdx: Int) -> String? {
@@ -179,17 +275,19 @@ extension SettingsViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as FormTableViewCell
-
-        guard let section = Section(rawValue: indexPath.section), let rows = sections[section] else { return cell }
-        let row = rows[indexPath.row]
+        guard let section = Section(rawValue: indexPath.section), let row = sections[section]?[indexPath.row] else { return cell }
 
         cell.textLabel?.text = row.title
         cell.textLabel?.textColor = Color.black
         cell.detailTextLabel?.text = nil
         cell.imageView?.image = UIImage.init(named: row.imageName)
         cell.accessoryType = .disclosureIndicator
+        cell.isLoading = false
 
-        if row == .appicon {
+        if row == .notifications {
+            cell.detailTextLabel?.text = PushMessagesController.shared.isPushNotificationsEnabled() ? "Enabled" : "Disabled"
+            cell.isLoading = isTogglingPush
+        } else if row == .appicon {
             let icon = AppIconManager.selectedIcon()
             cell.detailTextLabel?.text = icon.title
         } else if row == .joinBeta {
@@ -199,7 +297,6 @@ extension SettingsViewController: UITableViewDataSource {
         } else if row == .switchEnv {
             cell.detailTextLabel?.text = nextEnvironment().title
         }
-
         return cell
     }
 
@@ -218,30 +315,34 @@ extension SettingsViewController: UITableViewDataSource {
 }
 
 fileprivate enum Section: Int, EnumTitle {
-    case resources, about, auth
+    case notifications, resources, about, auth
 
     var title: String {
         switch self {
-        case .resources:    return "Resources"
-        case .about:        return "About \(Bundle.main.releaseDescriptionPretty)"
-        case .auth:         return ""
+        case .notifications:    return ""
+        case .resources:        return "Resources"
+        case .about:            return "RaceSync iOS \(Bundle.main.releaseDescriptionPretty)"
+        case .auth:             return ""
         }
     }
 }
 
 fileprivate enum Row: Int, EnumTitle {
+    case notifications
     case tracksGuide
-    case seasonRules
     case buildGuide
+    case seasonRules
     case appicon
     case joinBeta
     case visitSite
     case logout
     case featureFlags
     case switchEnv
+    case ioschedule // temporary
 
     var title: String {
         switch self {
+        case .notifications:        return "Push Notifications"
         case .tracksGuide:          return "MultiGP Tracks"
         case .seasonRules:          return "Season Rule Books"
         case .buildGuide:           return "Obstacles Build Guide"
@@ -251,21 +352,24 @@ fileprivate enum Row: Int, EnumTitle {
         case .logout:               return "Logout"
         case .featureFlags:         return "Feature Flags"
         case .switchEnv:            return "Switch to"
+        case .ioschedule:           return "IO 2025 Schedule"
         }
     }
 
     // For including icons to each row. Look for icons at https://thenounproject.com/
     var imageName: String {
         switch self {
-        case .tracksGuide:         return "icn_settings_tracks"
-        case .seasonRules:          return "icn_settings_handbook"
+        case .notifications:        return "icn_settings_apns"
+        case .tracksGuide:          return "icn_settings_tracks"
         case .buildGuide:           return "icn_settings_buildguide"
+        case .seasonRules:          return "icn_settings_handbook"
         case .visitSite:            return "icn_settings_mgp"
         case .appicon:              return "icn_settings_appicn"
         case .joinBeta:             return "icn_settings_beta"
         case .logout:               return "icn_settings_logout"
         case .featureFlags:         return "icn_settings_logout"
         case .switchEnv:            return "icn_settings_logout"
+        case .ioschedule:           return "icn_settings_io"
         }
     }
 }

@@ -15,9 +15,10 @@ public protocol UserApiInterface {
     /**
      Gets the authenticated User's profile information.
 
+     - parameter forceUpdate: Forces updating the user object. Default is false.
      - parameter completion: The closure to be called upon completion. Returns a transcient object containing the profile information of the authenticated User.
      */
-    func getMyUser(_ completion: @escaping ObjectCompletionBlock<User>)
+    func getMyUser(forceUpdate: Bool, completion: @escaping ObjectCompletionBlock<User>)
 
     /**
      Updates the home chapter on the authenticated User's profile.
@@ -38,6 +39,10 @@ public protocol UserApiInterface {
     /**
      */
     func getUsers(forChapter chapterId: String, _ completion: @escaping ObjectCompletionBlock<[User]>)
+
+    /**
+     */
+    func registerPushNotification(forAction action: PushAction, deviceToken: String?, _ completion: @escaping StatusCompletionBlock)
 }
 
 public class UserApi: UserApiInterface {
@@ -45,12 +50,12 @@ public class UserApi: UserApiInterface {
     public init() {}
     fileprivate let repositoryAdapter = RepositoryAdapter()
 
-    public func getMyUser(_ completion: @escaping ObjectCompletionBlock<User>) {
+    public func getMyUser(forceUpdate: Bool = false, completion: @escaping ObjectCompletionBlock<User>) {
 
         let endpoint = EndPoint.userProfile
 
         repositoryAdapter.getObject(endpoint, type: User.self) { (user, error) in
-            if user != nil { APIServices.shared.myUser = user }
+            if user != nil || forceUpdate { APIServices.shared.myUser = user }
             completion(user, error)
         }
     }
@@ -85,5 +90,14 @@ public class UserApi: UserApiInterface {
     @available(*, deprecated, message: "Not implemented by the API yet. See https://github.com/mainedrones/racesync-api/issues/16")
     public func getUsers(forChapter chapterId: String, _ completion: @escaping ObjectCompletionBlock<[User]>) {
         //
+    }
+
+    public func registerPushNotification(forAction action: PushAction, deviceToken: String? = nil, _ completion: @escaping StatusCompletionBlock) {
+
+        let endpoint = EndPoint.userSetPushNotification
+        var parameters: Params = [ParamKey.action: action.rawValue, ParamKey.platform: ParamKey.ios]
+        if let token = deviceToken { parameters += [ParamKey.devicetoken: token] }
+
+        repositoryAdapter.performAction(endpoint, parameters: parameters, completion: completion)
     }
 }

@@ -31,6 +31,7 @@ enum ButtonImg {
     static let edit = UIImage(named: "icn_navbar_edit")
     static let calendar = UIImage(named: "icn_navbar_calendar")
     static let settings = UIImage(named: "icn_navbar_settings")
+    static let notifications = UIImage(named: "icn_navbar_notifications")
     static let search = UIImage(named: "icn_navbar_search")
     static let filter = UIImage(named: "icn_navbar_filter")
     static let map = UIImage(named: "icn_navbar_map")

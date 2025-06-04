@@ -82,7 +82,7 @@ public class AuthApi: AuthApiInterface {
                 Clog.log("Ended request with code \(String(describing: response.response?.statusCode))")
 
                 if let code = response.response?.statusCode, code == 401 {
-                    Clog.log("Detected 401. Should log out User!")
+                    Clog.log("Detected 401!")
                 }
 
                 switch response.result {

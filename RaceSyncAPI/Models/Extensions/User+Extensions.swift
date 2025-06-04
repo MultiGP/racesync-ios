@@ -38,8 +38,7 @@ public extension User {
             "20676",    // Ignacio "Zenith" Romero
             "96",       // Roger "Focus" Bess
             "2145",     // Mark "2dogrc" Grohe
-            "7327",     // Tim "DoALoop" Barnhart
-            "35435"     // Henry "MrOizoFPV" Moizo
+            "2145",     // Mark "2dogrc" Grohe
         ]
 
         return ids.contains(where: { (someId) -> Bool in

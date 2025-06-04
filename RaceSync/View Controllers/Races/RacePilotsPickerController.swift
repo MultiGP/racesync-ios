@@ -69,8 +69,8 @@ class RacePilotsPickerController: UIViewController, Shimmable {
     fileprivate var joinedIds = [ObjectId]()
     fileprivate var didForceJoin: Bool = false
 
-    fileprivate var emptyStateMembers = EmptyStateViewModel(.noChapterMembers)
-    fileprivate var emptyStateSearch = EmptyStateViewModel(.noSearchResults)
+    fileprivate let emptyStateMembers = EmptyStateViewModel(.noChapterMembers)
+    fileprivate let emptyStateSearch = EmptyStateViewModel(.noSearchResults)
 
     fileprivate var isSearching: Bool {
         guard let text = searchBar.text else { return false }
@@ -170,7 +170,7 @@ class RacePilotsPickerController: UIViewController, Shimmable {
                         self.joinedIds = self.joinedIds.filter { $0 != userId }
                         self.didForceJoin = true
 
-                        RateMe.sharedInstance.userDidPerformEvent(showPrompt: true)
+                        RateMe.shared.userDidPerformEvent()
                     }
                 }
             }) { (action) in
@@ -186,7 +186,7 @@ class RacePilotsPickerController: UIViewController, Shimmable {
                         self.joinedIds += [userId]
                         self.didForceJoin = true
 
-                        RateMe.sharedInstance.userDidPerformEvent(showPrompt: true)
+                        RateMe.shared.userDidPerformEvent()
                     }
                 }
             }) { (action) in

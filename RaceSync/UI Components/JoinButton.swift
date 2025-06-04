@@ -50,7 +50,7 @@ class JoinButton: CustomButton {
         return view
     }()
 
-    // MARK: - Initializatiom
+    // MARK: - Initialization
 
     init() {
         super.init(frame: .zero)

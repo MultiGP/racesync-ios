@@ -31,7 +31,7 @@ class RaceViewModel: Descriptable {
     let seasonLabel: String
     let imageUrl: String?
 
-    // MARK: - Initializatiom
+    // MARK: - Initialization
 
     init(with race: Race) {
         self.race = race

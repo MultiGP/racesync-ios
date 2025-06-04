@@ -22,6 +22,7 @@ enum EndPoint {
     static let userProfile = "user/profile"
     static let userSearch = "user/search"
     static let userUpdateProfile = "user/updateProfile"
+    static let userSetPushNotification = "user/setPushNotification"
 
     static let race = "race/"
     static let raceList = "race/list"
@@ -189,6 +190,7 @@ enum ParamKey {
     static let raceClassString = "raceClassString"
     static let sendNotification = "sendNotification"
     static let isPublic = "isPublic"
+    static let pushNotificationEnabled = "pushNotificationEnabled"
     static let query = "query"
 
     // Geo-location
@@ -227,4 +229,8 @@ enum ParamKey {
     // System
     static let dateAdded = "dateAdded"
     static let dateModified = "dateModified"
+    static let action = "action"
+    static let platform = "platform"
+    static let ios = "ios"
+    static let devicetoken = "devicetoken"
 }

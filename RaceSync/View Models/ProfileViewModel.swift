@@ -88,7 +88,7 @@ class ProfileViewModel: Descriptable {
             self.leftBadgeLabel = "\(chapter.raceCount) Races"
         }
 
-        self.rightBadgeImage = UIImage(named: "icn_chapter_small")
+        self.rightBadgeImage = UIImage(named: "icn_member_small")
         self.rightSegmentLabel = "Members"
         if chapter.memberCount == 1 {
             self.rightBadgeLabel = "\(chapter.memberCount) Member"

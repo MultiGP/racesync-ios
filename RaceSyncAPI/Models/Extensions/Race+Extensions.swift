@@ -53,4 +53,8 @@ public extension Race {
     var trueScoringFormat: ScoringFormat {
         return isGQ ? .fastest3Laps : scoringFormat
     }
+
+    var isZippyQEnabled: Bool {
+        return (maxZippyqDepth > 0 && disableSlotAutoPopulation == .open)
+    }
 }

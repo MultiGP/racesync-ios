@@ -44,7 +44,7 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
     fileprivate var userApi = UserApi()
     fileprivate var userViewModels = [UserViewModel]()
 
-    fileprivate var emptyStateRaceRegisters = EmptyStateViewModel(.noRaceRegisters)
+    fileprivate let emptyStateRaceRegisters = EmptyStateViewModel(.noRaceRegisters)
     fileprivate var didTapCell: Bool = false
     fileprivate var externalResultSection: Int = 0
 
@@ -67,7 +67,6 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     init(with race: Race) {
         self.race = race
-
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -107,9 +106,13 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate func configureNavigationItems() {
 
-        title = showingResults ? "Race Results" : "Pilots Racing"
-        let itemTitle = showingResults ? "Results" : "Pilots"
-        tabBarItem = UITabBarItem(title: itemTitle, image: UIImage(named: "icn_tabbar_roster"), selectedImage: nil)
+        if showingResults {
+            title = "Race Results"
+            tabBarItem = UITabBarItem(title: "Results", image: UIImage(named: "icn_tabbar_results"), selectedImage: UIImage(named: "icn_tabbar_results_filled"))
+        } else {
+            title = "Pilots Racing"
+            tabBarItem = UITabBarItem(title: "Pilots", image: UIImage(systemName: "person.2"), selectedImage: UIImage(systemName: "person.2.fill"))
+        }
 
         var buttons = [UIButton]()
 

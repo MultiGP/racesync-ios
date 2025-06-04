@@ -12,6 +12,7 @@ import RaceSyncAPI
 import Presentr
 import EmptyDataSet_Swift
 import CoreLocation
+import QRCode
 
 class UserViewController: ProfileViewController, ViewJoinable {
 
@@ -70,13 +71,14 @@ class UserViewController: ProfileViewController, ViewJoinable {
     fileprivate var presenter: Presentr?
     fileprivate var userCoordinates: CLLocationCoordinate2D?
 
-    fileprivate var emptyStateRaces = EmptyStateViewModel(.noProfileRaces)
-    fileprivate var emptyStateChapters = EmptyStateViewModel(.noProfileChapters)
-    fileprivate var emptyStateMyRaces = EmptyStateViewModel(.noMyProfileRaces)
-    fileprivate var emptyStateMyChapters = EmptyStateViewModel(.noMyProfileChapters)
+    fileprivate let emptyStateRaces = EmptyStateViewModel(.noProfileRaces)
+    fileprivate let emptyStateChapters = EmptyStateViewModel(.noProfileChapters)
+    fileprivate let emptyStateMyRaces = EmptyStateViewModel(.noMyProfileRaces)
+    fileprivate let emptyStateMyChapters = EmptyStateViewModel(.noMyProfileChapters)
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
+        static let cellHeight: CGFloat = UniversalConstants.cellHeight
         static let buttonHeight: CGFloat = 32
         static let buttonSpacing: CGFloat = 12
         static let avatarImageSize = CGSize(width: 50, height: 50)
@@ -196,8 +198,17 @@ class UserViewController: ProfileViewController, ViewJoinable {
         navigationController?.pushViewController(vc, animated: true)
     }
 
+    func getQRImage(with userId: String) -> UIImage? {
+        var qrCode = QRCode(userId)
+        qrCode?.size = CGSize(width: 270, height: 270)
+        qrCode?.color = CIColor(color: Color.black)
+        qrCode?.backgroundColor = CIColor(color: Color.white)
+        return qrCode?.image
+    }
+
     @objc func didPressQRButton() {
-        let vc = QRViewController(with: user.id)
+        guard let qrImage = getQRImage(with: user.id) else { return }
+        let vc = ImageExportViewController(with: qrImage, caption: user.id)
 
         let presenter = Presentr(presentationType: .fullScreen)
         presenter.blurBackground = false
@@ -323,7 +334,7 @@ extension UserViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UniversalConstants.cellHeight
+        return Constants.cellHeight
     }
 
     func userRaceTableViewCell(for indexPath: IndexPath) -> UserRaceTableViewCell {
