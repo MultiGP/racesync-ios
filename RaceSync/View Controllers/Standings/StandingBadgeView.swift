@@ -63,35 +63,14 @@ class StandingBadgeView: UIView {
             rankString.setAttributes(ordinalAttributes, range: nsRange)
         }
 
-        // Helper function to create attributed score labels
-        func attributedScore(label: String, score: String) -> NSAttributedString {
-            let whiteAttributes: [NSAttributedString.Key: Any] = [
-                .font: UIFont.systemFont(ofSize: 20, weight: .semibold),
-                .foregroundColor: UIColor.white
-            ]
-            let yellowAttributes: [NSAttributedString.Key: Any] = [
-                .font: UIFont.systemFont(ofSize: 20, weight: .semibold),
-                .foregroundColor: UIColor.yellow
-            ]
-
-            let attributedString = NSMutableAttributedString(string: label, attributes: whiteAttributes)
-
-            if score != "N/A", let scoreRange = label.range(of: score) {
-                let nsRange = NSRange(scoreRange, in: label)
-                attributedString.setAttributes(yellowAttributes, range: nsRange)
-            }
-
-            return attributedString
-        }
-
         positionLabel.attributedText = rankString
         titleLabel.text = viewModel.titleLabel
 
         let score1 = StandingViewModel.timeLabel(for: viewModel.standing.season1Score)
-        time1Label.attributedText = attributedScore(label: viewModel.score1Label, score: score1)
-
         let score2 = StandingViewModel.timeLabel(for: viewModel.standing.season2Score)
-        time2Label.attributedText = attributedScore(label: viewModel.score2Label, score: score2)
+
+        time1Label.attributedText = attributedScore(label: viewModel.score1Label, scores: [score1, score2])
+        time2Label.attributedText = attributedScore(label: viewModel.score2Label, scores: [score1, score2])
 
         // Download the image and render
         let placeholder = PlaceholderImg.profileAvatar?.withRenderingMode(.alwaysOriginal)
@@ -102,6 +81,29 @@ class StandingBadgeView: UIView {
                 completion(image)
             }
         }
+    }
+
+    fileprivate func attributedScore(label: String, scores: [String]) -> NSAttributedString {
+        let white: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: 20, weight: .semibold),
+            .foregroundColor: UIColor.white
+        ]
+        let yellow: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: 20, weight: .semibold),
+            .foregroundColor: UIColor.yellow
+        ]
+
+        let result = NSMutableAttributedString(string: label, attributes: white)
+
+        scores.forEach { score in
+            guard score != "N/A" else { return }
+            let range = (label as NSString).range(of: score)
+            if range.location != NSNotFound && range.length > 0 {
+                result.setAttributes(yellow, range: range)
+            }
+        }
+
+        return result
     }
 
     fileprivate func asImage() -> UIImage {

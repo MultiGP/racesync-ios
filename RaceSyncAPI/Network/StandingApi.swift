@@ -57,6 +57,7 @@ public class StandingApi: StandingApiInterface {
 fileprivate extension StandingApi {
 
     func fetchCSVAndConvertToJSON(from url: URL, knownHeaders: [String]? = nil, completion: @escaping (Result<[[String: Any]], Error>) -> Void) {
+        Clog.log("Starting request \(String(describing: url))")
         URLSession.shared.dataTask(with: url) { data, _, error in
             if let error = error {
                 return completion(.failure(error))
@@ -113,16 +114,16 @@ fileprivate extension StandingApi {
     }
 
     func getStandingsUrl(for season: StandingSeason) -> URL? {
+        let base = MGPWebConstant.viewZipperSeasonResults.rawValue
 
-        let baseURLString = MGPWebConstant.viewZipperSeasonResults
-        let params: [String: String] = [
-            "season1": "\(season.rawValue)Spring",
-            "season2": "\(season.rawValue)Summer",
-            "exportcsv": "true"
+        let params: [(String, String)] = [
+            ("season1", "\(season.rawValue)Spring"),
+            ("season2", "\(season.rawValue)Summer"),
+            ("exportcsv", "true")
         ]
 
-        var components = URLComponents(string: baseURLString.rawValue)
-        components?.queryItems = params.map { URLQueryItem(name: $0.key, value: $0.value) }
+        var components = URLComponents(string: base)
+        components?.queryItems = params.map { URLQueryItem(name: $0.0, value: $0.1) }
 
         return components?.url
     }
