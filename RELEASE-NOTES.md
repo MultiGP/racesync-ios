@@ -1,6 +1,15 @@
 
 # App Store Release Notes
 
+## 1.7.1
+
+### Fixes and enhancements:
+
+   * Fixed several UI issues related to GQ standings
+   * Removed 2025 IO schedule quick access
+
+---
+
 ## 1.7
 
 ### New Features:
