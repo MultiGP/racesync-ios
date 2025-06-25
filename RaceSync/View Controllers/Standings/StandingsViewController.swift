@@ -2,8 +2,8 @@
 //  StandingsViewController.swift
 //  RaceSync
 //
-//  Created by Ignacio Romero Zurbuchen on 2020-03-05.
-//  Copyright © 2020 MultiGP Inc. All rights reserved.
+//  Created by Ignacio Romero Zurbuchen on 2025-05-31.
+//  Copyright © 2025 MultiGP Inc. All rights reserved.
 //
 
 import UIKit
@@ -89,9 +89,10 @@ class StandingsViewController: UIViewController, Shimmable {
 
     // MARK: - Private Variables
 
-    fileprivate let standinApi = StandingApi()
+    fileprivate let standingApi = StandingApi()
     fileprivate let userApi = UserApi()
 
+    fileprivate let season: StandingSeason = .y2025
     fileprivate var standingViewModels = [StandingViewModel]()
     fileprivate var searchResult = [StandingViewModel]()
     fileprivate var pinnedView: UIView?
@@ -192,7 +193,7 @@ class StandingsViewController: UIViewController, Shimmable {
             isLoadingList(true)
         }
 
-        standinApi.getStandings(for: .y2025) { (objects, error) in
+        standingApi.getStandings(for: season) { (objects, error) in
             if let objects = objects {
                 self.standingViewModels = StandingViewModel.viewModels(with: objects)
                 self.enableSearchBar(objects.count > 0)
@@ -255,6 +256,8 @@ class StandingsViewController: UIViewController, Shimmable {
     // MARK: - Cell Pinning
 
     func layoutPinnedCell() {
+        guard !isSearching else { return }
+
         guard let indexPath = pinnedCellIndexPath() else { return }
         guard let _ = tableView.superview else { return }
 
@@ -337,6 +340,8 @@ class StandingsViewController: UIViewController, Shimmable {
         if view.superview != nil {
             view.removeFromSuperview()
         }
+
+        pinnedView = nil
     }
 
     fileprivate func pinnedCellIndexPath() -> IndexPath? {
@@ -396,6 +401,24 @@ class StandingsViewController: UIViewController, Shimmable {
         guard let cachedIndexPath = cachedPinnedIndexPath else { return }
         shouldPresentMyStandingBadge(cachedIndexPath)
     }
+
+    func resetTableView() {
+        tableView.refreshControl = isSearching ? nil : refreshControl
+        tableView.setContentOffset(.zero, animated: false)
+        tableView.reloadData()
+
+        // resets it each time, so it can be recalculated
+        invalidatePinnedCell()
+    }
+
+    func invalidatePinnedCell() {
+        cachedPinnedIndexPath = nil
+        removePinnedCell()
+
+        if pinnedCellIndexPath() != nil {
+            layoutPinnedCell()
+        }
+    }
 }
 
 extension StandingsViewController: UITableViewDelegate {
@@ -427,14 +450,18 @@ extension StandingsViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        guard !(isSearching && searchResult.isEmpty), !standingViewModels.isEmpty else {
+        guard !standingViewModels.isEmpty else {
             return nil
         }
-        return "2025 MultiGP Global Qualifier - Sponsored by FINZ\nFastest 3 Consecutive Laps"
+
+        guard !isSearching else {
+            return searchResult.isEmpty ? nil : "Showing \(searchResult.count) Pilots"
+        }
+        return "\(season.rawValue) MultiGP Global Qualifier - Sponsored by FINZ\nFastest 3 Consecutive Laps"
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 50
+        return isSearching ? 30 : 50 // 1 or 2 lines
     }
 }
 
@@ -529,21 +556,6 @@ extension StandingsViewController: UISearchBarDelegate {
         searchBar.text = nil
         searchBar.resignFirstResponder()
         resetTableView()
-    }
-
-    func resetTableView() {
-        tableView.refreshControl = isSearching ? nil : refreshControl
-        tableView.setContentOffset(.zero, animated: false)
-        tableView.reloadData()
-
-        // resets it each time, so it can be recalculated
-        cachedPinnedIndexPath = nil
-
-        if pinnedCellIndexPath() != nil {
-            layoutPinnedCell()
-        } else {
-            removePinnedCell()
-        }
     }
 }
 

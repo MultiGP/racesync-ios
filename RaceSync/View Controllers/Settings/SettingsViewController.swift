@@ -62,8 +62,8 @@ class SettingsViewController: UIViewController {
     }()
 
     fileprivate var sections = [Section: [Row]]()
+    fileprivate let isDevModeEnabled: Bool = true
     fileprivate var isTogglingPush: Bool = false
-    fileprivate let isDevModeEnabled: Bool = false
 
     fileprivate func nextEnvironment() -> APIEnvironment {
         return APIServices.shared.settings.isDev ? APIEnvironment.prod : APIEnvironment.dev
@@ -132,17 +132,9 @@ class SettingsViewController: UIViewController {
     func loadSections() {
 
         sections = {
-           var resources: [Row] = []
-            var about: [Row] = []
+            var resources: [Row] = [.tracksGuide, .buildGuide, .seasonRules, .visitSite]
             var auth: [Row] = [.logout]
-
-            // show calendar only until after IO (16/06/2025)
-            if let ioDate = Date.date(for: 16, month: 6, year: 2025), Date() <= ioDate {
-                resources += [.ioschedule]
-            } else {
-                resources += [.tracksGuide]
-            }
-            resources += [.buildGuide, .seasonRules, .visitSite]
+            var about: [Row] = []
 
            if UIApplication.shared.supportsAlternateIcons { about += [.appicon] }
            about += [.joinBeta]
@@ -251,14 +243,16 @@ extension SettingsViewController: UITableViewDelegate {
             switchEnvironment()
         case .featureFlags:
             showFeatureFlags()
-        case .ioschedule:
-            WebViewController.openUrl(AppWebConstants.io25schedule)
         }
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection sectionIdx: Int) -> String? {
         guard let section = Section(rawValue: sectionIdx) else { return nil }
         return section.title
+    }
+
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 30
     }
 }
 
@@ -338,7 +332,6 @@ fileprivate enum Row: Int, EnumTitle {
     case logout
     case featureFlags
     case switchEnv
-    case ioschedule // temporary
 
     var title: String {
         switch self {
@@ -352,7 +345,6 @@ fileprivate enum Row: Int, EnumTitle {
         case .logout:               return "Logout"
         case .featureFlags:         return "Feature Flags"
         case .switchEnv:            return "Switch to"
-        case .ioschedule:           return "IO 2025 Schedule"
         }
     }
 
@@ -369,7 +361,6 @@ fileprivate enum Row: Int, EnumTitle {
         case .logout:               return "icn_settings_logout"
         case .featureFlags:         return "icn_settings_logout"
         case .switchEnv:            return "icn_settings_logout"
-        case .ioschedule:           return "icn_settings_io"
         }
     }
 }

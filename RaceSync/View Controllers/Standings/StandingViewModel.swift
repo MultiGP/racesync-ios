@@ -24,16 +24,19 @@ class StandingViewModel: Descriptable {
     // MARK: - Initialization
 
     init(with standing: Standing) {
-
         self.standing = standing
 
         let flag = FlagEmojiGenerator.flag(country: standing.country)
-        self.titleLabel = "\(flag) \(standing.firstName) \'\(standing.userName)\' \(standing.lastName)"
+        self.titleLabel = "\(flag) \(standing.firstName) ‘\(standing.userName)’ \(standing.lastName)"
 
-        self.score1Label = "Spring: \(Self.timeLabel(for: standing.season1Score))"
-        self.score2Label = "Summer: \(Self.timeLabel(for: standing.season2Score))"
+        func score(for seasonKey: String) -> Double {
+            return (seasonKey == standing.season1) ? standing.season1Score : standing.season2Score
+        }
+
+        self.score1Label = "Spring: \(Self.timeLabel(for: score(for: "\(standing.season.rawValue)Spring")))"
+        self.score2Label = "Summer: \(Self.timeLabel(for: score(for: "\(standing.season.rawValue)Summer")))"
+
         self.subtitleLabel = [score1Label, score2Label].joined(separator: "  |  ")
-
         self.rank = Int32(standing.position) ?? 0
     }
 
@@ -46,10 +49,11 @@ class StandingViewModel: Descriptable {
     }
 
     static func timeLabel(for value: Double) -> String {
-        guard value > 0 && value < 2000000 else { return "N/A" }
+        guard value > 0 && value <= 180 else { return "N/A" }
 
         if value < 60 {
-            return String(format: "%.3fs", value)
+            let truncated = floor(value * 1_000) / 1_000
+            return String(format: "%.3f", truncated)
         } else {
             let minutes = Int(value) / 60
             let seconds = value.truncatingRemainder(dividingBy: 60)
