@@ -1,6 +1,15 @@
 
 # App Store Release Notes
 
+## 1.7.2
+
+### Fixes and enhancements:
+
+   * Fixed a sorting issue with the Global Qualifier standings not being the same than the website.
+   * Fixed small UI and display issues in the race detail
+
+---
+
 ## 1.7.1
 
 ### Fixes and enhancements:

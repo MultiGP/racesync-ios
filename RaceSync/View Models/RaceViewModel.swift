@@ -40,8 +40,8 @@ class RaceViewModel: Descriptable {
         self.startDateDesc = Self.fullDateLabelString(for: race.startDate) // "Saturday, September 14th @ 9:00 AM"
         self.endDateLabel = Self.dateLabelString(for: race.endDate) // "Sat Sept 14 @ 5:00 PM"
         self.endDateDesc = Self.fullDateLabelString(for: race.startDate, and: race.endDate) // "Saturday, September 14th @ 5:00 PM" or "@ 5:00 PM"
-        self.locationLabel = Self.locationLabelString(for: race)
-        self.fullLocationLabel = Self.fullLocationLabelString(for: race)
+        self.locationLabel = Self.locationLabelString(for: race).stripHTML()
+        self.fullLocationLabel = Self.fullLocationLabelString(for: race).stripHTML()
         self.distanceLabel = Self.distanceLabelString(for: race) // "309.4 mi" or "122 kms"
         self.distance = Self.distance(for: race)
         self.joinState = Self.joinState(for: race)
