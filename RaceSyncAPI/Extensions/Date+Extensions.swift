@@ -12,6 +12,16 @@ public extension Date {
 
     static let currentYear: Int = Calendar.current.component(.year, from: Date())
 
+    static func date(for day: Int, month: Int, year: Int) -> Date? {
+        var components = DateComponents()
+        components.day = day
+        components.month = month
+        components.year = year
+
+        let calendar = Calendar.current
+        return calendar.date(from: components)
+    }
+
     func isInSameWeek(date: Date) -> Bool {
         return Calendar.current.isDate(self, equalTo: date, toGranularity: .weekOfYear)
     }

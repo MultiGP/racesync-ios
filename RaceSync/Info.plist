@@ -107,6 +107,10 @@
 	<string>Search races based on location and show user location on map</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Browse and save images</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen.storyboard</string>
 	<key>UIMainStoryboardFile</key>

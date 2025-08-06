@@ -33,7 +33,7 @@ class ProfileAvatarView: DimmableView {
         return view
     }()
 
-    // MARK: - Initializatiom
+    // MARK: - Initialization
 
     override init(frame: CGRect) {
         super.init(frame: frame)

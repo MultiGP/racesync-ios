@@ -12,7 +12,7 @@ class PasteboardButton: UIButton, TextCopiable {
 
     var shouldHighlight: Bool = false
 
-    // MARK: - Initializatiom
+    // MARK: - Initialization
 
     override init(frame: CGRect) {
         super.init(frame: frame)

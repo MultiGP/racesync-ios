@@ -83,8 +83,21 @@ class RaceFormViewController: UIViewController {
     fileprivate let presenter = Appearance.defaultPresenter()
     fileprivate var formNavigationController: NavigationController?
     fileprivate var isFormEnabled: Bool
+
     fileprivate var shouldHideShortDescription: Bool {
-        get { return data.shortDesc == nil }
+        get {
+            guard let raceData = initialData else { return true } // on new race creation
+            guard let text = raceData.shortDesc else { return true }
+            return text.isEmpty
+        }
+    }
+
+    fileprivate var shouldHideItineraryDescription: Bool {
+        get {
+            guard let raceData = initialData else { return true } // on new race creation
+            guard let text = raceData.itinerary else { return true }
+            return text.isEmpty
+        }
     }
 
     // Needs to be computed each time, since there are dynamic values
@@ -93,8 +106,10 @@ class RaceFormViewController: UIViewController {
             let general: [RaceFormRow] = [.name, .startDate, .endDate, .chapter, .class, .format, .schedule, .privacy, .status]
             var specific: [RaceFormRow] = [.scoring, .timing, .rounds, .season, .location]
 
-            if !shouldHideShortDescription { specific += [.shortDesc] } // hide Short Description row if it isn't set already. This is used to be backwards compatible.
-            specific += [.longDesc, .itinerary, .notify]
+            if !shouldHideShortDescription { specific += [.shortDesc] } // hide the Short description row if it isn't set already.
+            specific += [.longDesc]
+            if !shouldHideItineraryDescription { specific += [.itinerary] } // hide the Itinerary description row if it isn't set already.
+            specific += [.notify]
 
             return [.general: general, .specific: specific]
         }

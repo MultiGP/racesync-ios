@@ -145,7 +145,7 @@ class AircraftFormViewController: UIViewController {
             if let aircraft = aircraft {
                 strongSelf.delegate?.aircraftFormViewController(strongSelf, didCreateAircraft: aircraft)
 
-                RateMe.sharedInstance.userDidPerformEvent(showPrompt: true)
+                RateMe.shared.userDidPerformEvent()
             } else if let error = error {
                 AlertUtil.presentAlertMessage(error.localizedDescription, title: "Error")
             }

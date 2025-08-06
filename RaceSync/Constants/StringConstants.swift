@@ -14,5 +14,6 @@ public class StringConstants {
     public static let appstoreReviewUrl = "\(RateMe.appstoreUrl(with: applicationID))"
 
     public static let copyright = "Copyright © 2015 - \(Date().thisYear()) MultiGP, Inc."
+    public static let developedBy = "Developed by Ignacio 'Zenith' Romero"
     public static let supportEmail = "mobile@multigp.com"
 }

@@ -62,7 +62,7 @@ class RaceTabBarController: UITabBarController {
         return UIActivityIndicatorView(style: .medium)
     }()
 
-    fileprivate var initialSelectedIndex: Int = RaceTabs.details.rawValue
+    fileprivate var initialSelectedIndex: Int
     fileprivate var emptyStateError: EmptyStateViewModel?
 
     fileprivate let raceApi = RaceApi()
@@ -73,12 +73,20 @@ class RaceTabBarController: UITabBarController {
 
     // MARK: - Initialization
 
-    init(with race: Race) {
+    init(with race: Race, raceTab: RaceTabs = .details) {
         self.raceId = race.id
         self.race = race
+        self.initialSelectedIndex = raceTab.rawValue
         super.init(nibName: nil, bundle: nil)
     }
-    
+
+    init(with raceId: ObjectId, raceTab: RaceTabs = .details) {
+        self.raceId = raceId
+        self.race = nil
+        self.initialSelectedIndex = raceTab.rawValue
+        super.init(nibName: nil, bundle: nil)
+    }
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -121,7 +129,7 @@ class RaceTabBarController: UITabBarController {
         var vcs = [UIViewController]()
         vcs += [RaceDetailViewController(with: race)]
         vcs += [RacePilotsViewController(with: race)]
-        vcs += [RaceScheduleViewController()]
+        vcs += [RaceScheduleViewController(with: race)]
 
         for vc in vcs { vc.willMove(toParent: self) }
         viewControllers = vcs
@@ -279,11 +287,6 @@ extension RaceTabBarController: EmptyDataSetDelegate {
 
     func emptyDataSetShouldAllowScroll(_ scrollView: UIScrollView) -> Bool {
         return false
-    }
-
-    func emptyDataSet(_ scrollView: UIScrollView, didTapButton button: UIButton) {
-        guard let url = AppWebConstants.getPrefilledFeedbackFormUrl() else { return }
-        WebViewController.openUrl(url)
     }
 }
 

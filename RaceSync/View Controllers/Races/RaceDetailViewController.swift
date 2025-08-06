@@ -240,7 +240,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate var htmlViewHeightConstraint: Constraint?
     fileprivate let ignoreFinalizingError: Bool = true // The API finalize(id) still returns 500 error. Reported https://github.com/MultiGP/multigp-com/issues/93
-    fileprivate let isEnrollmentTogglingEnabled: Bool = false // The API open(id)/close(id) returns 400 error.
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -386,7 +385,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             !race.ownerUserName.isEmpty && !race.ownerId.isEmpty ? Row.owner : nil,
             raceViewModel.chapterLabel.isEmpty ? nil : Row.chapter,
             raceViewModel.seasonLabel.isEmpty ? nil : Row.season,
-            (race.maxZippyqDepth > 0 && race.disableSlotAutoPopulation == .open) ? Row.zippyQ : nil,
+            race.isZippyQEnabled ? Row.zippyQ : nil,
             raceViewModel.classLabel.isEmpty ? nil : Row.class,
             race.liveTimeEventUrl != nil ? Row.results : nil
         ].compactMap { $0 }
@@ -538,7 +537,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             alert.addAction(action)
         }
 
-        if race.canChangeEnrollment, isEnrollmentTogglingEnabled {
+        if race.canChangeEnrollment {
             let isClose = (race.status == .closed)
             let title = isClose ? "Open Enrollment" : "Close Enrollment"
             let message = isClose ? "Are you sure you want to open race enrollment?" : "Are you sure you want to close race enrollment?"
@@ -851,6 +850,14 @@ extension RaceDetailViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        return formTableViewCell(for: indexPath)
+    }
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return Constants.cellHeight
+    }
+
+    func formTableViewCell(for indexPath: IndexPath) -> FormTableViewCell {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as FormTableViewCell
 
         let row = tableViewRows[indexPath.row]
@@ -870,21 +877,15 @@ extension RaceDetailViewController: UITableViewDataSource {
             cell.detailImage = raceViewModel.raceClassImage()
         } else if row == .results, let url = race.liveTimeEventUrl {
             if let web = AppWeb(url: url) {
-                if web == .livefpv {
-                    cell.detailImage = UIImage(named: "logo_livefpv")
-                } else if web == .fpvscores {
-                    cell.detailImage = UIImage(named: "logo_fpvscores")
-                } else {
+                cell.detailImage = web.image
+
+                if cell.detailImage == nil {
                     cell.detailTextLabel?.text = URL(string: url)?.rootDomain ?? ""
                 }
             }
         }
 
         return cell
-    }
-
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return Constants.cellHeight
     }
 }
 

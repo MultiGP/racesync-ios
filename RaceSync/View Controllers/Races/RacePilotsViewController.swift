@@ -27,6 +27,7 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
         tableView.tableFooterView = UIView()
         tableView.backgroundColor = Color.gray50
         tableView.register(cellType: AvatarTableViewCell.self)
+        tableView.register(cellType: FormTableViewCell.self)
         return tableView
     }()
 
@@ -98,13 +99,18 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
     fileprivate var userApi = UserApi()
     fileprivate var userViewModels = [UserViewModel]()
 
-    fileprivate var emptyStateRaceRegisters = EmptyStateViewModel(.noRaceRegisters)
+    fileprivate let emptyStateRaceRegisters = EmptyStateViewModel(.noRaceRegisters)
     fileprivate var didTapCell: Bool = false
+    fileprivate var externalResultSection: Int = 0
 
     fileprivate var showingResults: Bool {
         guard let results = race.results, results.count > 0 else { return false }
         guard let startDate = race.startDate else { return false }
         return startDate.isPassed
+    }
+
+    func showingExternalResults() -> Bool {
+        return showingResults && race.liveTimeEventUrl != nil
     }
 
     fileprivate enum Constants {
@@ -116,7 +122,6 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     init(with race: Race) {
         self.race = race
-
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -156,9 +161,13 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate func configureNavigationItems() {
 
-        title = showingResults ? "Race Results" : "Pilots Racing"
-        let itemTitle = showingResults ? "Results" : "Pilots"
-        tabBarItem = UITabBarItem(title: itemTitle, image: UIImage(named: "icn_tabbar_roster"), selectedImage: nil)
+        if showingResults {
+            title = "Race Results"
+            tabBarItem = UITabBarItem(title: "Results", image: UIImage(named: "icn_tabbar_results"), selectedImage: UIImage(named: "icn_tabbar_results_filled"))
+        } else {
+            title = "Pilots Racing"
+            tabBarItem = UITabBarItem(title: "Pilots", image: UIImage(systemName: "person.2"), selectedImage: UIImage(systemName: "person.2.fill"))
+        }
 
         var buttons = [UIButton]()
 
@@ -278,13 +287,23 @@ fileprivate extension RacePilotsViewController {
 extension RacePilotsViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        showUserProfile(forUserAt: indexPath)
+
+        if showingExternalResults(), indexPath.section == externalResultSection {
+            guard let url = race.liveTimeEventUrl else { return }
+            WebViewController.openUrl(url)
+        } else {
+            showUserProfile(forUserAt: indexPath)
+        }
+
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
-    func tableView(_ tableview: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard userViewModels.count > 0 && showingResults else { return nil }
-        return tableHeaderView
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if showingResults {
+            return section == externalResultSection ? nil : race.scoringFormat.title
+        } else {
+            return nil
+        }
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -296,19 +315,31 @@ extension RacePilotsViewController: UITableViewDelegate {
 extension RacePilotsViewController: UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return showingExternalResults() ? 2 : 1
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return userViewModels.count
+        if showingExternalResults(), section == externalResultSection {
+            return 1
+        } else {
+            return userViewModels.count
+        }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return avatarTableViewCell(for: indexPath)
+        if showingExternalResults(), indexPath.section == externalResultSection {
+            return formTableViewCell(for: indexPath)
+        } else {
+            return avatarTableViewCell(for: indexPath)
+        }
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UniversalConstants.cellHeight
+        if showingExternalResults(), indexPath.section == externalResultSection {
+            return UniversalConstants.cellFormHeight
+        } else {
+            return UniversalConstants.cellHeight
+        }
     }
 
     func avatarTableViewCell(for indexPath: IndexPath) -> AvatarTableViewCell {
@@ -340,6 +371,24 @@ extension RacePilotsViewController: UITableViewDataSource {
             }
         } else if race.raceClass != .esport {
             cell.textPill.text = userVM.channelLabel // only real races have frequencies
+        }
+
+        return cell
+    }
+
+    func formTableViewCell(for indexPath: IndexPath) -> FormTableViewCell {
+        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as FormTableViewCell
+
+        cell.textLabel?.text = nil
+        cell.detailImage = nil
+
+        guard let url = race.liveTimeEventUrl, let web = AppWeb(url: url) else { return cell }
+
+        cell.textLabel?.text = "View full results on"
+        cell.detailImage = web.image
+        
+        if cell.detailImage == nil {
+            cell.detailTextLabel?.text = URL(string: url)?.rootDomain ?? ""
         }
 
         return cell

@@ -17,7 +17,7 @@
   </tr>
 </table>
 
-## RaceSync for iOS & WatchOS
+## RaceSync for iOS
 Get ready to race with RaceSync, the official app of the MultiGP Drone Racing League.
 Find and join local drone races hosted by MultiGP chapters worldwide with a free account.
 
@@ -66,4 +66,3 @@ The following application targets are being privately built and tested using XCo
 ## Platform
 
 * iOS 14.0+
-* WatchOS 7.0+

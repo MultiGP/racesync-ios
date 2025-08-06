@@ -23,7 +23,7 @@ import UIKit
 /// A simple and lightweight Review Manager for iOS, written in Swift
 public class RateMe: NSObject {
 
-    public static var sharedInstance = RateMe()
+    public static var shared = RateMe()
     public var appId: String?
     public weak var delegate: RateMeProtocol?
 
@@ -75,7 +75,7 @@ public class RateMe: NSObject {
      * Use this method to inform SR that a significant event has been
      * performed by the user and increasing the events count.
      */
-    public func userDidPerformEvent(showPrompt: Bool) {
+    public func userDidPerformEvent(showPrompt: Bool = false) {
         self.eventsCount += 1
 
         if showPrompt {

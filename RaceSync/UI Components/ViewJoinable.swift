@@ -89,7 +89,7 @@ extension ViewJoinable {
             var object = joinable
             object.isJoined = newState.flag
             button.joinState = newState
-            RateMe.sharedInstance.userDidPerformEvent(showPrompt: true)
+            RateMe.shared.userDidPerformEvent()
         }
 
         button.isLoading = false

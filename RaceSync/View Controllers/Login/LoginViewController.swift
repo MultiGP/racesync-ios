@@ -91,7 +91,7 @@ class LoginViewController: UIViewController {
         button.titleLabel?.font = UIFont.systemFont(ofSize: 21, weight: .regular)
         button.setTitleColor(Color.blue, for: .normal)
         button.setTitle("Login", for: .normal)
-        button.backgroundColor = Color.white.withAlphaComponent(0.7)
+        button.backgroundColor = Color.white.withAlphaComponent(0.8)
         button.layer.cornerRadius = Constants.padding/2
         button.layer.borderColor = Color.gray100.cgColor
         button.layer.borderWidth = 0.5
@@ -186,7 +186,7 @@ class LoginViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        print("Login Did Appear") // used to detect whenever the sim launched but they keyboard isn't visible
+        print("Login Did Appear") // used to detect whenever the sim launched but the keyboard isn't visible
 
         // Skip login if there's a persisted sessionId
         if APIServices.shared.isLoggedIn {
@@ -413,6 +413,7 @@ class LoginViewController: UIViewController {
         viewController.modalTransitionStyle = transition
         viewController.modalPresentationStyle = .fullScreen
 
+        // Clear UI for next time login is needed
         present(viewController, animated: true) { [weak self] in
             self?.loginButton.isLoading = false
             self?.freezeLoginForm(false)

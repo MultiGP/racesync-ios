@@ -9,7 +9,7 @@
 import Foundation
 
 public extension String {
-
+    
     func lowercasedWords() -> [String] {
         return self.lowercased().components(separatedBy: " ")
     }
@@ -66,6 +66,7 @@ public extension String {
 
     func stripHTML(_ removeLineBreaks: Bool = false) -> String {
         var str = self.stringByDecodingHTMLEntities
+        str = str.replacingOccurrences(of: "<br/>", with: "\n", options: .regularExpression, range: nil)
         str = str.replacingOccurrences(of: "<br />", with: "\n", options: .regularExpression, range: nil)
         str = str.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression, range: nil)
 

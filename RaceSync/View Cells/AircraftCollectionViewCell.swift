@@ -49,7 +49,7 @@ class AircraftCollectionViewCell: UICollectionViewCell {
         static let padding: CGFloat = UniversalConstants.padding
     }
 
-    // MARK: - Initializatiom
+    // MARK: - Initialization
 
     override init(frame: CGRect) {
         super.init(frame: frame)

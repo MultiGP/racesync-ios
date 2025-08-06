@@ -73,6 +73,7 @@ class AvatarTableViewCell: UITableViewCell {
 
     fileprivate var rankLabelWidthConstraint: Constraint?
     fileprivate var leftSpacingConstraint: Constraint?
+    fileprivate var avatarImageViewWidthConstraint: Constraint?
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -80,7 +81,7 @@ class AvatarTableViewCell: UITableViewCell {
         static let buttonSpacing: CGFloat = 8
     }
 
-    // MARK: - Initializatiom
+    // MARK: - Initialization
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -110,29 +111,42 @@ class AvatarTableViewCell: UITableViewCell {
         rankView.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(Constants.padding)
             $0.centerY.equalToSuperview()
-            rankLabelWidthConstraint = $0.width.equalTo(Constants.imageHeight/2).constraint
+
+            rankLabelWidthConstraint = $0.width.greaterThanOrEqualTo(Constants.imageHeight / 2).constraint
             rankLabelWidthConstraint?.activate()
         }
 
         contentView.addSubview(avatarImageView)
         avatarImageView.snp.makeConstraints {
-            $0.height.width.equalTo(Constants.imageHeight)
+            $0.height.equalTo(Constants.imageHeight)
             $0.centerY.equalToSuperview()
+
             leftSpacingConstraint = $0.leading.equalTo(rankView.snp.trailing).offset(Constants.padding/2).constraint
             leftSpacingConstraint?.activate()
+
+            avatarImageViewWidthConstraint = $0.width.equalTo(Constants.imageHeight).constraint
+            avatarImageViewWidthConstraint?.activate()
         }
 
         contentView.addSubview(textStackView)
         textStackView.snp.makeConstraints {
-            $0.leading.equalTo(avatarImageView.snp.trailing).offset(Constants.padding)
-            $0.trailing.equalTo(textPill.snp.leading).offset(-Constants.padding).priority(.high)
+            $0.leading.equalTo(avatarImageView.snp.trailing).offset(Constants.padding).priority(.high)
+            $0.trailing.equalTo(textPill.snp.leading).offset(-Constants.padding)
             $0.centerY.equalToSuperview()
         }
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        leftSpacingConstraint?.update(offset: rankView.isHidden ? 0 : Constants.padding/2)
-        rankLabelWidthConstraint?.update(offset: rankView.isHidden ? 0 : Constants.imageHeight/2)
+        avatarImageViewWidthConstraint?.update(offset: avatarImageView.isHidden ? 0 : Constants.imageHeight)
+
+        if rankView.isHidden {
+            rankLabelWidthConstraint?.update(offset: 0)
+            leftSpacingConstraint?.update(offset: 0)
+
+        } else {
+            rankLabelWidthConstraint?.deactivate()
+            leftSpacingConstraint?.update(offset: Constants.padding/2)
+        }
     }
 }

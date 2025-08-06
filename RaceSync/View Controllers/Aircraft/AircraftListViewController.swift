@@ -55,8 +55,8 @@ class AircraftListViewController: UIViewController {
     fileprivate var aircraftViewModels = [AircraftViewModel]()
     fileprivate var shouldReloadAircraft: Bool = true
 
-    fileprivate var emptyStateAircraft = EmptyStateViewModel(.noAircraft)
-    fileprivate var emptyStateMyAircraft = EmptyStateViewModel(.noMyAircraft)
+    fileprivate let emptyStateAircraft = EmptyStateViewModel(.noAircraft)
+    fileprivate let emptyStateMyAircraft = EmptyStateViewModel(.noMyAircraft)
     fileprivate var emptyStateError: EmptyStateViewModel?
 
     fileprivate enum Constants {
@@ -330,12 +330,6 @@ extension AircraftListViewController: EmptyDataSetDelegate {
     }
 
     func emptyDataSet(_ scrollView: UIScrollView, didTapButton button: UIButton) {
-
-        if emptyStateError != nil {
-            guard let url = AppWebConstants.getPrefilledFeedbackFormUrl() else { return }
-            WebViewController.openUrl(url)
-        } else {
-            didPressCreateButton()
-        }
+        didPressCreateButton()
     }
 }

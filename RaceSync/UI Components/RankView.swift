@@ -34,17 +34,15 @@ class RankView: UIView {
 
     // MARK: - Private Variables
 
-    func rankString(for rank: Int32?) -> String? {
+    fileprivate func rankString(for rank: Int32?) -> String? {
         guard let rank = rank, rank >= 0 else { return nil }
 
-        if rank == 1 {
-            return "🥇"
-        } else if rank == 2 {
-            return "🥈"
-        } else if rank == 3 {
-            return "🥉"
+        switch rank {
+        case 1:     return "🥇"
+        case 2:     return "🥈"
+        case 3:     return "🥉"
+        default:    return "\(rank)"
         }
-        return "\(rank)"
     }
 
     // MARK: - Initialization
@@ -65,7 +63,7 @@ class RankView: UIView {
         addSubview(titleLabel)
         titleLabel.snp.makeConstraints {
             $0.top.leading.trailing.bottom.equalToSuperview()
+            $0.width.greaterThanOrEqualTo(24).priority(.high)
         }
     }
-
 }

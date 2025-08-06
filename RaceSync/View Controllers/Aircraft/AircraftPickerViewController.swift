@@ -70,7 +70,7 @@ class AircraftPickerViewController: UIViewController {
     fileprivate let aircraftApi = AircraftApi()
     fileprivate var aircraftViewModels = [AircraftViewModel]()
 
-    fileprivate var emptyStateAircraft = EmptyStateViewModel(.noMatchingAircraft)
+    fileprivate let emptyStateAircraft = EmptyStateViewModel(.noMatchingAircraft)
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding

@@ -15,6 +15,8 @@ public enum ClogLevel {
 public class Clog : NSObject {
 
     public class func log(_ message: String, andLevel level: ClogLevel = .debug) {
+#if DEBUG
         print("+ \(message)")
+#endif
     }
 }

@@ -24,4 +24,12 @@ public class MapperUtil {
     }) { (_: String?) -> String? in
         return nil
     }
+
+    public static let doubleTransform = TransformOf<Double, String>(
+        fromJSON: { value in
+            guard let value = value else { return nil }
+            return Double(value)
+        },
+        toJSON: { _ in nil }
+    )
 }

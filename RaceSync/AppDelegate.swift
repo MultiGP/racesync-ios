@@ -7,11 +7,10 @@
 //
 
 import UIKit
+import RaceSyncAPI
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
-    // MARK: - Public Variables
 
     var window: UIWindow?
     var orientationLock: UIInterfaceOrientationMask = .portrait
@@ -20,6 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         Appearance.configureUIAppearance()
+        UNUserNotificationCenter.current().delegate = PushMessagesController.shared
         return true
     }
 
@@ -34,7 +34,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidEnterBackground(_ application: UIApplication) { }
 
-    func applicationWillEnterForeground(_ application: UIApplication) { }
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        PushMessagesController.shared.preloadDeliveredNotifications()
+    }
 
     func applicationDidBecomeActive(_ application: UIApplication) { }
 
@@ -47,5 +49,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         return true
     }
-}
 
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        PushMessagesController.shared.didRegisterForPushNotifications(with: deviceToken)
+    }
+
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        PushMessagesController.shared.failedToRegisterForPushNotifications(with: error)
+    }
+
+    func application(_ application: UIApplication,
+                     didReceiveRemoteNotification userInfo: [AnyHashable : Any],
+                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        PushMessagesController.shared.didReceivePushNotification(with: userInfo)
+        completionHandler(.newData)
+    }
+}

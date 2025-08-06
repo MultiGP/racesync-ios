@@ -53,7 +53,7 @@ class FormTableViewCell: UITableViewCell {
         static let buttonSpacing: CGFloat = 8
     }
 
-    // MARK: - Initializatiom
+    // MARK: - Initialization
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .value1, reuseIdentifier: reuseIdentifier)
