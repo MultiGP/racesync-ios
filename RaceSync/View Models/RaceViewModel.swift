@@ -15,6 +15,7 @@ class RaceViewModel: Descriptable {
     let race: Race
 
     let titleLabel: String
+    let dateLabel: String?
     let startDateLabel: String?
     let startDateDesc: String?
     let endDateLabel: String?
@@ -36,6 +37,7 @@ class RaceViewModel: Descriptable {
     init(with race: Race) {
         self.race = race
         self.titleLabel = race.name
+        self.dateLabel = Self.combinedDateLabelString(for: race.startDate, and: race.endDate) // "Sat Sept 14 @ 9:00 AM" or "Sept 14 - Sept 16"
         self.startDateLabel = Self.dateLabelString(for: race.startDate) // "Sat Sept 14 @ 9:00 AM"
         self.startDateDesc = Self.fullDateLabelString(for: race.startDate) // "Saturday, September 14th @ 9:00 AM"
         self.endDateLabel = Self.dateLabelString(for: race.endDate) // "Sat Sept 14 @ 5:00 PM"
@@ -134,6 +136,25 @@ extension RaceViewModel {
             return DateUtil.displayTimeFormatter.string(from: endDate)
         }
         return DateUtil.displayFullDateTime2LineFormatter.string(from: endDate)
+    }
+
+    static func combinedDateLabelString(for startDate: Date?, and endDate: Date?) -> String? {
+        guard let startDate = startDate else { return nil }
+
+        guard let endDate, !endDate.isInSameDay(date: startDate) else {
+            return DateUtil.localizedString(from: startDate)
+        }
+
+        let startLabel = DateUtil.displayDayFormatter.string(from: startDate)
+        var endLabel: String
+
+        if endDate.isInThisYear {
+            endLabel = DateUtil.displayDayFormatter.string(from: endDate)
+        } else {
+            endLabel = DateUtil.displayDateFormatter.string(from: endDate)
+        }
+
+        return "\(startLabel) - \(endLabel)"
     }
 
     static func locationLabelString(for race: Race) -> String {

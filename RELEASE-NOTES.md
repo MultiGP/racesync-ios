@@ -5,6 +5,7 @@
 
 ### Fixes and enhancements:
 
+   * Improving multi-day events display
    * Fixed a sorting issue with the Global Qualifier standings not being the same than the website.
    * Fixed small UI and display issues in the race detail
 

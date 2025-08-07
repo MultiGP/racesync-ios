@@ -346,8 +346,8 @@ extension RaceFeedViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as RaceTableViewCell
         guard let viewModel = raceFeed?[indexPath.row] else { return cell }
 
-        cell.dateLabel.text = viewModel.startDateLabel //"Saturday Sept 14 @ 9:00 AM"
         cell.titleLabel.text = viewModel.titleLabel
+        cell.dateLabel.text = viewModel.dateLabel //"Saturday Sept 14 @ 9:00 AM"
         cell.joinButton.type = .race
         cell.joinButton.objectId = viewModel.race.id
         cell.joinButton.joinState = viewModel.joinState
