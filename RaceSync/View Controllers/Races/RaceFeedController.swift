@@ -75,7 +75,7 @@ fileprivate extension RaceFeedController {
             guard forceFetch else { return }
         }
 
-        let filters = remoteFilters(with: .joined)
+        let filters: [RaceListFilters] = [.joined]
         let sorting: RaceViewSorting = settings.showPastEvents ? .ascending : .descending
 
         raceApi.getMyRaces(filters: filters) { [weak self] (races, error) in
@@ -96,7 +96,7 @@ fileprivate extension RaceFeedController {
             guard forceFetch else { return }
         }
 
-        let filters = remoteFilters(with: .nearby)
+        let filters: [RaceListFilters] = [.nearby]
         let sorting: RaceViewSorting = settings.showPastEvents ? .ascending : .descending
 
         let coordinate = LocationManager.shared.location?.coordinate
@@ -122,7 +122,7 @@ fileprivate extension RaceFeedController {
             guard forceFetch else { return }
         }
 
-        let filters = remoteFilters()
+        let filters = [RaceListFilters]()
         let sorting: RaceViewSorting = settings.showPastEvents ? .ascending : .descending
 
         raceApi.getRaces(with: filters, chapterIds: user.chapterIds) { [weak self] races, error in
@@ -184,19 +184,12 @@ fileprivate extension RaceFeedController {
 
         return races?.filter({ (race) -> Bool in
             guard let startDate = race.startDate else { return false }
-            return startDate.isInToday || startDate.timeIntervalSinceNow.sign == .plus
+
+            if let endDate = race.endDate {
+                return endDate.isInToday || endDate.timeIntervalSinceNow.sign == .plus
+            } else {
+                return startDate.isInToday || startDate.timeIntervalSinceNow.sign == .plus
+            }
         })
-    }
-
-    func remoteFilters(with filter: RaceListFilters? = nil) -> [RaceListFilters] {
-        var filters = [RaceListFilters]()
-
-        if let filter = filter {
-            filters += [filter]
-        }
-        if !settings.showPastEvents {
-            filters += [.upcoming]
-        }
-        return filters
     }
 }
