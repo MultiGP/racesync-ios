@@ -19,6 +19,7 @@ class UserViewModel: Descriptable {
     let username: String
     let displayName: String
     let fullName: String
+    let fullPilotName: String
     let pictureUrl: String?
     let channelLabel: String?
 
@@ -32,7 +33,8 @@ class UserViewModel: Descriptable {
 
         self.username = user.userName
         self.displayName = ViewModelHelper.titleLabel(for: user.userName, country: user.country)
-        self.fullName = "\(user.firstName.capitalized) \(user.lastName.capitalized)"
+        self.fullName = Self.fullName(user.firstName, lastName: user.lastName)
+        self.fullPilotName = Self.fullName(user.firstName, userName: user.userName, lastName: user.lastName)
         self.pictureUrl = user.profilePictureUrl
         self.channelLabel = nil
     }
@@ -53,7 +55,8 @@ class UserViewModel: Descriptable {
 
         self.username = entry.userName
         self.displayName = entry.displayName
-        self.fullName = "\(entry.firstName.capitalized) \(entry.lastName.capitalized)"
+        self.fullName = Self.fullName(entry.firstName, lastName: entry.lastName)
+        self.fullPilotName = Self.fullName(entry.firstName, userName: entry.userName, lastName: entry.lastName)
         self.pictureUrl = entry.profilePictureUrl
 
         if let band = entry.band, let channel = entry.channel {
@@ -71,7 +74,8 @@ class UserViewModel: Descriptable {
 
         self.username = entry.userName
         self.displayName = entry.displayName
-        self.fullName = "\(entry.firstName.capitalized) \(entry.lastName.capitalized)"
+        self.fullName = Self.fullName(entry.firstName, lastName: entry.lastName)
+        self.fullPilotName = Self.fullName(entry.firstName, userName: entry.userName, lastName: entry.lastName)
         self.pictureUrl = entry.profilePictureUrl
 
         if let band = entry.band, let channel = entry.channel {
@@ -107,6 +111,17 @@ class UserViewModel: Descriptable {
         }.sorted { ($0.dateAdded ?? Date.distantPast) < ($1.dateAdded ?? Date.distantPast) }
 
         return viewModelsFromEntries(uniqueRaceEntries)
+    }
+}
+
+extension UserViewModel {
+
+    static func fullName(_ firstName: String, userName: String? = nil, lastName: String) -> String {
+        if let userName = userName, !userName.isEmpty {
+            return "\(firstName.capitalized) '\(userName)' \(lastName.capitalized)"
+        } else {
+            return "\(firstName.capitalized) \(lastName.capitalized)"
+        }
     }
 }
 

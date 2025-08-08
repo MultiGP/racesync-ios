@@ -17,11 +17,11 @@ public class RacePayment: Mappable, Descriptable {
     public var status: String = ""
 
     public var datePaid: Date?
-    public var amountPaid: Float = 0
-    public var amountDue: Float = 0
-    public var netAmount: Float = 0
-    public var paypalFee: Float = 0
-    public var platformFee: Float = 0
+    public var amountPaid: Float32 = 0
+    public var amountDue: Float32 = 0
+    public var netAmount: Float32 = 0
+    public var paypalFee: Float32 = 0
+    public var platformFee: Float32 = 0
 
     // MARK: - Initialization
 
@@ -45,11 +45,11 @@ public class RacePayment: Mappable, Descriptable {
         status <- map[ParamKey.status]
 
         datePaid <- (map[ParamKey.datePaid], MapperUtil.dateTransform)
-        amountPaid <- map[ParamKey.amountPaid]
-        amountDue <- map[ParamKey.amountDue]
-        netAmount <- map[ParamKey.netAmount]
-        paypalFee <- map[ParamKey.paypalFee]
-        platformFee <- map[ParamKey.platformFee]
+        amountPaid <- (map[ParamKey.amountPaid], FloatTransform())
+        amountDue <- (map[ParamKey.amountDue], FloatTransform())
+        netAmount <- (map[ParamKey.netAmount], FloatTransform())
+        paypalFee <- (map[ParamKey.paypalFee], FloatTransform())
+        platformFee <- (map[ParamKey.platformFee], FloatTransform())
     }
 }
 

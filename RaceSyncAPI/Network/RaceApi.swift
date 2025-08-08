@@ -329,7 +329,7 @@ public class RaceApi: RaceApiInterface {
 
         let endpoint = "\(EndPoint.racePayments)?\(ParamKey.id)=\(raceId)"
 
-        repositoryAdapter.getObjects(endpoint, type: RacePayment.self, completion)
+        repositoryAdapter.getObjects(endpoint, type: RacePayment.self, keyPath: "data.paymentStatus", completion)
     }
 
     public func cancelAll() {
