@@ -28,14 +28,14 @@ public struct RaceData: Descriptable {
     public var funfly: Bool = false
     public var timing: Bool = true
     public var rounds: Int32 = 5
+    public var fee: Float32 = 0.0
+    public var feeRequired: Bool = false
 
     public var seasonId: String? = nil
     public var seasonName: String? = nil
     public var courseId: String? = nil
     public var courseName: String? = nil
-    public var shortDesc: String? = nil
-    public var longDesc: String? = nil
-    public var itinerary: String? = nil
+    public var content: String? = nil
 
     // To be used to broadcast email and/or APNS after saving
     // See php code base that needs to be implemented on the API side
@@ -65,6 +65,8 @@ public struct RaceData: Descriptable {
         self.qualifying = race.disableSlotAutoPopulation.rawValue
         self.privacy = race.type.rawValue
         self.status = race.status.rawValue
+        self.fee = race.fee
+        self.feeRequired = race.isPaymentRequiredToJoin
 
         self.funfly = race.scoringDisabled
         self.timing = race.captureTimeEnabled
@@ -73,9 +75,7 @@ public struct RaceData: Descriptable {
         self.seasonName = race.seasonName
         self.courseId = race.courseId
         self.courseName = race.courseName
-        self.shortDesc = race.description
-        self.longDesc = race.content
-        self.itinerary = race.itinerary
+        self.content = race.content
     }
 
     func toParams() -> Params {
@@ -93,6 +93,8 @@ public struct RaceData: Descriptable {
         params[ParamKey.type] = privacy
         params[ParamKey.status] = status
         params[ParamKey.disableSlotAutoPopulation] = qualifying
+        params[ParamKey.fee] = fee
+        params[ParamKey.paymentRequiredToJoin] = (fee > 0 && feeRequired) // disable if fee is zero
 
         // set a default values for ZippyQ
         if qualifying == QualifyingType.open.rawValue {
@@ -108,9 +110,7 @@ public struct RaceData: Descriptable {
         if seasonId != nil { params[ParamKey.seasonId] = seasonId }
         if courseId != nil { params[ParamKey.courseId] = courseId }
 
-        params[ParamKey.description] = shortDesc
-        params[ParamKey.content] = longDesc
-        params[ParamKey.itineraryContent] = itinerary
+        params[ParamKey.content] = content
         params[ParamKey.sendNotification] = sendNotification
 
         return params

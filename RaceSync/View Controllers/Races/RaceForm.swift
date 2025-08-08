@@ -6,7 +6,7 @@
 //  Copyright © 2022 MultiGP Inc. All rights reserved.
 //
 
-import Foundation
+import UIKit
 import RaceSyncAPI
 
 enum RaceFormMode: Int {
@@ -34,8 +34,8 @@ enum RaceFormSection: Int {
 }
 
 enum RaceFormRow: Int, EnumTitle {
-    case name, startDate, endDate, chapter, `class`, format, schedule, privacy, status,
-         scoring, timing, rounds, season, location, shortDesc, longDesc, itinerary, notify
+    case name, startDate, endDate, chapter, `class`, format, privacy, fee, feeRequired, status,
+         scoring, schedule, rounds, season, location, content, notify
 
     public var title: String {
         switch self {
@@ -43,21 +43,20 @@ enum RaceFormRow: Int, EnumTitle {
         case .startDate:    return "Start Date"
         case .endDate:      return "End Date"
         case .chapter:      return "Chapter"
-        case .class:        return "Class"
-        case .format:       return "Format"
-        case .schedule:     return "Schedule"
-        case .privacy:      return "Privacy"
+        case .class:        return "Race Class"
+        case .format:       return "Race Format"
+        case .privacy:      return "Event Privacy"
+        case .fee:          return "Race Fee"
+        case .feeRequired:  return "Payment Required to Join"
         case .status:       return "Status"
 
         case .scoring:      return "Fun Fly (Disable Scoring)"
-        case .timing:       return "Time Capturing"
-        case .rounds:       return "Rounds/Pack count"
+        case .schedule:     return "Schedule"
+        case .rounds:       return "Pack Limit"
         case .season:       return "Season"
         case .location:     return "Location"
-        case .shortDesc:    return "Short Description"
-        case .longDesc:     return "Description"
-        case .itinerary:    return "Itinerary"
-        case .notify:       return "Send Notification? **"
+        case .content:      return "Description"
+        case .notify:       return "Notify Pilots **"
         }
     }
 }
@@ -88,30 +87,22 @@ extension RaceFormRow {
             return QualifyingType(rawValue: raceData.qualifying)?.title
         case .privacy:
             return EventType(rawValue: raceData.privacy)?.title
+        case .fee:
+            return String(format: "$%.2f USD", raceData.fee)
+        case .feeRequired:
+            return raceData.feeRequired ? "" : nil // will be converted to Bool
         case .status:
             return RaceStatus(rawValue: raceData.status)?.title
         case .scoring:
             return raceData.funfly ? "" : nil // will be converted to Bool
-        case .timing:
-            return raceData.timing ? "" : nil // will be converted to Bool
         case .rounds:
             return "\(raceData.rounds)"
         case .season:
             return raceData.seasonName
         case .location:
             return raceData.courseName
-        case .shortDesc:
-            if let text = raceData.shortDesc, text.count > 0 {
-                return text.stripHTML(true).safeSubstring(to: 20).capitalized + "…"
-            }
-            return nil
-        case .longDesc:
-            if let text = raceData.longDesc, text.count > 0 {
-                return text.stripHTML(true).safeSubstring(to: 20).capitalized + "…"
-            }
-            return nil
-        case .itinerary:
-            if let text = raceData.itinerary, text.count > 0 {
+        case .content:
+            if let text = raceData.content, text.count > 0 {
                 return text.stripHTML(true).safeSubstring(to: 20).capitalized + "…"
             }
             return nil
@@ -139,16 +130,25 @@ extension RaceFormRow {
 
     var formType: FormType {
         switch self {
-        case .name:
+        case .name, .fee:
             return .textfield
         case .startDate, .endDate:
             return .datePicker
-        case .scoring, .timing, .notify:
+        case .scoring, .feeRequired, .notify:
             return .switch
-        case .shortDesc, .longDesc, .itinerary:
+        case .content:
             return .textEditor
         default:
             return .textPicker
+        }
+    }
+
+    var keyboardType: UIKeyboardType {
+        switch self {
+        case .fee:
+            return UIKeyboardType.decimalPad
+        default:
+            return UIKeyboardType.default
         }
     }
 }
