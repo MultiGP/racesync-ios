@@ -83,7 +83,7 @@ public class Race: Mappable, Joinable, Descriptable {
 
     // MARK: - Initialization
 
-    fileprivate static let requiredProperties = [/*ParamKey.id, */ParamKey.name, ParamKey.chapterId, ParamKey.ownerId]
+    fileprivate static let requiredProperties = [ParamKey.id, ParamKey.name, ParamKey.chapterId, ParamKey.ownerId]
 
     public required convenience init?(map: Map) {
         for requiredProperty in Self.requiredProperties {

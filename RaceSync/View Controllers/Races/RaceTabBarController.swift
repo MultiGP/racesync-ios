@@ -215,11 +215,10 @@ extension RaceTabBarController {
         raceApi.view(race: raceId) { [weak self] (race, error) in
             self?.isLoading = false
 
-            if let race = race, let raceId = self?.raceId {
+            if let race = race {
 
-                // TODO: Temporary hack since race/view API doesn't include the raceId & raceOwnerName attributes just yet
+                // TODO: Temporary hack since race/view API doesn't include the raceOwnerName attribute
                 // See issue https://github.com/MultiGP/multigp-com/issues/88
-                race.id = raceId
                 race.ownerUserName = self?.race?.ownerUserName ?? ""
 
                 self?.race = race
@@ -234,11 +233,10 @@ extension RaceTabBarController {
         guard !isLoading else { return }
 
         raceApi.view(race: raceId) { [weak self] (race, error) in
-            guard let race = race, let raceId = self?.raceId , let vcs = self?.viewControllers else { return }
+            guard let race = race, let vcs = self?.viewControllers else { return }
 
-            // TODO: Temporary hack since race/view API doesn't include the raceId & raceOwnerName attributes just yet
+            // TODO: Temporary hack since race/view API doesn't include the raceOwnerName attribute
             // See issue https://github.com/MultiGP/multigp-com/issues/88
-            race.id = raceId
             race.ownerUserName = self?.race?.ownerUserName ?? ""
 
             self?.race = race
