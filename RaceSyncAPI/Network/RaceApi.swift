@@ -146,6 +146,11 @@ public protocol RaceApiInterface {
                     completion: @escaping StatusCompletionBlock)
 
     /**
+    */
+    func getRacePayments(with raceId: ObjectId,
+                    completion: @escaping ObjectCompletionBlock<[RacePayment]>)
+
+    /**
      Cancels all the HTTP requests of race API endpoint
     */
     func cancelAll()
@@ -317,6 +322,14 @@ public class RaceApi: RaceApiInterface {
         let endpoint = "\(EndPoint.raceFinalize)?\(ParamKey.id)=\(raceId)"
 
         repositoryAdapter.performAction(endpoint, completion: completion)
+    }
+
+    public func getRacePayments(with raceId: ObjectId,
+                         completion: @escaping ObjectCompletionBlock<[RacePayment]>) {
+
+        let endpoint = "\(EndPoint.racePayments)?\(ParamKey.id)=\(raceId)"
+
+        repositoryAdapter.getObjects(endpoint, type: RacePayment.self, completion)
     }
 
     public func cancelAll() {

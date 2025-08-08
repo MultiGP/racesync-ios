@@ -38,3 +38,67 @@ enum ButtonImg {
     static let radius = UIImage(named: "icn_settings_radius")
     static let empty = UIImage(named: "icn_navbar_empty")
 }
+
+enum SystemImg {
+
+    static let calendarCclock = UIImage(systemName:"calendar.badge.clock") // iOS 14.0+
+    static let person = UIImage(systemName:"person.2") // iOS 13.0+
+    static let personFill = UIImage(systemName:"person.2.fill") // iOS 13.0+
+    static let safari = UIImage(systemName:"safari") // iOS 13.0+
+    static let banknote = UIImage(systemName:"banknote") // iOS 14.0+
+    static let banknoteFill = UIImage(systemName:"banknote.fill") // iOS 14.0+
+    static let gearshape = UIImage(systemName:"gearshape") // iOS 14.0+
+    static let gearshapeFill = UIImage(systemName:"gearshape.fill") // iOS 14.0+
+
+    static var flagCheckeredCrossed: UIImage? {
+        if #available(iOS 18.0, *) {
+            return UIImage(systemName:"flag.pattern.checkered.2.crossed") // iOS 18.0+
+        } else if #available(iOS 16.0, *) {
+            return UIImage(systemName:"flag.checkered.2.crossed") // iOS 16.0+
+        } else {
+            return UIImage(systemName:"flag.2.crossed") // iOS 15.0+
+        }
+    }
+
+    static var flagCheckered: UIImage? {
+        if #available(iOS 18.0, *) {
+            return UIImage(systemName:"flag.pattern.checkered") // iOS 18.0+
+        } else if #available(iOS 16.0, *) {
+            return UIImage(systemName:"flag.checkered") // iOS 16.0+
+        } else {
+            return UIImage(systemName:"checkerboard.rectangle") // iOS 14.0+
+        }
+    }
+
+    static var medal: UIImage? {
+        if #available(iOS 16.0, *) {
+            return UIImage(systemName:"medal") // iOS 16.0+
+        } else {
+            return UIImage(named: "icn_tab_medal")
+        }
+    }
+
+    static var medalFill: UIImage? {
+        if #available(iOS 16.0, *) {
+            return UIImage(systemName:"medal.fill") // iOS 16.0+
+        } else {
+            return UIImage(systemName:"")
+        }
+    }
+
+    static var trophy: UIImage? {
+        if #available(iOS 16.0, *) {
+            return UIImage(systemName:"trophy") // iOS 16.0+
+        } else {
+            return UIImage(systemName:"")
+        }
+    }
+
+    static var trophyFill: UIImage? {
+        if #available(iOS 16.0, *) {
+            return UIImage(systemName:"trophy.fill") // iOS 16.0+
+        } else {
+            return UIImage(systemName:"")
+        }
+    }
+}

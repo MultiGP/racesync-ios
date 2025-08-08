@@ -21,6 +21,9 @@ public enum MGPWebConstant: String {
     case viewZipperSeasonResults = "https://www.multigp.com/MultiGP/views/viewZipperSeasonResults.php"
     //     ?season1=2025Summer&season2=2025Spring&exportcsv=true
 
+    case processPayment = "https://www.multigp.com/MultiGP/views/processPayment.php"
+    //     ?raceId=zzzzzz&pilotId=yyyy
+
 }
 
 public class MGPWeb {

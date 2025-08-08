@@ -108,10 +108,10 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
 
         if showingResults {
             title = "Race Results"
-            tabBarItem = UITabBarItem(title: "Results", image: UIImage(named: "icn_tabbar_results"), selectedImage: UIImage(named: "icn_tabbar_results_filled"))
+            tabBarItem = UITabBarItem(title: "Results", image: SystemImg.medal, selectedImage: SystemImg.medalFill)
         } else {
             title = "Pilots Racing"
-            tabBarItem = UITabBarItem(title: "Pilots", image: UIImage(systemName: "person.2"), selectedImage: UIImage(systemName: "person.2.fill"))
+            tabBarItem = UITabBarItem(title: "Pilots", image: SystemImg.person, selectedImage: SystemImg.personFill)
         }
 
         var buttons = [UIButton]()
@@ -135,6 +135,8 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
         stackView.spacing = Constants.buttonSpacing
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: stackView)
     }
+
+    // MARK: - Content
 
     fileprivate func populateData() {
 

@@ -57,4 +57,12 @@ public extension Race {
     var isZippyQEnabled: Bool {
         return (maxZippyqDepth > 0 && disableSlotAutoPopulation == .open)
     }
+
+    var isPayable: Bool {
+        return fee > 0
+    }
+
+    var isPaid: Bool {
+        return isPayable && amountDue == 0
+    }
 }

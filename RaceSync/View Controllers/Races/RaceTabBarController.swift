@@ -131,6 +131,10 @@ class RaceTabBarController: UITabBarController {
         vcs += [RacePilotsViewController(with: race)]
         vcs += [RaceScheduleViewController(with: race)]
 
+        if race.isMyChapter, race.fee > 0 {
+            vcs += [RacePaymentViewController(with: race)]
+        }
+
         for vc in vcs { vc.willMove(toParent: self) }
         viewControllers = vcs
         for vc in vcs { vc.didMove(toParent: self) }

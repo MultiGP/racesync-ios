@@ -182,7 +182,7 @@ class StandingsViewController: UIViewController, Shimmable {
 
     fileprivate func configureNavigationItems() {
         title = "Standings"
-        tabBarItem = UITabBarItem(title: "Standings", image: UIImage(systemName:"trophy"), selectedImage: UIImage(systemName:"trophy.fill"))
+        tabBarItem = UITabBarItem(title: "Standings", image: SystemImg.trophy, selectedImage: SystemImg.trophyFill)
     }
 
     // MARK: - Data Update

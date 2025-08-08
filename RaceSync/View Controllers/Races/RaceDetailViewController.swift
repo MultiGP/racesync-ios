@@ -464,7 +464,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate func configureNavigationItems() {
         title = "Race Details"
-        tabBarItem = UITabBarItem(title: "Details", image: UIImage(named: "icn_tabbar_details"), selectedImage: nil)
+        tabBarItem = UITabBarItem(title: "Details", image: SystemImg.calendarCclock, selectedImage: nil)
 
         var buttons = [UIButton]()
 

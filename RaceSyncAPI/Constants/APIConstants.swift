@@ -41,6 +41,7 @@ enum EndPoint {
     static let raceUpdate = "race/update"
     static let raceDelete = "race/delete"
     static let raceFinalize = "race/finalize"
+    static let racePayments = "race/getRacePayments"
 
     static let chapterList = "chapter/list"
     static let chapterFindLocal = "chapter/findLocal"
@@ -78,6 +79,7 @@ enum ParamKey {
     // ids
     static let id = "id"
     static let sessionId = "sessionId"
+    static let raceId = "raceId"
     static let pilotId = "pilotId"
     static let chapterId = "chapterId"
     static let aircraftId = "aircraftId"
@@ -192,6 +194,14 @@ enum ParamKey {
     static let isPublic = "isPublic"
     static let pushNotificationEnabled = "pushNotificationEnabled"
     static let query = "query"
+    static let fee = "fee"
+    static let paymentRequiredToJoin = "paymentRequiredToJoin"
+    static let amountPaid = "amountpaid"
+    static let netAmount = "netAmount"
+    static let paypalFee = "paypalFee"
+    static let platformFee = "platformFee"
+    static let amountDue = "amountdue"
+    static let datePaid = "datepaid"
 
     // Geo-location
     static let address = "address"

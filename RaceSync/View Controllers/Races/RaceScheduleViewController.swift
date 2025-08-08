@@ -123,11 +123,10 @@ class RaceScheduleViewController: UIViewController {
     fileprivate func configureNavigationItems() {
 
         title = "Race Schedule"
-        let itemTitle = "Schedule"
-        tabBarItem = UITabBarItem(title: itemTitle, image: UIImage(named: "icn_tabbar_schedule"), selectedImage: nil)
+        tabBarItem = UITabBarItem(title: "Schedule", image: SystemImg.flagCheckered, selectedImage: nil)
         tabBarItem.isEnabled = canDisplayZippyQ
 
-        let rightBtnItem = UIBarButtonItem(image: UIImage(systemName:"safari"), style: .plain, target: self, action: #selector(openZippyQSchedule))
+        let rightBtnItem = UIBarButtonItem(image: SystemImg.safari, style: .plain, target: self, action: #selector(openZippyQSchedule))
         navigationItem.rightBarButtonItem = rightBtnItem
         navigationItem.rightBarButtonItem?.isEnabled = canDisplayZippyQ
     }

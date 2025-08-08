@@ -124,7 +124,7 @@ class SettingsViewController: UIViewController {
     }
 
     fileprivate func configureNavigationItems() {
-        tabBarItem = UITabBarItem(title: "Settings", image: UIImage(systemName:"gearshape"), selectedImage: UIImage(systemName:"gearshape.fill"))
+        tabBarItem = UITabBarItem(title: "Settings", image: SystemImg.gearshape, selectedImage: SystemImg.gearshapeFill)
     }
 
     // MARK: - Actions
@@ -132,7 +132,7 @@ class SettingsViewController: UIViewController {
     func loadSections() {
 
         sections = {
-            var resources: [Row] = [.tracksGuide, .buildGuide, .seasonRules, .visitSite]
+            let resources: [Row] = [.tracksGuide, .buildGuide, .seasonRules, .visitSite]
             var auth: [Row] = [.logout]
             var about: [Row] = []
 
