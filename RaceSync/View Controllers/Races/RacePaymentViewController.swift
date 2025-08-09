@@ -22,9 +22,9 @@ class RacePaymentViewController: UIViewController, RaceTabbable {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.tableHeaderView = UIView()
         tableView.tableFooterView = UIView()
-        tableView.backgroundColor = Color.gray50
-        
+        tableView.backgroundColor = Color.clear
         tableView.register(cellType: ColumnTableViewCell.self)
         tableView.register(ColumnTableViewHeaderView.self, forHeaderFooterViewReuseIdentifier: ColumnTableViewHeaderView.identifier)
         tableView.refreshControl = self.refreshControl
@@ -33,7 +33,7 @@ class RacePaymentViewController: UIViewController, RaceTabbable {
 
     fileprivate lazy var refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
-        refreshControl.backgroundColor = Color.white
+        refreshControl.backgroundColor = Color.clear
         refreshControl.tintColor = Color.blue
         refreshControl.addTarget(self, action: #selector(didPullRefreshControl), for: .valueChanged)
         return refreshControl
@@ -45,9 +45,9 @@ class RacePaymentViewController: UIViewController, RaceTabbable {
 
     fileprivate lazy var headerView: ColumnTableViewHeaderView = {
         let header = ColumnTableViewHeaderView()
-        header.addColumn(with: "⇅ Pilot", orientation: .left) // TODO: Let the subview do the chevron layout logic. Use an enum to track each column type
-        header.addColumn(with: "⇅ Paid", orientation: .right)
-        header.addColumn(with: "⇅ Received", orientation: .right)
+        header.addColumn(with: Column.pilot.title, orientation: .left) // TODO: Let the subview do the chevron layout logic. Use an enum to track each column type
+        header.addColumn(with: Column.paid.title, orientation: .right)
+        header.addColumn(with: Column.received.title, orientation: .right)
         header.addTarget(self, action: #selector(didPressColumnTitle))
         return header
     }()
@@ -58,15 +58,27 @@ class RacePaymentViewController: UIViewController, RaceTabbable {
 
     fileprivate var isLoading: Bool = false {
         didSet {
-            if isLoading { activityIndicatorView.startAnimating() }
-            else { activityIndicatorView.stopAnimating() }
+            if isLoading {
+                activityIndicatorView.startAnimating()
+                tableView.isUserInteractionEnabled = false
+            }
+            else {
+                activityIndicatorView.stopAnimating()
+                tableView.isUserInteractionEnabled = true
+            }
         }
     }
 
     fileprivate var raceApi = RaceApi()
     fileprivate var userApi = UserApi()
-    fileprivate var userViewModels = [UserViewModel]()
-    fileprivate var payments = [RacePayment]()
+    fileprivate var userPaymentPairs: [(user: UserViewModel, payment: RacePayment?)] = []
+
+    fileprivate var sortingColumn: Column = .pilot
+    fileprivate var sortingAscending = true
+
+    fileprivate let mainSection: Int = 0
+    fileprivate var totalPaid: Float32 = 0
+    fileprivate var totalReceived: Float32 = 0
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -115,16 +127,16 @@ class RacePaymentViewController: UIViewController, RaceTabbable {
 
     fileprivate func setupLayout() {
 
-        view.backgroundColor = Color.white
-
-        view.addSubview(activityIndicatorView)
-        activityIndicatorView.snp.makeConstraints {
-            $0.centerX.centerY.equalToSuperview()
-        }
+        view.backgroundColor = Color.gray50
 
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
             $0.top.leading.trailing.bottom.equalToSuperview()
+        }
+
+        view.addSubview(activityIndicatorView)
+        activityIndicatorView.snp.makeConstraints {
+            $0.centerX.centerY.equalToSuperview()
         }
     }
 
@@ -153,25 +165,102 @@ class RacePaymentViewController: UIViewController, RaceTabbable {
 
     fileprivate func populateData() {
 
-        self.isLoading = true
+        if userPaymentPairs.count == 0 {
+            isLoading = true
+        }
+
+        var userViewModels = [UserViewModel]()
 
         if let entries = race.entries {
             userViewModels = UserViewModel.viewModelsFromEntries(entries)
         }
 
         raceApi.getRacePayments(with: race.id) { payments, error in
-            if let payments = payments {
-                self.payments = payments
-            } else if let _ = error {
-                // handle error
+            guard let payments = payments else {
+                return self.finishLoading()
             }
-            self.isLoading = false
-            self.tableView.reloadData()
+
+            let userPilotIds = Set(userViewModels.map { $0.userId })
+            let extraPayments = payments.filter { !userPilotIds.contains($0.pilotId) }
+
+            self.calculateTotals(from: payments)
+
+            guard !extraPayments.isEmpty else {
+                self.pair(payments: payments, with: userViewModels)
+                return self.finishLoading()
+            }
+
+            var counter = extraPayments.count
+
+            for payment in extraPayments {
+                self.userApi.getUser(with: payment.pilotId) { user, _ in
+                    if let user = user {
+                        userViewModels.append(UserViewModel(with: user))
+                    }
+                    counter -= 1
+                    if counter == 0 {
+                        self.pair(payments: payments, with: userViewModels)
+                        self.finishLoading()
+                    }
+                }
+            }
         }
     }
 
-    @objc fileprivate func didPullRefreshControl() {
-        // TODO: Implement refresh. Should reload parent too.
+    fileprivate func calculateTotals(from payments: [RacePayment]) {
+        totalPaid = 0
+        totalReceived = 0
+
+        for payment in payments {
+            totalPaid += payment.amountPaid
+            totalReceived += payment.netAmount
+        }
+    }
+
+    fileprivate func pair(payments: [RacePayment], with userViewModels: [UserViewModel]) {
+        // Create dictionary for quick lookup
+        let paymentDict = Dictionary(uniqueKeysWithValues: payments.map { ($0.pilotId, $0) })
+
+        // Map all users into tuple with matching payment (if any)
+        userPaymentPairs = userViewModels.map { viewModel in
+            (user: viewModel, payment: paymentDict[viewModel.userId])
+        }
+
+        // sort by username as default
+        sortByUsername(order: sortingAscending)
+    }
+
+    fileprivate func sortByUsername(order: Bool = true) {
+        userPaymentPairs.sort {
+            let comparison = $0.user.username.localizedCaseInsensitiveCompare($1.user.username)
+            return comparison == (order ? .orderedAscending : .orderedDescending)
+        }
+    }
+
+    fileprivate func sortByPaid(order: Bool = true) {
+        userPaymentPairs.sort {
+            let a = $0.payment?.amountPaid ?? 0
+            let b = $1.payment?.amountPaid ?? 0
+            return order ? a < b : a > b
+        }
+    }
+
+    fileprivate func sortByReceived(order: Bool = true) {
+        userPaymentPairs.sort {
+            let a = $0.payment?.netAmount ?? 0
+            let b = $1.payment?.netAmount ?? 0
+            return order ? a < b : a > b
+        }
+    }
+
+    fileprivate func finishLoading() {
+        isLoading = false
+
+        if refreshControl.isRefreshing {
+            refreshControl.endRefreshing()
+        }
+
+        tableView.reloadData()
     }
 
     func reloadContent() {
@@ -179,64 +268,130 @@ class RacePaymentViewController: UIViewController, RaceTabbable {
         tableView.reloadData()
     }
 
+    @objc fileprivate func didPullRefreshControl() {
+        tabBarController.reloadRaceView()
+    }
+
     // MARK: - Action
 
-    @objc fileprivate func didPressColumnTitle(_ sender: Any) {
+    @objc fileprivate func didPressColumnTitle(_ sender: UIButton) {
+        guard let title = sender.title(for: .normal), let column = Column(title: title) else { return }
 
-        // TODO: Implement Sorting
+        if column == sortingColumn, sortingAscending == true {
+            sortingAscending = false
+        } else {
+            sortingAscending = true
+        }
+
+        switch column {
+        case .pilot:
+            sortByUsername(order: sortingAscending)
+        case .paid:
+            sortByPaid(order: sortingAscending)
+        case .received:
+            sortByReceived(order: sortingAscending)
+        }
+
+        sortingColumn = column
+
+        tableView.reloadData()
     }
 }
 
 extension RacePaymentViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-
-        let viewModel = userViewModels[indexPath.row]
-
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        return headerView
+        if section == mainSection {
+            guard !isLoading else { return nil }
+            return headerView
+        }
+        return nil
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return ColumnTableViewHeaderView.headerHeight
+        if section == mainSection {
+            return ColumnTableViewHeaderView.headerHeight
+        }
+        return 0
+    }
+
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 0
+    }
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return ColumnTableViewCell.height
     }
 }
 
 extension RacePaymentViewController: UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return 2
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        payments.count
+        if section == mainSection {
+            return userPaymentPairs.count
+        }
+        return 1
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return columnTableViewCell(for: indexPath)
+        if indexPath.section == mainSection {
+            return paymentTableViewCell(for: indexPath)
+        } else {
+            return totalTableViewCell(for: indexPath)
+        }
     }
 
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UniversalConstants.cellFormHeight
-    }
-
-    func columnTableViewCell(for indexPath: IndexPath) -> ColumnTableViewCell {
+    func paymentTableViewCell(for indexPath: IndexPath) -> ColumnTableViewCell {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as ColumnTableViewCell
 
-        let payment = payments[indexPath.row]
-        cell.textLabel?.text = payment.pilotId
-        cell.columnLabel1.text = String(format: "$%.2f", payment.amountPaid)
-        cell.columnLabel2.text = String(format: "$%.2f", payment.netAmount)
-        cell.accessoryType = .none
+        let pair = userPaymentPairs[indexPath.row]
+        let user = pair.user
+        let payment = pair.payment
 
-        if let userViewModel = userViewModels.first(where: { $0.userId == payment.pilotId }) {
-            cell.textLabel?.text = userViewModel.username
-            cell.detailTextLabel?.text = userViewModel.fullName
+        if !user.isJoined {
+            cell.backgroundView?.backgroundColor = Color.red.withAlphaComponent(0.2)
+        } else {
+            cell.backgroundView?.backgroundColor = (indexPath.row % 2 == 0) ? Color.gray20 : Color.white
         }
 
+        cell.textLabel?.text = user.isJoined ? user.username : "\(user.username) (Not Joined)"
+        cell.detailTextLabel?.text = user.fullName
+        cell.columnLabel1.text = String(format: "$%.2f", payment?.amountPaid ?? 0)
+        cell.columnLabel2.text = String(format: "$%.2f", payment?.netAmount ?? 0)
         return cell
+    }
+
+    func totalTableViewCell(for indexPath: IndexPath) -> ColumnTableViewCell {
+        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as ColumnTableViewCell
+        cell.backgroundView?.backgroundColor = Color.white
+
+        cell.textLabel?.text = "Total:"
+        cell.detailTextLabel?.text = nil
+        cell.columnLabel1.text = String(format: "$%.2f", totalPaid)
+        cell.columnLabel2.text = String(format: "$%.2f", totalReceived)
+        return cell
+    }
+}
+
+fileprivate enum Column: EnumTitle {
+    case pilot, paid, received
+
+    public var title: String {
+        switch self {
+        case .pilot:
+            return "Pilot"
+        case .paid:
+            return "Paid"
+        case .received:
+            return "Received"
+        }
     }
 }

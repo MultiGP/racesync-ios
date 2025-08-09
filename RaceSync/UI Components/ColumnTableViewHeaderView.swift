@@ -27,6 +27,7 @@ class ColumnTableViewHeaderView: UITableViewHeaderFooterView {
         stackView.distribution = .fill
         stackView.alignment = .center
         stackView.spacing = 40
+        stackView.backgroundColor = Color.clear
 
         // Spacer setup
         spacer.setContentHuggingPriority(.defaultLow, for: .horizontal)
@@ -68,11 +69,15 @@ class ColumnTableViewHeaderView: UITableViewHeaderFooterView {
         button.addTarget(self, action: #selector(didPressButton), for: .touchUpInside)
         button.setTitle(title, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
-        button.titleLabel?.textColor = Color.gray200
+        button.titleLabel?.textColor = Color.white
         button.titleLabel?.textAlignment = (orientation == .left) ? .left : .right
-        button.tintColor = Color.gray200
+        button.tintColor = Color.white
         button.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         button.setContentCompressionResistancePriority(.required, for: .horizontal)
+
+        let string = "\("↕".textSymbol) \(title)" // ⇅ ⇵ ↕
+        let attributedString = NSAttributedString(string: string)
+        button.setAttributedTitle(attributedString, for: .normal)
 
         switch orientation {
         case .left:
@@ -92,13 +97,22 @@ class ColumnTableViewHeaderView: UITableViewHeaderFooterView {
 
     fileprivate func setupLayout() {
         backgroundView = UIView()
-        backgroundView?.backgroundColor = Color.gray50
+        backgroundView?.backgroundColor = Color.gray200.withAlphaComponent(0.98)
 
         addSubview(stackView)
         stackView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(Constants.padding)
+            $0.centerY.equalToSuperview()
             $0.leading.equalToSuperview().offset(Constants.padding)
             $0.trailing.equalToSuperview().offset(-Constants.padding)
+        }
+
+        let separatorLine = UIView()
+        separatorLine.backgroundColor = Color.gray400
+        addSubview(separatorLine)
+        separatorLine.snp.makeConstraints {
+            $0.height.equalTo(0.5)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(self.snp.bottom)
         }
     }
 
@@ -112,7 +126,11 @@ class ColumnTableViewHeaderView: UITableViewHeaderFooterView {
     @objc fileprivate func didPressButton(_ sender: Any) {
 
         if let target = target, let action = action {
-            _ = target.perform(action, with: self, with: sender)
+            _ = target.perform(action, with: sender)
         }
     }
+}
+
+extension String {
+    var textSymbol: String { self + "\u{FE0E}" }
 }

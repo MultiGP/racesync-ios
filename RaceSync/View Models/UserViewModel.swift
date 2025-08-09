@@ -24,6 +24,7 @@ class UserViewModel: Descriptable {
     let channelLabel: String?
 
     var score: Int32? = nil
+    var isJoined: Bool = false
 
     init(with user: User) {
         self.userId = user.id
@@ -58,6 +59,7 @@ class UserViewModel: Descriptable {
         self.fullName = Self.fullName(entry.firstName, lastName: entry.lastName)
         self.fullPilotName = Self.fullName(entry.firstName, userName: entry.userName, lastName: entry.lastName)
         self.pictureUrl = entry.profilePictureUrl
+        self.isJoined = true
 
         if let band = entry.band, let channel = entry.channel {
             channelLabel = "\(band)\(channel)"
@@ -77,6 +79,7 @@ class UserViewModel: Descriptable {
         self.fullName = Self.fullName(entry.firstName, lastName: entry.lastName)
         self.fullPilotName = Self.fullName(entry.firstName, userName: entry.userName, lastName: entry.lastName)
         self.pictureUrl = entry.profilePictureUrl
+        self.isJoined = true
 
         if let band = entry.band, let channel = entry.channel {
             channelLabel = "\(band)\(channel)"

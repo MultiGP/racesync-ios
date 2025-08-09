@@ -13,6 +13,7 @@ class ExternalAppSchemes {
     static let GoogleMapsScheme = "comgooglemaps://"
     static let WazeScheme = "waze://"
     static let WalletScheme = "shoebox://" // undocumented!
+    static let Paypal = "paypal://"
 
     static let CalendarScheme = "calshow://" // undocumented!
 }

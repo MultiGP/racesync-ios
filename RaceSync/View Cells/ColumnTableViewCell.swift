@@ -13,6 +13,10 @@ class ColumnTableViewCell: UITableViewCell {
 
     // MARK: - Public Variables
 
+    static var height: CGFloat {
+        return Constants.height
+    }
+
     lazy var columnLabel1: UILabel = {
         return genericLabel()
     }()
@@ -23,19 +27,10 @@ class ColumnTableViewCell: UITableViewCell {
 
     // MARK: - Private Variables
 
-    fileprivate lazy var stackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [columnLabel1, columnLabel2])
-        stackView.axis = .horizontal
-        stackView.distribution = .fillProportionally
-        stackView.alignment = .center
-        stackView.spacing = Constants.buttonSpacing
-        return stackView
-    }()
-
     fileprivate func genericLabel() -> UILabel {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 16, weight: .regular)
-        label.textColor = Color.gray200
+        label.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        label.textColor = Color.gray500
         label.textAlignment = .right
         return label
     }
@@ -43,6 +38,7 @@ class ColumnTableViewCell: UITableViewCell {
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
         static let buttonSpacing: CGFloat = 60
+        static let height: CGFloat = 76
     }
 
     // MARK: - Initialization
@@ -63,12 +59,26 @@ class ColumnTableViewCell: UITableViewCell {
         selectedBackgroundView.backgroundColor = Color.gray50
         self.selectedBackgroundView = selectedBackgroundView
 
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = Color.white
+        self.backgroundView = backgroundView
+
+        textLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        textLabel?.textColor = Color.black
+        detailTextLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        detailTextLabel?.textColor = Color.gray300
         accessoryType = .none
 
-        addSubview(stackView)
-        stackView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(Constants.padding)
+        addSubview(columnLabel2)
+        columnLabel2.snp.makeConstraints {
             $0.trailing.equalToSuperview().offset(-Constants.padding)
+            $0.centerY.equalToSuperview()
+        }
+
+        addSubview(columnLabel1)
+        columnLabel1.snp.makeConstraints {
+            $0.trailing.equalToSuperview().offset(-Constants.padding*8)
+            $0.centerY.equalToSuperview()
         }
     }
 }
