@@ -126,7 +126,7 @@ extension RaceViewModel {
 
     static func fullDateLabelString(for date: Date?) -> String? {
         guard let date = date else { return nil }
-        return DateUtil.displayFullDateTime2LineFormatter.string(from: date)
+        return DateUtil.displayFullDateTimeFormatter.string(from: date)
     }
 
     static func fullDateLabelString(for startDate: Date?, and endDate: Date?) -> String? {
@@ -135,7 +135,7 @@ extension RaceViewModel {
         if startDate.isInSameDay(date: endDate) {
             return DateUtil.displayTimeFormatter.string(from: endDate)
         }
-        return DateUtil.displayFullDateTime2LineFormatter.string(from: endDate)
+        return DateUtil.displayFullDateTimeFormatter.string(from: endDate)
     }
 
     static func combinedDateLabelString(for startDate: Date?, and endDate: Date?) -> String? {

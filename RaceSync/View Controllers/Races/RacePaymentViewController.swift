@@ -148,6 +148,13 @@ class RacePaymentViewController: UIViewController, RaceTabbable {
 
         var buttons = [UIButton]()
 
+        if race.isMyChapter {
+            let editButton = CustomButton(type: .system)
+            editButton.addTarget(self, action: #selector(didPressEditButton), for: .touchUpInside)
+            editButton.setImage(ButtonImg.edit, for: .normal)
+            buttons += [editButton]
+        }
+
         let shareButton = CustomButton(type: .system)
         shareButton.addTarget(tabBarController, action: #selector(tabBarController.didPressShareButton), for: .touchUpInside)
         shareButton.setImage(ButtonImg.share, for: .normal)
@@ -159,6 +166,7 @@ class RacePaymentViewController: UIViewController, RaceTabbable {
         stackView.alignment = .lastBaseline
         stackView.spacing = Constants.buttonSpacing
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: stackView)
+        
     }
 
     // MARK: - Content
@@ -268,11 +276,22 @@ class RacePaymentViewController: UIViewController, RaceTabbable {
         tableView.reloadData()
     }
 
-    @objc fileprivate func didPullRefreshControl() {
+    func reloadRaceView() {
         tabBarController.reloadRaceView()
     }
 
     // MARK: - Action
+
+    @objc func didPressEditButton() {
+        let users = userPaymentPairs.map { $0.user }
+
+        let vc = RacePilotsPickerController(with: race)
+        vc.externalUserViewModels = users
+        vc.delegate = self
+
+        let nc = NavigationController(rootViewController: vc)
+        present(nc, animated: true)
+    }
 
     @objc fileprivate func didPressColumnTitle(_ sender: UIButton) {
         guard let title = sender.title(for: .normal), let column = Column(title: title) else { return }
@@ -295,6 +314,10 @@ class RacePaymentViewController: UIViewController, RaceTabbable {
         sortingColumn = column
 
         tableView.reloadData()
+    }
+
+    @objc fileprivate func didPullRefreshControl() {
+        reloadRaceView()
     }
 }
 
@@ -378,6 +401,13 @@ extension RacePaymentViewController: UITableViewDataSource {
         cell.columnLabel1.text = String(format: "$%.2f", totalPaid)
         cell.columnLabel2.text = String(format: "$%.2f", totalReceived)
         return cell
+    }
+}
+
+extension RacePaymentViewController: RacePilotsPickerControllerDelegate {
+
+    func pickerControllerDidUpdate(_ viewController: RacePilotsPickerController) {
+        reloadRaceView()
     }
 }
 

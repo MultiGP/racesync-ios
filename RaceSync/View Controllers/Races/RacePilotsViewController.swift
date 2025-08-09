@@ -184,7 +184,7 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
     // MARK: - Actions
 
     @objc func didPressEditButton() {
-        let vc = RacePilotsPickerController(with: race, raceId: tabBarController.raceId)
+        let vc = RacePilotsPickerController(with: race)
         vc.externalUserViewModels = userViewModels
         vc.delegate = self
 

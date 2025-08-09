@@ -21,14 +21,7 @@ class RacePilotsPickerController: UIViewController, Shimmable {
     // MARK: - Public Variables
 
     var delegate: RacePilotsPickerControllerDelegate?
-
-    var externalUserViewModels: [UserViewModel]? {
-        didSet {
-            if let viewModels = externalUserViewModels {
-                joinedIds = viewModels.map({$0.userId})
-            }
-        }
-    }
+    var externalUserViewModels: [UserViewModel]?
 
     lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
@@ -58,7 +51,6 @@ class RacePilotsPickerController: UIViewController, Shimmable {
     }()
 
     fileprivate var race: Race
-    fileprivate var raceId: ObjectId
     fileprivate let raceApi = RaceApi()
     fileprivate var chapterApi = ChapterApi()
     fileprivate var userApi = UserApi()
@@ -66,7 +58,6 @@ class RacePilotsPickerController: UIViewController, Shimmable {
     fileprivate var sections = [Section]()
     fileprivate var userViewModels = [UserViewModel]()
     fileprivate var searchResult = [UserViewModel]()
-    fileprivate var joinedIds = [ObjectId]()
     fileprivate var didForceJoin: Bool = false
 
     fileprivate let emptyStateMembers = EmptyStateViewModel(.noChapterMembers)
@@ -86,9 +77,8 @@ class RacePilotsPickerController: UIViewController, Shimmable {
 
     // MARK: - Initialization
 
-    init(with race: Race, raceId: ObjectId) {
+    init(with race: Race) {
         self.race = race
-        self.raceId = raceId
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -159,7 +149,7 @@ class RacePilotsPickerController: UIViewController, Shimmable {
         button.isLoading = true
         let state = button.joinState
 
-        if joinedIds.contains(viewModel.userId) {
+        if viewModel.isJoined {
             ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Remove \(viewModel.username) from the race?", message: nil, destructiveTitle: "Yes, Remove", completion: { (action) in
                 self.resignUser(with: userId) { (newState) in
                     button.isLoading = false
@@ -167,7 +157,6 @@ class RacePilotsPickerController: UIViewController, Shimmable {
                     if state != newState {
                         button.joinState = newState
                         button.setTitle(Constants.joinButtonTitle, for: .normal)
-                        self.joinedIds = self.joinedIds.filter { $0 != userId }
                         self.didForceJoin = true
 
                         RateMe.shared.userDidPerformEvent()
@@ -183,7 +172,6 @@ class RacePilotsPickerController: UIViewController, Shimmable {
 
                     if state != newState {
                         button.joinState = newState
-                        self.joinedIds += [userId]
                         self.didForceJoin = true
 
                         RateMe.shared.userDidPerformEvent()
@@ -197,13 +185,12 @@ class RacePilotsPickerController: UIViewController, Shimmable {
 
     fileprivate func forceJoinUser(with id: ObjectId, completion: @escaping JoinStateCompletionBlock) {
 
-        raceApi.forceJoin(race: raceId, pilotId: id) { [weak self] (status, error) in
-            guard let strongSelf = self else { return }
+        raceApi.forceJoin(race: race.id, pilotId: id) { (status, error) in
 
             if status == true {
                 completion(.joined)
 
-                strongSelf.raceApi.checkIn(race: strongSelf.raceId, pilotId: id) { (raceEntry, error) in
+                self.raceApi.checkIn(race: self.race.id, pilotId: id) { (raceEntry, error) in
                     // when joining a race, we checkin to get a frequency assigned
                 }
             } else if let error = error {
@@ -217,7 +204,7 @@ class RacePilotsPickerController: UIViewController, Shimmable {
 
     fileprivate func resignUser(with id: ObjectId, completion: @escaping JoinStateCompletionBlock) {
 
-        raceApi.forceResign(race: raceId, pilotId: id) { (status, error) in
+        raceApi.forceResign(race: race.id, pilotId: id) { (status, error) in
             if status == true {
                 completion(.join)
             } else if let error = error {
@@ -331,7 +318,7 @@ extension RacePilotsPickerController: UITableViewDataSource {
         cell.joinButton.type = .race
         cell.joinButton.objectId = viewModel.userId
 
-        if joinedIds.contains(viewModel.userId) {
+        if viewModel.isJoined {
             cell.joinButton.joinState = .joined
         } else {
             cell.joinButton.joinState = .join
