@@ -99,6 +99,7 @@
 		4F6CAD8F298342DE00E80B5F /* UserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6CAD8E298342DE00E80B5F /* UserData.swift */; };
 		4F714DE123CD4906000C4036 /* CalendarActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F714DE023CD4906000C4036 /* CalendarActivity.swift */; };
 		4F714DE323CD5EAA000C4036 /* SafariActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F714DE223CD5EAA000C4036 /* SafariActivity.swift */; };
+		4F71B3262E47C1880029D3CB /* PaypalActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F71B3252E47C1880029D3CB /* PaypalActivity.swift */; };
 		4F73DAEA2DEE7300007B15F2 /* String+UIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F73DAE92DEE7300007B15F2 /* String+UIExtensions.swift */; };
 		4F791C9823A6105700F15FD7 /* TextPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F791C9723A6105700F15FD7 /* TextPill.swift */; };
 		4F791C9A23A66BA900F15FD7 /* NSAttributedString+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F791C9923A66BA900F15FD7 /* NSAttributedString+Extensions.swift */; };
@@ -405,6 +406,7 @@
 		4F6CAD8E298342DE00E80B5F /* UserData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserData.swift; sourceTree = "<group>"; };
 		4F714DE023CD4906000C4036 /* CalendarActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarActivity.swift; sourceTree = "<group>"; };
 		4F714DE223CD5EAA000C4036 /* SafariActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariActivity.swift; sourceTree = "<group>"; };
+		4F71B3252E47C1880029D3CB /* PaypalActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaypalActivity.swift; sourceTree = "<group>"; };
 		4F73DAE92DEE7300007B15F2 /* String+UIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+UIExtensions.swift"; sourceTree = "<group>"; };
 		4F791C9723A6105700F15FD7 /* TextPill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPill.swift; sourceTree = "<group>"; };
 		4F791C9923A66BA900F15FD7 /* NSAttributedString+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+Extensions.swift"; sourceTree = "<group>"; };
@@ -822,6 +824,7 @@
 				4F714DE223CD5EAA000C4036 /* SafariActivity.swift */,
 				4F27243A2517DB1C000C7408 /* CopyLinkActivity.swift */,
 				4F482EFA251158FF00DBA0DF /* SocialActivity.swift */,
+				4F71B3252E47C1880029D3CB /* PaypalActivity.swift */,
 				4F4129DA2DC0AE32006A2763 /* NotificationsController.swift */,
 			);
 			path = "UI Utils";
@@ -1544,6 +1547,7 @@
 				4F6429122402DB00005E8036 /* ImageConstants.swift in Sources */,
 				4FD4E1C5237F9746008816B3 /* UserViewController.swift in Sources */,
 				4FD4E1DF237FEC0A008816B3 /* Appearance.swift in Sources */,
+				4F71B3262E47C1880029D3CB /* PaypalActivity.swift in Sources */,
 				4F2724362515D88A000C7408 /* Chapter+UIExtensions.swift in Sources */,
 				4F3D640B23FB0C8800DE6DF2 /* AircraftListViewController.swift in Sources */,
 				4FD53FB123A0D48F00158206 /* UserRaceTableViewCell.swift in Sources */,

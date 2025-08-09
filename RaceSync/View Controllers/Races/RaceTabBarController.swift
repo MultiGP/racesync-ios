@@ -131,7 +131,7 @@ class RaceTabBarController: UITabBarController {
         vcs += [RacePilotsViewController(with: race)]
         vcs += [RaceScheduleViewController(with: race)]
 
-        if race.isMyChapter/* , race.fee > 0*/ {
+        if race.canManagePayments {
             vcs += [RacePaymentViewController(with: race)]
         }
 
@@ -254,7 +254,13 @@ extension RaceTabBarController {
         guard  let raceURL = MGPWeb.getURL(for: .raceView, value: raceId) else { return }
 
         var items: [Any] = [raceURL]
-        var activities: [UIActivity] = [CopyLinkActivity()]
+        var activities = [UIActivity]()
+
+        if let race = race, race.canManagePayments {
+            activities += [PaypalActivity()]
+        }
+
+        activities += [MultiGPActivity(), CopyLinkActivity()]
 
         // Calendar integration
         if let event = race?.createCalendarEvent(with: raceId) {
@@ -262,7 +268,6 @@ extension RaceTabBarController {
             activities += [CalendarActivity()]
         }
 
-        activities += [MultiGPActivity()]
 
         let vc = UIActivityViewController(activityItems: items, applicationActivities: activities)
         vc.excludeAllActivityTypes(except: [.airDrop])

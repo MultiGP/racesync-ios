@@ -38,12 +38,12 @@ enum SocialPlatform: String {
 
     var title: String {
         switch self {
-            case .livefpv:      return "View on LiveFPV.com"
-            case .facebook:     return "View on Facebook"
-            case .twitter:      return "View on Twitter"
-            case .youtube:      return "View on Youtube"
-            case .instagram:    return "View on Instagram"
-            case .meetup:       return "View on Meetup.com"
+            case .livefpv:      return "View on livefpv.com"
+            case .facebook:     return "View on facebook"
+            case .twitter:      return "View on X"
+            case .youtube:      return "View on youtube"
+            case .instagram:    return "View on instagram"
+            case .meetup:       return "View on meetup.com"
             case .website:      return "Visit homepage"
         }
     }

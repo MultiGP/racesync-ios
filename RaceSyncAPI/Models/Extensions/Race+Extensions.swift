@@ -59,10 +59,15 @@ public extension Race {
     }
 
     var isPayable: Bool {
-        return fee > 0
+        return true // fee > 0
     }
 
     var isPaid: Bool {
         return isPayable && amountDue == 0
     }
+
+    var canManagePayments: Bool {
+        return isPayable && isMyChapter
+    }
+
 }
