@@ -380,7 +380,7 @@ extension RacePilotsViewController: EmptyDataSetDelegate {
 
     func emptyDataSet(_ scrollView: UIScrollView, didTapButton button: UIButton) {
 
-        let currentState: JoinState = .join
+        let currentState: JoinState = .notJoined
 
         join(race: race, raceApi: raceApi) { [weak self] (newState) in
             if currentState != newState {

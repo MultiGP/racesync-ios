@@ -194,10 +194,10 @@ class RacePilotsPickerController: UIViewController, Shimmable {
                     // when joining a race, we checkin to get a frequency assigned
                 }
             } else if let error = error {
-                completion(.join)
+                completion(.notJoined)
                 AlertUtil.presentAlertMessage("Couldn't add this user to the race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
             } else {
-                completion(.join)
+                completion(.notJoined)
             }
         }
     }
@@ -206,7 +206,7 @@ class RacePilotsPickerController: UIViewController, Shimmable {
 
         raceApi.forceResign(race: race.id, pilotId: id) { (status, error) in
             if status == true {
-                completion(.join)
+                completion(.notJoined)
             } else if let error = error {
                 completion(.joined)
                 AlertUtil.presentAlertMessage("Couldn't remove this user from the race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
@@ -321,7 +321,7 @@ extension RacePilotsPickerController: UITableViewDataSource {
         if viewModel.isJoined {
             cell.joinButton.joinState = .joined
         } else {
-            cell.joinButton.joinState = .join
+            cell.joinButton.joinState = .notJoined
             cell.joinButton.setTitle(Constants.joinButtonTitle, for: .normal)
         }
 

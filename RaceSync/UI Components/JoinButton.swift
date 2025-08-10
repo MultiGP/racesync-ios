@@ -22,7 +22,7 @@ class JoinButton: CustomButton {
     /// compact style to be used in small cells, with no interactivity
     var isCompact: Bool = false
 
-    var joinState: JoinState = .join {
+    var joinState: JoinState = .notJoined {
         didSet {
             updateLayout()
         }
@@ -79,7 +79,7 @@ class JoinButton: CustomButton {
     fileprivate func updateLayout() {
 
         UIView.performWithoutAnimation {
-            if isCompact && joinState == .join {
+            if isCompact && joinState == .notJoined {
                 isHidden = true
                 return
             } else {
@@ -193,32 +193,35 @@ extension JoinState {
 
     var fillColor: UIColor {
         switch self {
-        case .joined:   return Color.green
-        case .join:     return Color.white
-        case .closed:    return Color.gray100
+        case .notJoined:    return Color.white
+        case .joined:       return Color.green
+        case .joinedPaid:   return Color.green
+        case .closed:       return Color.gray100
         }
     }
 
     var outlineColor: UIColor? {
         switch self {
-        case .join:     return Color.green
-        default:        return nil
+        case .notJoined:    return Color.green
+        default:            return nil
         }
     }
 
     var titleColor: UIColor {
         switch self {
-        case .joined:   return Color.white
-        case .join:     return Color.green
-        case .closed:   return Color.black
+        case .notJoined:    return Color.green
+        case .joined:       return Color.white
+        case .joinedPaid:   return Color.white
+        case .closed:       return Color.black
         }
     }
 
     var font: UIFont {
         switch self {
-        case .joined:   return UIFont.systemFont(ofSize: 14, weight: .regular)
-        case .join:     return UIFont.systemFont(ofSize: 14, weight: .bold)
-        case .closed:   return UIFont.systemFont(ofSize: 14, weight: .regular)
+        case .joined:       return UIFont.systemFont(ofSize: 14, weight: .regular)
+        case .joinedPaid:   return UIFont.systemFont(ofSize: 14, weight: .regular)
+        case .notJoined:    return UIFont.systemFont(ofSize: 14, weight: .bold)
+        case .closed:       return UIFont.systemFont(ofSize: 14, weight: .regular)
         }
     }
 

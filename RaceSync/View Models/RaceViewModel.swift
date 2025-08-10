@@ -176,7 +176,7 @@ extension RaceViewModel {
 
     static func joinState(for race: Race) -> JoinState {
         if race.status == .closed { return .closed }
-        return race.isJoined ? .joined : .join
+        return race.isJoined ? .joined : .notJoined
     }
 
     static func distance(for race: Race) -> Double {

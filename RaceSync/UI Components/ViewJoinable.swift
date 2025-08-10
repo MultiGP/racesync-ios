@@ -18,18 +18,19 @@ protocol ViewJoinable {
 }
 
 public enum JoinState {
-    case join, joined, closed
+    case notJoined, joined, joinedPaid, closed
 
     var title: String {
         switch self {
-        case .join:   return "Join"
-        case .joined: return "Joined"
-        case .closed: return "Closed"
+        case .notJoined:    return "Join"
+        case .joined:       return "Joined"
+        case .joinedPaid:   return "Paid"
+        case .closed:       return "Closed"
         }
     }
 
     var flag: Bool {
-        if self == .join { return true }
+        if self == .notJoined { return true }
         return false
     }
 }
@@ -41,7 +42,7 @@ extension ViewJoinable {
         button.isLoading = true
         let state = button.joinState
 
-        if state == .join {
+        if state == .notJoined {
             if let endDate = race.endDate, endDate.isPassed {
                 AlertUtil.presentAlertMessage("Cannot join a passed race.",
                                               title: "Uh Oh",
@@ -69,7 +70,7 @@ extension ViewJoinable {
                 self.handleStateChange(state, newState: newState, in: button, with: chapter, completion)
             }
 
-        } else if state == .join  {
+        } else if state == .notJoined  {
             join(chapter: chapter, chapterApi: chapterApi) { (newState) in
                 self.handleStateChange(state, newState: newState, in: button, with: chapter, completion)
             }
@@ -113,10 +114,10 @@ extension ViewJoinable {
                         // when joining a race, we checkin to get a frequency assigned
                     }
                 } else if let error = error {
-                    completion(.join)
+                    completion(.notJoined)
                     AlertUtil.presentAlertMessage("Couldn't join this race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
                 } else {
-                    completion(.join)
+                    completion(.notJoined)
                 }
             }
         }
@@ -129,7 +130,7 @@ extension ViewJoinable {
                                                       completion: { (action) in
                                                         raceApi.resign(race: race.id) { (status, error) in
                                                             if status == true {
-                                                                completion(.join)
+                                                                completion(.notJoined)
                                                             } else {
                                                                 completion(.joined)
                                                                 AlertUtil.presentAlertMessage("Couldn't resign from this race. Please try again later.", title: "Error", delay: 0.5)
@@ -151,10 +152,10 @@ extension ViewJoinable {
             if status == true {
                 completion(.joined)
             } else if let error = error {
-                completion(.join)
+                completion(.notJoined)
                 AlertUtil.presentAlertMessage("Couldn't join this chapter. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
             } else {
-                completion(.join)
+                completion(.notJoined)
             }
         }
     }
@@ -166,7 +167,7 @@ extension ViewJoinable {
                                                       completion: { (action) in
                                                         chapterApi.resign(chapter: chapter.id) { (status, error) in
                                                             if status == true {
-                                                                completion(.join)
+                                                                completion(.notJoined)
                                                             } else {
                                                                 completion(.joined)
                                                                 AlertUtil.presentAlertMessage("Couldn't leave this chapter. Please try again later.", title: "Error", delay: 0.5)
