@@ -77,7 +77,7 @@ public protocol RaceApiInterface {
     /**
      */
     func join(race raceId: ObjectId,
-              aircraftId: ObjectId,
+              aircraftId: ObjectId?,
               completion: @escaping StatusCompletionBlock)
 
     /**
@@ -225,12 +225,16 @@ public class RaceApi: RaceApiInterface {
         repositoryAdapter.getObject(endpoint, type: Race.self, completion)
     }
 
-    public func join(race raceId: ObjectId, aircraftId: ObjectId, completion: @escaping StatusCompletionBlock) {
+    public func join(race raceId: ObjectId, aircraftId: ObjectId? = nil, completion: @escaping StatusCompletionBlock) {
 
         let endpoint = "\(EndPoint.raceJoin)?\(ParamKey.id)=\(raceId)"
-        let parameters = [ParamKey.aircraftId: aircraftId]
+        var params: Params = [:]
 
-        repositoryAdapter.performAction(endpoint, parameters: parameters, completion: completion)
+        if let id = aircraftId {
+            params[ParamKey.aircraftId] = id
+        }
+
+        repositoryAdapter.performAction(endpoint, parameters: params, completion: completion)
     }
 
     public func resign(race raceId: ObjectId, completion: @escaping StatusCompletionBlock) {
@@ -243,17 +247,17 @@ public class RaceApi: RaceApiInterface {
     public func forceJoin(race raceId: ObjectId, pilotId: ObjectId, completion: @escaping StatusCompletionBlock) {
 
         let endpoint = "\(EndPoint.raceForceJoin)?\(ParamKey.id)=\(raceId)"
-        let parameters = [ParamKey.pilotId: pilotId]
+        let params = [ParamKey.pilotId: pilotId]
 
-        repositoryAdapter.performAction(endpoint, parameters: parameters, completion: completion)
+        repositoryAdapter.performAction(endpoint, parameters: params, completion: completion)
     }
 
     public func forceResign(race raceId: ObjectId, pilotId: ObjectId, completion: @escaping StatusCompletionBlock) {
 
         let endpoint = "\(EndPoint.raceResign)?\(ParamKey.id)=\(raceId)"
-        let parameters = [ParamKey.pilotId: pilotId]
+        let params = [ParamKey.pilotId: pilotId]
 
-        repositoryAdapter.performAction(endpoint, parameters: parameters, completion: completion)
+        repositoryAdapter.performAction(endpoint, parameters: params, completion: completion)
     }
 
     public func open(race raceId: ObjectId, completion: @escaping StatusCompletionBlock) {

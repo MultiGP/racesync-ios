@@ -28,14 +28,6 @@ public enum JoinState {
         }
     }
 
-    fileprivate var inverted: JoinState {
-        switch self {
-        case .join:   return .joined
-        case .joined: return .join
-        case .closed: return .closed
-        }
-    }
-
     var flag: Bool {
         if self == .join { return true }
         return false
@@ -89,6 +81,7 @@ extension ViewJoinable {
             var object = joinable
             object.isJoined = newState.flag
             button.joinState = newState
+
             RateMe.shared.userDidPerformEvent()
         }
 
@@ -103,10 +96,16 @@ extension ViewJoinable {
 
     func join(race: Race, raceApi: RaceApi, _ completion: @escaping JoinStateCompletionBlock) {
 
-        let aircraftPicker = AircraftPickerController.showAircraftPicker(for: race)
+        if race.requiresPayment, let url = race.getMyPaymentUrl()  {
+            UIApplication.shared.open(url, options: [:]) { completed in
+                //
+            }
+        } else {
+            handleJoiningRace()
+        }
 
-        aircraftPicker.didSelect = { (aircraftId) in
-            raceApi.join(race: race.id, aircraftId: aircraftId) { (status, error) in
+        func handleJoiningRace() {
+            raceApi.join(race: race.id) { (status, error) in
                 if status == true {
                     completion(.joined)
 
@@ -120,14 +119,6 @@ extension ViewJoinable {
                     completion(.join)
                 }
             }
-        }
-
-        aircraftPicker.didError = {
-            AlertUtil.presentAlertMessage("Couldn't join this race. Please try again later.", title: "Error", delay: 0.5)
-        }
-
-        aircraftPicker.didCancel = {
-            completion(.join)
         }
     }
 
