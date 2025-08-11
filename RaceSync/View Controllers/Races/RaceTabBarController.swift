@@ -112,6 +112,8 @@ class RaceTabBarController: UITabBarController {
 
     fileprivate func setupLayout() {
 
+        configureTabBar()
+
         title = ""
         view.backgroundColor = Color.white
 
@@ -145,10 +147,16 @@ class RaceTabBarController: UITabBarController {
 
         // Trick to pre-load each view controller
         preloadTabs()
-        tabBar.isHidden = false
+        self.tabBar.isHidden = false
 
         // Using a custom button title in this case, to display the id of a Race on tap
         navigationItem.titleView = titleButton
+    }
+
+    fileprivate func configureTabBar() {
+
+        // Replace default tab bar with custom one
+        setValue(RoundedSelectionTabBar(), forKey: "tabBar")
     }
 
     // MARK: - Actions
@@ -304,6 +312,9 @@ extension RaceTabBarController: UITabBarControllerDelegate {
     }
 
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+
+        (tabBar as? RoundedSelectionTabBar)?.updateSelectionFrame(animated: true)
+
         if let index = viewControllers?.lastIndex(of: viewController) {
             didSelectedIndex(index)
         }

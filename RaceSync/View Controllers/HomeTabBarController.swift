@@ -138,9 +138,10 @@ class HomeTabBarController: UITabBarController {
 
     fileprivate func setupLayout() {
 
+        configureTabBar()
         configureNavigationItems()
 
-        let vcs: [UIViewController] = [raceFeedVC, standingsVC, settingsVC]
+        let vcs: [UIViewController] = [standingsVC, raceFeedVC, settingsVC]
 
         for vc in vcs { vc.willMove(toParent: self) }
         self.viewControllers = vcs
@@ -154,7 +155,12 @@ class HomeTabBarController: UITabBarController {
 
         // Trick to pre-load each view controller
         self.preloadTabs()
-        self.tabBar.isHidden = false
+    }
+
+    fileprivate func configureTabBar() {
+
+        // Replace default tab bar with custom one
+        setValue(RoundedSelectionTabBar(), forKey: "tabBar")
     }
 
     fileprivate func configureNavigationItems() {
@@ -318,6 +324,8 @@ extension HomeTabBarController: ChapterPickerViewControllerDelegate {
 extension HomeTabBarController: UITabBarControllerDelegate {
 
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+
+        (tabBar as? RoundedSelectionTabBar)?.updateSelectionFrame(animated: true)
 
         if hidesNavigationShadowAtRoot, let vcs = viewControllers, vcs.contains(viewController) {
             hideNavigationShadow()
