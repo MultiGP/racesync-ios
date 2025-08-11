@@ -49,14 +49,22 @@ enum RaceFormRow: Int, EnumTitle {
         case .fee:          return "Race Fee"
         case .feeRequired:  return "Payment Required to Join"
         case .status:       return "Status"
-
-        case .scoring:      return "Fun Fly (Disable Scoring)"
+        case .scoring:      return "Fun Fly"
         case .schedule:     return "Schedule"
         case .rounds:       return "Pack Limit"
         case .season:       return "Season"
         case .location:     return "Location"
         case .content:      return "Description"
         case .notify:       return "Notify Pilots **"
+        }
+    }
+
+    public var tooltip: String? {
+        switch self {
+        case .name:         return "Name of this event"
+        case .fee:          return "Race Fee (USD)"
+        case .content:      return "Enter the details of this event"
+        default: return nil
         }
     }
 }

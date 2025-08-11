@@ -82,13 +82,13 @@ class RaceFormViewController: UIViewController {
 
     fileprivate let presenter = Appearance.defaultPresenter()
     fileprivate var formNavigationController: NavigationController?
-    fileprivate var isFormEnabled: Bool
+    fileprivate var isQuickFormActive: Bool
 
     // Needs to be computed each time, since there are dynamic values
     fileprivate var sections: [RaceFormSection: [RaceFormRow]] {
         get {
-            let general: [RaceFormRow] = [.name, .startDate, .endDate, .chapter, .class, .format, .privacy, .status, .fee, .feeRequired]
-            let specific: [RaceFormRow] = [.scoring, .schedule, .rounds, .season, .location, .content, .notify]
+            let general: [RaceFormRow] = [.name, .startDate, .endDate, .chapter, .location, .privacy, .status, .fee, .feeRequired]
+            let specific: [RaceFormRow] = [.scoring, .schedule, .rounds, .class, .format, .season, .content, .notify]
             return [.general: general, .specific: specific]
         }
     }
@@ -104,7 +104,7 @@ class RaceFormViewController: UIViewController {
         self.chapters = chapters
         self.data = RaceData(with: selectedChapterId, chapterName: selectedChapterName)
         self.currentSection = .general
-        self.isFormEnabled = true
+        self.isQuickFormActive = true
 
         super.init(nibName: nil, bundle: nil)
         self.title = "New Event"
@@ -115,7 +115,7 @@ class RaceFormViewController: UIViewController {
         self.data = raceData
         self.initialData = initialRaceData
         self.currentSection = section
-        self.isFormEnabled = false
+        self.isQuickFormActive = false
 
         super.init(nibName: nil, bundle: nil)
         self.title = data.name
@@ -141,7 +141,7 @@ class RaceFormViewController: UIViewController {
         super.viewDidAppear(animated)
 
         // Bring up keyboard on first row, if applicable
-        if isFormEnabled, currentSection == .general, editMode == .new {
+        if isQuickFormActive, currentSection == .general, editMode == .new {
             let rows = currentSectionRows()
 
             DispatchQueue.main.async { [weak self] in
@@ -212,9 +212,7 @@ class RaceFormViewController: UIViewController {
             } else {
                 handleSubmission()
             }
-        } /*else if currentSection == .frequencies {
-
-        }*/
+        }
     }
 
     @objc fileprivate func didPressCloseButton() {
@@ -258,7 +256,7 @@ fileprivate extension RaceFormViewController {
         let vc = TextFieldViewController(with: text)
         vc.delegate = self
         vc.title = row.title
-        vc.textField.placeholder = row.title
+        vc.textField.placeholder = row.tooltip
         vc.textField.keyboardType = row.keyboardType
 
         if pushed {
@@ -275,23 +273,45 @@ fileprivate extension RaceFormViewController {
     }
 
     func showTextPicker(forRow row: RaceFormRow, pushed: Bool) {
-        let values = values(for: row)
-        let rowValue = row.value(from: data)
 
-        let vc = TextPickerViewController(with: values, selectedItem: rowValue)
-        vc.delegate = self
-        vc.title = row.title
-
-        if pushed {
-            formNavigationController?.pushViewController(vc, animated: true)
-            formNavigationController?.delegate = self
-        } else {
-            let nc = NavigationController(rootViewController: vc)
-            customPresentViewController(presenter, viewController: nc, animated: true)
-
-            if formNavigationController == nil {
-                formNavigationController = nc
+        func present<T>(_ cached: [T]?, fetch: (@escaping ([T]?, NSError?) -> Void) -> Void,
+                        set: @escaping ([T]) -> Void,
+                        selected: String?,
+                        name: @escaping (T) -> String?) {
+            if let cached = cached {
+                show(cached.map { name($0) ?? "" }, selected)
+            } else {
+                fetch { list, _ in
+                    if let list = list { set(list) }
+                    show(list?.map { name($0) ?? "" } ?? [], selected)
+                }
             }
+        }
+
+        func show(_ items: [String], _ selected: String?) {
+            let vc = TextPickerViewController(with: items, selectedItem: selected)
+            vc.delegate = self
+            vc.title = row.title
+
+            if pushed {
+                formNavigationController?.pushViewController(vc, animated: true)
+                formNavigationController?.delegate = self
+            } else {
+                let nc = NavigationController(rootViewController: vc)
+                customPresentViewController(presenter, viewController: nc, animated: true)
+                formNavigationController = formNavigationController ?? nc
+            }
+        }
+
+        switch row {
+        case .season:
+            present(seasons, fetch: { seasonApi.getSeasons(forChapter: data.chapterId, $0) },
+                    set: { self.seasons = $0 }, selected: data.seasonName, name: { $0.name })
+        case .location:
+            present(courses, fetch: { courseApi.getCourses(forChapter: data.chapterId, $0) },
+                    set: { self.courses = $0 }, selected: data.courseName, name: { $0.name })
+        default:
+            show(values(for: row), row.value(from: data))
         }
     }
 
@@ -316,60 +336,6 @@ fileprivate extension RaceFormViewController {
         }
     }
 
-    func showSeasonPicker(for row: RaceFormRow, cell: FormTableViewCell) {
-        if seasons != nil {
-            presentTextPicker(seasons)
-        } else {
-            cell.isLoading = true
-
-            seasonApi.getSeasons(forChapter: data.chapterId) { seasons, error in
-                presentTextPicker(seasons)
-                cell.isLoading = false
-            }
-        }
-
-        func presentTextPicker(_ seasons: [Season]?) {
-            guard let seasons = seasons, seasons.count > 0 else { return }
-
-            let names = seasons.compactMap { $0.name }
-            self.seasons = seasons
-
-            let vc = TextPickerViewController(with: names, selectedItem: data.seasonName)
-            vc.delegate = self
-            vc.title = row.title
-
-            let nc = NavigationController(rootViewController: vc)
-            customPresentViewController(presenter, viewController: nc, animated: true)
-        }
-    }
-
-    func showCoursePicker(for row: RaceFormRow, cell: FormTableViewCell) {
-        if courses != nil {
-            presentTextPicker(courses)
-        } else {
-            cell.isLoading = true
-
-            courseApi.getCourses(forChapter: data.chapterId) { courses, error in
-                presentTextPicker(courses)
-                cell.isLoading = false
-            }
-        }
-
-        func presentTextPicker(_ courses: [Course]?) {
-            guard let courses = courses, courses.count > 0 else { return }
-
-            let names = courses.compactMap { $0.name }
-            self.courses = courses
-
-            let vc = TextPickerViewController(with: names, selectedItem: data.courseName)
-            vc.delegate = self
-            vc.title = row.title
-
-            let nc = NavigationController(rootViewController: vc)
-            customPresentViewController(presenter, viewController: nc, animated: true)
-        }
-    }
-
     func showTextViewController(forRow row: RaceFormRow) {
 
         var text: String?
@@ -381,6 +347,7 @@ fileprivate extension RaceFormViewController {
         let vc = TextEditorViewController(with: text)
         vc.delegate = self
         vc.title = row.title
+        vc.placeholder = row.tooltip
 
         navigationController?.pushViewController(vc, animated: true)
     }
@@ -464,6 +431,15 @@ extension RaceFormViewController {
             return row.isRowRequired
         })
     }
+
+    func nextRowInCurrentSection() -> RaceFormRow? {
+        guard let rows = currentSectionRows(),
+              let row = selectedRow,
+              let index = rows.firstIndex(of: row)
+        else { return nil }
+
+        return rows[safe: index + 1]
+    }
 }
 
 // MARK: - UITableView Delegate
@@ -488,13 +464,7 @@ extension RaceFormViewController: UITableViewDelegate {
             showDatePicker(forRow: row, pushed: false)
             showDatePicker(forRow: row, pushed: false)
         } else if row.formType == .textPicker {
-            if row == .season {
-                showSeasonPicker(for: row, cell: cell)
-            } else if row == .location {
-                showCoursePicker(for: row, cell: cell)
-            } else {
-                showTextPicker(forRow: row, pushed: false)
-            }
+            showTextPicker(forRow: row, pushed: false)
         } else if row.formType == .textEditor {
             showTextViewController(forRow: row)
         }
@@ -641,8 +611,9 @@ extension RaceFormViewController: FormBaseViewControllerDelegate {
         }
 
         // handle next row
-        if isFormEnabled, let rows = currentSectionRows(), row.rawValue < rows.count-1  {
-            guard let nextRow = RaceFormRow(rawValue: row.rawValue + 1) else { return }
+        if isQuickFormActive, let nextRow = nextRowInCurrentSection()  {
+
+            print("Next Row: \(nextRow.title)")
 
             if nextRow.formType == .textfield {
                 selectedRow = nextRow
@@ -661,7 +632,7 @@ extension RaceFormViewController: FormBaseViewControllerDelegate {
 
     func formViewControllerDidDismiss(_ viewController: FormBaseViewController) {
         // invalidate form once reaching the section
-        isFormEnabled = false
+        isQuickFormActive = false
         selectedRow = nil
 
         viewController.dismiss(animated: true)
@@ -687,16 +658,15 @@ extension RaceFormViewController: FormBaseViewControllerDelegate {
     }
 
     func formViewControllerRightBarButtonTitle(_ viewController: FormBaseViewController) -> String {
-        guard let row = selectedRow, let rows = currentSectionRows() else { return "" }
 
-        if isFormEnabled, row.rawValue < rows.count-2 {
+        if isQuickFormActive, nextRowInCurrentSection() != nil {
             return "Next"
         }
         return "OK"
     }
 
     func formViewControllerKeyboardReturnKeyType(_ viewController: FormBaseViewController) -> UIReturnKeyType {
-        return isFormEnabled ? .next : .done
+        return isQuickFormActive ? .next : .done
     }
 }
 
