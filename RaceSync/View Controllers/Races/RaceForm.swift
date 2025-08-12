@@ -126,14 +126,6 @@ extension RaceFormRow {
         }
     }
 
-    func requiredValue(from data: RaceData) -> String? {
-        switch self {
-        case .name:         return data.name
-        case .startDate:    return data.startDateString
-        default:            return nil
-        }
-    }
-
     var formType: FormType {
         switch self {
         case .name, .fee:

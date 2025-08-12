@@ -73,7 +73,12 @@ class RaceFormViewController: UIViewController {
     fileprivate var initialData: RaceData?
 
     fileprivate var currentSection: RaceFormSection
-    fileprivate var selectedRow: RaceFormRow?
+    fileprivate var selectedRow: RaceFormRow? {
+        didSet {
+            print("Selected Row : \(String(describing: selectedRow?.title))")
+        }
+    }
+
     fileprivate var raceApi = RaceApi()
     fileprivate var seasonApi = SeasonApi()
     fileprivate var seasons: [Season]?
@@ -346,11 +351,30 @@ fileprivate extension RaceFormViewController {
         }
     }
 
+    func showSwitchPicker(forRow row: RaceFormRow, pushed: Bool) {
+        let values = ["No", "Yes"]
+        let selected = (row.value(from: data) != nil) ? values.last : values.first
+
+        let vc = TextPickerViewController(with: values, selectedItem: selected)
+        vc.delegate = self
+        vc.title = row.title
+
+        if pushed {
+            formNavigationController?.pushViewController(vc, animated: true)
+            formNavigationController?.delegate = self
+        } else {
+            let nc = NavigationController(rootViewController: vc)
+            customPresentViewController(presenter, viewController: nc, animated: true)
+            formNavigationController = formNavigationController ?? nc
+        }
+
+    }
+
     // MARK: - Verification
 
     func canGoNextSection() -> Bool {
         for row in currentSectionRequiredRows() {
-            if let value = row.requiredValue(from: data) {
+            if let value = row.value(from: data) {
                 if value.isEmpty { return false }
             } else {
                 return false
@@ -427,12 +451,20 @@ extension RaceFormViewController {
     }
 
     func nextRowInCurrentSection() -> RaceFormRow? {
+        rowInCurrentSection(offset: 1)
+    }
+
+    func previousRowInCurrentSection() -> RaceFormRow? {
+        rowInCurrentSection(offset: -1)
+    }
+
+    func rowInCurrentSection(offset: Int) -> RaceFormRow? {
         guard let rows = currentSectionRows(),
               let row = selectedRow,
               let index = rows.firstIndex(of: row)
         else { return nil }
 
-        return rows[safe: index + 1]
+        return rows[safe: index + offset]
     }
 }
 
@@ -581,6 +613,8 @@ extension RaceFormViewController: FormBaseViewControllerDelegate {
             let amount = Float32(item) ?? 0
             if amount == 0 { data.feeRequired = false }
             data.fee = amount
+        case .feeRequired:
+            data.feeRequired = (item == "Yes")
         case .rounds:
             data.rounds = (item as NSString).intValue
         case .season:
@@ -610,7 +644,6 @@ extension RaceFormViewController: FormBaseViewControllerDelegate {
         // handle next row
         if isQuickFormActive, let nextRow = nextRowInCurrentSection()  {
 
-            print("Next Row: \(nextRow.title)")
             selectedRow = nextRow
 
             if nextRow.formType == .textfield {
@@ -620,7 +653,7 @@ extension RaceFormViewController: FormBaseViewControllerDelegate {
             } else if nextRow.formType == .datePicker {
                 showDatePicker(forRow: nextRow, pushed: true)
             } else if nextRow.formType == .switch {
-
+                showSwitchPicker(forRow: nextRow, pushed: true)
             } else {
                 selectedRow = nil
             }
@@ -693,7 +726,7 @@ extension RaceFormViewController: UINavigationControllerDelegate {
         guard let row = selectedRow else { return nil }
 
         if operation == .pop {
-            selectedRow = RaceFormRow(rawValue: row.rawValue - 1)
+            selectedRow = previousRowInCurrentSection()
         }
 
         return nil
