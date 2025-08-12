@@ -124,7 +124,7 @@ extension RaceFormRow {
 
     var formType: FormType {
         switch self {
-        case .name, .fee:
+        case .name, .fee, .rounds:
             return .textfield
         case .startDate, .endDate:
             return .datePicker
@@ -141,6 +141,8 @@ extension RaceFormRow {
         switch self {
         case .fee:
             return UIKeyboardType.decimalPad
+        case .rounds:
+            return UIKeyboardType.numberPad
         default:
             return UIKeyboardType.default
         }

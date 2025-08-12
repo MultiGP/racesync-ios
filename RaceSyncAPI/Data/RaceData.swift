@@ -105,7 +105,7 @@ public struct RaceData: Descriptable {
 
         params[ParamKey.scoringDisabled] = funfly
         params[ParamKey.captureTimeEnabled] = timing
-        params[ParamKey.cycleCount] = rounds
+        params[ParamKey.cycleCount] = rounds // TODO: Get rid of this?
 
         if seasonId != nil { params[ParamKey.seasonId] = seasonId }
         if courseId != nil { params[ParamKey.courseId] = courseId }

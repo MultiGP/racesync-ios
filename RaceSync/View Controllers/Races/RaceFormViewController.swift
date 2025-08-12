@@ -388,12 +388,10 @@ extension RaceFormViewController {
 
     func text(for row: RaceFormRow) -> String? {
         switch row {
-        case .name:
-            return data.name
         case .fee:
             return (data.fee > 0) ? String(format: "%.2f", data.fee) : nil // blank field
         default:
-            return nil
+            return row.value(from: data)
         }
     }
 
@@ -409,8 +407,6 @@ extension RaceFormViewController {
             return QualifyingType.allCases.compactMap { $0.title }
         case .privacy:
             return EventType.allCases.compactMap { $0.title }
-        case .rounds:
-            return ["1","2","3","4","5","6","7","8","9","10"]
         default:
             return [String]()
         }
@@ -677,7 +673,7 @@ extension RaceFormViewController: FormBaseViewControllerDelegate {
             if row == .name {
                 guard item.count >= Race.nameMinLength else { return false }
                 guard item.count < Race.nameMaxLength else { return false }
-            } else if row == .fee {
+            } else if row == .fee || row == .rounds {
                 return true // allow any length
             }
         }
