@@ -76,7 +76,7 @@ enum RaceFormRow: Int, EnumTitle {
         case .scoring:      return "Fun Fly disables scoring"
         case .season:       return nil
         case .startDate:    return nil
-        case .zDepth:       return "Set how many time a pilot can be in the line"
+        case .zDepth:       return "Set how many times a pilot can be in the line"
         case .zIterator:    return "Number of rounds to rest"
         case .zNoKiosk:     return "Allow ZippyQ sign up from your phone"
         }

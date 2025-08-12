@@ -20,7 +20,6 @@ class RaceFormViewController: UIViewController {
 
     // MARK: - Public Variables
 
-    var chapters: [ManagedChapter]
     var editMode: RaceFormMode = .new
     var delegate: RaceFormViewControllerDelegate?
 
@@ -79,11 +78,12 @@ class RaceFormViewController: UIViewController {
         }
     }
 
-    fileprivate var raceApi = RaceApi()
-    fileprivate var seasonApi = SeasonApi()
+    fileprivate var chapters: [ManagedChapter]
     fileprivate var seasons: [Season]?
     fileprivate var courseApi = CourseApi()
     fileprivate var courses: [Course]?
+    fileprivate var raceApi = RaceApi()
+    fileprivate var seasonApi = SeasonApi()
 
     fileprivate let presenter = Appearance.defaultPresenter()
     fileprivate var formNavigationController: NavigationController?
@@ -92,12 +92,20 @@ class RaceFormViewController: UIViewController {
     // Needs to be computed each time, since there are dynamic values
     fileprivate var sections: [RaceFormSection: [RaceFormRow]] {
         get {
-            let general: [RaceFormRow] = [.name, .startDate, .endDate, .chapter, .location, .season, .privacy, .fee, .feeRequired]
+            var general: [RaceFormRow] = [.name, .startDate, .endDate, .chapter, .location, .season, .privacy]
+
+            // Payments are enabled at a chapter level
+            if let chapter = chapters.filter ({ return $0.id == data.chapterId }).first, chapter.paymentsEnabled {
+                general += [.fee, .feeRequired]
+            }
 
             var specific: [RaceFormRow] = [.scoring, .class, .format, .schedule]
-            if data.qualifying == QualifyingType.open.rawValue { // ZippyQ
+
+            // Only applicable for ZippyQ
+            if data.qualifying == QualifyingType.open.rawValue {
                 specific += [.rounds, .zDepth, .zIterator, .zNoKiosk]
             }
+
             specific += [.content, .notify]
 
             return [.general: general, .specific: specific]
@@ -613,8 +621,8 @@ extension RaceFormViewController: FormBaseViewControllerDelegate {
             data.endDateString = item
         case .chapter:
             if let chapter = chapters.filter ({ return $0.name == item }).first {
-                data.chapterName = chapter.name
                 data.chapterId = chapter.id
+                data.chapterName = chapter.name
             }
         case .class:
             if let value = RaceClass(title: item)?.rawValue {

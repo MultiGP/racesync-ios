@@ -203,6 +203,7 @@ enum ParamKey {
     static let platformFee = "platformFee"
     static let amountDue = "amountdue"
     static let datePaid = "datepaid"
+    static let paymentsEnabled = "paymentsEnabled"
 
     // Geo-location
     static let address = "address"

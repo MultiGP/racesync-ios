@@ -13,6 +13,7 @@ public class ManagedChapter: Mappable, Descriptable {
 
     public var id: ObjectId = ""
     public var name: String = ""
+    public var paymentsEnabled: Bool = false
 
     // MARK: - Initialization
 
@@ -30,5 +31,6 @@ public class ManagedChapter: Mappable, Descriptable {
     public func mapping(map: Map) {
         id <- map[ParamKey.id]
         name <- (map[ParamKey.name], MapperUtil.stringTransform)
+        paymentsEnabled <- (map[ParamKey.paymentsEnabled], BooleanTransform()) // returns as String from API
     }
 }
