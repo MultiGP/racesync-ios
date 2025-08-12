@@ -14,14 +14,12 @@ enum RaceFormMode: Int {
 }
 
 enum RaceFormSection: Int {
-    case general, specific //, frequencies
+    case general, specific
 
     public var header: String {
         switch self {
         case .general:      return "General Details "
         case .specific:     return "Specific Details"
-        // TODO: Implement Video Frequency Profile selection (may need new API support)
-        //case .frequencies:  return "Video Frequencies"
         }
     }
 
@@ -121,7 +119,7 @@ extension RaceFormRow {
 
     var isRowRequired: Bool {
         switch self {
-        case .name, .startDate:
+        case .name, .startDate, .chapter:
             return true
         default:
             return false

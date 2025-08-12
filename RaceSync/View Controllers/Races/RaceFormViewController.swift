@@ -251,9 +251,16 @@ class RaceFormViewController: UIViewController {
 
 fileprivate extension RaceFormViewController {
 
+    func showTextViewController(forRow row: RaceFormRow) {
+        let vc = TextEditorViewController(with: row == .content ? data.content : nil)
+        vc.delegate = self
+        vc.title = row.title
+        vc.placeholder = row.tooltip
+        navigationController?.pushViewController(vc, animated: true)
+    }
+
     func showTextField(forRow row: RaceFormRow, pushed: Bool) {
-        let text = text(for: row)
-        let vc = TextFieldViewController(with: text)
+        let vc = TextFieldViewController(with: text(for: row))
         vc.delegate = self
         vc.title = row.title
         vc.textField.placeholder = row.tooltip
@@ -274,22 +281,11 @@ fileprivate extension RaceFormViewController {
 
     func showTextPicker(forRow row: RaceFormRow, pushed: Bool) {
 
-        func present<T>(_ cached: [T]?, fetch: (@escaping ([T]?, NSError?) -> Void) -> Void,
-                        set: @escaping ([T]) -> Void,
-                        selected: String?,
-                        name: @escaping (T) -> String?) {
-            if let cached = cached {
-                show(cached.map { name($0) ?? "" }, selected)
-            } else {
-                fetch { list, _ in
-                    if let list = list { set(list) }
-                    show(list?.map { name($0) ?? "" } ?? [], selected)
-                }
-            }
-        }
-
         func show(_ items: [String], _ selected: String?) {
-            let vc = TextPickerViewController(with: items, selectedItem: selected)
+            var values = items
+            if !row.isRowRequired { values.insert("", at: 0) } // Adding blank value, since they're optional
+
+            let vc = TextPickerViewController(with: values, selectedItem: selected)
             vc.delegate = self
             vc.title = row.title
 
@@ -312,6 +308,20 @@ fileprivate extension RaceFormViewController {
                     set: { self.courses = $0 }, selected: data.courseName, name: { $0.name })
         default:
             show(values(for: row), row.value(from: data))
+        }
+
+        func present<T>(_ cached: [T]?, fetch: (@escaping ([T]?, NSError?) -> Void) -> Void,
+                        set: @escaping ([T]) -> Void,
+                        selected: String?,
+                        name: @escaping (T) -> String?) {
+            if let cached = cached {
+                show(cached.map { name($0) ?? "" }, selected)
+            } else {
+                fetch { list, _ in
+                    if let list = list { set(list) }
+                    show(list?.map { name($0) ?? "" } ?? [], selected)
+                }
+            }
         }
     }
 
@@ -336,22 +346,6 @@ fileprivate extension RaceFormViewController {
         }
     }
 
-    func showTextViewController(forRow row: RaceFormRow) {
-
-        var text: String?
-
-        if row == .content {
-            text = data.content
-        }
-
-        let vc = TextEditorViewController(with: text)
-        vc.delegate = self
-        vc.title = row.title
-        vc.placeholder = row.tooltip
-
-        navigationController?.pushViewController(vc, animated: true)
-    }
-
     // MARK: - Verification
 
     func canGoNextSection() -> Bool {
@@ -373,7 +367,7 @@ extension RaceFormViewController {
         case .name:
             return data.name
         case .fee:
-            return String(format: "%.2f", data.fee)
+            return (data.fee > 0) ? String(format: "%.2f", data.fee) : nil // blank field
         default:
             return nil
         }
@@ -461,7 +455,6 @@ extension RaceFormViewController: UITableViewDelegate {
         if row.formType == .textfield {
             showTextField(forRow: row, pushed: false)
         } else if row.formType == .datePicker {
-            showDatePicker(forRow: row, pushed: false)
             showDatePicker(forRow: row, pushed: false)
         } else if row.formType == .textPicker {
             showTextPicker(forRow: row, pushed: false)
@@ -594,36 +587,42 @@ extension RaceFormViewController: FormBaseViewControllerDelegate {
             if let season = seasons?.filter ({ return $0.name == item }).first {
                 data.seasonId = season.id
                 data.seasonName = season.name
+            } else {
+                data.seasonId = nil
+                data.seasonName = nil
             }
         case .location:
             if let course = courses?.filter ({ return $0.name == item }).first {
                 data.courseId = course.id
                 data.courseName = course.name
+            } else {
+                data.courseId = nil
+                data.courseName = nil
             }
         default:
             break
         }
 
         // refresh content
-        if !item.isEmpty || row == .fee {
-            tableView.reloadData()
-            navigationItem.rightBarButtonItem?.isEnabled = canGoNextSection()
-        }
+        tableView.reloadData()
+        navigationItem.rightBarButtonItem?.isEnabled = canGoNextSection()
 
         // handle next row
         if isQuickFormActive, let nextRow = nextRowInCurrentSection()  {
 
             print("Next Row: \(nextRow.title)")
+            selectedRow = nextRow
 
             if nextRow.formType == .textfield {
-                selectedRow = nextRow
                 showTextField(forRow: nextRow, pushed: true)
             } else if nextRow.formType == .textPicker {
-                selectedRow = nextRow
                 showTextPicker(forRow: nextRow, pushed: true)
             } else if nextRow.formType == .datePicker {
-                selectedRow = nextRow
                 showDatePicker(forRow: nextRow, pushed: true)
+            } else if nextRow.formType == .switch {
+
+            } else {
+                selectedRow = nil
             }
         } else {
             formViewControllerDidDismiss(viewController)
