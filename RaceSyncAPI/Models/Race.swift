@@ -32,7 +32,8 @@ public class Race: Mappable, Joinable, Descriptable {
     public var cycleCount: Int32 = 0
     public var disableSlotAutoPopulation: QualifyingType = .controlled
     public var maxZippyqDepth: Int32 = 0
-    public var zippyqIterator: Bool = false
+    public var zippyqIterator: Int32 = 0
+    public var zippyNoKiosk: Bool = true
     public var maxBatteriesForQualifying: Int32 = 0
 
     public var urlName: String = ""
@@ -124,6 +125,7 @@ public class Race: Mappable, Joinable, Descriptable {
         disableSlotAutoPopulation <- (map[ParamKey.disableSlotAutoPopulation], EnumTransform<QualifyingType>())
         maxZippyqDepth <- (map[ParamKey.maxZippyqDepth], IntegerTransform())
         zippyqIterator <- map[ParamKey.zippyqIterator]
+        zippyNoKiosk <- map[ParamKey.zippyNoKiosk]
         maxBatteriesForQualifying <- (map[ParamKey.maxBatteriesForQualifying], IntegerTransform())
 
         urlName <- map[ParamKey.urlName]

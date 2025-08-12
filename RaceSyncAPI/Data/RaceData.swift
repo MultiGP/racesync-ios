@@ -12,30 +12,31 @@ import Alamofire
 public struct RaceData: Descriptable {
 
     public var raceId: String? = nil
-
     public var name: String? = nil
     public var startDateString: String? = nil
     public var endDateString: String? = nil
     public var chapterId: String
     public var chapterName: String
-
-    // Default race values, useful for new race creation
-    public var raceClass: String = RaceClass.open.rawValue
-    public var format: String = ScoringFormat.fastest3Laps.rawValue
-    public var qualifying: String = QualifyingType.controlled.rawValue
-    public var privacy: String = EventType.public.rawValue
-    public var status: String = RaceStatus.open.rawValue
-    public var funfly: Bool = false
-    public var timing: Bool = true
-    public var rounds: Int32 = 5
-    public var fee: Float32 = 0.0
-    public var feeRequired: Bool = false
-
     public var seasonId: String? = nil
     public var seasonName: String? = nil
     public var courseId: String? = nil
     public var courseName: String? = nil
     public var content: String? = nil
+
+    // Default race values, useful for new race creation
+    public var fee: Float32 = 0.0
+    public var feeRequired: Bool = false
+    public var format: String = ScoringFormat.fastest3Laps.rawValue
+    public var funfly: Bool = false
+    public var privacy: String = EventType.public.rawValue
+    public var qualifying: String = QualifyingType.open.rawValue
+    public var raceClass: String = RaceClass.open.rawValue
+    public var rounds: Int32 = 5
+    public var status: String = RaceStatus.open.rawValue
+    public var timing: Bool = true
+    public var zippyqDepth: Int32 = 5
+    public var zippyqIterator: Int32 = 1
+    public var zippyqNoKiosk: Bool = true
 
     // To be used to broadcast email and/or APNS after saving
     // See php code base that needs to be implemented on the API side
@@ -67,15 +68,17 @@ public struct RaceData: Descriptable {
         self.status = race.status.rawValue
         self.fee = race.fee
         self.feeRequired = race.isPaymentRequiredToJoin
-
         self.funfly = race.scoringDisabled
         self.timing = race.captureTimeEnabled
-        self.rounds = race.cycleCount
         self.seasonId = race.seasonId
         self.seasonName = race.seasonName
         self.courseId = race.courseId
         self.courseName = race.courseName
         self.content = race.content
+        self.rounds = race.cycleCount
+        self.zippyqDepth = race.maxZippyqDepth
+        self.zippyqIterator = race.zippyqIterator
+        self.zippyqNoKiosk = race.zippyNoKiosk
     }
 
     func toParams() -> Params {
@@ -87,9 +90,8 @@ public struct RaceData: Descriptable {
         params[ParamKey.endDate] = endDateString
         params[ParamKey.chapterId] = chapterId
         params[ParamKey.chapterName] = chapterName
-
-        params[ParamKey.raceClass] = raceClass
         params[ParamKey.scoringFormat] = format
+        params[ParamKey.raceClass] = raceClass
         params[ParamKey.type] = privacy
         params[ParamKey.status] = status
         params[ParamKey.disableSlotAutoPopulation] = qualifying
@@ -98,14 +100,16 @@ public struct RaceData: Descriptable {
 
         // set a default values for ZippyQ
         if qualifying == QualifyingType.open.rawValue {
-            params[ParamKey.maxZippyqDepth] = 5
-            params[ParamKey.zippyqIterator] = 0
-            params[ParamKey.maxBatteriesForQualifying] = 10
+            params[ParamKey.cycleCount] = rounds
+            params[ParamKey.maxZippyqDepth] = zippyqDepth
+            params[ParamKey.zippyqIterator] = zippyqIterator
+            params[ParamKey.zippyNoKiosk] = zippyqNoKiosk
+        } else {
+        // TODO: Should clear params for controlled heats?
         }
 
         params[ParamKey.scoringDisabled] = funfly
         params[ParamKey.captureTimeEnabled] = timing
-        params[ParamKey.cycleCount] = rounds // TODO: Get rid of this?
 
         if seasonId != nil { params[ParamKey.seasonId] = seasonId }
         if courseId != nil { params[ParamKey.courseId] = courseId }

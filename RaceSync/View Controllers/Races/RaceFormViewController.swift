@@ -93,7 +93,13 @@ class RaceFormViewController: UIViewController {
     fileprivate var sections: [RaceFormSection: [RaceFormRow]] {
         get {
             let general: [RaceFormRow] = [.name, .startDate, .endDate, .chapter, .location, .season, .privacy, .fee, .feeRequired]
-            let specific: [RaceFormRow] = [.scoring, .schedule, .rounds, .class, .format, .content, .notify]
+
+            var specific: [RaceFormRow] = [.scoring, .class, .format, .schedule]
+            if data.qualifying == QualifyingType.open.rawValue { // ZippyQ
+                specific += [.rounds, .zDepth, .zIterator, .zNoKiosk]
+            }
+            specific += [.content, .notify]
+
             return [.general: general, .specific: specific]
         }
     }
@@ -278,7 +284,7 @@ fileprivate extension RaceFormViewController {
 
     @discardableResult
     func showFormForNextRow(_ pushed: Bool) -> Bool {
-        if let nextRow = nextRowInCurrentSection(), nextRow.isQuickFormEnabled {
+        if let nextRow = nextRowInCurrentSection(), nextRow.canQuickForm {
             showForm(forRow: nextRow, pushed: pushed)
             return true
         } else {
@@ -299,7 +305,7 @@ fileprivate extension RaceFormViewController {
 
         func show(_ items: [String], _ selected: String?) {
             var values = items
-            if !row.isRowRequired { values.insert("", at: 0) } // Adding blank value, since they're optional
+            if !row.isRequired { values.insert("", at: 0) } // Adding blank value, since they're optional
 
             let vc = TextPickerViewController(with: values, selectedItem: selected)
             vc.delegate = self
@@ -452,7 +458,7 @@ extension RaceFormViewController {
         guard let rows = currentSectionRows() else { return [RaceFormRow]() }
 
         return rows.filter({ (row) -> Bool in
-            return row.isRowRequired
+            return row.isRequired
         })
     }
 
@@ -527,7 +533,7 @@ extension RaceFormViewController: UITableViewDataSource {
         let row = rows[indexPath.row]
         let rowValue = row.value(from: data)
 
-        if row.isRowRequired {
+        if row.isRequired {
             cell.textLabel?.text = row.title + " *"
         } else {
             cell.textLabel?.text = row.title
@@ -697,7 +703,7 @@ extension RaceFormViewController: FormBaseViewControllerDelegate {
             }
         }
 
-        if row.isRowRequired {
+        if row.isRequired {
             return !item.isEmpty
         }
 
