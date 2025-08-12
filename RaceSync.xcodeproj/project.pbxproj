@@ -1130,10 +1130,10 @@
 				4F8376DB23EE87CC00256AEC /* RotatingIconView.swift */,
 				4F3D641023FE664A00DE6DF2 /* TextFieldViewController.swift */,
 				4F3D640E23FC65F700DE6DF2 /* TextPickerViewController.swift */,
-				4FC86BA42D27E00E004297E7 /* MultiTextPickerViewController.swift */,
 				4F004EA8295BB282009C46AA /* DatePickerViewController.swift */,
 				4F8B866B296583EB00EAF695 /* TextEditorViewController.swift */,
 				4F6429132403AE9A005E8036 /* FormBaseViewController.swift */,
+				4FC86BA42D27E00E004297E7 /* MultiTextPickerViewController.swift */,
 				4FC1797C24B0801900D2EA2D /* ImagePickerController.swift */,
 				4F3E2D012DEE23D900A6646C /* ImageExportViewController.swift */,
 			);

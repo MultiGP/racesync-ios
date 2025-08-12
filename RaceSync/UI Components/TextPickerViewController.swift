@@ -22,8 +22,8 @@ class TextPickerViewController: FormBaseViewController {
                 activityIndicatorView.startAnimating()
             }
             else {
-                navigationItem.rightBarButtonItem = rightBarButtonItem
                 activityIndicatorView.stopAnimating()
+                navigationItem.rightBarButtonItem = rightBarButtonItem
             }
         }
     }

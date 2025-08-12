@@ -147,4 +147,13 @@ extension RaceFormRow {
             return UIKeyboardType.default
         }
     }
+
+    var isQuickFormEnabled: Bool {
+        switch self.formType {
+        case .textEditor:
+            return false
+        default:
+            return true
+        }
+    }
 }

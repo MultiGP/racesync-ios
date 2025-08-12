@@ -18,8 +18,16 @@ class DatePickerViewController: FormBaseViewController {
     // MARK: - Public Variables
 
     override var isLoading: Bool {
-        get { return false }
-        set { }
+        didSet {
+            if isLoading {
+                navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicatorView)
+                activityIndicatorView.startAnimating()
+            }
+            else {
+                activityIndicatorView.stopAnimating()
+                navigationItem.rightBarButtonItem = rightBarButtonItem
+            }
+        }
     }
 
     override var formType: FormType {
@@ -41,6 +49,12 @@ class DatePickerViewController: FormBaseViewController {
         view.datePickerMode = .dateAndTime
         view.minuteInterval = 15
         view.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
+        return view
+    }()
+
+    fileprivate lazy var activityIndicatorView: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView(style: .medium)
+        view.hidesWhenStopped = true
         return view
     }()
 
