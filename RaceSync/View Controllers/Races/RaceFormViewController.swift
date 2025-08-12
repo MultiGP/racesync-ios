@@ -92,7 +92,7 @@ class RaceFormViewController: UIViewController {
     // Needs to be computed each time, since there are dynamic values
     fileprivate var sections: [RaceFormSection: [RaceFormRow]] {
         get {
-            let general: [RaceFormRow] = [.name, .startDate, .endDate, .chapter, .location, .privacy, .status, .fee, .feeRequired]
+            let general: [RaceFormRow] = [.name, .startDate, .endDate, .chapter, .location, .privacy, .fee, .feeRequired]
             let specific: [RaceFormRow] = [.scoring, .schedule, .rounds, .class, .format, .season, .content, .notify]
             return [.general: general, .specific: specific]
         }
@@ -409,8 +409,6 @@ extension RaceFormViewController {
             return QualifyingType.allCases.compactMap { $0.title }
         case .privacy:
             return EventType.allCases.compactMap { $0.title }
-        case .status:
-            return RaceStatus.allCases.compactMap { $0.title }
         case .rounds:
             return ["1","2","3","4","5","6","7","8","9","10"]
         default:
@@ -549,7 +547,13 @@ extension RaceFormViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        return currentSection.footer
+        if let footer = currentSection.footer {
+            return footer
+        } else if currentSectionRequiredRows().count > 0 {
+            return "* Required fields"
+        } else {
+            return nil
+        }
     }
 }
 
@@ -604,10 +608,6 @@ extension RaceFormViewController: FormBaseViewControllerDelegate {
         case .privacy:
             if let value = EventType(title: item)?.rawValue {
                 data.privacy = value
-            }
-        case .status:
-            if let value = RaceStatus(title: item)?.rawValue {
-                data.status = value
             }
         case .fee:
             let amount = Float32(item) ?? 0

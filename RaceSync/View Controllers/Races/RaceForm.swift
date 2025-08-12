@@ -19,20 +19,19 @@ enum RaceFormSection: Int {
     public var header: String {
         switch self {
         case .general:      return "General Details "
-        case .specific:     return "Specific Details"
+        case .specific:     return "Race Details"
         }
     }
 
     public var footer: String? {
         switch self {
-        case .general:      return "* Required fields"
-        case .specific:     return "** Broadcasts a notification to all chapter members."
+        default:            return nil
         }
     }
 }
 
 enum RaceFormRow: Int, EnumTitle {
-    case name, startDate, endDate, chapter, `class`, format, privacy, fee, feeRequired, status,
+    case name, startDate, endDate, chapter, `class`, format, privacy, fee, feeRequired,
          scoring, schedule, rounds, season, location, content, notify
 
     public var title: String {
@@ -46,14 +45,13 @@ enum RaceFormRow: Int, EnumTitle {
         case .privacy:      return "Event Privacy"
         case .fee:          return "Race Fee"
         case .feeRequired:  return "Payment Required to Join"
-        case .status:       return "Status"
         case .scoring:      return "Fun Fly"
         case .schedule:     return "Schedule"
         case .rounds:       return "Pack Limit"
         case .season:       return "Season"
         case .location:     return "Location"
         case .content:      return "Description"
-        case .notify:       return "Notify Pilots **"
+        case .notify:       return "Notify Pilots"
         }
     }
 
@@ -97,8 +95,6 @@ extension RaceFormRow {
             return String(format: "$%.2f USD", raceData.fee)
         case .feeRequired:
             return raceData.feeRequired ? "" : nil // will be converted to Bool
-        case .status:
-            return RaceStatus(rawValue: raceData.status)?.title
         case .scoring:
             return raceData.funfly ? "" : nil // will be converted to Bool
         case .rounds:
@@ -119,7 +115,7 @@ extension RaceFormRow {
 
     var isRowRequired: Bool {
         switch self {
-        case .name, .startDate, .chapter:
+        case .name, .startDate, .chapter, .class, .format, .schedule, .rounds:
             return true
         default:
             return false
