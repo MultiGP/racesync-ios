@@ -1,13 +1,23 @@
 
 # App Store Release Notes
 
+## 1.8
+
+### Fixes and enhancements:
+
+   * Adding a new tab to the race detail view, where organizers can see paid and unpaid registered pilots
+   * Race edit/create form overhaul (organizers only) + including Payment options
+   * 
+
+---
+
 ## 1.7.2
 
 ### Fixes and enhancements:
 
-   * Improving multi-day events display
-   * Fixed a sorting issue with the Global Qualifier standings not being the same than the website.
-   * Fixed small UI and display issues in the race detail
+   * Fixed a sorting inconsistency in the Global Qualifier standings so they now match the website.
+   * Improved the display of multi-day events.
+   * Resolved minor UI and layout issues in the race detail view.
 
 ---
 
