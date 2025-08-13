@@ -31,6 +31,6 @@ public class ManagedChapter: Mappable, Descriptable {
     public func mapping(map: Map) {
         id <- map[ParamKey.id]
         name <- (map[ParamKey.name], MapperUtil.stringTransform)
-        paymentsEnabled <- (map[ParamKey.paymentsEnabled], BooleanTransform()) // returns as String from API
+        paymentsEnabled <- map[ParamKey.paymentsEnabled]
     }
 }
