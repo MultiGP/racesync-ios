@@ -96,49 +96,16 @@ class ProfileViewModel: Descriptable {
             self.rightBadgeLabel = "\(chapter.memberCount) Members"
         }
     }
-
-    init(with aircraft: Aircraft) {
-        self.type = .aircraft
-        self.id = aircraft.id
-
-        self.title = aircraft.name
-        self.displayName = ""
-        self.locationName = ""
-        self.pictureUrl = aircraft.mainImageUrl
-        self.backgroundUrl = aircraft.backgroundImageUrl
-
-        self.topBadgeLabel = nil
-        self.topBadgeImage = nil
-
-        self.leftBadgeLabel = ""
-        self.leftBadgeImage = nil
-        self.leftSegmentLabel = ""
-        self.rightSegmentLabel = ""
-
-        if aircraft.entryCount > 0 {
-            self.rightBadgeImage = UIImage(named: "icn_race_small")
-            if aircraft.entryCount == 1 {
-                self.rightBadgeLabel = "\(aircraft.entryCount) Race"
-            } else {
-                self.rightBadgeLabel = "\(aircraft.entryCount) Races"
-            }
-        } else {
-            self.rightBadgeImage = nil
-            self.rightBadgeLabel = ""
-        }
-    }
 }
 
 public enum ProfileViewModelType: String {
     case user = "user"
     case chapter = "chapter"
-    case aircraft = "aircraft"
 
     var placeholder: UIImage? {
         switch self {
         case .user:         return PlaceholderImg.profileAvatar
         case .chapter:      return PlaceholderImg.profileAvatar
-        case .aircraft:     return PlaceholderImg.profileAircraft
         }
     }
 }

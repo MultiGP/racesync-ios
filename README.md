@@ -27,7 +27,6 @@ Find and join local drone races hosted by MultiGP chapters worldwide with a free
 * Check assigned video frequency during races
 * View race participants
 * Add races to your calendar and get directions to the venue
-* Manage aircraft from your profile
 * Use MultiGP QR code for special events and ZippyQ races
 
 ### Features for chapter organizers:

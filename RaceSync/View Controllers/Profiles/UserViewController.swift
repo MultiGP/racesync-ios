@@ -26,28 +26,6 @@ class UserViewController: ProfileViewController, ViewJoinable {
         return button
     }()
 
-    fileprivate lazy var aircraftButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.tintColor = Color.white
-        button.addTarget(self, action: #selector(didPressAircraftButton), for: .touchUpInside)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-        button.setTitleColor(Color.white, for: .normal)
-
-        button.setTitle("Aircraft", for: .normal)
-        button.setImage(UIImage(named: "icn_button_aircraft"), for: .normal)
-
-        let padding = Constants.padding
-        let spacing = Constants.buttonSpacing
-        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -spacing/2, bottom: 0, right: spacing/2)
-        button.contentEdgeInsets = UIEdgeInsets(top: spacing/2, left: padding, bottom: spacing/2, right: padding)
-
-        let capInsets = UIEdgeInsets(top: 0, left: padding, bottom: 0, right: padding)
-        let bkgdImage = UIImage(named: "btn_arrow_bkgd")?.resizableImage(withCapInsets: capInsets, resizingMode: .tile).withTintColor(Color.blue)
-        button.setBackgroundImage(bkgdImage, for: .normal)
-
-        return button
-    }()
-
     fileprivate func raceViewModel(for index: Int) -> RaceViewModel? {
         if index >= 0, index < raceViewModels.count {
             return raceViewModels[index]
@@ -129,13 +107,6 @@ class UserViewController: ProfileViewController, ViewJoinable {
 
     override func setupLayout() {
         super.setupLayout()
-
-        headerView.addSubview(aircraftButton)
-        aircraftButton.snp.makeConstraints {
-            $0.bottom.equalToSuperview()
-            $0.trailing.equalToSuperview().offset(-Constants.padding)
-            $0.height.equalTo(Constants.buttonHeight)
-        }
     }
 
     fileprivate func configureBarButtonItems() {
@@ -190,12 +161,6 @@ class UserViewController: ProfileViewController, ViewJoinable {
 
     @objc func didPressCloseButton() {
         dismiss(animated: true)
-    }
-
-    @objc func didPressAircraftButton() {
-        let vc = AircraftListViewController(with: user)
-        vc.isEditable = user.isMe
-        navigationController?.pushViewController(vc, animated: true)
     }
 
     func getQRImage(with userId: String) -> UIImage? {

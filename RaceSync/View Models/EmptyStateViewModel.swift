@@ -33,10 +33,6 @@ enum EmptyState {
     case noMyProfileRaces
     case noMyProfileChapters
 
-    case noAircraft
-    case noMyAircraft
-    case noMatchingAircraft
-
     case noPushMessages
     case noPushAuthorized
     case noPushEnabled
@@ -47,7 +43,6 @@ enum EmptyState {
     case errorRaces
     case errorChapters
     case errorUsers
-    case errorAircraft
     case errorStandings
 
     case noInternet
@@ -81,10 +76,6 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "No Races"
         case .noChapters, .noMyProfileChapters, .noProfileChapters:
             text = "No Chapters"
-        case .noAircraft, .noMyAircraft:
-            text = "No Aircraft"
-        case .noMatchingAircraft:
-            text = "No Matching Aircraft"
         case .noPushMessages:
             text = "No Messages"
         case .noPushAuthorized:
@@ -95,7 +86,7 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "Coming Soon"
         case .noSearchResults:
             text = "No Results"
-        case .errorRaces, .errorAircraft, .errorStandings:
+        case .errorRaces, .errorStandings:
             text = "Error"
         default:
             return nil
@@ -136,12 +127,6 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "This user hasn't joined any chapters yet."
         case .noMyProfileChapters:
             text = "You haven't joined any chapters yet."
-        case .noAircraft:
-            text = "This user doesn't have any aircraft yet."
-        case .noMyAircraft:
-            text = "You don't have any aircraft yet."
-        case .noMatchingAircraft:
-            text = "You don't have any aircraft matching the race requirements."
         case .noPushMessages:
             text = "You don't have any messages yet."
         case .noPushAuthorized:
@@ -152,8 +137,6 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "This section is under development."
         case .errorRaces:
             text = "Could not load the race details.\nPlease try again later or report a bug."
-        case .errorAircraft:
-            text = "Could not load the aircraft.\nPlease try again later or report a bug."
         case .errorStandings:
             text = "Could not load the season standings.\nPlease try again later or report a bug."
         default:
@@ -182,8 +165,6 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "Search Nearby Races"
         case .noRaceRegisters:
             text = "Join Race"
-        case .noMyAircraft, .noMatchingAircraft:
-            text = "Add Aircraft"
         case .noPushAuthorized:
             text = "Allow Push Notifications"
         case .noPushEnabled:
