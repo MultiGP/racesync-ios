@@ -81,7 +81,7 @@ public struct RaceData: Descriptable {
         self.zippyqNoKiosk = race.zippyNoKiosk
     }
 
-    func toParams() -> Params {
+    public func toParams() -> Params {
         var params: Params = [:]
 
         if name != nil { params[ParamKey.name] = name }
@@ -96,23 +96,17 @@ public struct RaceData: Descriptable {
         params[ParamKey.status] = status
         params[ParamKey.disableSlotAutoPopulation] = qualifying
         params[ParamKey.fee] = fee
-        params[ParamKey.paymentRequiredToJoin] = (fee > 0 && feeRequired) // disable if fee is zero
-
-        // set a default values for ZippyQ
-        if qualifying == QualifyingType.open.rawValue {
-            params[ParamKey.cycleCount] = rounds
-            params[ParamKey.maxZippyqDepth] = zippyqDepth
-            params[ParamKey.zippyqIterator] = zippyqIterator
-            params[ParamKey.zippyNoKiosk] = zippyqNoKiosk
-        } else {
-        // TODO: Should clear params for controlled heats?
-        }
-
+        params[ParamKey.paymentRequiredToJoin] = feeRequired
         params[ParamKey.scoringDisabled] = funfly
         params[ParamKey.captureTimeEnabled] = timing
 
-        if seasonId != nil { params[ParamKey.seasonId] = seasonId }
-        if courseId != nil { params[ParamKey.courseId] = courseId }
+        params[ParamKey.cycleCount] = rounds
+        params[ParamKey.maxZippyqDepth] = zippyqDepth
+        params[ParamKey.zippyqIterator] = zippyqIterator
+        params[ParamKey.zippyNoKiosk] = zippyqNoKiosk.intValue
+
+        params[ParamKey.seasonId] = seasonId
+        params[ParamKey.courseId] = courseId
 
         params[ParamKey.content] = content
         params[ParamKey.sendNotification] = sendNotification

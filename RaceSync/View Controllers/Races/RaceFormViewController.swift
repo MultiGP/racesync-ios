@@ -187,6 +187,9 @@ class RaceFormViewController: UIViewController {
     fileprivate func createRace() {
         isLoading = true
 
+        let params = data.toParams()
+        print("Creating race with params: \(params)")
+
         raceApi.createRace(withData: data) { object, error in
             if let race = object {
                 self.delegate?.raceFormViewController(self, didUpdateRace: race)
@@ -220,6 +223,8 @@ class RaceFormViewController: UIViewController {
             data.feeRequired = sender.isOn
         } else if row == .scoring {
             data.funfly = sender.isOn
+        } else if row == .zNoKiosk {
+            data.zippyqNoKiosk = sender.isOn
         } else if row == .notify {
             data.sendNotification = sender.isOn
         }
