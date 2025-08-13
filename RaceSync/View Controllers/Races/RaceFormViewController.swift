@@ -194,7 +194,7 @@ class RaceFormViewController: UIViewController {
             if let race = object {
                 self.delegate?.raceFormViewController(self, didUpdateRace: race)
             } else if let error = error {
-                AlertUtil.presentAlertMessage("Failed to create the race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
+                AlertUtil.presentAlertMessage("Failed to create the race. \(error.localizedDescription)", title: "Error", delay: 0.5)
                 self.isLoading = false
             }
         }
@@ -209,7 +209,7 @@ class RaceFormViewController: UIViewController {
             if let race = object {
                 self.delegate?.raceFormViewController(self, didUpdateRace: race)
             } else if let error = error {
-                AlertUtil.presentAlertMessage("Failed to update the race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
+                AlertUtil.presentAlertMessage("Failed to update the race. \(error.localizedDescription)", title: "Error", delay: 0.5)
                 self.isLoading = false
             }
         }
@@ -369,7 +369,7 @@ fileprivate extension RaceFormViewController {
     func showSwitchPicker(forRow row: RaceFormRow, pushed: Bool) {
         guard pushed else { return } // Only using when pushed
 
-        let values = ["No", "Yes"]
+        let values = [false.localizedString, true.localizedString]
         let selected = (row.value(from: data) != nil) ? values.last : values.first
 
         let vc = TextPickerViewController(with: values, selectedItem: selected)
@@ -651,9 +651,9 @@ extension RaceFormViewController: FormBaseViewControllerDelegate {
             if amount == 0 { data.feeRequired = false }
             data.fee = amount
         case .feeRequired:
-            data.feeRequired = (item == "Yes")
+            data.feeRequired = (item == true.localizedString)
         case .scoring:
-            data.funfly = (item == "Yes")
+            data.funfly = (item == true.localizedString)
         case .rounds:
             data.rounds = (item as NSString).intValue
         case .zDepth:
@@ -661,7 +661,7 @@ extension RaceFormViewController: FormBaseViewControllerDelegate {
         case .zIterator:
             data.zippyqIterator = (item as NSString).intValue
         case .zNoKiosk:
-            data.zippyqNoKiosk = (item == "Yes")
+            data.zippyqNoKiosk = (item == true.localizedString)
         case .season:
             if let season = seasons?.filter ({ return $0.name == item }).first {
                 data.seasonId = season.id
@@ -728,11 +728,7 @@ extension RaceFormViewController: FormBaseViewControllerDelegate {
     }
 
     func formViewControllerRightBarButtonTitle(_ viewController: FormBaseViewController) -> String {
-
-        if isQuickFormActive /*, nextRowInCurrentSection() != nil */ {
-            return "Next"
-        }
-        return "OK"
+        return isQuickFormActive ? "Next" : "OK"
     }
 
     func formViewControllerKeyboardReturnKeyType(_ viewController: FormBaseViewController) -> UIReturnKeyType {

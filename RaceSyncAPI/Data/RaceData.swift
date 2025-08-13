@@ -114,7 +114,7 @@ public struct RaceData: Descriptable {
         return params
     }
 
-    func toDiffParams(_ beforeData: RaceData) -> Params {
+    public func toDiffParams(_ beforeData: RaceData) -> Params {
         let before = beforeData.toParams()
         let after = toParams()
         return before.diff(with: after)

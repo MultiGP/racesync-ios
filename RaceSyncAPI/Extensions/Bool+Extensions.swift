@@ -8,6 +8,11 @@
 
 import Foundation
 
-extension Bool {
+public extension Bool {
+
     var intValue: Int { self ? 1 : 0 }
+
+    var stringValue : String { self ? "true" : "false" }
+
+    var localizedString : String { self ? "Yes" : "No" }
 }
