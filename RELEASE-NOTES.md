@@ -7,7 +7,7 @@
 
    * Adding a new tab to the race detail view, where organizers can see paid and unpaid registered pilots
    * Race edit/create form overhaul (organizers only) + including Payment options
-   * 
+   * The Standings tab is now selected by default. The app will also remember your last selected tab and open with it on launch.
 
 ---
 

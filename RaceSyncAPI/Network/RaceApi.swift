@@ -77,7 +77,6 @@ public protocol RaceApiInterface {
     /**
      */
     func join(race raceId: ObjectId,
-              aircraftId: ObjectId?,
               completion: @escaping StatusCompletionBlock)
 
     /**
@@ -225,16 +224,11 @@ public class RaceApi: RaceApiInterface {
         repositoryAdapter.getObject(endpoint, type: Race.self, completion)
     }
 
-    public func join(race raceId: ObjectId, aircraftId: ObjectId? = nil, completion: @escaping StatusCompletionBlock) {
+    public func join(race raceId: ObjectId, completion: @escaping StatusCompletionBlock) {
 
         let endpoint = "\(EndPoint.raceJoin)?\(ParamKey.id)=\(raceId)"
-        var params: Params = [:]
 
-        if let id = aircraftId {
-            params[ParamKey.aircraftId] = id
-        }
-
-        repositoryAdapter.performAction(endpoint, parameters: params, completion: completion)
+        repositoryAdapter.performAction(endpoint, completion: completion)
     }
 
     public func resign(race raceId: ObjectId, completion: @escaping StatusCompletionBlock) {

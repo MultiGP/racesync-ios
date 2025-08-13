@@ -25,11 +25,4 @@ public enum ImageType {
         case .background:   return "backgroundImageInput"
         }
     }
-
-    public var endpoint: String {
-        switch self {
-        case .main:         return EndPoint.aircraftUploadMainImage
-        case .background:   return EndPoint.aircraftUploadBackground
-        }
-    }
 }

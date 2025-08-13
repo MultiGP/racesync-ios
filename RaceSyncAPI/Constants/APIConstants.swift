@@ -62,13 +62,6 @@ enum EndPoint {
     static let courseCreate = "course/create"
     static let courseUpdate = "course/update"
     static let courseDelete = "course/delete"
-
-    static let aircraftList = "aircraft/list"
-    static let aircraftCreate = "aircraft/create"
-    static let aircraftUpdate = "aircraft/update"
-    static let aircraftRetire = "aircraft/retire"
-    static let aircraftUploadMainImage = "aircraft/uploadMainImage"
-    static let aircraftUploadBackground = "aircraft/uploadBackground"
 }
 
 enum ParamKey {
@@ -82,7 +75,6 @@ enum ParamKey {
     static let raceId = "raceId"
     static let pilotId = "pilotId"
     static let chapterId = "chapterId"
-    static let aircraftId = "aircraftId"
     static let seasonId = "seasonId"
     static let locationId = "locationId"
     static let ownerId = "ownerId"
@@ -120,7 +112,6 @@ enum ParamKey {
     static let courseName = "courseName"
     static let pilotUserName = "pilotUserName"
     static let pilotName = "pilotName"
-    static let aircraftName = "aircraftName"
     static let urlName = "urlName"
 
     // Model attributes
@@ -136,9 +127,6 @@ enum ParamKey {
     static let type = "type"
     static let count = "count"
     static let size = "size"
-    static let battery = "battery"
-    static let propellerSize = "propellerSize"
-    static let antenna = "antenna"
     static let managedChapters = "managedChapters"
     static let races = "races"
     static let entries = "entries"
@@ -146,7 +134,6 @@ enum ParamKey {
     static let raceType = "raceType"
     static let startDate = "startDate"
     static let endDate = "endDate"
-    static let entryCount = "entryCount"
     static let childRaceCount = "childRaceCount"
     static let raceEntryCount = "raceEntryCount"
     static let participantCount = "participantCount"
@@ -173,10 +160,6 @@ enum ParamKey {
     static let sizeRestriction = "sizeRestriction"
     static let batteryRestriction = "batteryRestriction"
     static let propellerSizeRestriction = "propellerSizeRestriction"
-    static let videoTransmitter = "videoTransmitter"
-    static let videoTransmitterPower = "videoTransmitterPower"
-    static let videoTransmitterChannels = "videoTransmitterChannels"
-    static let videoReceiverChannels = "videoReceiverChannels"
     static let frequency = "frequency"
     static let group = "group"
     static let groupSlot = "groupSlot"
