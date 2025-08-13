@@ -12,8 +12,6 @@ import UserNotifications
 class NotificationsController: NSObject {
 
     public static let shared = NotificationsController()
-
-
 }
 
 extension NotificationsController: UNUserNotificationCenterDelegate {

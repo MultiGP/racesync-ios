@@ -98,6 +98,7 @@
 		4F6CAD8D2983040100E80B5F /* ChapterPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6CAD8C2983040100E80B5F /* ChapterPickerViewController.swift */; };
 		4F6CAD8F298342DE00E80B5F /* UserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6CAD8E298342DE00E80B5F /* UserData.swift */; };
 		4F6FA16C2E4C12550056E115 /* Bool+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6FA16B2E4C12550056E115 /* Bool+Extensions.swift */; };
+		4F6FA16E2E4C66940056E115 /* AppPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6FA16D2E4C66940056E115 /* AppPreferences.swift */; };
 		4F714DE123CD4906000C4036 /* CalendarActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F714DE023CD4906000C4036 /* CalendarActivity.swift */; };
 		4F714DE323CD5EAA000C4036 /* SafariActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F714DE223CD5EAA000C4036 /* SafariActivity.swift */; };
 		4F71B3262E47C1880029D3CB /* PaypalActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F71B3252E47C1880029D3CB /* PaypalActivity.swift */; };
@@ -408,6 +409,7 @@
 		4F6CAD8C2983040100E80B5F /* ChapterPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterPickerViewController.swift; sourceTree = "<group>"; };
 		4F6CAD8E298342DE00E80B5F /* UserData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserData.swift; sourceTree = "<group>"; };
 		4F6FA16B2E4C12550056E115 /* Bool+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bool+Extensions.swift"; sourceTree = "<group>"; };
+		4F6FA16D2E4C66940056E115 /* AppPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPreferences.swift; sourceTree = "<group>"; };
 		4F714DE023CD4906000C4036 /* CalendarActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarActivity.swift; sourceTree = "<group>"; };
 		4F714DE223CD5EAA000C4036 /* SafariActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariActivity.swift; sourceTree = "<group>"; };
 		4F71B3252E47C1880029D3CB /* PaypalActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaypalActivity.swift; sourceTree = "<group>"; };
@@ -822,6 +824,7 @@
 				4FC57C32258E1362006E210F /* AppUtil.swift */,
 				4F6C8A97236A9E840017FD78 /* Color.swift */,
 				4FD4E1DE237FEC0A008816B3 /* Appearance.swift */,
+				4F4129DA2DC0AE32006A2763 /* NotificationsController.swift */,
 				4F5001E423823C940025A593 /* FlagEmojiGenerator.swift */,
 				4F5C1E4E2390B01700D756EB /* ImageNetworking.swift */,
 				4FDC05D723CDB16E00B10881 /* CalendarUtil.swift */,
@@ -832,7 +835,6 @@
 				4F27243A2517DB1C000C7408 /* CopyLinkActivity.swift */,
 				4F482EFA251158FF00DBA0DF /* SocialActivity.swift */,
 				4F71B3252E47C1880029D3CB /* PaypalActivity.swift */,
-				4F4129DA2DC0AE32006A2763 /* NotificationsController.swift */,
 			);
 			path = "UI Utils";
 			sourceTree = "<group>";
@@ -937,6 +939,7 @@
 			isa = PBXGroup;
 			children = (
 				4FA1FC8A23D6D7C0006D4704 /* ApplicationControl.swift */,
+				4F6FA16D2E4C66940056E115 /* AppPreferences.swift */,
 				4FEADB732416B3D400F82F0D /* EventTracker.swift */,
 				4F00E065242930B3001DCFC4 /* RateMe */,
 			);
@@ -1564,6 +1567,7 @@
 				4FA1AB3723C7149D007CF389 /* AircraftCollectionViewCell.swift in Sources */,
 				4F6429122402DB00005E8036 /* ImageConstants.swift in Sources */,
 				4FD4E1C5237F9746008816B3 /* UserViewController.swift in Sources */,
+				4F6FA16E2E4C66940056E115 /* AppPreferences.swift in Sources */,
 				4FD4E1DF237FEC0A008816B3 /* Appearance.swift in Sources */,
 				4F71B3262E47C1880029D3CB /* PaypalActivity.swift in Sources */,
 				4F2724362515D88A000C7408 /* Chapter+UIExtensions.swift in Sources */,

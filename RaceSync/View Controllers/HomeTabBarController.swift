@@ -114,6 +114,15 @@ class HomeTabBarController: UITabBarController {
         super.viewWillAppear(animated)
 
         loadContent()
+
+        let selectedIdx = AppPreferences.lastSelectedTab
+
+        // Dirty little trick to select the first tab bar item
+        if let vcs = viewControllers, selectedIdx == 0 {
+            selectedIndex = vcs.count-1
+        }
+
+        selectedIndex = selectedIdx
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -138,7 +147,6 @@ class HomeTabBarController: UITabBarController {
 
     fileprivate func setupLayout() {
 
-        configureTabBar()
         configureNavigationItems()
 
         let vcs: [UIViewController] = [standingsVC, raceFeedVC, settingsVC]
@@ -147,14 +155,12 @@ class HomeTabBarController: UITabBarController {
         self.viewControllers = vcs
         for vc in vcs { vc.didMove(toParent: self) }
 
-        // Dirty little trick to select the first tab bar item
-        selectedIndex = vcs.count-1
-        selectedIndex = 0
-
         delegate = self
 
         // Trick to pre-load each view controller
         self.preloadTabs()
+
+        configureTabBar()
     }
 
     fileprivate func configureTabBar() {
@@ -339,5 +345,8 @@ extension HomeTabBarController: UITabBarControllerDelegate {
                 topVC.scrollToTop()
             }
         }
+
+        // To open the last tab at launch
+        AppPreferences.lastSelectedTab = tabBarController.selectedIndex
     }
 }

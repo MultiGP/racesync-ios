@@ -87,7 +87,7 @@ public struct RaceData: Descriptable {
         if name != nil { params[ParamKey.name] = name }
         if startDateString != nil { params[ParamKey.startDate] = startDateString }
 
-        params[ParamKey.endDate] = endDateString
+        params[ParamKey.endDate] = endDateString // TODO: This attribute is being ignored by the API
         params[ParamKey.chapterId] = chapterId
         params[ParamKey.chapterName] = chapterName
         params[ParamKey.scoringFormat] = format
