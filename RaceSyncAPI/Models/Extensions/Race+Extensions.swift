@@ -64,18 +64,15 @@ public extension Race {
 public extension Race {
 
     var isPayable: Bool {
-#warning("**** This code is temporary. Remove before release.")
-        return true // fee > 0
+        return fee > 0
     }
 
     var isPaid: Bool {
-#warning("**** This code is temporary. Remove before release.")
-        return isPayable && amountDue > 0 // && amountDue == 0
+        return isPayable && amountDue == 0
     }
 
     var requiresPayment: Bool {
-#warning("**** This code is temporary. Remove before release.")
-        return isPayable && !isPaid && !isPaymentRequiredToJoin
+        return isPayable && !isPaid && isPaymentRequiredToJoin
     }
 
     var canManagePayments: Bool {

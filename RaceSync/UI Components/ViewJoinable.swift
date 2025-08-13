@@ -98,9 +98,10 @@ extension ViewJoinable {
     func join(race: Race, raceApi: RaceApi, _ completion: @escaping JoinStateCompletionBlock) {
 
         if race.requiresPayment, let url = race.getMyPaymentUrl()  {
-            UIApplication.shared.open(url, options: [:]) { completed in
-                //
-            }
+
+//            AlertUtil.presentAlertMessage("", title: <#T##String?#>, buttonTitle: "Go Paym,en", delay: <#T##TimeInterval#>, completion: <#T##AlertCompletionBlock?#>)
+
+            WebViewController.openURL(url)
         } else {
             handleJoiningRace()
         }
