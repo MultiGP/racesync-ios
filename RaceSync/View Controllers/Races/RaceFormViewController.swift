@@ -306,7 +306,7 @@ fileprivate extension RaceFormViewController {
         vc.title = row.title
         vc.textField.placeholder = row.tooltip
         vc.textField.keyboardType = row.keyboardType
-        showViewController(vc, forRow: row, pushed: pushed)
+        presentViewController(vc, forRow: row, pushed: pushed)
     }
 
     func showTextPicker(forRow row: RaceFormRow, pushed: Bool) {
@@ -319,7 +319,7 @@ fileprivate extension RaceFormViewController {
             vc.delegate = self
             vc.title = row.title
 
-            showViewController(vc, forRow: row, pushed: pushed)
+            presentViewController(vc, forRow: row, pushed: pushed)
         }
 
         switch row {
@@ -358,7 +358,7 @@ fileprivate extension RaceFormViewController {
         vc.title = row.title
         vc.delegate = self
 
-        showViewController(vc, forRow: row, pushed: pushed)
+        presentViewController(vc, forRow: row, pushed: pushed)
     }
 
     func showSwitchPicker(forRow row: RaceFormRow, pushed: Bool) {
@@ -371,7 +371,7 @@ fileprivate extension RaceFormViewController {
         vc.delegate = self
         vc.title = row.title
 
-        showViewController(vc, forRow: row, pushed: pushed)
+        presentViewController(vc, forRow: row, pushed: pushed)
     }
 
     func showTextViewController(forRow row: RaceFormRow) {
@@ -382,7 +382,9 @@ fileprivate extension RaceFormViewController {
         navigationController?.pushViewController(vc, animated: true)
     }
 
-    func showViewController(_ viewController: UIViewController, forRow row: RaceFormRow, pushed: Bool) {
+    func presentViewController(_ viewController: UIViewController, forRow row: RaceFormRow, pushed: Bool) {
+
+        // most common place to set this
         selectedRow = row
 
         if pushed && formNavigationController != nil {
@@ -404,7 +406,7 @@ fileprivate extension RaceFormViewController {
             if let vc = formNavigationController?.viewControllers.last as? FormBaseViewController {
                 vc.isLoading = loading
             }
-        } else if let cell = selectedTableViewCell() {
+        } else if let cell = tableViewCell(forRow: row) {
             cell.isLoading = loading
         }
     }
@@ -495,9 +497,8 @@ extension RaceFormViewController {
         return rows[safe: index + offset]
     }
 
-    func selectedTableViewCell() -> FormTableViewCell? {
+    func tableViewCell(forRow row: RaceFormRow) -> FormTableViewCell? {
         guard let rows = currentSectionRows(),
-              let row = selectedRow,
               let index = rows.firstIndex(of: row)
         else { return nil }
 
@@ -650,6 +651,12 @@ extension RaceFormViewController: FormBaseViewControllerDelegate {
             data.funfly = (item == "Yes")
         case .rounds:
             data.rounds = (item as NSString).intValue
+        case .zDepth:
+            data.zippyqDepth = (item as NSString).intValue
+        case .zIterator:
+            data.zippyqIterator = (item as NSString).intValue
+        case .zNoKiosk:
+            data.zippyqNoKiosk = (item == "Yes")
         case .season:
             if let season = seasons?.filter ({ return $0.name == item }).first {
                 data.seasonId = season.id
@@ -682,9 +689,6 @@ extension RaceFormViewController: FormBaseViewControllerDelegate {
             } else if !showFormForNextRow(true) {
                 formViewControllerDidDismiss(viewController)
             }
-//            else {
-//                 // TODO: Consider use case where we'd want to dismiss the form instead
-//            }
         }
         else {
             formViewControllerDidDismiss(viewController)
