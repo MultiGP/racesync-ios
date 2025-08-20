@@ -189,10 +189,6 @@ class RacePilotsPickerController: UIViewController, Shimmable {
 
             if status == true {
                 completion(.joined)
-
-                self.raceApi.checkIn(race: self.race.id, pilotId: id) { (raceEntry, error) in
-                    // when joining a race, we checkin to get a frequency assigned
-                }
             } else if let error = error {
                 completion(.notJoined)
                 AlertUtil.presentAlertMessage("Couldn't add this user to the race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)

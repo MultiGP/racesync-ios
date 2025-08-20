@@ -154,7 +154,7 @@ class PushMessagesViewController: UIViewController {
 
         if message.type == "zippyq_next_round" {
             guard !message.raceId.isEmpty else { return }
-            let vc = RaceTabBarController(with: message.raceId, raceTab: .schedule)
+            let vc = RaceTabBarController(with: message.raceId, selectedTab: .schedule)
             navigationController?.pushViewController(vc, animated: animated)
             
         } else if message.type == "app_store_review" {

@@ -10,8 +10,10 @@ import UIKit
 import SnapKit
 import RaceSyncAPI
 
-protocol ScrollToTop {
-    func scrollToTop()
+enum HomeTabs: Int {
+    case races, standings, settings
+
+    static let `default`: HomeTabs = .standings
 }
 
 class HomeTabBarController: UITabBarController {
@@ -149,7 +151,7 @@ class HomeTabBarController: UITabBarController {
 
         configureNavigationItems()
 
-        let vcs: [UIViewController] = [standingsVC, raceFeedVC, settingsVC]
+        let vcs: [UIViewController] = [raceFeedVC, standingsVC, settingsVC]
 
         for vc in vcs { vc.willMove(toParent: self) }
         self.viewControllers = vcs

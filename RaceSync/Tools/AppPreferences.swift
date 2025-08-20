@@ -15,7 +15,13 @@ class AppPreferences {
     }
 
     static var lastSelectedTab: Int {
-        get { UserDefaults.standard.integer(forKey: Key.lastSelectedTab) }
-        set { UserDefaults.standard.set(newValue, forKey: Key.lastSelectedTab) }
+        get {
+            if let value = UserDefaults.standard.string(forKey: Key.lastSelectedTab) {
+                return Int(value) ?? HomeTabs.default.rawValue
+            } else {
+                return HomeTabs.default.rawValue
+            }
+        }
+        set { UserDefaults.standard.set("\(newValue)", forKey: Key.lastSelectedTab) }
     }
 }

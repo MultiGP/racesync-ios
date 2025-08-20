@@ -73,17 +73,17 @@ class RaceTabBarController: UITabBarController {
 
     // MARK: - Initialization
 
-    init(with race: Race, raceTab: RaceTabs = .details) {
+    init(with race: Race, selectedTab: RaceTabs = .details) {
         self.raceId = race.id
         self.race = race
-        self.initialSelectedIndex = raceTab.rawValue
+        self.initialSelectedIndex = selectedTab.rawValue
         super.init(nibName: nil, bundle: nil)
     }
 
-    init(with raceId: ObjectId, raceTab: RaceTabs = .details) {
+    init(with raceId: ObjectId, selectedTab: RaceTabs = .details) {
         self.raceId = raceId
         self.race = nil
-        self.initialSelectedIndex = raceTab.rawValue
+        self.initialSelectedIndex = selectedTab.rawValue
         super.init(nibName: nil, bundle: nil)
     }
 
