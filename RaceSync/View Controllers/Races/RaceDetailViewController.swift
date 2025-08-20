@@ -41,7 +41,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate lazy var titleLabel: PasteboardLabel = {
         let label = PasteboardLabel()
-        label.font = UIFont.systemFont(ofSize: 22, weight: .regular)
+        label.font = UIFont.systemFont(ofSize: 23, weight: .regular)
         label.textColor = Color.black
         label.numberOfLines = 2
         return label
@@ -52,6 +52,16 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         label.font = UIFont.systemFont(ofSize: 15, weight: .medium)
         label.textColor = Color.gray300
         label.numberOfLines = 1
+        return label
+    }()
+
+    fileprivate lazy var feeLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        label.textColor = Color.gray300
+        label.textAlignment = .right
+        label.numberOfLines = 1
+        label.isHidden = true
         return label
     }()
 
@@ -78,12 +88,12 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     }()
 
     fileprivate lazy var buttonStackView: UIStackView = {
-        var subviews: [UIView] = [joinButton, memberBadgeView, funflyBadge]
+        var subviews: [UIView] = [joinButton, feeLabel, memberBadgeView, funflyBadge]
         let stackView = UIStackView(arrangedSubviews: subviews)
         stackView.axis = .vertical
-        stackView.distribution = .fillEqually
+        stackView.distribution = .equalSpacing
         stackView.alignment = .trailing
-        stackView.spacing = 7
+        stackView.spacing = Constants.padding/2
         return stackView
     }()
 
@@ -146,7 +156,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
         let stackView = UIStackView(arrangedSubviews: subviews)
         stackView.axis = .vertical
-        stackView.distribution = .fillEqually
+        stackView.distribution = .equalSpacing
         stackView.alignment = .leading
         stackView.spacing = Constants.padding/2
         return stackView
@@ -230,6 +240,10 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         return raceViewModel.race.scoringDisabled
     }
 
+    fileprivate var canDisplayFee: Bool {
+        return raceViewModel.feeLabel.count > 0
+    }
+
     fileprivate var tableViewRows = [Row]()
     fileprivate var didTapCell: Bool = false
 
@@ -287,6 +301,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         configureNavigationItems()
 
         let contentView = UIView()
+        let headerView = UIView()
         view.backgroundColor = Color.white
 
         // add temporairly to the view hiearchy so the map is displayed when loading
@@ -300,60 +315,62 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             }
         }
 
-        if canDisplayGQIcon {
-            contentView.addSubview(rotatingIconView)
-            rotatingIconView.snp.makeConstraints {
-                if canDisplayMap {
-                    $0.top.equalTo(mapView.snp.bottom).offset(Constants.padding*1.5)
-                } else {
-                    $0.top.equalToSuperview().offset(Constants.padding*1.5)
-                }
+        contentView.addSubview(headerView)
+        headerView.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview()
+            $0.height.lessThanOrEqualTo(150)
 
+            if canDisplayMap {
+                $0.top.equalTo(mapView.snp.bottom).offset(Constants.padding)
+            } else {
+                $0.top.equalToSuperview().offset(Constants.padding)
+            }
+        }
+
+        headerView.addSubview(classLabel)
+        classLabel.snp.makeConstraints {
+            $0.leading.equalToSuperview().offset(Constants.padding)
+            $0.top.equalToSuperview()
+        }
+
+        if canDisplayGQIcon {
+            headerView.addSubview(rotatingIconView)
+            rotatingIconView.snp.makeConstraints {
+                $0.top.equalTo(classLabel.snp.bottom).offset(Constants.padding/2)
                 $0.leading.equalToSuperview().offset(Constants.padding)
                 $0.width.height.equalTo(20)
             }
         }
 
-        contentView.addSubview(titleLabel)
+        headerView.addSubview(titleLabel)
         titleLabel.snp.makeConstraints {
+            $0.top.equalTo(classLabel.snp.bottom).offset(Constants.padding/2)
+            $0.trailing.equalToSuperview().offset(-Constants.padding)
+
             if canDisplayGQIcon {
-                $0.top.equalTo(rotatingIconView.snp.top)
                 $0.leading.equalTo(rotatingIconView.snp.trailing).offset(Constants.padding/2)
             } else {
-                if canDisplayMap {
-                    $0.top.equalTo(mapView.snp.bottom).offset(Constants.padding*1.5)
-                } else {
-                    $0.top.equalToSuperview().offset(Constants.padding*1.5)
-                }
                 $0.leading.equalToSuperview().offset(Constants.padding)
             }
-
-            $0.trailing.equalToSuperview().offset(-Constants.padding)
         }
 
-        contentView.addSubview(classLabel)
-        classLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(Constants.padding/2)
-            $0.leading.equalTo(titleLabel.snp.leading)
-        }
-
-        contentView.addSubview(buttonStackView)
+        headerView.addSubview(buttonStackView)
         buttonStackView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(Constants.padding/2)
             $0.width.greaterThanOrEqualTo(Constants.minButtonSize)
             $0.trailing.equalToSuperview().offset(-Constants.padding)
         }
 
-        contentView.addSubview(headerLabelStackView)
+        headerView.addSubview(headerLabelStackView)
         headerLabelStackView.snp.makeConstraints {
-            $0.top.equalTo(classLabel.snp.bottom).offset(Constants.padding)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(Constants.padding/2)
             $0.leading.equalToSuperview().offset(Constants.padding*1.5)
             $0.trailing.equalTo(buttonStackView.snp.leading).offset(-Constants.padding/2)
         }
 
         contentView.addSubview(htmlView)
         htmlView.snp.makeConstraints {
-            $0.top.equalTo(headerLabelStackView.snp.bottom).offset(Constants.padding/2)
+            $0.top.equalTo(headerView.snp.bottom).offset(Constants.padding/2)
             $0.leading.trailing.equalToSuperview()
             $0.width.equalTo(view.bounds.width)
 
@@ -366,7 +383,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             $0.top.equalTo(htmlView.snp.bottom).offset(Constants.padding/2)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(Constants.cellHeight*CGFloat(tableViewRows.count))
-            $0.bottom.equalToSuperview() //.offset(-Constants.padding)
+            $0.bottom.equalToSuperview()
         }
 
         scrollView.addSubview(contentView)
@@ -378,6 +395,39 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         scrollView.snp.makeConstraints {
             $0.top.leading.trailing.bottom.equalToSuperview()
         }
+    }
+
+    fileprivate func configureNavigationItems() {
+        title = "Race Details"
+        tabBarItem = UITabBarItem(title: "Details", image: SystemImg.calendarCclock, selectedImage: nil)
+
+        var buttons = [UIButton]()
+
+        if race.canBeEdited {
+            let editButton = CustomButton(type: .system)
+            editButton.addTarget(self, action: #selector(didPressEditButton), for: .touchUpInside)
+            editButton.setImage(ButtonImg.edit, for: .normal)
+            buttons += [editButton]
+        }
+
+        if race.canCreateCalendarEvent() {
+            let calendarButton = CustomButton(type: .system)
+            calendarButton.addTarget(self, action: #selector(didPressCalendarButton), for: .touchUpInside)
+            calendarButton.setImage(ButtonImg.calendar, for: .normal)
+            buttons += [calendarButton]
+        }
+
+        let shareButton = CustomButton(type: .system)
+        shareButton.addTarget(tabBarController, action: #selector(tabBarController.didPressShareButton), for: .touchUpInside)
+        shareButton.setImage(ButtonImg.share, for: .normal)
+        buttons += [shareButton]
+
+        let stackView = UIStackView(arrangedSubviews: buttons)
+        stackView.axis = .horizontal
+        stackView.distribution = .fillEqually
+        stackView.alignment = .lastBaseline
+        stackView.spacing = Constants.buttonSpacing
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: stackView)
     }
 
     fileprivate func loadRows() {
@@ -399,6 +449,8 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         memberBadgeView.count = raceViewModel.participantCount
         startDateButton.setTitle(raceViewModel.startDateDesc , for: .normal)
         funflyBadge.isHidden = !canDisplayFunFly
+        feeLabel.text = raceViewModel.feeLabel
+        feeLabel.isHidden = !canDisplayFee
 
         if canDisplayEndDate {
             endDateButton.setTitle(raceViewModel.endDateDesc, for: .normal)
@@ -460,39 +512,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         
         // Seems like this is not doing anything?
         scrollView.contentSize = CGSize(width: contentRect.size.width, height: contentRect.size.height)
-    }
-
-    fileprivate func configureNavigationItems() {
-        title = "Race Details"
-        tabBarItem = UITabBarItem(title: "Details", image: SystemImg.calendarCclock, selectedImage: nil)
-
-        var buttons = [UIButton]()
-
-        if race.canBeEdited {
-            let editButton = CustomButton(type: .system)
-            editButton.addTarget(self, action: #selector(didPressEditButton), for: .touchUpInside)
-            editButton.setImage(ButtonImg.edit, for: .normal)
-            buttons += [editButton]
-        }
-
-        if race.canCreateCalendarEvent() {
-            let calendarButton = CustomButton(type: .system)
-            calendarButton.addTarget(self, action: #selector(didPressCalendarButton), for: .touchUpInside)
-            calendarButton.setImage(ButtonImg.calendar, for: .normal)
-            buttons += [calendarButton]
-        }
-
-        let shareButton = CustomButton(type: .system)
-        shareButton.addTarget(tabBarController, action: #selector(tabBarController.didPressShareButton), for: .touchUpInside)
-        shareButton.setImage(ButtonImg.share, for: .normal)
-        buttons += [shareButton]
-
-        let stackView = UIStackView(arrangedSubviews: buttons)
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-        stackView.alignment = .lastBaseline
-        stackView.spacing = Constants.buttonSpacing
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: stackView)
     }
 
     // MARK: - Actions
