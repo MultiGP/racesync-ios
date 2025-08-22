@@ -70,7 +70,7 @@ class RacePilotsPickerController: UIViewController, Shimmable {
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
-        static let joinButtonTitle: String = "Force Join"
+        static let forceJoinTitle: String = "Force Join"
         static let avatarImageSize = CGSize(width: 50, height: 50)
         static let searchBarHeight: CGFloat = 56
     }
@@ -156,7 +156,7 @@ class RacePilotsPickerController: UIViewController, Shimmable {
 
                     if state != newState {
                         button.joinState = newState
-                        button.setTitle(Constants.joinButtonTitle, for: .normal)
+                        button.setTitle(Constants.forceJoinTitle, for: .normal)
                         self.didForceJoin = true
 
                         RateMe.shared.userDidPerformEvent()
@@ -186,14 +186,9 @@ class RacePilotsPickerController: UIViewController, Shimmable {
     fileprivate func forceJoinUser(with id: ObjectId, completion: @escaping JoinStateCompletionBlock) {
 
         raceApi.forceJoin(race: race.id, pilotId: id) { (status, error) in
-
-            if status == true {
-                completion(.joined)
-            } else if let error = error {
-                completion(.notJoined)
+            completion(status ? .joined : .notJoined)
+            if let error = error {
                 AlertUtil.presentAlertMessage("Couldn't add this user to the race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
-            } else {
-                completion(.notJoined)
             }
         }
     }
@@ -201,13 +196,9 @@ class RacePilotsPickerController: UIViewController, Shimmable {
     fileprivate func resignUser(with id: ObjectId, completion: @escaping JoinStateCompletionBlock) {
 
         raceApi.forceResign(race: race.id, pilotId: id) { (status, error) in
-            if status == true {
-                completion(.notJoined)
-            } else if let error = error {
-                completion(.joined)
+            completion(status ? .notJoined : .joined)
+            if let error = error {
                 AlertUtil.presentAlertMessage("Couldn't remove this user from the race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
-            } else {
-                completion(.joined)
             }
         }
     }
@@ -305,20 +296,28 @@ extension RacePilotsPickerController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as ChapterUserTableViewCell
         guard let viewModel = userViewModel(for: indexPath) else { return cell }
 
-        cell.titleLabel.text = viewModel.displayName
-        cell.avatarImageView.imageView.setImage(with: viewModel.pictureUrl, placeholderImage: PlaceholderImg.medium, size: Constants.avatarImageSize)
-        cell.subtitleLabel.text = viewModel.fullName
+        // Find external match (if any)
+        let otherViewModel = externalUserViewModels?.first { $0.userId == viewModel.userId }
 
+        // --- Configure cell UI ---
+        cell.titleLabel.text = viewModel.displayName
+        cell.subtitleLabel.text = viewModel.fullName
+        cell.avatarImageView.imageView.setImage(with: viewModel.pictureUrl,
+            placeholderImage: PlaceholderImg.medium,
+            size: Constants.avatarImageSize
+        )
+
+        // --- Configure join button ---
         cell.joinButton.addTarget(self, action: #selector(didPressJoinButton), for: .touchUpInside)
         cell.joinButton.hitTestEdgeInsets = UIEdgeInsets(proportionally: -10)
         cell.joinButton.type = .race
         cell.joinButton.objectId = viewModel.userId
 
-        if viewModel.isJoined {
-            cell.joinButton.joinState = .joined
-        } else {
-            cell.joinButton.joinState = .notJoined
-            cell.joinButton.setTitle(Constants.joinButtonTitle, for: .normal)
+        // Determine join state
+        let isJoined = otherViewModel?.isJoined ?? viewModel.isJoined
+        cell.joinButton.joinState = isJoined ? .joined : .notJoined
+        if !isJoined {
+            cell.joinButton.setTitle(Constants.forceJoinTitle, for: .normal)
         }
 
         return cell
