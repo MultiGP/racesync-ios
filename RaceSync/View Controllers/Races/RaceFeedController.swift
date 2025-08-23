@@ -10,6 +10,9 @@ import UIKit
 import RaceSyncAPI
 import CoreLocation
 
+// cached is true when the returned array is from the cached collection or a new data collection from the server
+public typealias RaceFeedControllerCompletionBlock<T> = (_ object: T?, _ cached: Bool, _ error: NSError?) -> Void
+
 // 
 class RaceFeedController {
 
@@ -46,7 +49,7 @@ class RaceFeedController {
         return raceCollection[filter] == nil
     }
 
-    func raceViewModels(for filter: RaceFilter, forceFetch: Bool = false, completion: @escaping ObjectCompletionBlock<[RaceViewModel]>) {
+    func raceViewModels(for filter: RaceFilter, forceFetch: Bool = false, completion: @escaping RaceFeedControllerCompletionBlock<[RaceViewModel]>) {
         switch filter {
         case .joined:
             getJoinedRaces(forceFetch, completion)
@@ -68,10 +71,10 @@ class RaceFeedController {
 
 fileprivate extension RaceFeedController {
 
-    func getJoinedRaces(_ forceFetch: Bool = false, _ completion: @escaping ObjectCompletionBlock<[RaceViewModel]>) {
+    func getJoinedRaces(_ forceFetch: Bool = false, _ completion: @escaping RaceFeedControllerCompletionBlock<[RaceViewModel]>) {
 
         if let viewModels = raceCollection[.joined] {
-            completion(viewModels, nil)
+            completion(viewModels, true, nil)
             guard forceFetch else { return }
         }
 
@@ -82,17 +85,17 @@ fileprivate extension RaceFeedController {
             if let filteredRaces = self?.locallyFilteredRaces(races) {
                 let sortedViewModels = RaceViewModel.sortedViewModels(with: filteredRaces, sorting: sorting)
                 self?.raceCollection[.joined] = sortedViewModels
-                completion(sortedViewModels, nil)
+                completion(sortedViewModels, false, nil)
             } else {
-                completion(nil, error)
+                completion(nil, false, error)
             }
         }
     }
 
-    func getNearbydRaces(_ forceFetch: Bool = false, _ completion: @escaping ObjectCompletionBlock<[RaceViewModel]>) {
+    func getNearbydRaces(_ forceFetch: Bool = false, _ completion: @escaping RaceFeedControllerCompletionBlock<[RaceViewModel]>) {
 
         if let viewModels = raceCollection[.nearby] {
-            completion(viewModels, nil)
+            completion(viewModels, true, nil)
             guard forceFetch else { return }
         }
 
@@ -107,18 +110,18 @@ fileprivate extension RaceFeedController {
             if let filteredRaces = self?.locallyFilteredRaces(races) {
                 let sortedViewModels = RaceViewModel.sortedViewModels(with: filteredRaces, sorting: sorting)
                 self?.raceCollection[.nearby] = sortedViewModels
-                completion(sortedViewModels, nil)
+                completion(sortedViewModels, false, nil)
             } else {
-                completion(nil, error)
+                completion(nil, false, error)
             }
         }
     }
 
-    func getChapterRaces(_ forceFetch: Bool = false, _ completion: @escaping ObjectCompletionBlock<[RaceViewModel]>) {
+    func getChapterRaces(_ forceFetch: Bool = false, _ completion: @escaping RaceFeedControllerCompletionBlock<[RaceViewModel]>) {
         guard let user = APIServices.shared.myUser else { return }
 
         if let viewModels = raceCollection[.chapters] {
-            completion(viewModels, nil)
+            completion(viewModels, true, nil)
             guard forceFetch else { return }
         }
 
@@ -129,17 +132,17 @@ fileprivate extension RaceFeedController {
             if let filteredRaces = self?.locallyFilteredRaces(races) {
                 let sortedViewModels = RaceViewModel.sortedViewModels(with: filteredRaces, sorting: sorting)
                 self?.raceCollection[.chapters] = sortedViewModels
-                completion(sortedViewModels, nil)
+                completion(sortedViewModels, false, nil)
             } else {
-                completion(nil, error)
+                completion(nil, false, error)
             }
         }
     }
 
-    func getRaces(for class: RaceClass, _ forceFetch: Bool = false, _ completion: @escaping ObjectCompletionBlock<[RaceViewModel]>) {
+    func getRaces(for class: RaceClass, _ forceFetch: Bool = false, _ completion: @escaping RaceFeedControllerCompletionBlock<[RaceViewModel]>) {
 
         if let viewModels = raceCollection[.classes(`class`)] {
-            completion(viewModels, nil)
+            completion(viewModels, true, nil)
             guard forceFetch else { return }
         }
 
@@ -150,17 +153,17 @@ fileprivate extension RaceFeedController {
             if let filteredRaces = self?.locallyFilteredRaces(races) {
                 let sortedViewModels = RaceViewModel.sortedViewModels(with: filteredRaces, sorting: sorting)
                 self?.raceCollection[.classes(`class`)] = sortedViewModels
-                completion(sortedViewModels, nil)
+                completion(sortedViewModels, false, nil)
             } else {
-                completion(nil, error)
+                completion(nil, false, error)
             }
         }
     }
 
-    func getRaces(for series: GQSeries, _ forceFetch: Bool = false, _ completion: @escaping ObjectCompletionBlock<[RaceViewModel]>) {
+    func getRaces(for series: GQSeries, _ forceFetch: Bool = false, _ completion: @escaping RaceFeedControllerCompletionBlock<[RaceViewModel]>) {
 
         if let viewModels = raceCollection[.series(series)] {
-            completion(viewModels, nil)
+            completion(viewModels, true, nil)
             guard forceFetch else { return }
         }
 
@@ -172,9 +175,9 @@ fileprivate extension RaceFeedController {
             if let filteredRaces = series.isThisYear() ? self?.locallyFilteredRaces(races) : races {
                 let sortedViewModels = RaceViewModel.sortedViewModels(with: filteredRaces, sorting: sorting)
                 self?.raceCollection[.series(series)] = sortedViewModels
-                completion(sortedViewModels, nil)
+                completion(sortedViewModels, false, nil)
             } else {
-                completion(nil, error)
+                completion(nil, false, error)
             }
         }
     }

@@ -245,13 +245,14 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
             isLoadingList(true)
         }
 
-        raceFeedController.raceViewModels(for: selectedList, forceFetch: forceReload) { [weak self] (viewModels, error) in
+        raceFeedController.raceViewModels(for: selectedList, forceFetch: forceReload) { [weak self] (viewModels, cached, error) in
             guard let strongSelf = self else { return }
 
             strongSelf.isLoadingList(false)
 
             if let _ = viewModels, selectedList == strongSelf.selectedRaceFilter {
-                if strongSelf.refreshControl.isRefreshing {
+
+                if strongSelf.refreshControl.isRefreshing, !cached {
                     strongSelf.refreshControl.endRefreshing()
                 }
 
