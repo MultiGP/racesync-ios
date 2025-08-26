@@ -457,7 +457,7 @@ extension StandingsViewController: UITableViewDelegate {
         guard !isSearching else {
             return searchResult.isEmpty ? nil : "Showing \(searchResult.count) Pilots"
         }
-        return "\(season.rawValue) MultiGP Global Qualifier - Sponsored by FINZ\nFastest 3 Consecutive Laps"
+        return season.sectionTitle
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
