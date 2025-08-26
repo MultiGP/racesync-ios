@@ -380,6 +380,9 @@ fileprivate extension RaceFormViewController {
     }
 
     func showTextViewController(forRow row: RaceFormRow) {
+        // most common place to set this
+        selectedRow = row
+
         let vc = TextEditorViewController(with: row == .content ? data.content : nil)
         vc.delegate = self
         vc.title = row.title
@@ -388,7 +391,6 @@ fileprivate extension RaceFormViewController {
     }
 
     func presentViewController(_ viewController: UIViewController, forRow row: RaceFormRow, pushed: Bool) {
-
         // most common place to set this
         selectedRow = row
 
@@ -519,7 +521,6 @@ extension RaceFormViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
 
         guard let rows = currentSectionRows() else { return }
-        guard let cell = tableView.cellForRow(at: indexPath) as? FormTableViewCell else { return }
 
         let row = rows[indexPath.row]
 
