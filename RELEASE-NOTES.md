@@ -9,6 +9,7 @@
    * Race edit/create form overhaul (organizers only) + including Payment options
    * Removed Aircraft support. Joining a race no longer requires selecting an aircraft beforehand.
    * The Standings tab is now selected by default. The app will also remember your last selected tab and open with it on launch.
+   * Fixing the rank display when higher than 100th, in the personal GQ card from standings.
 
 ---
 

@@ -46,14 +46,17 @@ class StandingBadgeView: UIView {
         let positionText = String.stringWithOrdinalSuffix(for: viewModel.rank)
         let suffixText = String.ordinalSuffix(for: viewModel.rank)
 
+        let textSize: CGFloat = 90
+
         // Define attributes
         let rankAttributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: 90, weight: .bold),
+            .font: UIFont.systemFont(ofSize: textSize, weight: .bold),
             .foregroundColor: UIColor.white
         ]
         let ordinalAttributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: 50, weight: .medium),
-            .foregroundColor: UIColor.white
+            .font: UIFont.systemFont(ofSize: textSize/2, weight: .medium),
+            .foregroundColor: UIColor.white,
+            .baselineOffset: textSize/3 // raises the ordinal element to the top of the font
         ]
 
         // Create attributed rank string
@@ -64,6 +67,8 @@ class StandingBadgeView: UIView {
         }
 
         positionLabel.attributedText = rankString
+        positionLabel.sizeToFit() //forcing the label to adjust size
+
         titleLabel.text = viewModel.titleLabel
 
         let score1 = StandingViewModel.timeLabel(for: viewModel.standing.season1Score)

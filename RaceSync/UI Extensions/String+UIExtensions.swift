@@ -14,24 +14,26 @@ extension String {
         return self.unicodeScalars.contains { $0.properties.isEmoji && ($0.value > 0x238C || $0.properties.isEmojiPresentation) }
     }
 
-    static func ordinalSuffix(for number: Int32) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .ordinal
-        guard let full = formatter.string(from: NSNumber(value: number)) else {
-            return ""
-        }
-
-        let numberString = String(number)
-        if full.hasPrefix(numberString) {
-            return String(full.dropFirst(numberString.count))
-        } else {
-            return ""
-        }
+    // The native ordinal API from NumberFormatter (.numberStyle = .ordinal)
+    // always adds a comma for thousands, hitting a limit.
+    // This is a custom method suggested by ChatGPT
+    static func stringWithOrdinalSuffix(for number: Int32) -> String {
+        return "\(number)\(ordinalSuffix(for: number))"
     }
 
-    static func stringWithOrdinalSuffix(for number: Int32) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .ordinal
-        return formatter.string(from: NSNumber(value: number)) ?? "\(number)"
+    static func ordinalSuffix(for number: Int32) -> String {
+        let ones = number % 10
+        let tens = (number / 10) % 10
+
+        if tens == 1 {
+            return "th"
+        }
+
+        switch ones {
+            case 1: return "st"
+            case 2: return "nd"
+            case 3: return "rd"
+            default: return "th"
+        }
     }
 }
