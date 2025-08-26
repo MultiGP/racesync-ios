@@ -14,11 +14,13 @@ protocol Pinnable where Self: UIViewController {
     var isSearching: Bool { get }
 
     var pinnedView: UIView? { get set }
-    var cachedPinnedIndexPath: IndexPath? { get }
+    var cachedPinnedIndexPath: IndexPath? { get set }
 
-    func layoutPinnedCell()
     func pinnedCellIndexPath() -> IndexPath?
     func cellForRow(at indexPath: IndexPath) -> UITableViewCell
+
+    func layoutPinnedCell()
+    func invalidatePinnedCell()
 }
 
 extension Pinnable {
@@ -97,10 +99,6 @@ extension Pinnable {
         return snapshot
     }
 
-    func didTapPinnedCell() {
-        print("Tapped!")
-    }
-
     fileprivate func removePinnedCell() {
         guard let view = pinnedView else { return }
 
@@ -109,6 +107,15 @@ extension Pinnable {
         }
 
         pinnedView = nil
+    }
+
+    func invalidatePinnedCell() {
+        cachedPinnedIndexPath = nil
+        removePinnedCell()
+
+        if pinnedCellIndexPath() != nil {
+            layoutPinnedCell()
+        }
     }
 }
 
