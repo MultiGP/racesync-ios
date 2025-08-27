@@ -3,14 +3,20 @@
 
 ## 1.8
 
+### New Features:
+
+   * RaceSync Payments support on iOS : Pay for races directly in-app via PayPal (available for races with payments enabled).
+   * Race Management Improvements: Overhauled race creation and editing forms, now including payment options (organizers only).
+   * New Registrations Tab: View paid and unpaid pilot registrations in the race detail screen (organizers only).
+   * Pinned View for Race Results: See your personal result in a pinned format, similar to the GQ Standings view.
+
 ### Fixes and enhancements:
 
    * Adding a new tab to the race detail view, where organizers can see paid and unpaid registered pilots
-   * Race edit/create form overhaul (organizers only) + including Payment options
    * Removed Aircraft support. Joining a race no longer requires selecting an aircraft beforehand.
    * The Standings tab is now selected by default. The app will also remember your last selected tab and open with it on launch.
    * Fixing the rank display when higher than 100th, in the personal GQ card from standings.
-
+   
 ---
 
 ## 1.7.2

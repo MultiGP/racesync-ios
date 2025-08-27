@@ -10,7 +10,7 @@ import UIKit
 import EmptyDataSet_Swift
 import RaceSyncAPI
 
-class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
+class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pinnable {
 
     // MARK: - Public Variables
 
@@ -47,6 +47,16 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
     fileprivate let emptyStateRaceRegisters = EmptyStateViewModel(.noRaceRegisters)
     fileprivate var didTapCell: Bool = false
     fileprivate var externalResultSection: Int = 0
+
+    // Pinnable variables
+    var pinnedView: UIView?
+    var cachedPinnedIndexPath: IndexPath?
+    var isSearching = false
+    fileprivate var hasLaidPinnedView = false
+
+    fileprivate var myUserId: ObjectId? {
+        get { return APIServices.shared.myUser?.id }
+    }
 
     fileprivate var showingResults: Bool {
         guard let results = race.results, results.count > 0 else { return false }
@@ -139,7 +149,6 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
     // MARK: - Content
 
     fileprivate func populateData() {
-
         var viewModels = [UserViewModel]()
 
         func populateScore(in userViewModels: [UserViewModel]) {
@@ -170,11 +179,19 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
         }
 
         userViewModels = viewModels
+
+        resetTableView()
+    }
+
+    func resetTableView() {
+        tableView.setContentOffset(.zero, animated: false)
+        tableView.reloadData()
+
+        invalidatePinnedCell()
     }
 
     func reloadContent() {
         populateData()
-        tableView.reloadData()
     }
 
     fileprivate func reloadRaceView() {
@@ -190,6 +207,32 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable {
 
         let nc = NavigationController(rootViewController: vc)
         present(nc, animated: true)
+    }
+
+    // MARK: - Pinnable
+
+    func pinnedCellIndexPath() -> IndexPath? {
+        guard showingResults, let userId = myUserId else { return nil }
+
+        if let cached = cachedPinnedIndexPath {
+            return cached
+        }
+
+        let source = userViewModels
+        let section = showingExternalResults() ? 1 : 0
+        guard let index = source.firstIndex(where: { $0.userId == userId }) else {
+            return nil
+        }
+
+        let indexPath = IndexPath(row: index, section: section)
+        cachedPinnedIndexPath = indexPath
+        return indexPath
+    }
+
+    func pinnedCellForRow(at indexPath: IndexPath) -> UITableViewCell {
+        let cell = AvatarTableViewCell(style: .default, reuseIdentifier: nil)
+        configure(tableViewCell: cell, forRowAt: indexPath)
+        return cell
     }
 }
 
@@ -252,6 +295,18 @@ extension RacePilotsViewController: UITableViewDelegate {
         guard userViewModels.count > 0 else { return 0 }
         return UITableView.automaticDimension
     }
+
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        guard let visibleIndexPaths = tableView.indexPathsForVisibleRows else { return }
+
+        // Best spot to lay the pinned view for the first time
+        if indexPath == visibleIndexPaths.max() && !hasLaidPinnedView {
+            DispatchQueue.main.async {
+                self.invalidatePinnedCell()
+                self.hasLaidPinnedView = true
+            }
+        }
+    }
 }
 
 extension RacePilotsViewController: UITableViewDataSource {
@@ -285,18 +340,27 @@ extension RacePilotsViewController: UITableViewDataSource {
     }
 
     func avatarTableViewCell(for indexPath: IndexPath) -> AvatarTableViewCell {
-        let userVM = userViewModels[indexPath.row]
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as AvatarTableViewCell
+        configure(tableViewCell: cell, forRowAt: indexPath)
+        return cell
+    }
 
-        cell.avatarImageView.imageView.setImage(with: userVM.pictureUrl, placeholderImage: PlaceholderImg.medium)
-        cell.titleLabel.text = userVM.displayName
+    func configure(tableViewCell cell: AvatarTableViewCell, forRowAt indexPath: IndexPath) {
+        let viewModel = userViewModels[indexPath.row]
+
+        cell.avatarImageView.imageView.setImage(with: viewModel.pictureUrl, placeholderImage: PlaceholderImg.medium)
+        cell.titleLabel.text = viewModel.displayName
         cell.subtitleLabel.text = ResultEntryViewModel.noResultPlaceholder
         cell.rankView.rank = nil
         cell.textPill.text = nil
         cell.textPill.style = .badge
+        cell.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : Color.gray20
+        cell.titleLabel.textColor = Color.black
+        cell.subtitleLabel.textColor = Color.gray300
+        cell.rankView.titleLabel.textColor = Color.gray300
 
         if showingResults {
-            if let resultEntry = userVM.resultEntry {
+            if let resultEntry = viewModel.resultEntry {
                 let resultEntryVM = ResultEntryViewModel(with: resultEntry, from: race)
 
                 if resultEntryVM.resultLabel != nil {
@@ -305,17 +369,22 @@ extension RacePilotsViewController: UITableViewDataSource {
                 }
             }
 
-            if let score = userVM.score, score > 0 {
+            if let score = viewModel.score, score > 0 {
                 let unit = (score == 1) ? "pt" : "pts"
                 cell.textPill.text = "\(score) \(unit)"
                 cell.textPill.style = .text
                 cell.rankView.rank = Int32(indexPath.row+1)
             }
-        } else if race.raceClass != .esport {
-            cell.textPill.text = userVM.channelLabel // only real races have frequencies
-        }
 
-        return cell
+            if let userId = myUserId, viewModel.userId == userId {
+                cell.backgroundColor = Color.gray200
+                cell.titleLabel.textColor = Color.white
+                cell.subtitleLabel.textColor = Color.gray20
+                cell.rankView.titleLabel.textColor = Color.gray20
+            }
+        } else if race.raceClass != .esport {
+            cell.textPill.text = viewModel.channelLabel // only real races have frequencies
+        }
     }
 
     func formTableViewCell(for indexPath: IndexPath) -> FormTableViewCell {
@@ -334,6 +403,20 @@ extension RacePilotsViewController: UITableViewDataSource {
         }
 
         return cell
+    }
+}
+
+extension RacePilotsViewController: UIScrollViewDelegate {
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        layoutPinnedCell()
+    }
+}
+
+extension RacePilotsViewController: ScrollToTop {
+
+    func scrollToTop() {
+        tableView.setContentOffset(.zero, animated: true)
     }
 }
 
@@ -387,9 +470,5 @@ extension RacePilotsViewController: EmptyDataSetDelegate {
                 self?.reloadRaceView()
             }
         }
-    }
-
-    func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
-        return -(view.safeAreaInsets.top + view.safeAreaInsets.bottom)
     }
 }

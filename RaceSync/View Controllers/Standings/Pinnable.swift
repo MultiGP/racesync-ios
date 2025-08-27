@@ -17,7 +17,7 @@ protocol Pinnable where Self: UIViewController {
     var cachedPinnedIndexPath: IndexPath? { get set }
 
     func pinnedCellIndexPath() -> IndexPath?
-    func cellForRow(at indexPath: IndexPath) -> UITableViewCell
+    func pinnedCellForRow(at indexPath: IndexPath) -> UITableViewCell
 
     func layoutPinnedCell()
     func invalidatePinnedCell()
@@ -26,34 +26,24 @@ protocol Pinnable where Self: UIViewController {
 extension Pinnable {
 
     func layoutPinnedCell() {
-        guard !isSearching else { return }
-
-        guard let indexPath = pinnedCellIndexPath() else { return }
-        guard let _ = tableView.superview else { return }
+        guard !isSearching,
+              let indexPath = pinnedCellIndexPath(),
+              let superview = tableView.superview else { return }
 
         let cellRect = tableView.rectForRow(at: indexPath)
-        let topInset = tableView.contentInset.top
-        let bottomInset = tableView.contentInset.bottom
-        let contentOffsetY = tableView.contentOffset.y
-        let visibleHeight = tableView.bounds.height - topInset - bottomInset
-        let tabBarHeight = tabBarController?.tabBar.frame.size.height ?? 0
+        let cellSuperRect = tableView.convert(cellRect, to: superview)
 
-        let targetTopOffsetY = cellRect.minY - topInset
-        let targetBottomOffsetY = cellRect.maxY + tabBarHeight - visibleHeight
+        let topInset = tableView.adjustedContentInset.top
+        let bottomInset = tableView.adjustedContentInset.bottom
 
-        let cellHeight = tableView.delegate?.tableView?(tableView, heightForRowAt: indexPath) ?? cellRect.height
-        let cellWidth = tableView.frame.width
+        let topPinY = tableView.frame.minY + topInset
+        let bottomPinY = tableView.frame.maxY - bottomInset - cellSuperRect.height
 
-        let topPinY = tableView.frame.minY
-        let bottomPinY = tableView.frame.maxY - bottomInset - cellHeight - tabBarHeight
-
-        // Pin to top
-        if contentOffsetY >= targetTopOffsetY {
-            showPinnedCell(at: topPinY, indexPath: indexPath, size: CGSize(width: cellWidth, height: cellHeight))
-
-        // Pin to bottom
-        } else if contentOffsetY <= targetBottomOffsetY {
-            showPinnedCell(at: bottomPinY, indexPath: indexPath, size: CGSize(width: cellWidth, height: cellHeight))
+        // Check whether the cell is scrolled past top or bottom
+        if cellSuperRect.minY <= topPinY {
+            showPinnedCell(at: topPinY, indexPath: indexPath, size: cellSuperRect.size)
+        } else if cellSuperRect.maxY >= bottomPinY + cellSuperRect.height {
+            showPinnedCell(at: bottomPinY, indexPath: indexPath, size: cellSuperRect.size)
         } else {
             removePinnedCell()
         }
@@ -61,8 +51,7 @@ extension Pinnable {
 
     fileprivate func showPinnedCell(at y: CGFloat, indexPath: IndexPath, size: CGSize) {
         if pinnedView == nil {
-            let snapshot = createSnapshotFromCell(forRowAt: indexPath)
-            pinnedView = snapshot
+            pinnedView = createSnapshotFromCell(forRowAt: indexPath)
             pinnedView?.frame = CGRect(origin: CGPoint(x: 0, y: y), size: size)
             pinnedView?.layer.zPosition = 999
         } else {
@@ -75,37 +64,34 @@ extension Pinnable {
     }
 
     fileprivate func createSnapshotFromCell(forRowAt indexPath: IndexPath) -> UIView? {
-        let cellWidth = tableView.bounds.width
-        let cellHeight = tableView.delegate?.tableView?(tableView, heightForRowAt: indexPath) ?? tableView.rowHeight
 
-        let cell = cellForRow(at: indexPath)
+        let cellWidth = tableView.bounds.width
+        let cellHeight = tableView.rectForRow(at: indexPath).height
+
+        let cell = pinnedCellForRow(at: indexPath)
+        
         cell.frame = CGRect(x: 0, y: 0, width: cellWidth, height: cellHeight)
 
-        // Force the cell to layout its subviews
         cell.setNeedsLayout()
         cell.layoutIfNeeded()
 
-        // Create a snapshot of the cell’s current rendered content
-        guard let snapshot = cell.snapshotView(afterScreenUpdates: true) else {
-            return nil
-        }
-        snapshot.tag = indexPath.row
+        // Wrap in container to preserve layout (optional but cleaner)
+        let container = UIView(frame: cell.bounds)
+        container.addSubview(cell)
 
-        snapshot.addTapAction {
-            guard let indexPath = self.pinnedCellIndexPath() else { return }
-            self.tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
+        guard let snapshot = container.snapshotView(afterScreenUpdates: true) else { return nil }
+        snapshot.tag = indexPath.row
+        snapshot.addTapAction { [weak self] in
+            guard let self = self,
+                  let pinnedIndexPath = self.pinnedCellIndexPath() else { return }
+            self.tableView.scrollToRow(at: pinnedIndexPath, at: .middle, animated: true)
         }
 
         return snapshot
     }
 
     fileprivate func removePinnedCell() {
-        guard let view = pinnedView else { return }
-
-        if view.superview != nil {
-            view.removeFromSuperview()
-        }
-
+        pinnedView?.removeFromSuperview()
         pinnedView = nil
     }
 

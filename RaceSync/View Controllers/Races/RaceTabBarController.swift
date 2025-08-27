@@ -112,12 +112,13 @@ class RaceTabBarController: UITabBarController {
 
     fileprivate func setupLayout() {
 
+        // keep this here, else the custom tab wouldn't load properly
         configureTabBar()
+        tabBar.isHidden = true
 
         title = ""
         view.backgroundColor = Color.white
 
-        tabBar.isHidden = true
         delegate = self
 
         view.addSubview(activityIndicatorView)

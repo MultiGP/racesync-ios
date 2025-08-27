@@ -96,6 +96,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     fileprivate var standingViewModels = [StandingViewModel]()
     fileprivate var searchResult = [StandingViewModel]()
 
+    // Pinnable variables
     var pinnedView: UIView?
     var cachedPinnedIndexPath: IndexPath?
 
@@ -261,26 +262,26 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
 
     // MARK: - Cell Pinning
 
-    func cellForRow(at indexPath: IndexPath) -> UITableViewCell {
+    func pinnedCellIndexPath() -> IndexPath? {
+        guard let userId = myUserId else { return nil }
+
+        if let cachedPinnedIndexPath { return cachedPinnedIndexPath }
+
+        let source = isSearching ? searchResult : standingViewModels
+
+        guard let index = source.firstIndex(where: { $0.standing.userId == userId }) else {
+            return nil
+        }
+
+        let indexPath = IndexPath(row: index, section: 0)
+        cachedPinnedIndexPath = indexPath
+        return indexPath
+    }
+
+    func pinnedCellForRow(at indexPath: IndexPath) -> UITableViewCell {
         let cell = AvatarTableViewCell(style: .default, reuseIdentifier: nil)
         configure(tableViewCell: cell, forRowAt: indexPath)
         return cell
-    }
-
-    func pinnedCellIndexPath() -> IndexPath? {
-        if let cached = cachedPinnedIndexPath {
-            return cached
-        }
-
-        guard let userId = myUserId else { return nil }
-        let source = isSearching ? searchResult : standingViewModels
-
-        if let index = source.firstIndex(where: { $0.standing.userId == userId }) {
-            let indexPath = IndexPath(row: index, section: 0)
-            cachedPinnedIndexPath = indexPath
-            return indexPath
-        }
-        return nil
     }
 
     // MARK: - Personal Standing Badge
@@ -323,12 +324,12 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     }
 
     func resetTableView() {
+        // resets it each time, so it can be recalculated
+        invalidatePinnedCell()
+
         tableView.refreshControl = isSearching ? nil : refreshControl
         tableView.setContentOffset(.zero, animated: false)
         tableView.reloadData()
-
-        // resets it each time, so it can be recalculated
-        invalidatePinnedCell()
     }
 }
 
@@ -384,7 +385,9 @@ extension StandingsViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return cellForRow(at: indexPath)
+        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as AvatarTableViewCell
+        configure(tableViewCell: cell, forRowAt: indexPath)
+        return cell
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -397,19 +400,20 @@ extension StandingsViewController: UITableViewDataSource {
         cell.titleLabel.text = viewModel.titleLabel
         cell.subtitleLabel.text = viewModel.subtitleLabel
         cell.avatarImageView.isHidden = true
+        cell.accessoryView = nil
 
         if let userId = myUserId, viewModel.standing.userId == userId {
-            cell.backgroundColor = UIColor(hex: "898b8c")
+            cell.backgroundColor = Color.gray200
             cell.titleLabel.textColor = Color.white
             cell.subtitleLabel.textColor = Color.gray20
             cell.rankView.titleLabel.textColor = Color.gray20
 
-            let image = UIImage(named: "icn_navbar_share")?.withTintColor(.white)
+            let image = ButtonImg.share?.withTintColor(.white)
             let imageView = UIImageView(image: image)
             imageView.tintColor = .white
             cell.accessoryView = imageView
         } else {
-            cell.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : UIColor(hex: "f7f9fa")
+            cell.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : Color.gray20
             cell.titleLabel.textColor = Color.black
             cell.subtitleLabel.textColor = Color.gray300
             cell.rankView.titleLabel.textColor = Color.gray300
@@ -490,6 +494,13 @@ extension StandingsViewController: EmptyDataSetSource {
             return emptyStateSearch.description
         }
         return nil
+    }
+}
+
+extension StandingsViewController: EmptyDataSetDelegate {
+
+    func emptyDataSetShouldAllowScroll(_ scrollView: UIScrollView) -> Bool {
+        return false
     }
 
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
