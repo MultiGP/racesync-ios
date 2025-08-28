@@ -26,8 +26,9 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
         tableView.emptyDataSetSource = self
         tableView.tableFooterView = UIView()
         tableView.backgroundColor = Color.gray50
-        tableView.register(cellType: AvatarTableViewCell.self)
         tableView.register(cellType: FormTableViewCell.self)
+        tableView.register(cellType: AvatarTableViewCell.self)
+        tableView.register(cellType: AvatarTableViewCell.self, identifier: Constants.pinnedCellIdentifier)
         return tableView
     }()
 
@@ -52,25 +53,21 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
     var pinnedView: UIView?
     var cachedPinnedIndexPath: IndexPath?
     var isSearching = false
-    fileprivate var hasLaidPinnedView = false
+    fileprivate var didShowPinnedView = false
 
     fileprivate var myUserId: ObjectId? {
         get { return APIServices.shared.myUser?.id }
     }
 
-    fileprivate var showingResults: Bool {
-        guard let results = race.results, results.count > 0 else { return false }
-        guard let startDate = race.startDate else { return false }
-        return startDate.isPassed
-    }
-
     func showingExternalResults() -> Bool {
-        return showingResults && race.liveTimeEventUrl != nil
+        return race.canShowResults && race.liveTimeEventUrl != nil
     }
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
         static let buttonSpacing: CGFloat = 12
+
+        static let pinnedCellIdentifier: String = "\((String(describing: StandingsViewController.self))).pinnedCell"
     }
 
     // MARK: - Initialization
@@ -116,7 +113,7 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
 
     fileprivate func configureNavigationItems() {
 
-        if showingResults {
+        if race.canShowResults {
             title = "Race Results"
             tabBarItem = UITabBarItem(title: "Results", image: SystemImg.medal, selectedImage: SystemImg.medalFill)
         } else {
@@ -161,7 +158,7 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
             }
         }
 
-        if showingResults, let results = ResultEntryViewModel.combinedResults(from: race.results, for: race.trueScoringFormat) {
+        if race.canShowResults, let results = ResultEntryViewModel.combinedResults(from: race.results, for: race.trueScoringFormat) {
             viewModels += UserViewModel.viewModelsFromResults(results)
             populateScore(in: viewModels)
         }
@@ -212,7 +209,7 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
     // MARK: - Pinnable
 
     func pinnedCellIndexPath() -> IndexPath? {
-        guard showingResults, let userId = myUserId else { return nil }
+        guard race.canShowResults, let userId = myUserId else { return nil }
 
         if let cached = cachedPinnedIndexPath {
             return cached
@@ -230,7 +227,7 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
     }
 
     func pinnedCellForRow(at indexPath: IndexPath) -> UITableViewCell {
-        let cell = AvatarTableViewCell(style: .default, reuseIdentifier: nil)
+        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath, identifier: Constants.pinnedCellIdentifier) as AvatarTableViewCell
         configure(tableViewCell: cell, forRowAt: indexPath)
         return cell
     }
@@ -284,7 +281,7 @@ extension RacePilotsViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if showingResults {
+        if race.canShowResults {
             return section == externalResultSection ? nil : race.scoringFormat.title
         } else {
             return nil
@@ -300,10 +297,10 @@ extension RacePilotsViewController: UITableViewDelegate {
         guard let visibleIndexPaths = tableView.indexPathsForVisibleRows else { return }
 
         // Best spot to lay the pinned view for the first time
-        if indexPath == visibleIndexPaths.max() && !hasLaidPinnedView {
+        if indexPath == visibleIndexPaths.max() && !didShowPinnedView {
             DispatchQueue.main.async {
                 self.invalidatePinnedCell()
-                self.hasLaidPinnedView = true
+                self.didShowPinnedView = true
             }
         }
     }
@@ -359,7 +356,7 @@ extension RacePilotsViewController: UITableViewDataSource {
         cell.subtitleLabel.textColor = Color.gray300
         cell.rankView.titleLabel.textColor = Color.gray300
 
-        if showingResults {
+        if race.canShowResults {
             if let resultEntry = viewModel.resultEntry {
                 let resultEntryVM = ResultEntryViewModel(with: resultEntry, from: race)
 

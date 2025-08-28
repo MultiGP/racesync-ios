@@ -51,7 +51,7 @@ extension Pinnable {
 
     fileprivate func showPinnedCell(at y: CGFloat, indexPath: IndexPath, size: CGSize) {
         if pinnedView == nil {
-            pinnedView = createSnapshotFromCell(forRowAt: indexPath)
+            pinnedView = createImageViewFromCell(forRowAt: indexPath)
             pinnedView?.frame = CGRect(origin: CGPoint(x: 0, y: y), size: size)
             pinnedView?.layer.zPosition = 999
         } else {
@@ -64,12 +64,10 @@ extension Pinnable {
     }
 
     fileprivate func createSnapshotFromCell(forRowAt indexPath: IndexPath) -> UIView? {
-
         let cellWidth = tableView.bounds.width
         let cellHeight = tableView.rectForRow(at: indexPath).height
 
         let cell = pinnedCellForRow(at: indexPath)
-        
         cell.frame = CGRect(x: 0, y: 0, width: cellWidth, height: cellHeight)
 
         cell.setNeedsLayout()
@@ -90,14 +88,50 @@ extension Pinnable {
         return snapshot
     }
 
+    fileprivate func createImageViewFromCell(forRowAt indexPath: IndexPath) -> UIView? {
+        let cellWidth = tableView.bounds.width
+        let cellHeight = tableView.rectForRow(at: indexPath).height
+
+        let cell = pinnedCellForRow(at: indexPath)
+        cell.frame = CGRect(x: 0, y: 0, width: cellWidth, height: cellHeight)
+
+        // important to call, since it may have not laid correctly when dequeued
+        cell.setNeedsLayout()
+        cell.layoutIfNeeded()
+
+        // Render into an image
+        let renderer = UIGraphicsImageRenderer(size: cell.bounds.size)
+        let image = renderer.image { context in
+            cell.layer.render(in: context.cgContext)
+        }
+
+        // the cell may have been added to the view hierarchy, so let's remove it
+        cell.removeFromSuperview()
+
+        // Wrap in UIImageView so we return a UIView
+        let imageView = UIImageView(image: image)
+        imageView.frame = cell.bounds
+        imageView.tag = indexPath.row
+        imageView.isUserInteractionEnabled = true
+
+        imageView.addTapAction { [weak self] in
+            guard let self = self,
+                  let pinnedIndexPath = self.pinnedCellIndexPath() else { return }
+            self.tableView.scrollToRow(at: pinnedIndexPath, at: .middle, animated: true)
+        }
+
+        return imageView
+    }
+
     fileprivate func removePinnedCell() {
         pinnedView?.removeFromSuperview()
-        pinnedView = nil
     }
 
     func invalidatePinnedCell() {
-        cachedPinnedIndexPath = nil
         removePinnedCell()
+
+        cachedPinnedIndexPath = nil
+        pinnedView = nil
 
         if pinnedCellIndexPath() != nil {
             layoutPinnedCell()

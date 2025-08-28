@@ -24,6 +24,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         tableView.emptyDataSetSource = self
         tableView.tableFooterView = UIView()
         tableView.register(cellType: AvatarTableViewCell.self)
+        tableView.register(cellType: AvatarTableViewCell.self, identifier: Constants.pinnedCellIdentifier)
         tableView.keyboardDismissMode = .onDrag
         tableView.verticalScrollIndicatorInsets = UIEdgeInsets(top: -1, left: 0, bottom: 0, right: 0)
         tableView.refreshControl = self.refreshControl
@@ -106,17 +107,11 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     fileprivate var presenter: Presentr?
 
     fileprivate var myUserId: ObjectId? {
-        get {
-//            return "9649"
-            return APIServices.shared.myUser?.id
-        }
+        get { return APIServices.shared.myUser?.id }
     }
 
     fileprivate var myProfileUrl: String? {
-        get {
-//            return "https://multigp-storage-new.s3.us-east-2.amazonaws.com/user/9649/profileImage-64.png"
-            return APIServices.shared.myUser?.profilePictureUrl
-        }
+        get { return APIServices.shared.myUser?.profilePictureUrl }
     }
 
     fileprivate enum Constants {
@@ -124,6 +119,8 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         static let cellHeight: CGFloat = 80
         static let headerViewHeight: CGFloat = 51
         static let searchBarHeight: CGFloat = 56
+
+        static let pinnedCellIdentifier: String = "\((String(describing: StandingsViewController.self))).pinnedCell"
     }
 
     // MARK: - Lifecycle Methods
@@ -279,7 +276,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     }
 
     func pinnedCellForRow(at indexPath: IndexPath) -> UITableViewCell {
-        let cell = AvatarTableViewCell(style: .default, reuseIdentifier: nil)
+        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath, identifier: Constants.pinnedCellIdentifier) as AvatarTableViewCell
         configure(tableViewCell: cell, forRowAt: indexPath)
         return cell
     }
