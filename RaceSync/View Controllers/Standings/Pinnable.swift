@@ -6,28 +6,33 @@
 //  Copyright © 2025 MultiGP Inc. All rights reserved.
 //
 
-import Foundation
 import UIKit
 
 protocol Pinnable where Self: UIViewController {
     var tableView: UITableView { get }
-    var isSearching: Bool { get }
-
     var pinnedView: UIView? { get set }
     var cachedPinnedIndexPath: IndexPath? { get set }
 
-    func pinnedCellIndexPath() -> IndexPath?
-    func pinnedCellForRow(at indexPath: IndexPath) -> UITableViewCell
+    func canPinView() -> Bool
+    func pinnedViewIndexPath() -> IndexPath?
 
-    func layoutPinnedCell()
-    func invalidatePinnedCell()
+    func registerPinnedView<T: UITableViewCell>(viewType: T.Type)
+    func configure<T: UITableViewCell>(_ view: T, forRowAt indexPath: IndexPath)
+    func layoutPinnedView()
+    func invalidatePinnedView()
 }
 
 extension Pinnable {
 
-    func layoutPinnedCell() {
-        guard !isSearching,
-              let indexPath = pinnedCellIndexPath(),
+    // MARK: - Public
+
+    func registerPinnedView<T: UITableViewCell>(viewType: T.Type) {
+        tableView.register(cellType: viewType, identifier: pinnedCellIdentifier())
+    }
+
+    func layoutPinnedView() {
+        guard canPinView(),
+              let indexPath = pinnedViewIndexPath(),
               let superview = tableView.superview else { return }
 
         let cellRect = tableView.rectForRow(at: indexPath)
@@ -48,6 +53,19 @@ extension Pinnable {
             removePinnedCell()
         }
     }
+
+    func invalidatePinnedView() {
+        removePinnedCell()
+
+        cachedPinnedIndexPath = nil
+        pinnedView = nil
+
+        if pinnedViewIndexPath() != nil {
+            layoutPinnedView()
+        }
+    }
+
+    // MARK: - Private
 
     fileprivate func showPinnedCell(at y: CGFloat, indexPath: IndexPath, size: CGSize) {
         if pinnedView == nil {
@@ -81,7 +99,7 @@ extension Pinnable {
         snapshot.tag = indexPath.row
         snapshot.addTapAction { [weak self] in
             guard let self = self,
-                  let pinnedIndexPath = self.pinnedCellIndexPath() else { return }
+                  let pinnedIndexPath = self.pinnedViewIndexPath() else { return }
             self.tableView.scrollToRow(at: pinnedIndexPath, at: .middle, animated: true)
         }
 
@@ -116,26 +134,25 @@ extension Pinnable {
 
         imageView.addTapAction { [weak self] in
             guard let self = self,
-                  let pinnedIndexPath = self.pinnedCellIndexPath() else { return }
+                  let pinnedIndexPath = self.pinnedViewIndexPath() else { return }
             self.tableView.scrollToRow(at: pinnedIndexPath, at: .middle, animated: true)
         }
 
         return imageView
     }
 
+    fileprivate func pinnedCellForRow(at indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath, identifier: pinnedCellIdentifier())
+        configure(cell, forRowAt: indexPath)
+        return cell
+    }
+
     fileprivate func removePinnedCell() {
         pinnedView?.removeFromSuperview()
     }
 
-    func invalidatePinnedCell() {
-        removePinnedCell()
-
-        cachedPinnedIndexPath = nil
-        pinnedView = nil
-
-        if pinnedCellIndexPath() != nil {
-            layoutPinnedCell()
-        }
+    fileprivate func pinnedCellIdentifier() -> String {
+        return "\(String(describing: type(of: self))).\(String(describing: Pinnable.self))"
     }
 }
 
