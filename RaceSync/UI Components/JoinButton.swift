@@ -185,9 +185,9 @@ extension JoinState {
 
     var icon: UIImage? {
         switch self {
-        case .joined:   return UIImage(named: "icn_button_join")?.withRenderingMode(.alwaysOriginal)
-        case .closed:   return UIImage(named: "icn_button_closed")?.withRenderingMode(.alwaysOriginal)
-        default:        return nil
+        case .joined:       return UIImage(named: "icn_button_join")?.withRenderingMode(.alwaysOriginal)
+        case .closed:       return UIImage(named: "icn_button_closed")?.withRenderingMode(.alwaysOriginal)
+        default:            return nil
         }
     }
 
@@ -195,14 +195,17 @@ extension JoinState {
         switch self {
         case .notJoined:    return Color.white
         case .joined:       return Color.green
-        case .joinedPaid:   return Color.green
         case .closed:       return Color.gray100
+        case .notPaid(fee: _):
+                            return Color.white
         }
     }
 
     var outlineColor: UIColor? {
         switch self {
         case .notJoined:    return Color.green
+        case .notPaid(fee: _):
+                            return Color.green
         default:            return nil
         }
     }
@@ -211,17 +214,19 @@ extension JoinState {
         switch self {
         case .notJoined:    return Color.green
         case .joined:       return Color.white
-        case .joinedPaid:   return Color.white
         case .closed:       return Color.black
+        case .notPaid(fee: _):
+                            return Color.green
         }
     }
 
     var font: UIFont {
         switch self {
         case .joined:       return UIFont.systemFont(ofSize: 14, weight: .regular)
-        case .joinedPaid:   return UIFont.systemFont(ofSize: 14, weight: .regular)
         case .notJoined:    return UIFont.systemFont(ofSize: 14, weight: .bold)
         case .closed:       return UIFont.systemFont(ofSize: 14, weight: .regular)
+        case .notPaid(fee: _):
+                            return UIFont.systemFont(ofSize: 14, weight: .bold)
         }
     }
 

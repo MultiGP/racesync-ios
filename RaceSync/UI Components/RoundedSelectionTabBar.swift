@@ -39,7 +39,7 @@ class RoundedSelectionTabBar: UITabBar {
 
         let inset: CGFloat = 16
         var targetFrame = tabBarButton.frame.insetBy(dx: inset, dy: inset/8)
-        targetFrame.size.height += inset/4
+        targetFrame.size.height += inset/2
 
         if animated {
             UIView.animate(withDuration: 0.2, delay: 0, options: [.curveEaseOut, .beginFromCurrentState]) {

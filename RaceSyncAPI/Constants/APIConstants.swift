@@ -35,8 +35,6 @@ enum EndPoint {
     static let raceForceJoin = "race/forceJoinPilot"
     static let raceOpen = "race/open"
     static let raceClose = "race/close"
-    static let raceCheckIn = "race/checkIn"
-    static let raceCheckOut = "race/checkOut"
     static let raceCreate = "race/create"
     static let raceUpdate = "race/update"
     static let raceDelete = "race/delete"
@@ -64,26 +62,26 @@ enum EndPoint {
     static let courseDelete = "course/delete"
 }
 
-enum ParamKey {
+public enum ParamKey {
     // API keywords
     static let apiKey = "apiKey"
     static let authType = "authType"
 
     // ids
-    static let id = "id"
-    static let sessionId = "sessionId"
-    static let raceId = "raceId"
-    static let pilotId = "pilotId"
-    static let chapterId = "chapterId"
-    static let seasonId = "seasonId"
-    static let locationId = "locationId"
-    static let ownerId = "ownerId"
-    static let courseId = "courseId"
-    static let parentCourseId = "parentCourseId"
-    static let parentRaceId = "parentRaceId"
-    static let homeChapterId = "homeChapterId"
-    static let chapterIds = "chapterIds"
-    static let raceEntryId = "raceEntryId"
+    static public let id = "id"
+    static public let sessionId = "sessionId"
+    static public let raceId = "raceId"
+    static public let pilotId = "pilotId"
+    static public let chapterId = "chapterId"
+    static public let seasonId = "seasonId"
+    static public let locationId = "locationId"
+    static public let ownerId = "ownerId"
+    static public let courseId = "courseId"
+    static public let parentCourseId = "parentCourseId"
+    static public let parentRaceId = "parentRaceId"
+    static public let homeChapterId = "homeChapterId"
+    static public let chapterIds = "chapterIds"
+    static public let raceEntryId = "raceEntryId"
 
     // Network keywords
     static let url = "url"

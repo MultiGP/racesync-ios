@@ -96,12 +96,12 @@ public enum RaceClass: String, EnumTitle {
 
     public var title: String {
         switch self {
-        case .open:         return "Open"
-        case .whoop:        return "Whoop"
-        case .micro:        return "Micro"
+        case .open:         return "Open Class"
+        case .whoop:        return "Whoop Class"
+        case .micro:        return "Micro Class"
         case .freedom:      return "Freedom Spec"
         case .spec7in:      return "7 Inch Spec"
-        //case .mega:         return "Mega"
+        //case .mega:         return "Mega Class"
         case .esport:       return "E-Sport"
         case .spec5in:      return "5 Inch Spec"
         case .prospec:      return "Pro Spec"

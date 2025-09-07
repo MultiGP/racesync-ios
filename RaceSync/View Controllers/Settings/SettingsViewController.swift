@@ -165,7 +165,7 @@ class SettingsViewController: UIViewController {
                 controller.requestAuthorizationPushNotifications()
                 isTogglingPush = true
             } else {
-                ApplicationControl.shared.openAppSettings()
+                AppControl.shared.openAppSettings()
             }
         } else {
             ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Do you want to stop receiving push notifications?", destructiveTitle: "Yes, stop", completion: { (action) in
@@ -194,7 +194,7 @@ class SettingsViewController: UIViewController {
 
     fileprivate func logout() {
         ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Logout from RaceSync?", destructiveTitle: "Yes, log out", completion: { (action) in
-            ApplicationControl.shared.logout(forced: true)
+            AppControl.shared.logout(forced: true)
         }, cancel: nil)
     }
 
@@ -203,7 +203,7 @@ class SettingsViewController: UIViewController {
         let environment = nextEnvironment()
 
         ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Switch to \(environment.title)?", destructiveTitle: "Yes, switch", completion: { (action) in
-            ApplicationControl.shared.logout(switchTo: environment)
+            AppControl.shared.logout(switchTo: environment)
         }, cancel: nil)
     }
 

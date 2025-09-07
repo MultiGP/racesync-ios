@@ -8,7 +8,9 @@
 
 import Foundation
 
-class AppPreferences {
+typealias AppPrefs = AppplicationPreferences
+
+class AppplicationPreferences {
 
     private enum Key {
         static let lastSelectedTab = "com.multigp.RaceSync.preferences.last_selected_tab"

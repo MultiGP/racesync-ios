@@ -460,7 +460,7 @@ extension RacePilotsViewController: EmptyDataSetDelegate {
 
         let currentState: JoinState = .notJoined
 
-        join(race: race, raceApi: raceApi) { [weak self] (newState) in
+        AppControl.shared.tryJoining(race: race, raceApi: raceApi) { [weak self] (newState) in
             if currentState != newState {
                 self?.reloadRaceView()
             }

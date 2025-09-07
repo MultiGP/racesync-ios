@@ -96,7 +96,7 @@ public struct RaceData: Descriptable {
         params[ParamKey.status] = status
         params[ParamKey.disableSlotAutoPopulation] = qualifying
         params[ParamKey.fee] = fee
-        params[ParamKey.paymentRequiredToJoin] = feeRequired
+        params[ParamKey.paymentRequiredToJoin] = feeRequired.intValue
         params[ParamKey.scoringDisabled] = funfly
         params[ParamKey.captureTimeEnabled] = timing
 

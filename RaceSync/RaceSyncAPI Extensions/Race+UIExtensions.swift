@@ -11,6 +11,12 @@ import RaceSyncAPI
 
 extension Race {
 
+    var canShowResults: Bool {
+        guard let results = results, results.count > 0 else { return false }
+        guard let startDate = startDate else { return false }
+        return startDate.isPassed
+    }
+
     func canCreateCalendarEvent() -> Bool {
         guard let startDate = startDate, startDate.timeIntervalSinceNow.sign == .plus else {
             return false

@@ -76,7 +76,7 @@ class PushMessagesViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
 
         setupLayout()
-        populateDataSource()
+        loadContent()
 
         if let message = message {
             presentContent(from: message, animated: false)
@@ -115,7 +115,7 @@ class PushMessagesViewController: UIViewController {
         }
     }
 
-    fileprivate func populateDataSource() {
+    fileprivate func loadContent() {
         let messages = PushMessagesController.shared.store.getAllMessages()
         messageViewModels = PushMessageViewModel.viewModels(with: messages)
 
@@ -205,7 +205,7 @@ class PushMessagesViewController: UIViewController {
 
         ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Clear all messages?", destructiveTitle: "Yes", completion: { (action) in
             PushMessagesController.shared.clearAllPushMessages()
-            self.populateDataSource()
+            self.loadContent()
         }, cancel: nil)
     }
 
@@ -219,7 +219,7 @@ class PushMessagesViewController: UIViewController {
     }
 
     @objc fileprivate func didPressShowSettingsButton() {
-        ApplicationControl.shared.openAppSettings()
+        AppControl.shared.openAppSettings()
     }
 
     @objc fileprivate func appDidBecomeActive() {

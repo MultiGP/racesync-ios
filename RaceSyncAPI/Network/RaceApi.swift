@@ -107,18 +107,6 @@ public protocol RaceApiInterface {
                completion: @escaping StatusCompletionBlock)
 
     /**
-    */
-    func checkIn(race raceId: ObjectId,
-                 pilotId: ObjectId?,
-                 completion: @escaping ObjectCompletionBlock<RaceEntry>)
-
-    /**
-    */
-    func checkOut(race raceId: ObjectId,
-                  pilotId: ObjectId?,
-                  completion: @escaping ObjectCompletionBlock<RaceEntry>)
-
-    /**
     Creates a full Race object, using a data transfer object converted into parameters.
 
      - parameter data: The data transfer object
@@ -268,24 +256,6 @@ public class RaceApi: RaceApiInterface {
         repositoryAdapter.performAction(endpoint, completion: completion)
     }
 
-    public func checkIn(race raceId: ObjectId, pilotId: ObjectId? = nil, completion: @escaping ObjectCompletionBlock<RaceEntry>) {
-
-        let endpoint = "\(EndPoint.raceCheckIn)?\(ParamKey.id)=\(raceId)"
-        var params = Params()
-        params[ParamKey.pilotId] = pilotId
-
-        repositoryAdapter.getObject(endpoint, parameters: params, type: RaceEntry.self, completion)
-    }
-
-    public func checkOut(race raceId: ObjectId, pilotId: ObjectId? = nil, completion: @escaping ObjectCompletionBlock<RaceEntry>) {
-
-        let endpoint = "\(EndPoint.raceCheckOut)?\(ParamKey.id)=\(raceId)"
-        var params = Params()
-        params[ParamKey.pilotId] = pilotId
-
-        repositoryAdapter.getObject(endpoint, parameters: params, type: RaceEntry.self, completion)
-    }
-
     public func createRace(withData data: RaceData, completion: @escaping ObjectCompletionBlock<Race>) {
 
         let endpoint = "\(EndPoint.raceCreate)?\(ParamKey.chapterId)=\(data.chapterId)"
@@ -301,6 +271,10 @@ public class RaceApi: RaceApiInterface {
 
         if let beforeData = beforeData {
             params = afterData.toDiffParams(beforeData)
+
+            // These values can't be diffed, since they're technically not part of a Race object
+            params[ParamKey.fee] = beforeData.fee
+            params[ParamKey.paymentRequiredToJoin] = beforeData.feeRequired
         } else {
             params = afterData.toParams()
         }

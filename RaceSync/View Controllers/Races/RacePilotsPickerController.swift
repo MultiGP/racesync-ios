@@ -296,10 +296,9 @@ extension RacePilotsPickerController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as ChapterUserTableViewCell
         guard let viewModel = userViewModel(for: indexPath) else { return cell }
 
-        // Find external match (if any)
+        // Find external match, for checking if joined or not.
         let otherViewModel = externalUserViewModels?.first { $0.userId == viewModel.userId }
 
-        // --- Configure cell UI ---
         cell.titleLabel.text = viewModel.displayName
         cell.subtitleLabel.text = viewModel.fullName
         cell.avatarImageView.imageView.setImage(with: viewModel.pictureUrl,
@@ -307,7 +306,6 @@ extension RacePilotsPickerController: UITableViewDataSource {
             size: Constants.avatarImageSize
         )
 
-        // --- Configure join button ---
         cell.joinButton.addTarget(self, action: #selector(didPressJoinButton), for: .touchUpInside)
         cell.joinButton.hitTestEdgeInsets = UIEdgeInsets(proportionally: -10)
         cell.joinButton.type = .race
@@ -385,6 +383,6 @@ extension RacePilotsPickerController: EmptyDataSetSource {
 }
 
 fileprivate struct Section {
-    let letter : String
-    let viewModels : [UserViewModel]
+    let letter: String
+    let viewModels: [UserViewModel]
 }

@@ -117,7 +117,7 @@ class HomeTabBarController: UITabBarController {
 
         loadContent()
 
-        let selectedIdx = AppPreferences.lastSelectedTab
+        let selectedIdx = AppPrefs.lastSelectedTab
 
         // Dirty little trick to select the first tab bar item
         if let vcs = viewControllers, selectedIdx == 0 {
@@ -256,7 +256,7 @@ class HomeTabBarController: UITabBarController {
                 self?.updateUserProfileImage()
             } else if error != nil {
                 // This is somewhat the best way to detect an invalid session
-                ApplicationControl.shared.invalidateSession(forced: false)
+                AppControl.shared.invalidateSession(forced: false)
             }
         }
     }
@@ -349,6 +349,6 @@ extension HomeTabBarController: UITabBarControllerDelegate {
         }
 
         // To open the last tab at launch
-        AppPreferences.lastSelectedTab = tabBarController.selectedIndex
+        AppPrefs.lastSelectedTab = tabBarController.selectedIndex
     }
 }

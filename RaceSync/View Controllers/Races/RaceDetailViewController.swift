@@ -61,7 +61,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         label.textColor = Color.gray300
         label.textAlignment = .right
         label.numberOfLines = 1
-        label.isHidden = true
         return label
     }()
 
@@ -85,16 +84,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         view.addTarget(self, action: #selector(didPressMemberView), for: .touchUpInside)
         view.isUserInteractionEnabled = true
         return view
-    }()
-
-    fileprivate lazy var buttonStackView: UIStackView = {
-        var subviews: [UIView] = [joinButton, feeLabel, memberBadgeView, funflyBadge]
-        let stackView = UIStackView(arrangedSubviews: subviews)
-        stackView.axis = .vertical
-        stackView.distribution = .equalSpacing
-        stackView.alignment = .trailing
-        stackView.spacing = Constants.padding/2
-        return stackView
     }()
 
     fileprivate lazy var locationButton: PasteboardButton = {
@@ -136,32 +125,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         return button
     }()
 
-    fileprivate lazy var funflyBadge: CustomButton = {
-        let button = CustomButton()
-        button.setTitle("Fun Fly", for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-        button.setTitleColor(Color.white, for: .normal)
-        button.tintColor = Color.white
-        button.contentEdgeInsets = UIEdgeInsets(top: 5, left: 15, bottom: 5, right: 12)
-        button.backgroundColor = Color.lightBlue
-        button.layer.cornerRadius = 6
-        return button
-    }()
-
-    fileprivate lazy var headerLabelStackView: UIStackView = {
-        var subviews = [UIView]()
-        subviews += [startDateButton]
-        if canDisplayEndDate { subviews += [endDateButton] }
-        if canDisplayAddress { subviews += [locationButton] }
-
-        let stackView = UIStackView(arrangedSubviews: subviews)
-        stackView.axis = .vertical
-        stackView.distribution = .equalSpacing
-        stackView.alignment = .leading
-        stackView.spacing = Constants.padding/2
-        return stackView
-    }()
-
     fileprivate lazy var htmlView: RichEditorView = {
         let view = RichEditorView()
         view.isEditable = false
@@ -195,6 +158,26 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             $0.width.equalToSuperview()
         }
         return tableView
+    }()
+
+    fileprivate lazy var rightStackView: UIStackView = {
+        var subviews: [UIView] = [joinButton, feeLabel, memberBadgeView]
+        let stackView = UIStackView(arrangedSubviews: subviews)
+        stackView.axis = .vertical
+        stackView.alignment = .trailing
+        stackView.distribution = .equalSpacing
+        stackView.spacing = Constants.padding/2
+        return stackView
+    }()
+
+    fileprivate lazy var leftStackView: UIStackView = {
+        var subviews = [startDateButton, endDateButton, locationButton]
+        let stackView = UIStackView(arrangedSubviews: subviews)
+        stackView.axis = .vertical
+        stackView.alignment = .leading
+        stackView.distribution = .equalSpacing
+        stackView.spacing = Constants.padding*3/4
+        return stackView
     }()
 
     fileprivate var raceCoordinates: CLLocationCoordinate2D? {
@@ -234,10 +217,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate var canDisplayItinerary: Bool {
         return raceViewModel.race.itinerary.stripHTML().count > 0
-    }
-
-    fileprivate var canDisplayFunFly: Bool {
-        return raceViewModel.race.scoringDisabled
     }
 
     fileprivate var canDisplayFee: Bool {
@@ -304,8 +283,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         let headerView = UIView()
         view.backgroundColor = Color.white
 
-        // add temporairly to the view hiearchy so the map is displayed when loading
-        // remove the map once the snapshot has been rendered
         if canDisplayMap {
             contentView.addSubview(mapView)
             mapView.snp.makeConstraints {
@@ -318,7 +295,8 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         contentView.addSubview(headerView)
         headerView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
-            $0.height.lessThanOrEqualTo(150)
+            $0.width.equalTo(view.bounds.width)
+            $0.height.lessThanOrEqualTo(200) // very max
 
             if canDisplayMap {
                 $0.top.equalTo(mapView.snp.bottom).offset(Constants.padding)
@@ -354,23 +332,24 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             }
         }
 
-        headerView.addSubview(buttonStackView)
-        buttonStackView.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(Constants.padding/2)
+        headerView.addSubview(rightStackView)
+        rightStackView.snp.makeConstraints {
+            $0.top.equalTo(titleLabel.snp.bottom).offset(Constants.padding)
             $0.width.greaterThanOrEqualTo(Constants.minButtonSize)
             $0.trailing.equalToSuperview().offset(-Constants.padding)
+            $0.bottom.equalToSuperview().offset(-Constants.padding/2)
         }
 
-        headerView.addSubview(headerLabelStackView)
-        headerLabelStackView.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(Constants.padding/2)
+        headerView.addSubview(leftStackView)
+        leftStackView.snp.makeConstraints {
+            $0.top.equalTo(rightStackView.snp.top)
             $0.leading.equalToSuperview().offset(Constants.padding*1.5)
-            $0.trailing.equalTo(buttonStackView.snp.leading).offset(-Constants.padding/2)
+            $0.trailing.equalTo(rightStackView.snp.leading).offset(-Constants.padding/2)
         }
 
         contentView.addSubview(htmlView)
         htmlView.snp.makeConstraints {
-            $0.top.equalTo(headerView.snp.bottom).offset(Constants.padding/2)
+            $0.top.equalTo(headerView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
             $0.width.equalTo(view.bounds.width)
 
@@ -436,26 +415,21 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             raceViewModel.chapterLabel.isEmpty ? nil : Row.chapter,
             raceViewModel.seasonLabel.isEmpty ? nil : Row.season,
             race.isZippyQEnabled ? Row.zippyQ : nil,
-            raceViewModel.classLabel.isEmpty ? nil : Row.class,
+            raceViewModel.classLabel.string.isEmpty ? nil : Row.class,
             race.liveTimeEventUrl != nil ? Row.results : nil
         ].compactMap { $0 }
     }
 
     fileprivate func populateContent() {
-
         titleLabel.text = raceViewModel.titleLabel.uppercased()
-        classLabel.text = raceViewModel.classLabel
+        classLabel.attributedText = raceViewModel.classLabel
         joinButton.joinState = raceViewModel.joinState
         memberBadgeView.count = raceViewModel.participantCount
         startDateButton.setTitle(raceViewModel.startDateDesc , for: .normal)
-        funflyBadge.isHidden = !canDisplayFunFly
-        feeLabel.text = raceViewModel.feeLabel
-        feeLabel.isHidden = !canDisplayFee
 
         if canDisplayEndDate {
             endDateButton.setTitle(raceViewModel.endDateDesc, for: .normal)
         }
-
         if canDisplayAddress {
             locationButton.setTitle(raceViewModel.fullLocationLabel, for: .normal)
 
@@ -464,6 +438,13 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
                 locationButton.imageEdgeInsets = UIEdgeInsets(top: -Constants.padding, left: -Constants.padding, bottom: 0, right: 0)
             }
         }
+        if canDisplayFee {
+            feeLabel.text = raceViewModel.feeLabel
+        }
+
+        endDateButton.isHidden = !canDisplayEndDate
+        locationButton.isHidden = !canDisplayAddress
+        feeLabel.isHidden = !canDisplayFee
 
         // Load the HTML on the next runloop
         DispatchQueue.main.async { [weak self] in
@@ -615,12 +596,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 extension RaceDetailViewController {
 
     func reloadContent() {
-
-        let viewModel = RaceViewModel(with: race)
-
-        joinButton.joinState = viewModel.joinState
-        memberBadgeView.count = viewModel.participantCount
-        raceViewModel = viewModel
+        raceViewModel = RaceViewModel(with: race)
 
         loadRows()
         populateContent()

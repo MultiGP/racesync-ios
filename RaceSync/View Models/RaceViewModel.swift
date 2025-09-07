@@ -24,9 +24,9 @@ class RaceViewModel: Descriptable {
     let fullLocationLabel: String
     let distanceLabel: String
     let distance: Double
-    let joinState: JoinState
     let participantCount: Int
-    let classLabel: String
+    let classLabel: NSAttributedString
+    let feeLabel: String
     let chapterLabel: String
     let ownerLabel: String
     let seasonLabel: String
@@ -46,19 +46,13 @@ class RaceViewModel: Descriptable {
         self.fullLocationLabel = Self.fullLocationLabelString(for: race).stripHTML()
         self.distanceLabel = Self.distanceLabelString(for: race) // "309.4 mi" or "122 kms"
         self.distance = Self.distance(for: race)
-        self.joinState = Self.joinState(for: race)
         self.participantCount = Int(race.participantCount) ?? 0
         self.chapterLabel = race.chapterName
         self.ownerLabel = race.ownerUserName
         self.seasonLabel = race.seasonName
         self.imageUrl = Self.imageUrl(for: race)
-
-        switch race.raceClass {
-        case .prospec, .freedom, .spec5in, .spec7in:
-            self.classLabel = "\(race.raceClass.title) Spec"
-        default:
-            self.classLabel = "\(race.raceClass.title) Class"
-        }
+        self.classLabel = Self.classAttributedString(for: race)
+        self.feeLabel = Self.feeLabelString(for: race)
     }
 
     static func viewModels(with objects:[Race]) -> [RaceViewModel] {
@@ -109,6 +103,10 @@ class RaceViewModel: Descriptable {
          }
 
          return nil
+    }
+
+    var joinState: JoinState {
+        return Self.joinState(for: race)
     }
 }
 
@@ -176,7 +174,12 @@ extension RaceViewModel {
 
     static func joinState(for race: Race) -> JoinState {
         if race.status == .closed { return .closed }
-        return race.isJoined ? .joined : .notJoined
+
+        if race.requiresPayment {
+            return .notPaid(fee: race.fee)
+        } else {
+            return race.isJoined ? .joined : .notJoined
+        }
     }
 
     static func distance(for race: Race) -> Double {
@@ -214,6 +217,44 @@ extension RaceViewModel {
         } else {
             return nil
         }
+    }
+
+    fileprivate static func classAttributedString(for race: Race) -> NSAttributedString {
+        var string = race.raceClass.title
+        let funFly = "Fun Fly"
+
+        if race.scoringDisabled {
+            string +=  " - \(funFly)"
+        }
+
+        let grey: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: 15, weight: .semibold),
+            .foregroundColor: Color.gray300
+        ]
+        let blue: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: 15, weight: .semibold),
+            .foregroundColor: Color.lightBlue
+        ]
+
+        let attributedString = NSMutableAttributedString(string: string, attributes: grey)
+
+        let range = (attributedString.string as NSString).range(of: funFly)
+        if range.location != NSNotFound && range.length > 0 {
+            attributedString.setAttributes(blue, range: range)
+        }
+
+        return attributedString
+    }
+
+    static func feeLabelString(for race: Race) -> String {
+        if race.fee > 0 {
+            if race.amountPaid > 0 {
+                return String(format: "✓ Paid $%.2f", race.amountPaid)
+            } else if race.amountDue > 0 {
+                return String(format: "Fee: %.2f USD", race.fee)
+            }
+        }
+        return ""
     }
 }
 

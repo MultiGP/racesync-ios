@@ -1,5 +1,5 @@
 //
-//  RacePaymentViewController.swift
+//  RacePaymentsViewController.swift
 //  RaceSync
 //
 //  Created by Ignacio Romero Zurbuchen on 2025-08-07.
@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import RaceSyncAPI
 
-class RacePaymentViewController: UIViewController, RaceTabbable {
+class RacePaymentsViewController: UIViewController, RaceTabbable {
 
     // MARK: - Public Variables
 
@@ -321,7 +321,7 @@ class RacePaymentViewController: UIViewController, RaceTabbable {
     }
 }
 
-extension RacePaymentViewController: UITableViewDelegate {
+extension RacePaymentsViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -351,7 +351,7 @@ extension RacePaymentViewController: UITableViewDelegate {
     }
 }
 
-extension RacePaymentViewController: UITableViewDataSource {
+extension RacePaymentsViewController: UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
@@ -404,7 +404,7 @@ extension RacePaymentViewController: UITableViewDataSource {
     }
 }
 
-extension RacePaymentViewController: RacePilotsPickerControllerDelegate {
+extension RacePaymentsViewController: RacePilotsPickerControllerDelegate {
 
     func pickerControllerDidUpdate(_ viewController: RacePilotsPickerController) {
         reloadRaceView()

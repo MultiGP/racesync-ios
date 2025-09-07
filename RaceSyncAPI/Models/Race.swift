@@ -74,6 +74,7 @@ public class Race: Mappable, Joinable, Descriptable {
     public var fee: Float = 0
     public var isPaymentRequiredToJoin: Bool = false
     public var amountDue: Float = 0
+    public var amountPaid: Float = 0
 
     public var entries: [RaceEntry]? = nil
     public var schedule: RaceSchedule? = nil
@@ -166,6 +167,7 @@ public class Race: Mappable, Joinable, Descriptable {
         fee <- (map[ParamKey.fee], FloatTransform())
         isPaymentRequiredToJoin <- (map[ParamKey.paymentRequiredToJoin], BooleanTransform())
         amountDue <- (map[ParamKey.amountDue], FloatTransform())
+        amountPaid <- (map[ParamKey.amountPaid], FloatTransform())
 
         entries <- map[ParamKey.entries]
         schedule <- map[ParamKey.schedule]

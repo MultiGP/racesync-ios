@@ -15,14 +15,13 @@ public enum MGPWebConstant: String {
     case raceView = "https://www.multigp.com/races/view/?race"
     case chapterView = "https://www.multigp.com/chapters/view/?chapter"
     case userView = "https://www.multigp.com/pilots/view/?pilot"
-
     case zippyqView = "https://www.multigp.com/MultiGP/views/zippyq.php?raceId"
-
     case viewZipperSeasonResults = "https://www.multigp.com/MultiGP/views/viewZipperSeasonResults.php"
     //     ?season1=2025Summer&season2=2025Spring&exportcsv=true
 
     case processPayment = "https://www.multigp.com/MultiGP/views/processPayment.php"
-    //     ?raceId=zzzzzz&pilotId=yyyy
+//     ?raceId=zzzzzz&pilotId=yyyy
+//    https://dev.multigp.com/MultiGP/views/processPayment.php?raceId=29943&pilotId=20676&user-agent=ios
 
 }
 

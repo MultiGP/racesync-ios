@@ -135,7 +135,7 @@ class RaceTabBarController: UITabBarController {
         vcs += [RaceScheduleViewController(with: race)]
 
         if race.canManagePayments {
-            vcs += [RacePaymentViewController(with: race)]
+            vcs += [RacePaymentsViewController(with: race)]
         }
 
         for vc in vcs { vc.willMove(toParent: self) }

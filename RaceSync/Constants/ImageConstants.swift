@@ -34,7 +34,6 @@ enum ButtonImg {
 }
 
 enum SystemImg {
-
     static let calendarCclock = UIImage(systemName:"calendar.badge.clock") // iOS 14.0+
     static let person = UIImage(systemName:"person.2") // iOS 13.0+
     static let personFill = UIImage(systemName:"person.2.fill") // iOS 13.0+

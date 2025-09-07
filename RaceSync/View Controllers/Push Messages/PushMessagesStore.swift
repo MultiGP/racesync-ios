@@ -108,7 +108,3 @@ class PushMessagesStore {
         }
     }
 }
-
-extension Notification.Name {
-    static let newPushMessageReceived = Notification.Name("com.racecync.newPushMessageReceived")
-}
