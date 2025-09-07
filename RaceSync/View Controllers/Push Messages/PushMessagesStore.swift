@@ -87,6 +87,7 @@ class PushMessagesStore {
     // MARK: - Private
 
     fileprivate var messages: [PushMessage] = []
+    fileprivate let syncQueue = DispatchQueue(label: "PushMessagesStore.syncQueue")
 
     private var fileURL: URL {
         let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
@@ -94,9 +95,15 @@ class PushMessagesStore {
     }
 
     fileprivate func saveMessages() {
+        // Take a thread-safe snapshot
+        let snapshot = syncQueue.sync { self.messages }
+
         let encoder = JSONEncoder()
-        if let data = try? encoder.encode(messages) {
-            try? data.write(to: fileURL)
+        do {
+            let data = try encoder.encode(snapshot)
+            try data.write(to: fileURL)
+        } catch {
+            print("Failed to save messages: \(error)")
         }
     }
 
