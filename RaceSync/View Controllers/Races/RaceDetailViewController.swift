@@ -47,7 +47,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         return label
     }()
 
-    fileprivate lazy var classLabel: UILabel = {
+    fileprivate lazy var subtitleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 15, weight: .medium)
         label.textColor = Color.gray300
@@ -305,8 +305,8 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             }
         }
 
-        headerView.addSubview(classLabel)
-        classLabel.snp.makeConstraints {
+        headerView.addSubview(subtitleLabel)
+        subtitleLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(Constants.padding)
             $0.top.equalToSuperview()
         }
@@ -314,7 +314,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         if canDisplayGQIcon {
             headerView.addSubview(rotatingIconView)
             rotatingIconView.snp.makeConstraints {
-                $0.top.equalTo(classLabel.snp.bottom).offset(Constants.padding/2)
+                $0.top.equalTo(subtitleLabel.snp.bottom).offset(Constants.padding/2)
                 $0.leading.equalToSuperview().offset(Constants.padding)
                 $0.width.height.equalTo(20)
             }
@@ -322,7 +322,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
         headerView.addSubview(titleLabel)
         titleLabel.snp.makeConstraints {
-            $0.top.equalTo(classLabel.snp.bottom).offset(Constants.padding/2)
+            $0.top.equalTo(subtitleLabel.snp.bottom).offset(Constants.padding/2)
             $0.trailing.equalToSuperview().offset(-Constants.padding)
 
             if canDisplayGQIcon {
@@ -337,7 +337,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             $0.top.equalTo(titleLabel.snp.bottom).offset(Constants.padding)
             $0.width.greaterThanOrEqualTo(Constants.minButtonSize)
             $0.trailing.equalToSuperview().offset(-Constants.padding)
-            $0.bottom.equalToSuperview().offset(-Constants.padding/2)
         }
 
         headerView.addSubview(leftStackView)
@@ -345,6 +344,12 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             $0.top.equalTo(rightStackView.snp.top)
             $0.leading.equalToSuperview().offset(Constants.padding*1.5)
             $0.trailing.equalTo(rightStackView.snp.leading).offset(-Constants.padding/2)
+        }
+
+        headerView.snp.makeConstraints {
+            $0.bottom.equalToSuperview().priority(.low) // if needed
+            $0.bottom.greaterThanOrEqualTo(rightStackView.snp.bottom).offset(Constants.padding/2)
+            $0.bottom.greaterThanOrEqualTo(leftStackView.snp.bottom).offset(Constants.padding/2)
         }
 
         contentView.addSubview(htmlView)
@@ -415,14 +420,14 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             raceViewModel.chapterLabel.isEmpty ? nil : Row.chapter,
             raceViewModel.seasonLabel.isEmpty ? nil : Row.season,
             race.isZippyQEnabled ? Row.zippyQ : nil,
-            raceViewModel.classLabel.string.isEmpty ? nil : Row.class,
+            raceViewModel.subtitleLabel.string.isEmpty ? nil : Row.class,
             race.liveTimeEventUrl != nil ? Row.results : nil
         ].compactMap { $0 }
     }
 
     fileprivate func populateContent() {
         titleLabel.text = raceViewModel.titleLabel.uppercased()
-        classLabel.attributedText = raceViewModel.classLabel
+        subtitleLabel.attributedText = raceViewModel.subtitleLabel
         joinButton.joinState = raceViewModel.joinState
         memberBadgeView.count = raceViewModel.participantCount
         startDateButton.setTitle(raceViewModel.startDateDesc , for: .normal)
@@ -454,15 +459,15 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             let spacing = Constants.padding * 3/4
 
             if s.canDisplayDescription {
-                let description = s.race.description.replaceHTMLColorTag(with: Color.gray300).stripHTMLFontTag()
+                let description = s.race.description.replaceHTMLColorTag(with: Color.gray300).stripHTMLFontTag().stripHTMLEdges()
                 html += "<div id=\"description\">\(description)</div>"
             }
             if s.canDisplayContent {
-                let content = s.race.content.replaceHTMLColorTag(with: Color.black).stripHTMLFontTag()
+                let content = s.race.content.replaceHTMLColorTag(with: Color.black).stripHTMLFontTag().stripHTMLEdges()
                 html += "<div id=\"content\" style=\"color:\(Color.black.toHexString()); padding-top: \(spacing)px; padding-bottom: \(spacing)px;\">\(content)</div>"
             }
             if s.canDisplayItinerary {
-                let itinerary = s.race.description.replaceHTMLColorTag(with: Color.gray100).stripHTMLFontTag()
+                let itinerary = s.race.description.replaceHTMLColorTag(with: Color.gray100).stripHTMLFontTag().stripHTMLEdges()
                 html += "<hr style=\"border-top: 0.25px solid;\">"
                 html += "<div id=\"itinerary\" style=\"padding-top: \(spacing)px;\">\(itinerary)</div>"
             }

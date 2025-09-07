@@ -15,6 +15,7 @@ class RaceViewModel: Descriptable {
     let race: Race
 
     let titleLabel: String
+    let subtitleLabel: NSAttributedString
     let dateLabel: String?
     let startDateLabel: String?
     let startDateDesc: String?
@@ -25,7 +26,6 @@ class RaceViewModel: Descriptable {
     let distanceLabel: String
     let distance: Double
     let participantCount: Int
-    let classLabel: NSAttributedString
     let feeLabel: String
     let chapterLabel: String
     let ownerLabel: String
@@ -37,6 +37,7 @@ class RaceViewModel: Descriptable {
     init(with race: Race) {
         self.race = race
         self.titleLabel = race.name
+        self.subtitleLabel = Self.subtitleLabelAttributedString(for: race)
         self.dateLabel = Self.combinedDateLabelString(for: race.startDate, and: race.endDate) // "Sat Sept 14 @ 9:00 AM" or "Sept 14 - Sept 16"
         self.startDateLabel = Self.dateLabelString(for: race.startDate) // "Sat Sept 14 @ 9:00 AM"
         self.startDateDesc = Self.fullDateLabelString(for: race.startDate) // "Saturday, September 14th @ 9:00 AM"
@@ -51,7 +52,6 @@ class RaceViewModel: Descriptable {
         self.ownerLabel = race.ownerUserName
         self.seasonLabel = race.seasonName
         self.imageUrl = Self.imageUrl(for: race)
-        self.classLabel = Self.classAttributedString(for: race)
         self.feeLabel = Self.feeLabelString(for: race)
     }
 
@@ -219,7 +219,7 @@ extension RaceViewModel {
         }
     }
 
-    fileprivate static func classAttributedString(for race: Race) -> NSAttributedString {
+    fileprivate static func subtitleLabelAttributedString(for race: Race) -> NSAttributedString {
         var string = race.raceClass.title
         let funFly = "Fun Fly"
 
