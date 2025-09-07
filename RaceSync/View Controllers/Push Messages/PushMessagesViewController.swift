@@ -61,16 +61,6 @@ class PushMessagesViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = "Messages"
-
-        let leftBtnItem = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
-        navigationItem.leftBarButtonItem = leftBtnItem
-
-        let rightBtnItem = UIBarButtonItem(title: "Clear All", style: .done, target: self, action: #selector(didPressClearButton))
-        rightBtnItem.isEnabled = false
-        if #available(iOS 16.0, *) { rightBtnItem.isHidden = true }
-        navigationItem.rightBarButtonItem = rightBtnItem
-
         NotificationCenter.default.addObserver(self, selector: #selector(handlePushMessageRegistration(_:)), name: .registeredForPushMessages, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleNewPushMessage(_:)), name: .newPushMessageReceived, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
@@ -107,12 +97,26 @@ class PushMessagesViewController: UIViewController {
 
     fileprivate func setupLayout() {
 
+        configureNavigationItems()
+
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(view.snp.bottom)
         }
+    }
+
+    fileprivate func configureNavigationItems() {
+        title = "Messages"
+
+        let leftBtnItem = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
+        navigationItem.leftBarButtonItem = leftBtnItem
+
+        let rightBtnItem = UIBarButtonItem(title: "Clear All", style: .done, target: self, action: #selector(didPressClearButton))
+        rightBtnItem.isEnabled = false
+        if #available(iOS 16.0, *) { rightBtnItem.isHidden = true }
+        navigationItem.rightBarButtonItem = rightBtnItem
     }
 
     fileprivate func loadContent() {

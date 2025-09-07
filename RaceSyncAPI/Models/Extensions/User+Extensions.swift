@@ -30,15 +30,15 @@ public extension User {
     }
 
     /**
-     Convenience to identify if a multigp.com User is part of the development team, to show special dev tools such as API environment switch, feature flags and more.
+     Convenience to identify if a multigp.com User is part of the development team,
+     to show special dev tools such as API environment switch, feature flags and more.
      Add your MGP user id to the list.
      */
     var isDevTeam: Bool {
         let ids = [
-            "20676",    // Ignacio "Zenith" Romero
-            "96",       // Roger "Focus" Bess
-            "2145",     // Mark "2dogrc" Grohe
-            "2145",     // Mark "2dogrc" Grohe
+            "20676",    // Ignacio Romero
+            "96",       // Roger Bess
+            "2145",     // Mark Grohe
         ]
 
         return ids.contains(where: { (someId) -> Bool in

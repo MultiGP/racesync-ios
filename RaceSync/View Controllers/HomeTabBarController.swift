@@ -11,7 +11,7 @@ import SnapKit
 import RaceSyncAPI
 
 enum HomeTabs: Int {
-    case races, standings, settings
+    case races, standings, series
 
     static let `default`: HomeTabs = .standings
 }
@@ -30,8 +30,8 @@ class HomeTabBarController: UITabBarController {
         return StandingsViewController()
     }()
 
-    fileprivate lazy var settingsVC: SettingsViewController = {
-        return SettingsViewController()
+    fileprivate lazy var seriesVC: SeriesViewController = {
+        return SeriesViewController()
     }()
 
     fileprivate lazy var titleView: UIView = {
@@ -48,6 +48,13 @@ class HomeTabBarController: UITabBarController {
         let button = CustomButton(type: .system)
         button.addTarget(self, action: #selector(didPressNotificationsButton), for: .touchUpInside)
         button.setImage(ButtonImg.notifications, for: .normal)
+        return button
+    }()
+
+    fileprivate lazy var settingsButton: CustomButton = {
+        let button = CustomButton(type: .system)
+        button.addTarget(self, action: #selector(didPressSettingsButton), for: .touchUpInside)
+        button.setImage(ButtonImg.settings, for: .normal)
         return button
     }()
 
@@ -151,7 +158,7 @@ class HomeTabBarController: UITabBarController {
 
         configureNavigationItems()
 
-        let vcs: [UIViewController] = [raceFeedVC, standingsVC, settingsVC]
+        let vcs: [UIViewController] = [raceFeedVC, standingsVC, seriesVC]
 
         for vc in vcs { vc.willMove(toParent: self) }
         self.viewControllers = vcs
@@ -175,7 +182,7 @@ class HomeTabBarController: UITabBarController {
 
         navigationItem.titleView = titleView
 
-        let leftStackSubviews = [notificationsButton]
+        let leftStackSubviews = [notificationsButton, settingsButton]
         let leftStackView = UIStackView(arrangedSubviews: leftStackSubviews)
         leftStackView.axis = .horizontal
         leftStackView.distribution = .fillEqually
@@ -232,6 +239,12 @@ class HomeTabBarController: UITabBarController {
 
     @objc fileprivate func didPressNotificationsButton(_ sender: Any) {
         let vc = PushMessagesViewController()
+        let nc = NavigationController(rootViewController: vc)
+        present(nc, animated: true)
+    }
+
+    @objc fileprivate func didPressSettingsButton(_ sender: Any) {
+        let vc = SettingsViewController()
         let nc = NavigationController(rootViewController: vc)
         present(nc, animated: true)
     }

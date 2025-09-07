@@ -179,7 +179,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
 
     fileprivate func configureNavigationItems() {
         title = "Standings"
-        tabBarItem = UITabBarItem(title: "Standings", image: SystemImg.trophy, selectedImage: SystemImg.trophyFill)
+        tabBarItem = UITabBarItem(title: title, image: SystemImg.trophy, selectedImage: SystemImg.trophyFill)
     }
 
     // MARK: - Data Update

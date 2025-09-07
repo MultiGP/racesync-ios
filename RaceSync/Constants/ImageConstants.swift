@@ -42,6 +42,8 @@ enum SystemImg {
     static let banknoteFill = UIImage(systemName:"banknote.fill") // iOS 14.0+
     static let gearshape = UIImage(systemName:"gearshape") // iOS 14.0+
     static let gearshapeFill = UIImage(systemName:"gearshape.fill") // iOS 14.0+
+    static let stack = UIImage(systemName:"rectangle.stack") // iOS 13.0+
+    static let stackFill = UIImage(systemName:"rectangle.stack.fill") // iOS 13.0+
 
     static var flagCheckeredCrossed: UIImage? {
         if #available(iOS 18.0, *) {
