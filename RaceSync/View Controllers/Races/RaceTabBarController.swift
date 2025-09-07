@@ -142,6 +142,11 @@ class RaceTabBarController: UITabBarController {
         viewControllers = vcs
         for vc in vcs { vc.didMove(toParent: self) }
 
+        // Override tab selection, if not available
+        if initialSelectedIndex == RaceTabs.schedule.rawValue && !race.canShowSchedule {
+            initialSelectedIndex = RaceTabs.details.rawValue
+        }
+
         // Dirty little trick to select the first tab bar item
         self.selectedIndex = initialSelectedIndex+1
         self.selectedIndex = initialSelectedIndex

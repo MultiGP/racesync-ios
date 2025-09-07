@@ -56,7 +56,7 @@ class DeepLinkURLHandler {
 
 fileprivate extension DeepLinkURLHandler {
 
-    // sync://race/join?id=29941&pilotId=20676
+    // racesync://race/join?id=29941&pilotId=20676
 
     func handleDeepLink(_ deepLink: DeepLink) -> Bool {
         if deepLink.domain == .race, deepLink.action == .join {

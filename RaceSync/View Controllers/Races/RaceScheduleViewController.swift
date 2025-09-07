@@ -60,10 +60,6 @@ class RaceScheduleViewController: UIViewController {
     fileprivate var reloadTimer: Timer?
     fileprivate let isWebPollEnabled: Bool = true
 
-    fileprivate var canDisplayZippyQ: Bool {
-        get { return race.isZippyQEnabled && !race.isFinalized }
-    }
-
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
         static let cellHeight: CGFloat = UniversalConstants.cellHeight
@@ -89,7 +85,7 @@ class RaceScheduleViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if canDisplayZippyQ {
+        if race.canShowSchedule {
             setupLayout()
             initializeWebview()
         }
@@ -124,11 +120,11 @@ class RaceScheduleViewController: UIViewController {
 
         title = "Race Schedule"
         tabBarItem = UITabBarItem(title: "Schedule", image: SystemImg.flagCheckered, selectedImage: nil)
-        tabBarItem.isEnabled = canDisplayZippyQ
+        tabBarItem.isEnabled = race.canShowSchedule
 
         let rightBtnItem = UIBarButtonItem(image: SystemImg.safari, style: .plain, target: self, action: #selector(openZippyQSchedule))
         navigationItem.rightBarButtonItem = rightBtnItem
-        navigationItem.rightBarButtonItem?.isEnabled = canDisplayZippyQ
+        navigationItem.rightBarButtonItem?.isEnabled = race.canShowSchedule
     }
 
     fileprivate func initializeWebview() {

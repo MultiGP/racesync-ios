@@ -17,6 +17,10 @@ extension Race {
         return startDate.isPassed
     }
 
+    var canShowSchedule: Bool {
+        return isZippyQEnabled && !isFinalized
+    }
+
     func canCreateCalendarEvent() -> Bool {
         guard let startDate = startDate, startDate.timeIntervalSinceNow.sign == .plus else {
             return false
