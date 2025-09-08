@@ -237,7 +237,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
         static let contentInsets = UIEdgeInsets(top: padding/2, left: 10, bottom: padding/2, right: padding/2)
-        static let mapHeight: CGFloat = 260
+        static let mapHeight: CGFloat = UIScreen.main.bounds.height/3 // 1/3 of the screen
         static let cellHeight: CGFloat = 50
         static let minButtonSize: CGFloat = 72
         static let buttonSpacing: CGFloat = 12
