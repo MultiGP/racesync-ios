@@ -146,10 +146,13 @@ class RacePilotsPickerController: UIViewController, Shimmable {
         guard let button = sender as? JoinButton, let userId = button.objectId else { return }
         guard let viewModel = userViewModels.filter ({ return $0.userId == userId }).first else { return }
 
+        let otherViewModel = externalUserViewModels?.first { $0.userId == viewModel.userId }
+        let isJoined = otherViewModel?.isJoined ?? viewModel.isJoined
+
         button.isLoading = true
         let state = button.joinState
 
-        if viewModel.isJoined {
+        if isJoined {
             ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Remove \(viewModel.username) from the race?", message: nil, destructiveTitle: "Yes, Remove", completion: { (action) in
                 self.resignUser(with: userId) { (newState) in
                     button.isLoading = false
