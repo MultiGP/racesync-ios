@@ -43,6 +43,9 @@ public struct RaceData: Descriptable {
     // https://github.com/MultiGP/multigp-com/blob/09841623ae274fa8f62a3a4df1393cf1cf986b74/public_html/mgp/protected/modules/multigp/models/Race.php#L311
     public var sendNotification: Bool = false
 
+    // These properties don't belong on the Race table
+    fileprivate static let nonDiffableProperties = [ParamKey.fee, ParamKey.paymentRequiredToJoin]
+
     public init(with chapterId: ObjectId, chapterName: String) {
         self.chapterId = chapterId
         self.chapterName = chapterName
@@ -84,32 +87,33 @@ public struct RaceData: Descriptable {
     public func toParams() -> Params {
         var params: Params = [:]
 
+        // These can't be overriden
         if name != nil { params[ParamKey.name] = name }
         if startDateString != nil { params[ParamKey.startDate] = startDateString }
 
         params[ParamKey.endDate] = endDateString // TODO: This attribute is being ignored by the API
         params[ParamKey.chapterId] = chapterId
         params[ParamKey.chapterName] = chapterName
-        params[ParamKey.scoringFormat] = format
+
         params[ParamKey.raceClass] = raceClass
+        params[ParamKey.scoringFormat] = format
+        params[ParamKey.disableSlotAutoPopulation] = qualifying
         params[ParamKey.type] = privacy
         params[ParamKey.status] = status
-        params[ParamKey.disableSlotAutoPopulation] = qualifying
         params[ParamKey.fee] = fee
         params[ParamKey.paymentRequiredToJoin] = feeRequired.intValue
         params[ParamKey.scoringDisabled] = funfly
         params[ParamKey.captureTimeEnabled] = timing
 
+        params[ParamKey.seasonId] = seasonId
+        params[ParamKey.courseId] = courseId
+        params[ParamKey.content] = content
+        params[ParamKey.sendNotification] = sendNotification
+
         params[ParamKey.cycleCount] = rounds
         params[ParamKey.maxZippyqDepth] = zippyqDepth
         params[ParamKey.zippyqIterator] = zippyqIterator
         params[ParamKey.zippyNoKiosk] = zippyqNoKiosk.intValue
-
-        params[ParamKey.seasonId] = seasonId
-        params[ParamKey.courseId] = courseId
-
-        params[ParamKey.content] = content
-        params[ParamKey.sendNotification] = sendNotification
 
         return params
     }
@@ -117,7 +121,16 @@ public struct RaceData: Descriptable {
     public func toDiffParams(_ beforeData: RaceData) -> Params {
         let before = beforeData.toParams()
         let after = toParams()
-        return before.diff(with: after)
+        var diff = before.diff(with: after)
+
+        // reinsert "nonDiffableProperties" keys from `after`
+        Self.nonDiffableProperties.forEach { key in
+            if let value = after[key] {
+                diff[key] = value
+            }
+        }
+
+        return diff
     }
 }
 

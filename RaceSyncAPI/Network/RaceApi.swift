@@ -271,10 +271,6 @@ public class RaceApi: RaceApiInterface {
 
         if let beforeData = beforeData {
             params = afterData.toDiffParams(beforeData)
-
-            // These values can't be diffed, since they're technically not part of a Race object
-            params[ParamKey.fee] = beforeData.fee
-            params[ParamKey.paymentRequiredToJoin] = beforeData.feeRequired
         } else {
             params = afterData.toParams()
         }
