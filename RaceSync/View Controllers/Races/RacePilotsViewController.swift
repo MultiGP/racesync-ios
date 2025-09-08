@@ -44,7 +44,7 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
     fileprivate var userApi = UserApi()
     fileprivate var userViewModels = [UserViewModel]()
 
-    fileprivate let emptyStateRaceRegisters = EmptyStateViewModel(.noRaceRegisters)
+    fileprivate let emptyStateNoPilots = EmptyStateViewModel(.noRacePilots)
     fileprivate var didTapCell: Bool = false
     fileprivate var externalResultSection: Int = 0
 
@@ -425,20 +425,24 @@ extension RacePilotsViewController: RacePilotsPickerControllerDelegate {
 extension RacePilotsViewController: EmptyDataSetSource {
 
     func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
-        emptyStateRaceRegisters.title
+        emptyStateNoPilots.title
     }
 
     func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
-        return emptyStateRaceRegisters.description
+        return emptyStateNoPilots.description
     }
 
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
         guard let startDate = race.startDate else { return nil }
         if race.status == .open && !startDate.isPassed {
-            return emptyStateRaceRegisters.buttonTitle(state)
+            return emptyStateNoPilots.buttonTitle(state)
         } else {
             return nil
         }
+    }
+
+    func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
+        return -scrollView.adjustedContentInset.top
     }
 
     func backgroundColor(forEmptyDataSet scrollView: UIScrollView) -> UIColor? {

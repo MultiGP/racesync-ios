@@ -9,6 +9,15 @@
 import UIKit
 import SnapKit
 import RaceSyncAPI
+import EmptyDataSet_Swift
+
+fileprivate enum Column: String, EnumTitle {
+    case pilot = "Pilot"
+    case paid = "Paid"
+    case received = "Received"
+
+    var title: String { rawValue }
+}
 
 class RacePaymentsViewController: UIViewController, RaceTabbable {
 
@@ -22,6 +31,8 @@ class RacePaymentsViewController: UIViewController, RaceTabbable {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.emptyDataSetSource = self
+        tableView.emptyDataSetDelegate = self
         tableView.tableHeaderView = UIView()
         tableView.tableFooterView = UIView()
         tableView.backgroundColor = Color.clear
@@ -75,6 +86,7 @@ class RacePaymentsViewController: UIViewController, RaceTabbable {
 
     fileprivate var sortingColumn: Column = .pilot
     fileprivate var sortingAscending = true
+    fileprivate let emptyStateNoPayments = EmptyStateViewModel(.noRacePayments)
 
     fileprivate let mainSection: Int = 0
     fileprivate var totalPaid: Float32 = 0
@@ -328,6 +340,8 @@ extension RacePaymentsViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        guard userPaymentPairs.count > 0 else { return nil }
+
         if section == mainSection {
             guard !isLoading else { return nil }
             return headerView
@@ -336,6 +350,8 @@ extension RacePaymentsViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        guard userPaymentPairs.count > 0 else { return 0 }
+
         if section == mainSection {
             return ColumnTableViewHeaderView.headerHeight
         }
@@ -354,6 +370,7 @@ extension RacePaymentsViewController: UITableViewDelegate {
 extension RacePaymentsViewController: UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
+        guard userPaymentPairs.count > 0 else { return 0 }
         return 2
     }
 
@@ -411,17 +428,32 @@ extension RacePaymentsViewController: RacePilotsPickerControllerDelegate {
     }
 }
 
-fileprivate enum Column: EnumTitle {
-    case pilot, paid, received
+extension RacePaymentsViewController: EmptyDataSetSource {
 
-    public var title: String {
-        switch self {
-        case .pilot:
-            return "Pilot"
-        case .paid:
-            return "Paid"
-        case .received:
-            return "Received"
-        }
+    func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        return emptyStateNoPayments.title
+    }
+
+    func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        return emptyStateNoPayments.description
+    }
+
+    func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
+        return nil
+    }
+
+    func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
+        return -scrollView.adjustedContentInset.top
+    }
+
+    func backgroundColor(forEmptyDataSet scrollView: UIScrollView) -> UIColor? {
+        return Color.white
+    }
+}
+
+extension RacePaymentsViewController: EmptyDataSetDelegate {
+
+    func emptyDataSetShouldAllowScroll(_ scrollView: UIScrollView) -> Bool {
+        return false
     }
 }

@@ -23,8 +23,9 @@ enum EmptyState {
     case noJoinedRaces
     case noNearbydRaces
     case noSeriesRaces
-    case noRaceRegisters
+    case noRacePilots
     case noRaceResults
+    case noRacePayments
     case noChapters
     case noChapterMembers
 
@@ -66,7 +67,7 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "No Races Found"
         case .noSeriesRaces:
             text = "No GQ Found"
-        case .noRaceRegisters:
+        case .noRacePilots:
             text = "No Registered Pilots"
         case .noRaceResults:
             text = "No Race Results"
@@ -74,6 +75,8 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "No Chapter Members"
         case .noRaces, .noMyProfileRaces, .noProfileRaces:
             text = "No Races"
+        case .noRacePayments:
+            text = "No Race Payments"
         case .noChapters, .noMyProfileChapters, .noProfileChapters:
             text = "No Chapters"
         case .noPushMessages:
@@ -115,10 +118,12 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "There are no \(Date().thisYear()) GQ races available just yet."
         case .noNearbydRaces:
             text = "There are no races available in a \(settings.searchRadius)\(settings.lengthUnit.symbol) radius."
-        case .noRaceRegisters:
-            text = "There are no registered pilots for this race yet."
+        case .noRacePilots:
+            text = "There are no registered pilots yet."
         case .noRaceResults:
             text = "There are no race results available just yet."
+        case .noRacePayments:
+            text = "There are no race payments yet."
         case .noChapterMembers:
             text = "There are no registered members yet."
         case .noProfileRaces:
@@ -163,7 +168,7 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
         switch emptyState {
         case .noJoinedRaces:
             text = "Search Nearby Races"
-        case .noRaceRegisters:
+        case .noRacePilots:
             text = "Join Race"
         case .noPushAuthorized:
             text = "Allow Push Notifications"
