@@ -19,7 +19,7 @@ class ApplicationControl: NSObject {
 
     // MARK: - Private Variables
 
-    fileprivate let authApi = AuthApi()
+    fileprivate var authApi = AuthApi()
 
     // MARK: - Public Methods
 
@@ -47,15 +47,15 @@ class ApplicationControl: NSObject {
             PushMessagesController.shared.store.removeAll() // clear all saved messages
         }
 
-        // Logs out from RaceSync and invalidates session
         authApi.logout { [weak self] (status, error) in
-            if error == nil {
-                self?.invalidateSession(forced: forced)
-            }
 
-            if status {
-                APIServices.shared.settings.environment = environment
-            }
+            // Invalidates the session, regardless if the logout call was successful or not
+            self?.invalidateSession(forced: forced)
+
+            // The authAPI must be resetted, in case we switched environments (prod, dev)
+            self?.authApi = AuthApi()
+
+            APIServices.shared.settings.environment = environment
         }
     }
 
