@@ -26,9 +26,7 @@ extension Shimmable where Self: UIViewController {
         shimmeringView.isHidden = !loading
         view.isUserInteractionEnabled = !loading
 
-        tableView.reloadData()
-
-        
+        tableView.reloadData()        
     }
 
     static func defaultShimmeringView() -> ShimmeringView {

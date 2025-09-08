@@ -226,17 +226,17 @@ class HomeTabBarController: UITabBarController {
     // MARK: - Data Update
 
     fileprivate func loadContent() {
+        let vcs: [UIViewController] = [raceFeedVC, standingsVC, seriesVC]
+        let idx = AppPrefs.lastSelectedTab
+
+        configureTabBarController(with: vcs, selectedIndex: idx)
+
         if APIServices.shared.myUser == nil {
             raceFeedVC.isLoadingList(true)
             loadMyUser()
         } else {
             raceFeedVC.loadRaces(forceReload: true)
         }
-
-        let vcs: [UIViewController] = [raceFeedVC, standingsVC, seriesVC]
-        let idx = AppPrefs.lastSelectedTab
-
-        configureTabBarController(with: vcs, selectedIndex: idx)
     }
 
     fileprivate func loadMyUser() {
