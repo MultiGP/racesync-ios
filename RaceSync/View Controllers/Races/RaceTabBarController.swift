@@ -13,6 +13,8 @@ import RaceSyncAPI
 
 enum RaceTabs: Int {
     case details, results, schedule
+
+    static let `default`: Self = .details
 }
 
 class RaceTabBarController: UITabBarController {
@@ -35,8 +37,7 @@ class RaceTabBarController: UITabBarController {
 
     var isLoading: Bool = false {
         didSet {
-            if isLoading { activityIndicatorView.startAnimating() }
-            else { activityIndicatorView.stopAnimating() }
+            activityIndicatorView.isLoading = isLoading
         }
     }
 
@@ -58,8 +59,11 @@ class RaceTabBarController: UITabBarController {
         return button
     }()
 
-    fileprivate lazy var activityIndicatorView: UIActivityIndicatorView = {
-        return UIActivityIndicatorView(style: .medium)
+    fileprivate lazy var activityIndicatorView: ActivityLoadingView = {
+        let view = ActivityLoadingView(style: .medium)
+        view.title = "Loading Race..."
+        view.hidesWhenStopped = true
+        return view
     }()
 
     fileprivate var initialSelectedIndex: Int
@@ -112,13 +116,12 @@ class RaceTabBarController: UITabBarController {
 
     fileprivate func setupLayout() {
 
-        // keep this here, else the custom tab wouldn't load properly
-        configureTabBar()
-        tabBar.isHidden = true
-
+        // Using a custom button title in this case, to display the id of a Race on tap
+        navigationItem.titleView = titleButton
         title = ""
-        view.backgroundColor = Color.white
 
+        view.backgroundColor = Color.white
+        tabBar.isHidden = true // hiding temporarily, while the view loads
         delegate = self
 
         view.addSubview(activityIndicatorView)
@@ -138,31 +141,9 @@ class RaceTabBarController: UITabBarController {
             vcs += [RacePaymentsViewController(with: race)]
         }
 
-        for vc in vcs { vc.willMove(toParent: self) }
-        viewControllers = vcs
-        for vc in vcs { vc.didMove(toParent: self) }
+        configureTabBarController(with: vcs, selectedIndex: initialSelectedIndex)
 
-        // Override tab selection, if not available
-        if initialSelectedIndex == RaceTabs.schedule.rawValue && !race.canShowSchedule {
-            initialSelectedIndex = RaceTabs.details.rawValue
-        }
-
-        // Dirty little trick to select the first tab bar item
-        self.selectedIndex = initialSelectedIndex+1
-        self.selectedIndex = initialSelectedIndex
-
-        // Trick to pre-load each view controller
-        preloadTabs()
-        self.tabBar.isHidden = false
-
-        // Using a custom button title in this case, to display the id of a Race on tap
-        navigationItem.titleView = titleButton
-    }
-
-    fileprivate func configureTabBar() {
-
-        // Replace default tab bar with custom one
-        setValue(RoundedSelectionTabBar(), forKey: "tabBar")
+        tabBar.isHidden = false
     }
 
     // MARK: - Actions

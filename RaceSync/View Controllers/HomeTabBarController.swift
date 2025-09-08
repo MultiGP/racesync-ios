@@ -12,8 +12,8 @@ import RaceSyncAPI
 
 enum HomeTabs: Int {
     case races, standings, series
-
-    static let `default`: HomeTabs = .standings
+    
+    static let `default`: Self = .standings
 }
 
 class HomeTabBarController: UITabBarController {
@@ -123,15 +123,6 @@ class HomeTabBarController: UITabBarController {
         super.viewWillAppear(animated)
 
         loadContent()
-
-        let selectedIdx = AppPrefs.lastSelectedTab
-
-        // Dirty little trick to select the first tab bar item
-        if let vcs = viewControllers, selectedIdx == 0 {
-            selectedIndex = vcs.count-1
-        }
-
-        selectedIndex = selectedIdx
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -156,26 +147,9 @@ class HomeTabBarController: UITabBarController {
 
     fileprivate func setupLayout() {
 
-        configureNavigationItems()
-
-        let vcs: [UIViewController] = [raceFeedVC, standingsVC, seriesVC]
-
-        for vc in vcs { vc.willMove(toParent: self) }
-        self.viewControllers = vcs
-        for vc in vcs { vc.didMove(toParent: self) }
-
         delegate = self
 
-        // Trick to pre-load each view controller
-        self.preloadTabs()
-
-        configureTabBar()
-    }
-
-    fileprivate func configureTabBar() {
-
-        // Replace default tab bar with custom one
-        setValue(RoundedSelectionTabBar(), forKey: "tabBar")
+        configureNavigationItems()
     }
 
     fileprivate func configureNavigationItems() {
@@ -251,16 +225,21 @@ class HomeTabBarController: UITabBarController {
 
     // MARK: - Data Update
 
-    func loadContent() {
+    fileprivate func loadContent() {
         if APIServices.shared.myUser == nil {
             raceFeedVC.isLoadingList(true)
             loadMyUser()
         } else {
             raceFeedVC.loadRaces(forceReload: true)
         }
+
+        let vcs: [UIViewController] = [raceFeedVC, standingsVC, seriesVC]
+        let idx = AppPrefs.lastSelectedTab
+
+        configureTabBarController(with: vcs, selectedIndex: idx)
     }
 
-    func loadMyUser() {
+    fileprivate func loadMyUser() {
         userApi.getMyUser { [weak self] (user, error) in
             if let user = user {
                 self?.raceFeedVC.loadRaces()
@@ -274,7 +253,7 @@ class HomeTabBarController: UITabBarController {
         }
     }
 
-    func loadMyHomeChapter(_ chapterId: String) {
+    fileprivate func loadMyHomeChapter(_ chapterId: String) {
         guard !chapterId.isEmpty else { return }
 
         chapterApi.getChapter(with: chapterId) { [weak self] (chapter, error) in
@@ -283,7 +262,7 @@ class HomeTabBarController: UITabBarController {
         }
     }
 
-    func loadMyManagedChapters() {
+    fileprivate func loadMyManagedChapters() {
         chapterApi.getMyManagedChapters { (managedChapters, error) in
 
             guard let chapters = managedChapters else {
@@ -300,7 +279,7 @@ class HomeTabBarController: UITabBarController {
         }
     }
 
-    func updateUserProfileImage() {
+    fileprivate func updateUserProfileImage() {
         let imageUrl = APIServices.shared.myUser?.miniProfilePictureUrl
         let placeholder = PlaceholderImg.small?.withRenderingMode(.alwaysOriginal)
 
@@ -310,7 +289,7 @@ class HomeTabBarController: UITabBarController {
         }
     }
 
-    func updateChapterProfileImage() {
+    fileprivate func updateChapterProfileImage() {
         let imageUrl = APIServices.shared.myChapter?.miniProfilePictureUrl
         let placeholder = PlaceholderImg.small?.withRenderingMode(.alwaysOriginal)
 
@@ -318,7 +297,7 @@ class HomeTabBarController: UITabBarController {
         chapterProfileButton.setImage(with: imageUrl, placeholderImage: placeholder, forState: .normal, size: Constants.miniProfileSize)
     }
 
-    func updateMyHomeChapter(with chapter: Chapter) {
+    fileprivate func updateMyHomeChapter(with chapter: Chapter) {
         APIServices.shared.myChapter = chapter
         updateChapterProfileImage()
     }

@@ -55,6 +55,7 @@
 		4F5001E723827DE70025A593 /* ImageUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5001E623827DE70025A593 /* ImageUtil.swift */; };
 		4F5001E923830E180025A593 /* Race.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5001E823830E180025A593 /* Race.swift */; };
 		4F521F822E6E18D800AE7C03 /* SeriesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F521F812E6E18D800AE7C03 /* SeriesViewController.swift */; };
+		4F521F842E6E5F0A00AE7C03 /* ActivityLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F521F832E6E5F0A00AE7C03 /* ActivityLoadingView.swift */; };
 		4F5488962D2146C80056EA59 /* RaceScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5488952D2146C80056EA59 /* RaceScheduleViewController.swift */; };
 		4F5488982D2236950056EA59 /* String+HTML.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5488972D2236950056EA59 /* String+HTML.swift */; };
 		4F5614A42DDC4C2800EAD42A /* MessageEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5614A32DDC4C2800EAD42A /* MessageEnums.swift */; };
@@ -357,6 +358,7 @@
 		4F5001E623827DE70025A593 /* ImageUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUtil.swift; sourceTree = "<group>"; };
 		4F5001E823830E180025A593 /* Race.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Race.swift; sourceTree = "<group>"; };
 		4F521F812E6E18D800AE7C03 /* SeriesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesViewController.swift; sourceTree = "<group>"; };
+		4F521F832E6E5F0A00AE7C03 /* ActivityLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityLoadingView.swift; sourceTree = "<group>"; };
 		4F5488952D2146C80056EA59 /* RaceScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceScheduleViewController.swift; sourceTree = "<group>"; };
 		4F5488972D2236950056EA59 /* String+HTML.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+HTML.swift"; sourceTree = "<group>"; };
 		4F5614A32DDC4C2800EAD42A /* MessageEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEnums.swift; sourceTree = "<group>"; };
@@ -1104,6 +1106,7 @@
 				4F5C1E44238D1BD200D756EB /* PasteboardButton.swift */,
 				4F5C1E46238D1C3200D756EB /* TextCopiable.swift */,
 				4FCAF9FD23AC8B8400ACE7D3 /* Shimmable.swift */,
+				4F521F832E6E5F0A00AE7C03 /* ActivityLoadingView.swift */,
 				4F8376DB23EE87CC00256AEC /* RotatingIconView.swift */,
 				4F3D641023FE664A00DE6DF2 /* TextFieldViewController.swift */,
 				4F3D640E23FC65F700DE6DF2 /* TextPickerViewController.swift */,
@@ -1554,6 +1557,7 @@
 				4F80A660296F9951008B19AF /* RichEditorToolbar.swift in Sources */,
 				4F7BE2672722354F00592297 /* UIViewController+Navigation.swift in Sources */,
 				4F60562A258D59EC008AF93F /* GalleryViewController.swift in Sources */,
+				4F521F842E6E5F0A00AE7C03 /* ActivityLoadingView.swift in Sources */,
 				4F9DB7B223D68EB200570483 /* NavigationController.swift in Sources */,
 				4F9DB7AC23D5A1DE00570483 /* EmptyStateViewModel.swift in Sources */,
 				4F0B61452385F66300930D91 /* ProfileHeaderView.swift in Sources */,
