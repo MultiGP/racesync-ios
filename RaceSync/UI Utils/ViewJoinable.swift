@@ -76,7 +76,7 @@ extension ViewJoinable {
                 AppControl.shared.presentPayment(for: race, completion)
                 button.isLoading = false // let's disable this for now
             } else {
-                AppControl.shared.resign(race: race.id, raceApi: raceApi) { (newState) in
+                AppControl.shared.resign(race: race, raceApi: raceApi) { (newState) in
                     self.handleStateChange(state, newState: newState, in: button, with: race, completion)
                 }
             }
@@ -93,11 +93,11 @@ extension ViewJoinable {
 
         switch state {
         case .notJoined:
-            AppControl.shared.resign(chapter: chapter.id, chapterApi: chapterApi) { (newState) in
+            AppControl.shared.resign(chapter: chapter, chapterApi: chapterApi) { (newState) in
                 self.handleStateChange(state, newState: newState, in: button, with: chapter, completion)
             }
         case .joined:
-            AppControl.shared.join(chapter: chapter.id, chapterApi: chapterApi) { (newState) in
+            AppControl.shared.join(chapter: chapter, chapterApi: chapterApi) { (newState) in
                 self.handleStateChange(state, newState: newState, in: button, with: chapter, completion)
             }
         default:

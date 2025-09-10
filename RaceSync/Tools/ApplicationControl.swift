@@ -100,15 +100,25 @@ extension ApplicationControl {
                 self.presentPayment(for: race, completion)
             })
         } else {
-            join(race: race.id, raceApi: raceApi, completion)
+            join(race: race, raceApi: raceApi, completion)
         }
     }
 
-    func join(race raceId: ObjectId, raceApi: RaceApi, _ completion: @escaping JoinStateCompletionBlock) {
+    func join(race: Race, raceApi: RaceApi, _ completion: @escaping JoinStateCompletionBlock) {
 
-        raceApi.join(race: raceId) { (status, error) in
+        raceApi.join(race: race.id) { (status, error) in
             if status == true {
                 completion(.joined)
+
+                if race.isPayable {
+                    AlertUtil.presentAlertMessage("This race has a fee of \(race.fee) USD. Would you like to pay it now?",
+                                                  title: "Joined race!",
+                                                  buttonTitle: "Pay Now", delay: 0.5) { action in
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
+                            self.presentPayment(for: race, completion)
+                        })
+                    }
+                }
             } else if let error = error {
                 completion(.notJoined)
                 AlertUtil.presentAlertMessage("\(error.localizedDescription)", title: "Error", delay: 0.5)
@@ -119,10 +129,10 @@ extension ApplicationControl {
         }
     }
 
-    func resign(race raceId: ObjectId, raceApi: RaceApi, _ completion: @escaping JoinStateCompletionBlock) {
+    func resign(race: Race, raceApi: RaceApi, _ completion: @escaping JoinStateCompletionBlock) {
 
         let handler: AlertCompletionBlock = { _ in
-            raceApi.resign(race: raceId) { (status, error) in
+            raceApi.resign(race: race.id) { (status, error) in
                 if status == true {
                     completion(.notJoined)
                 } else if let error = error {
@@ -179,9 +189,9 @@ extension ApplicationControl {
 
 extension ApplicationControl {
 
-    func join(chapter chapterId: ObjectId, chapterApi: ChapterApi, _ completion: @escaping JoinStateCompletionBlock) {
+    func join(chapter: Chapter, chapterApi: ChapterApi, _ completion: @escaping JoinStateCompletionBlock) {
 
-        chapterApi.join(chapter: chapterId) { (status, error) in
+        chapterApi.join(chapter: chapter.id) { (status, error) in
             if status == true {
                 completion(.joined)
             } else if let error = error {
@@ -194,10 +204,10 @@ extension ApplicationControl {
         }
     }
 
-    func resign(chapter chapterId: ObjectId, chapterApi: ChapterApi, _ completion: @escaping JoinStateCompletionBlock) {
+    func resign(chapter: Chapter, chapterApi: ChapterApi, _ completion: @escaping JoinStateCompletionBlock) {
 
         let handler: AlertCompletionBlock = { _ in
-            chapterApi.resign(chapter: chapterId) { (status, error) in
+            chapterApi.resign(chapter: chapter.id) { (status, error) in
                 if status == true {
                     completion(.notJoined)
                 } else if let error = error {

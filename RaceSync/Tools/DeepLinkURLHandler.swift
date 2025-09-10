@@ -68,17 +68,18 @@ fileprivate extension DeepLinkURLHandler {
     func handleJoiningRace(with deepLink: DeepLink) -> Bool {
         guard let myUser = APIServices.shared.myUser else { return false }
         guard let raceId = deepLink.parameters[ParamKey.id], let pilotId = deepLink.parameters[ParamKey.pilotId] else { return false }
+        guard pilotId == myUser.id else { return false }
 
-        if pilotId == myUser.id {
-            AppControl.shared.join(race: raceId, raceApi: raceApi) { _ in
-                NotificationCenter.default.post(
-                    name: .joinedRaceViaDeeplink,
-                    object: deepLink
-                )
-            }
-            return true
+        raceApi.join(race: raceId) { (status, error) in
+            // Broadcast regardless if joined successful or not
+            // since this may be called, even if the race has already been joined
+            // in cases like paying fees after joining a race.
+            NotificationCenter.default.post(
+                name: .joinedRaceViaDeeplink,
+                object: deepLink
+            )
         }
-        return false
+        return true
     }
 }
 
