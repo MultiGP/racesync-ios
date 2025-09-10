@@ -84,7 +84,8 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
 
         setupLayout()
         configureNavigationItems()
-        populateData()
+        loadContent()
+        registerJoinable()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -93,6 +94,10 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+    }
+
+    deinit {
+        unregisterJoinable()
     }
 
     // MARK: - Layout
@@ -141,9 +146,21 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: stackView)
     }
 
-    // MARK: - Content
+    // MARK: - Actions
 
-    fileprivate func populateData() {
+    @objc func didPressEditButton() {
+        let vc = RacePilotsPickerController(with: race)
+        vc.externalUserViewModels = userViewModels
+        vc.delegate = self
+
+        let nc = NavigationController(rootViewController: vc)
+        present(nc, animated: true)
+    }
+
+    // MARK: - Data Update
+
+    // ViewJoinable
+    func loadContent(forced: Bool = false) {
         var viewModels = [UserViewModel]()
 
         func populateScore(in userViewModels: [UserViewModel]) {
@@ -178,30 +195,19 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
         resetTableView()
     }
 
-    func resetTableView() {
-        tableView.setContentOffset(.zero, animated: false)
-        tableView.reloadData()
-
-        invalidatePinnedView()
-    }
-
+    // RaceTabbable
     func reloadContent() {
-        populateData()
+        loadContent(forced: true)
     }
 
     fileprivate func reloadRaceView() {
         tabBarController.reloadRaceView()
     }
 
-    // MARK: - Actions
-
-    @objc func didPressEditButton() {
-        let vc = RacePilotsPickerController(with: race)
-        vc.externalUserViewModels = userViewModels
-        vc.delegate = self
-
-        let nc = NavigationController(rootViewController: vc)
-        present(nc, animated: true)
+    func resetTableView() {
+        tableView.setContentOffset(.zero, animated: false)
+        tableView.reloadData()
+        invalidatePinnedView()
     }
 
     // MARK: - Pinnable

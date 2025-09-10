@@ -84,6 +84,7 @@ class UserViewController: ProfileViewController, ViewJoinable {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        registerJoinable()
         configureBarButtonItems()
 
         tableView.register(cellType: UserRaceTableViewCell.self)
@@ -92,7 +93,7 @@ class UserViewController: ProfileViewController, ViewJoinable {
         tableView.emptyDataSetSource = self
         tableView.emptyDataSetDelegate = self
         
-        loadRaces()
+        loadContent()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -101,6 +102,10 @@ class UserViewController: ProfileViewController, ViewJoinable {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+    }
+
+    deinit {
+        unregisterJoinable()
     }
 
     // MARK: - Layout
@@ -138,11 +143,7 @@ class UserViewController: ProfileViewController, ViewJoinable {
     override func didChangeSegment() {
         super.didChangeSegment()
 
-        if selectedSegment == .left {
-            loadRaces()
-        } else {
-            loadChapters()
-        }
+        loadContent()
     }
 
     override func didPressLocationButton() {
@@ -210,15 +211,35 @@ class UserViewController: ProfileViewController, ViewJoinable {
         vc.excludeAllActivityTypes(except: [.airDrop])
         present(vc, animated: true)
     }
-}
 
-fileprivate extension UserViewController {
+    // MARK: - Data Update
 
-    func loadRaces() {
-        if raceViewModels.isEmpty {
+    // ViewJoinable
+    func loadContent(forced: Bool = false) {
+        if selectedSegment == .left {
+            loadRaces(forced)
+        } else {
+            loadChapters(forced)
+        }
+    }
+
+    func loadRaces(_ forced: Bool = false) {
+        if raceViewModels.isEmpty || forced {
             isLoadingList(true)
 
             fetchRaces { [weak self] in
+                self?.isLoadingList(false)
+            }
+        } else {
+            tableView.reloadData()
+        }
+    }
+
+    func loadChapters(_ forced: Bool = false) {
+        if chapterViewModels.isEmpty || forced {
+            isLoadingList(true)
+
+            fetchChapters { [weak self] in
                 self?.isLoadingList(false)
             }
         } else {
@@ -236,18 +257,6 @@ fileprivate extension UserViewController {
             }
 
             completion?()
-        }
-    }
-
-    func loadChapters() {
-        if chapterViewModels.isEmpty {
-            isLoadingList(true)
-
-            fetchChapters { [weak self] in
-                self?.isLoadingList(false)
-            }
-        } else {
-            tableView.reloadData()
         }
     }
 

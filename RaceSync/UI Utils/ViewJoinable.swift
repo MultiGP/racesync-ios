@@ -12,7 +12,8 @@ import Presentr
 
 public typealias JoinStateCompletionBlock = (_ joinState: JoinState) -> Void
 
-protocol ViewJoinable {
+protocol ViewJoinable where Self: UIViewController {
+    func loadContent(forced: Bool)
     func toggleJoinButton(_ button: JoinButton, forRace race: Race, raceApi: RaceApi, _ completion: @escaping JoinStateCompletionBlock)
     func toggleJoinButton(_ button: JoinButton, forChapter chapter: Chapter, chapterApi: ChapterApi, _ completion: @escaping JoinStateCompletionBlock)
 }
@@ -116,5 +117,16 @@ extension ViewJoinable {
         }
 
         completion(newState)
+    }
+}
+
+extension ViewJoinable where Self: UIViewController {
+    
+    func registerJoinable() {
+        ViewJoinableRegistry.shared.register(self)
+    }
+
+    func unregisterJoinable() {
+        ViewJoinableRegistry.shared.unregister(self)
     }
 }

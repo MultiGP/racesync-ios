@@ -9,7 +9,7 @@
 import Foundation
 import RaceSyncAPI
 
-class DeepLinkURLHandler {
+class DeepLinkURLHandler: Descriptable {
 
     static let shared = DeepLinkURLHandler()
 

@@ -86,6 +86,7 @@ class ChapterViewController: ProfileViewController, ViewJoinable {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        registerJoinable()
         configureBarButtonItems()
 
         tableView.register(cellType: RaceTableViewCell.self)
@@ -94,11 +95,7 @@ class ChapterViewController: ProfileViewController, ViewJoinable {
         tableView.emptyDataSetSource = self
         tableView.emptyDataSetDelegate = self
 
-        if selectedSegment == .left {
-            loadRaces()
-        } else {
-            loadUsers()
-        }
+        loadContent()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -111,6 +108,10 @@ class ChapterViewController: ProfileViewController, ViewJoinable {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+    }
+
+    deinit {
+        unregisterJoinable()
     }
 
     // MARK: - Layout
@@ -159,11 +160,7 @@ class ChapterViewController: ProfileViewController, ViewJoinable {
     override func didChangeSegment() {
         super.didChangeSegment()
 
-        if selectedSegment == .left {
-            loadRaces()
-        } else {
-            loadUsers()
-        }
+        loadContent()
     }
 
     override func didPressLocationButton() {
@@ -198,70 +195,6 @@ class ChapterViewController: ProfileViewController, ViewJoinable {
         present(nc, animated: true)
     }
 
-    @objc func didPressCloseButton() {
-        dismiss(animated: true)
-    }
-}
-
-fileprivate extension ChapterViewController {
-
-    func loadRaces() {
-        if raceViewModels.isEmpty {
-            isLoadingList(true)
-
-            fetchRaces { [weak self] in
-                self?.isLoadingList(false)
-            }
-        } else {
-            tableView.reloadData()
-        }
-    }
-
-    func fetchRaces(_ completion: VoidCompletionBlock? = nil) {
-        raceApi.getRaces(chapterIds: [chapter.id]) { (races, error) in
-            if let races = races {
-                // skip parent races for now
-                let childRaces = races.filter({ (race) -> Bool in
-                    return race.childRaceCount == nil
-                })
-
-                let sortedRaces = childRaces.sorted(by: { $0.startDate?.compare($1.startDate ?? Date()) == .orderedDescending })
-                self.raceViewModels = RaceViewModel.viewModels(with: sortedRaces)
-                self.tableView.reloadData()
-            } else {
-                Clog.log("getMyRaces error : \(error.debugDescription)")
-            }
-
-            completion?()
-        }
-    }
-
-    func loadUsers() {
-        if userViewModels.isEmpty {
-            isLoadingList(true)
-
-            fetchUsers { [weak self] in
-                self?.isLoadingList(false)
-            }
-        } else {
-            tableView.reloadData()
-        }
-    }
-
-    func fetchUsers(_ completion: VoidCompletionBlock? = nil) {
-        chapterApi.getChapterMembers(with: chapter.id) { (users, error) in
-            if let users = users {
-                let viewModels = UserViewModel.viewModels(with: users)
-                self.userViewModels = viewModels.sorted { $0.username.lowercased() < $1.username.lowercased() }
-                self.tableView.reloadData()
-            } else {
-                Clog.log("getMyRaces error : \(error.debugDescription)")
-            }
-
-            completion?()
-        }
-    }
-
     @objc func didPressJoinButton(_ sender: JoinButton) {
         guard let objectId = sender.objectId else { return }
         let joinState = sender.joinState
@@ -293,6 +226,78 @@ fileprivate extension ChapterViewController {
         vc.excludeAllActivityTypes(except: [.airDrop])
 
         present(vc, animated: true)
+    }
+
+    @objc func didPressCloseButton() {
+        dismiss(animated: true)
+    }
+
+    // MARK: - Data Update
+
+    // ViewJoinable
+    func loadContent(forced: Bool = false) {
+        if selectedSegment == .left {
+            loadRaces(forced: forced)
+        } else {
+            loadUsers(forced: forced)
+        }
+    }
+
+    func loadRaces(forced: Bool = false) {
+        if raceViewModels.isEmpty || forced {
+            isLoadingList(true)
+
+            fetchRaces { [weak self] in
+                self?.isLoadingList(false)
+            }
+        } else {
+            tableView.reloadData()
+        }
+    }
+
+    func loadUsers(forced: Bool = false) {
+        if userViewModels.isEmpty || forced {
+            isLoadingList(true)
+
+            fetchUsers { [weak self] in
+                self?.isLoadingList(false)
+            }
+        } else {
+            tableView.reloadData()
+        }
+    }
+
+    func fetchRaces(_ completion: VoidCompletionBlock? = nil) {
+        raceApi.getRaces(chapterIds: [chapter.id]) { (races, error) in
+            if let races = races {
+                // skip parent races for now
+                let childRaces = races.filter({ (race) -> Bool in
+                    return race.childRaceCount == nil
+                })
+
+                let sortedRaces = childRaces.sorted(by: { $0.startDate?.compare($1.startDate ?? Date()) == .orderedDescending })
+                self.raceViewModels = RaceViewModel.viewModels(with: sortedRaces)
+                self.tableView.reloadData()
+            } else {
+                Clog.log("getMyRaces error : \(error.debugDescription)")
+            }
+
+            completion?()
+        }
+    }
+
+    func fetchUsers(_ completion: VoidCompletionBlock? = nil) {
+        chapterApi.getChapterMembers(with: chapter.id) { (users, error) in
+            if let users = users {
+                let viewModels = UserViewModel.viewModels(with: users)
+                self.userViewModels = viewModels.sorted { $0.username.lowercased() < $1.username.lowercased() }
+                self.tableView.reloadData()
+            } else {
+                Clog.log("getMyRaces error : \(error.debugDescription)")
+            }
+
+            completion?()
+        }
     }
 }
 

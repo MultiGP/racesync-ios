@@ -166,6 +166,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
         super.viewDidLoad()
 
         setupLayout()
+        registerJoinable()
 
         APIServices.shared.settings.add(self)
     }
@@ -184,6 +185,10 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+    }
+
+    deinit {
+        unregisterJoinable()
     }
 
     // MARK: - Layout
@@ -230,40 +235,11 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
         if selectedRaceFilter == .nearby, !locationManager.didRequestAuthorization {
             isLoadingList(true)
             locationManager.requestsAuthorization { [weak self] (error) in
-                self?.loadRaces()
+                self?.loadContent()
             }
         } else {
-            loadRaces(forceReload: true)
+            loadContent(forced: true)
         }
-    }
-
-    @objc func loadRaces(forceReload: Bool = false) {
-        let selectedList = selectedRaceFilter
-
-        if raceFeedController.shouldShowShimmer(for: selectedList) {
-            isLoadingList(true)
-        }
-
-        raceFeedController.raceViewModels(for: selectedList, forceFetch: forceReload) { [weak self] (viewModels, cached, error) in
-            guard let strongSelf = self else { return }
-
-            strongSelf.isLoadingList(false)
-
-            if let _ = viewModels, selectedList == strongSelf.selectedRaceFilter {
-
-                if strongSelf.refreshControl.isRefreshing, !cached {
-                    strongSelf.refreshControl.endRefreshing()
-                }
-
-                strongSelf.tableView.reloadData()
-            } else {
-                print("getMyRaces error : \(error.debugDescription)")
-            }
-        }
-    }
-
-    @objc func unloadRaces() {
-        raceFeedController.invalidateDataSource()
     }
 
     @objc fileprivate func didPressSearchButton(_ sender: Any) {
@@ -284,13 +260,13 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
         toggleJoinButton(sender, forRace: race, raceApi: raceApi) { [weak self] (newState) in
             if joinState != newState {
                 // reload races to reflect race changes, specially join counts
-                self?.loadRaces(forceReload: true)
+                self?.loadContent(forced: true)
             }
         }
     }
 
     @objc fileprivate func didPullRefreshControl() {
-        loadRaces(forceReload: true)
+        loadContent(forced: true)
     }
 
     fileprivate func openRaceDetail(_ viewModel: RaceViewModel) {
@@ -318,6 +294,34 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
 
         let idx = raceFeedController.raceFilters.firstIndex(of: filter) ?? 0
         segmentedControl.setSelectedSegment(idx)
+    }
+
+    // MARK: - Data Update
+
+    // ViewJoinable
+    func loadContent(forced: Bool = false) {
+        let selectedList = selectedRaceFilter
+
+        if raceFeedController.shouldShowShimmer(for: selectedList) {
+            isLoadingList(true)
+        }
+
+        raceFeedController.raceViewModels(for: selectedList, forceFetch: forced) { [weak self] (viewModels, cached, error) in
+            guard let strongSelf = self else { return }
+
+            strongSelf.isLoadingList(false)
+
+            if let _ = viewModels, selectedList == strongSelf.selectedRaceFilter {
+
+                if strongSelf.refreshControl.isRefreshing, !cached {
+                    strongSelf.refreshControl.endRefreshing()
+                }
+
+                strongSelf.tableView.reloadData()
+            } else {
+                print("getMyRaces error : \(error.debugDescription)")
+            }
+        }
     }
 }
 
@@ -374,13 +378,13 @@ extension RaceFeedViewController: APISettingsDelegate {
         switch settings {
         case .raceFeedFilters:
             updateSegmentedControl()
-            unloadRaces() // invalidates collection
-            loadRaces(forceReload: true)
+            raceFeedController.invalidateDataSource()
+            loadContent(forced: true)
         case .showPastEvents, .searchRadius:
-            unloadRaces() // invalidates collection
-            loadRaces(forceReload: true)
+            raceFeedController.invalidateDataSource()
+            loadContent(forced: true)
         case .measurement:
-            loadRaces() // simple refresh
+            loadContent() // simple refresh
         default:
             break
         }

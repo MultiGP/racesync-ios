@@ -20,6 +20,7 @@ class ApplicationControl: NSObject {
     // MARK: - Private Variables
 
     fileprivate var authApi = AuthApi()
+    fileprivate var deeplinkObserver: NSObjectProtocol?
 
     // MARK: - Public Methods
 
@@ -37,6 +38,9 @@ class ApplicationControl: NSObject {
         // dismisses the presented view and displays the login screen view instead
         let rootViewController = window?.rootViewController
         rootViewController?.dismiss(animated: true)
+
+        // clears all cached ViewJoinable objects
+        ViewJoinableRegistry.shared.unregisterAll()
     }
 
     // Default environment value is based on the existing environment
@@ -66,11 +70,21 @@ class ApplicationControl: NSObject {
 
     override init() {
         super.init()
-        NotificationCenter.default.addObserver(self, selector: #selector(handleDeepLinkNotification(_:)), name: .joinedRaceViaDeeplink, object: nil)
+
+        deeplinkObserver = NotificationCenter.default.addObserver(with: .joinedRaceViaDeeplink) { note in
+            guard let deeplink = note.object as? DeepLink else { return }
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: { [weak self] in
+                self?.handleDeepLink(deeplink)
+            })
+        }
     }
 
     deinit {
-        NotificationCenter.default.removeObserver(self)
+        // Add more observers to collections instead of variables?
+        if let observer = deeplinkObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
 }
 
@@ -141,12 +155,21 @@ extension ApplicationControl {
         }
     }
 
-    @objc fileprivate func handleDeepLinkNotification(_ notification: Notification)  {
-        guard notification.object is DeepLink else { return }
+    fileprivate func handleDeepLink(_ deeplink: DeepLink)  {
 
-        if notification.name == .joinedRaceViaDeeplink {
+        if deeplink.action == .join {
+            // Makes sure to dismiss the payment webview, if still present
             if let webvc = UIViewController.topMostViewController(), webvc.isKind(of: WebViewController.self) {
+
                 webvc.dismiss(animated: true)
+
+                // force reloading the visible ViewJoinable
+                // to reflect the updated state change.
+                // TODO: Consider reactive join button states, to avoid heavylift reloads
+                let joinables = ViewJoinableRegistry.shared.all()
+                for vc in joinables {
+                    vc.loadContent(forced: true)
+                }
             }
         }
     }

@@ -11,6 +11,7 @@ import RaceSyncAPI
 
 public class StringConstants {
     public static let applicationID = "1491110680"
+    public static let appstoreUrl = "https://apps.apple.com/app/\(applicationID)"
     public static let appstoreReviewUrl = "\(RateMe.appstoreUrl(with: applicationID))"
 
     public static let copyright = "Copyright © 2015 - \(Date().thisYear()) MultiGP, Inc."

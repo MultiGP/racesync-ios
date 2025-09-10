@@ -262,6 +262,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         super.viewDidLoad()
 
         setupLayout()
+        registerJoinable()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -270,6 +271,10 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+    }
+
+    deinit {
+        unregisterJoinable()
     }
 
     // MARK: - Layout
@@ -596,10 +601,19 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             CalendarUtil.add(event)
         })
     }
-}
 
-extension RaceDetailViewController {
+    // MARK: - Data Update
 
+    // ViewJoinable
+    func loadContent(forced: Bool = false) {
+        if forced {
+            reloadRaceView()
+        } else {
+            reloadContent()
+        }
+    }
+
+    // RaceTabbable
     func reloadContent() {
         raceViewModel = RaceViewModel(with: race)
 
@@ -612,6 +626,15 @@ extension RaceDetailViewController {
         }
 
         tableView.reloadData()
+    }
+
+    func reloadRaceView() {
+        tabBarController.reloadRaceView()
+    }
+
+    func setLoading(_ cell: FormTableViewCell, loading: Bool) {
+        cell.isLoading = loading
+        didTapCell = loading
     }
 }
 
@@ -695,15 +718,6 @@ fileprivate extension RaceDetailViewController {
                 AlertUtil.presentAlertMessage("Couldn't delete this race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
             }
         }
-    }
-
-    func reloadRaceView() {
-        tabBarController.reloadRaceView()
-    }
-
-    func setLoading(_ cell: FormTableViewCell, loading: Bool) {
-        cell.isLoading = loading
-        didTapCell = loading
     }
 
     func canInteract(with cell: FormTableViewCell) -> Bool {

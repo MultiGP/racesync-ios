@@ -25,4 +25,28 @@ extension UIViewController {
         return topController
     }
 
+    func topVisibleViewController() -> UIViewController {
+        if let nav = self as? UINavigationController {
+            return nav.visibleViewController?.topVisibleViewController() ?? nav
+        } else if let tab = self as? UITabBarController {
+            return tab.selectedViewController?.topVisibleViewController() ?? tab
+        } else if let presented = self.presentedViewController {
+            return presented.topVisibleViewController()
+        } else {
+            return self
+        }
+    }
+}
+
+extension UIApplication {
+    /// Finds the top-most visible view controller starting from the key window
+    var visibleViewController: UIViewController? {
+        guard let root = self.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .flatMap({ $0.windows })
+            .first(where: { $0.isKeyWindow })?.rootViewController else {
+            return nil
+        }
+        return root.topVisibleViewController()
+    }
 }

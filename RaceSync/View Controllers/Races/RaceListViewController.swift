@@ -82,6 +82,7 @@ class RaceListViewController: UIViewController, ViewJoinable {
         super.viewDidLoad()
 
         setupLayout()
+        registerJoinable()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -90,6 +91,10 @@ class RaceListViewController: UIViewController, ViewJoinable {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+    }
+
+    deinit {
+        unregisterJoinable()
     }
 
     // MARK: - Layout
@@ -113,7 +118,7 @@ class RaceListViewController: UIViewController, ViewJoinable {
         toggleJoinButton(sender, forRace: race, raceApi: raceApi) { [weak self] (newState) in
             if joinState != newState {
                 // reload races to reflect race changes, specially join counts
-                self?.reloadRaces()
+                self?.loadContent()
             }
         }
     }
@@ -124,7 +129,10 @@ class RaceListViewController: UIViewController, ViewJoinable {
         navigationController?.pushViewController(vc, animated: true)
     }
 
-    @objc func reloadRaces() {
+    // MARK: - Data Update
+
+    // ViewJoinable
+    func loadContent(forced: Bool = false) {
         if let seasonId = seasonId {
             raceApi.getRaces(seasonId: seasonId) { [weak self] (races, error) in
                 if let races = races {

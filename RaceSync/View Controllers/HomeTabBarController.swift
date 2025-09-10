@@ -235,14 +235,14 @@ class HomeTabBarController: UITabBarController {
             raceFeedVC.isLoadingList(true)
             loadMyUser()
         } else {
-            raceFeedVC.loadRaces(forceReload: true)
+            raceFeedVC.loadContent(forced: true)
         }
     }
 
     fileprivate func loadMyUser() {
         userApi.getMyUser { [weak self] (user, error) in
             if let user = user {
-                self?.raceFeedVC.loadRaces()
+                self?.raceFeedVC.loadContent()
                 self?.loadMyHomeChapter(user.homeChapterId)
                 self?.loadMyManagedChapters()
                 self?.updateUserProfileImage()

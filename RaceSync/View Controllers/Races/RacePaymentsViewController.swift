@@ -120,7 +120,7 @@ class RacePaymentsViewController: UIViewController, RaceTabbable {
 
         setupLayout()
         configureNavigationItems()
-        populateData()
+        loadContent()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -183,7 +183,7 @@ class RacePaymentsViewController: UIViewController, RaceTabbable {
 
     // MARK: - Content
 
-    fileprivate func populateData() {
+    fileprivate func loadContent() {
 
         if userPaymentPairs.count == 0 {
             isLoading = true
@@ -284,7 +284,7 @@ class RacePaymentsViewController: UIViewController, RaceTabbable {
     }
 
     func reloadContent() {
-        populateData()
+        loadContent()
         tableView.reloadData()
     }
 

@@ -248,6 +248,9 @@
 		4FEBB27A23A2DAFF007514B4 /* DescriptableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEBB27923A2DAFF007514B4 /* DescriptableTests.swift */; };
 		4FEBB27D23A30F99007514B4 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEBB27C23A30F99007514B4 /* Date+Extensions.swift */; };
 		4FEBB27F23A310BB007514B4 /* User+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEBB27E23A310BB007514B4 /* User+Extensions.swift */; };
+		4FF16CBC2E6F838E00B4FC51 /* NotificationCenter+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF16CBB2E6F838E00B4FC51 /* NotificationCenter+Extensions.swift */; };
+		4FF16CBE2E70EC7D00B4FC51 /* WeakRef.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF16CBD2E70EC7D00B4FC51 /* WeakRef.swift */; };
+		4FF16CC02E70EC9300B4FC51 /* ViewJoinableRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF16CBF2E70EC9300B4FC51 /* ViewJoinableRegistry.swift */; };
 		9545A27A3685C3F227C6CCDC /* Pods_RaceSync.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03ADD4F5A98600BFEB5B6C6E /* Pods_RaceSync.framework */; };
 		FA8A945598D582AC78BB26B0 /* Pods_RaceSyncAPITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 912450B59256F98707505DCE /* Pods_RaceSyncAPITests.framework */; };
 /* End PBXBuildFile section */
@@ -554,6 +557,9 @@
 		4FEBB27923A2DAFF007514B4 /* DescriptableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescriptableTests.swift; sourceTree = "<group>"; };
 		4FEBB27C23A30F99007514B4 /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		4FEBB27E23A310BB007514B4 /* User+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Extensions.swift"; sourceTree = "<group>"; };
+		4FF16CBB2E6F838E00B4FC51 /* NotificationCenter+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotificationCenter+Extensions.swift"; sourceTree = "<group>"; };
+		4FF16CBD2E70EC7D00B4FC51 /* WeakRef.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeakRef.swift; sourceTree = "<group>"; };
+		4FF16CBF2E70EC9300B4FC51 /* ViewJoinableRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewJoinableRegistry.swift; sourceTree = "<group>"; };
 		912450B59256F98707505DCE /* Pods_RaceSyncAPITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RaceSyncAPITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0AD3F0FAC42488B672FD23B /* Pods-RaceSyncAPITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RaceSyncAPITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RaceSyncAPITests/Pods-RaceSyncAPITests.debug.xcconfig"; sourceTree = "<group>"; };
 		D073602CBE253F96567B3B54 /* Pods_RaceSyncAPI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RaceSyncAPI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -630,6 +636,7 @@
 				4F27243F2517DC5B000C7408 /* UIActivityViewController+Extensions.swift */,
 				4F5488972D2236950056EA59 /* String+HTML.swift */,
 				4F73DAE92DEE7300007B15F2 /* String+UIExtensions.swift */,
+				4FF16CBB2E6F838E00B4FC51 /* NotificationCenter+Extensions.swift */,
 			);
 			path = "UI Extensions";
 			sourceTree = "<group>";
@@ -815,6 +822,7 @@
 				4F6C8A97236A9E840017FD78 /* Color.swift */,
 				4FD4E1DE237FEC0A008816B3 /* Appearance.swift */,
 				4F91BC892398FBCE00539E95 /* ViewJoinable.swift */,
+				4FF16CBF2E70EC9300B4FC51 /* ViewJoinableRegistry.swift */,
 				4F4129DA2DC0AE32006A2763 /* NotificationsController.swift */,
 				4F5001E423823C940025A593 /* FlagEmojiGenerator.swift */,
 				4F5C1E4E2390B01700D756EB /* ImageNetworking.swift */,
@@ -842,6 +850,7 @@
 			isa = PBXGroup;
 			children = (
 				4F71B32A2E4910100029D3CB /* Collection+Extensions.swift */,
+				4FF16CBD2E70EC7D00B4FC51 /* WeakRef.swift */,
 			);
 			path = "Swift Extensions";
 			sourceTree = "<group>";
@@ -1472,6 +1481,7 @@
 				4FC05C152E64FFB800EB97A4 /* DeepLink.swift in Sources */,
 				4F5488962D2146C80056EA59 /* RaceScheduleViewController.swift in Sources */,
 				4F8668F423860900005E310A /* UniversalConstants.swift in Sources */,
+				4FF16CC02E70EC9300B4FC51 /* ViewJoinableRegistry.swift in Sources */,
 				4F791C9823A6105700F15FD7 /* TextPill.swift in Sources */,
 				4F8B4A162DDD250D00B735DA /* MessageViewCell.swift in Sources */,
 				4F65033E2E467EFB00FA8AED /* ColumnTableViewHeaderView.swift in Sources */,
@@ -1480,6 +1490,7 @@
 				4FE1DADF2DEB9EEF009143C4 /* StandingViewModel.swift in Sources */,
 				4F86690223876E71005E310A /* ChapterViewModel.swift in Sources */,
 				4F8F2C112384903F00DC4907 /* RaceViewModel.swift in Sources */,
+				4FF16CBE2E70EC7D00B4FC51 /* WeakRef.swift in Sources */,
 				4F791C9A23A66BA900F15FD7 /* NSAttributedString+Extensions.swift in Sources */,
 				4FD4E1C7237F97AD008816B3 /* ChapterViewController.swift in Sources */,
 				4F3E2D062DEE52AE00A6646C /* StandingBadgeView.swift in Sources */,
@@ -1499,6 +1510,7 @@
 				4F80A661296F9951008B19AF /* RichEditorOptionItem.swift in Sources */,
 				4F9DB7A323D397B700570483 /* SettingsViewController.swift in Sources */,
 				4F80A655296F9951008B19AF /* RichEditorView.swift in Sources */,
+				4FF16CBC2E6F838E00B4FC51 /* NotificationCenter+Extensions.swift in Sources */,
 				4F8B4A0E2DDCECE900B735DA /* PushMessagesController.swift in Sources */,
 				4F27243B2517DB1C000C7408 /* CopyLinkActivity.swift in Sources */,
 				4FE96E9224E3E687009A7F53 /* HeaderStretchable.swift in Sources */,
