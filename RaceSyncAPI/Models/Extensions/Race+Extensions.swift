@@ -64,19 +64,19 @@ public extension Race {
 public extension Race {
 
     var isPayable: Bool {
-        return fee > 0
+        return fee > 0 && amountPaid == 0
     }
 
     var isPaid: Bool {
-        return isPayable && amountDue == 0
+        return fee > 0 && amountPaid > 0
     }
 
     var requiresPayment: Bool {
-        return isPayable && !isPaid && isPaymentRequiredToJoin
+        return !isPaid && isPaymentRequiredToJoin
     }
 
     var canManagePayments: Bool {
-        return isPayable && isMyChapter
+        return fee > 0 && isMyChapter
     }
 
     func getMyPaymentUrl() -> URL? {
