@@ -678,17 +678,17 @@ fileprivate extension RaceDetailViewController {
 
     func toggleRaceEnrollment() {
         if race.status == .closed {
-            raceApi.open(race: race.id) { status, error in
+            raceApi.open(race: race.id) { [weak self] status, error in
                 if status == true {
-                    self.reloadRaceView()
+                    self?.reloadRaceView()
                 } else if let error = error {
                     AlertUtil.presentAlertMessage("Couldn't open this race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
                 }
             }
         } else {
-            raceApi.close(race: race.id) { status, error in
+            raceApi.close(race: race.id) { [weak self] status, error in
                 if status == true {
-                    self.reloadRaceView()
+                    self?.reloadRaceView()
                 } else if let error = error {
                     AlertUtil.presentAlertMessage("Couldn't close this race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
                 }
