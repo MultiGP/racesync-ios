@@ -12,10 +12,11 @@
 
 ### Fixes and enhancements:
 
-   * Adding a new tab to the race detail view, where organizers can see paid and unpaid registered pilots
-   * Removed Aircraft support. Joining a race no longer requires selecting an aircraft beforehand.
-   * The Standings tab is now selected by default. The app will also remember your last selected tab and open with it on launch.
+   * Adding a new tab to the race detail view, to see paid and unpaid registered pilots (organizers only).
+   * Removed Aircraft support. Joining a race no longer requires selecting an aircraft beforehand!
+   * The Standings tab is now selected by default. The app will also remember your last selected tab and open it on launch.
    * Fixing the rank display when higher than 100th, in the personal GQ card from standings.
+   * The 2025 GQ race filter is no longer a default filter, since the 2025 season is over.
    
 ---
 

@@ -126,7 +126,7 @@ class RaceFormViewController: UIViewController {
         self.isQuickFormActive = true
 
         super.init(nibName: nil, bundle: nil)
-        self.title = "New Event"
+        self.title = "New Race"
     }
 
     init(with chapters: [ManagedChapter], raceData: RaceData, initialRaceData: RaceData? = nil, section: RaceFormSection = .general) {
@@ -136,7 +136,7 @@ class RaceFormViewController: UIViewController {
         self.currentSection = section
 
         super.init(nibName: nil, bundle: nil)
-        self.title = data.name
+        self.title = "Edit Race"
     }
 
     required init?(coder: NSCoder) {
@@ -605,7 +605,6 @@ extension RaceFormViewController: FormBaseViewControllerDelegate {
         switch row {
         case .name:
             data.name = item
-            title = item
         case .startDate:
 
             // Incrementing the end date, when adjusting the start date
