@@ -239,6 +239,11 @@ class HomeTabBarController: UITabBarController {
     fileprivate func loadMyUser() {
         userApi.getMyUser { [weak self] (user, error) in
             if let user = user {
+                // Load content only if it's the current tab
+                if self?.selectedIndex == HomeTabs.races.rawValue {
+                    self?.raceFeedVC.loadContent(forced: true)
+                }
+
                 self?.loadMyHomeChapter(user.homeChapterId)
                 self?.loadMyManagedChapters()
                 self?.updateUserProfileImage()
