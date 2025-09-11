@@ -132,7 +132,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         super.viewWillAppear(animated)
 
         if standingViewModels.count == 0 {
-            loadStandings()
+            isLoadingList(true)
         } else {
             tableView.reloadData()
         }
@@ -140,6 +140,10 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
+        if standingViewModels.count == 0 {
+            loadContent()
+        }
     }
 
     deinit {
@@ -184,7 +188,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
 
     // MARK: - Data Update
 
-    fileprivate func loadStandings() {
+    fileprivate func loadContent() {
 
         if !refreshControl.isRefreshing {
             isLoadingList(true)
@@ -214,7 +218,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     }
 
     @objc fileprivate func didPullRefreshControl() {
-        loadStandings()
+        loadContent()
     }
 
     // MARK: - Search
@@ -261,7 +265,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         guard let userId = myUserId else { return false }
 
         let source = isSearching ? searchResult : standingViewModels
-        guard let index = source.firstIndex(where: { $0.standing.userId == userId }) else {
+        guard source.firstIndex(where: { $0.standing.userId == userId }) != nil else {
             return false
         }
         return true

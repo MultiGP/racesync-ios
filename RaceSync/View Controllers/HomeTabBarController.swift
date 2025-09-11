@@ -232,17 +232,13 @@ class HomeTabBarController: UITabBarController {
         configureTabBarController(with: vcs, selectedIndex: idx)
 
         if APIServices.shared.myUser == nil {
-            raceFeedVC.isLoadingList(true)
             loadMyUser()
-        } else {
-            raceFeedVC.loadContent(forced: true)
         }
     }
 
     fileprivate func loadMyUser() {
         userApi.getMyUser { [weak self] (user, error) in
             if let user = user {
-                self?.raceFeedVC.loadContent()
                 self?.loadMyHomeChapter(user.homeChapterId)
                 self?.loadMyManagedChapters()
                 self?.updateUserProfileImage()

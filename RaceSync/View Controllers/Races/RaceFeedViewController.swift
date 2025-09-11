@@ -173,10 +173,18 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
+        if raceFeedCount == 0 {
+            isLoadingList(true)
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
+        if raceFeedCount == 0 {
+            loadContent(forced: true)
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
