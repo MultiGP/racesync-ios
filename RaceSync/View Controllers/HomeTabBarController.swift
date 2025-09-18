@@ -146,9 +146,7 @@ class HomeTabBarController: UITabBarController {
     // MARK: - Layout
 
     fileprivate func setupLayout() {
-
         delegate = self
-
         configureNavigationItems()
     }
 

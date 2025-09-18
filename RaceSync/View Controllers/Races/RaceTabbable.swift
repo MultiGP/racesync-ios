@@ -10,6 +10,6 @@ import Foundation
 import RaceSyncAPI
 
 protocol RaceTabbable {
-    var race: Race { get set }
+    var race: Race { get }
     func reloadContent()
 }

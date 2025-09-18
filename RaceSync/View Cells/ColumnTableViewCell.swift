@@ -56,7 +56,7 @@ class ColumnTableViewCell: UITableViewCell {
 
     fileprivate func setupLayout() {
         let selectedBackgroundView = UIView()
-        selectedBackgroundView.backgroundColor = Color.gray50
+        selectedBackgroundView.backgroundColor = Color.gray20
         self.selectedBackgroundView = selectedBackgroundView
 
         let backgroundView = UIView()

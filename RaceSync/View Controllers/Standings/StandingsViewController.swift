@@ -298,20 +298,22 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         cell.accessoryView = nil
 
         if let userId = myUserId, viewModel.standing.userId == userId {
-            cell.backgroundColor = Color.gray200
             cell.titleLabel.textColor = Color.white
             cell.subtitleLabel.textColor = Color.gray20
             cell.rankView.titleLabel.textColor = Color.gray20
+            cell.backgroundColor = Color.gray200
+            cell.selectedBackgroundView?.backgroundColor = Color.gray300
 
             let image = ButtonImg.share?.withTintColor(.white)
             let imageView = UIImageView(image: image)
             imageView.tintColor = .white
             cell.accessoryView = imageView
         } else {
-            cell.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : Color.gray20
             cell.titleLabel.textColor = Color.black
             cell.subtitleLabel.textColor = Color.gray300
             cell.rankView.titleLabel.textColor = Color.gray300
+            cell.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : Color.gray20
+            cell.selectedBackgroundView?.backgroundColor = Color.gray50
         }
     }
 

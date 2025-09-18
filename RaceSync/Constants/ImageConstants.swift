@@ -29,6 +29,7 @@ enum ButtonImg {
     static let search = UIImage(named: "icn_navbar_search")
     static let filter = UIImage(named: "icn_navbar_filter")
     static let map = UIImage(named: "icn_navbar_map")
+    static let safari = UIImage(named: "icn_navbar_safari")
     static let radius = UIImage(named: "icn_settings_radius")
     static let empty = UIImage(named: "icn_navbar_empty")
 }

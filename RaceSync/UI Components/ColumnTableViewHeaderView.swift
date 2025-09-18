@@ -46,7 +46,7 @@ class ColumnTableViewHeaderView: UITableViewHeaderFooterView {
 
     fileprivate enum Constants {
         static let padding: CGFloat = 16
-        static let height: CGFloat = padding * 3
+        static let height: CGFloat = padding * 2
     }
 
     // MARK: - Initializers

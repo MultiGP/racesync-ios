@@ -75,6 +75,13 @@ public extension Date {
         return self < Date()
     }
 
+    func isPassed(by days: Int) -> Bool {
+        guard let comparisonDate = Calendar.current.date(byAdding: .day, value: days, to: Date()) else {
+            return false
+        }
+        return self < comparisonDate
+    }
+
     var isInPastHour: Bool {
         return Calendar.current.isDate(self, equalTo: Date(), toGranularity: .hour)
     }

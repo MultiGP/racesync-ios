@@ -14,7 +14,15 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
 
     // MARK: - Public Variables
 
-    var race: Race
+    var raceController: RaceController
+
+    var race: Race {
+        get { return raceController.race! }
+    }
+
+    var raceApi: RaceApi {
+        get { return raceController.raceApi }
+    }
 
     // MARK: - Private Variables
 
@@ -31,16 +39,6 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
         return tableView
     }()
 
-    fileprivate var isLoading: Bool {
-        get { return tabBarController.isLoading }
-        set { }
-    }
-
-    override var tabBarController: RaceTabBarController {
-        return super.tabBarController as! RaceTabBarController
-    }
-
-    fileprivate var raceApi = RaceApi()
     fileprivate var userApi = UserApi()
     fileprivate var userViewModels = [UserViewModel]()
 
@@ -68,8 +66,8 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
 
     // MARK: - Initialization
 
-    init(with race: Race) {
-        self.race = race
+    init(with controller: RaceController) {
+        self.raceController = controller
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -120,78 +118,50 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
             title = "Race Results"
             tabBarItem = UITabBarItem(title: "Results", image: SystemImg.medal, selectedImage: SystemImg.medalFill)
         } else {
-            title = "Pilots Racing"
+            title = "Racing Pilots"
             tabBarItem = UITabBarItem(title: "Pilots", image: SystemImg.person, selectedImage: SystemImg.personFill)
         }
 
-        var buttons = [UIButton]()
-
-        if race.isMyChapter {
-            let editButton = CustomButton(type: .system)
-            editButton.addTarget(self, action: #selector(didPressEditButton), for: .touchUpInside)
-            editButton.setImage(ButtonImg.edit, for: .normal)
-            buttons += [editButton]
-        }
-
-        let shareButton = CustomButton(type: .system)
-        shareButton.addTarget(tabBarController, action: #selector(tabBarController.didPressShareButton), for: .touchUpInside)
-        shareButton.setImage(ButtonImg.share, for: .normal)
-        buttons += [shareButton]
-
-        let stackView = UIStackView(arrangedSubviews: buttons)
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-        stackView.alignment = .lastBaseline
-        stackView.spacing = Constants.buttonSpacing
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: stackView)
+        navigationItem.rightBarButtonItem = raceController.navigationItems()
     }
 
     // MARK: - Actions
 
-    @objc func didPressEditButton() {
-        let vc = RacePilotsPickerController(with: race)
-        vc.externalUserViewModels = userViewModels
-        vc.delegate = self
+    func showUserProfile(forUserAt indexPath: IndexPath) {
+        let viewModel = userViewModels[indexPath.row]
+        let cell = tableView.cellForRow(at: indexPath) as! AvatarTableViewCell
 
-        let nc = NavigationController(rootViewController: vc)
-        present(nc, animated: true)
+        guard canInteract(with: cell) else { return }
+        setLoading(cell, loading: true)
+
+        // needs to search for a User since we don't have its id
+        userApi.searchUser(with: viewModel.username) { [weak self] (user, error) in
+            if let user = user {
+                let vc = UserViewController(with: user)
+                self?.navigationController?.pushViewController(vc, animated: true)
+            } else if let _ = error {
+                // handle error
+            }
+            self?.setLoading(cell, loading: false)
+        }
+    }
+
+    func setLoading(_ cell: AvatarTableViewCell, loading: Bool) {
+        cell.isLoading = loading
+        didTapCell = loading
+    }
+
+    func canInteract(with cell: AvatarTableViewCell) -> Bool {
+        guard !cell.isLoading else { return false }
+        guard !didTapCell else { return false }
+        return true
     }
 
     // MARK: - Data Update
 
     // ViewJoinable
     func loadContent(forced: Bool = false) {
-        var viewModels = [UserViewModel]()
-
-        func populateScore(in userViewModels: [UserViewModel]) {
-            guard race.isGQ == false else { return } // Don't display points for GQ race results
-
-            for vm in userViewModels {
-                if let raceEntry = race.entries?.filter ({ return $0.pilotId == vm.userId }).first {
-                    vm.score = raceEntry.score
-                }
-            }
-        }
-
-        if race.canShowResults, let results = ResultEntryViewModel.combinedResults(from: race.results, for: race.trueScoringFormat) {
-            viewModels += UserViewModel.viewModelsFromResults(results)
-            populateScore(in: viewModels)
-        }
-
-        if let entries = race.entries, entries.count > 0 {
-            // We need to include the pilots that didn't complete laps still
-            if viewModels.count > 0, viewModels.count < entries.count {
-                viewModels += UserViewModel.viewModels(viewModels, withoutResults: entries)
-                populateScore(in: viewModels)
-
-            // No race results, so let's just populate with race entries instead
-            } else if viewModels.count == 0 {
-                viewModels += UserViewModel.viewModelsFromEntries(entries)
-            }
-        }
-
-        userViewModels = viewModels
-
+        userViewModels = raceController.raceUserViewModels()
         resetTableView()
     }
 
@@ -200,8 +170,8 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
         loadContent(forced: true)
     }
 
-    fileprivate func reloadRaceView() {
-        tabBarController.reloadRaceView()
+    fileprivate func reloadRace() {
+        raceController.reloadRace()
     }
 
     func resetTableView() {
@@ -245,10 +215,11 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
         cell.rankView.rank = nil
         cell.textPill.text = nil
         cell.textPill.style = .badge
-        cell.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : Color.gray20
         cell.titleLabel.textColor = Color.black
         cell.subtitleLabel.textColor = Color.gray300
         cell.rankView.titleLabel.textColor = Color.gray300
+        cell.backgroundColor = Color.white
+        cell.selectedBackgroundView?.backgroundColor = Color.gray20
 
         if race.canShowResults {
             if let resultEntry = viewModel.resultEntry {
@@ -272,42 +243,10 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
                 cell.titleLabel.textColor = Color.white
                 cell.subtitleLabel.textColor = Color.gray20
                 cell.rankView.titleLabel.textColor = Color.gray20
+                cell.selectedBackgroundView?.backgroundColor = Color.gray50
             }
         } else if race.raceClass != .esport {
             cell.textPill.text = viewModel.channelLabel // only real races have frequencies
-        }
-    }
-}
-
-fileprivate extension RacePilotsViewController {
-
-    func setLoading(_ cell: AvatarTableViewCell, loading: Bool) {
-        cell.isLoading = loading
-        didTapCell = loading
-    }
-    
-    func canInteract(with cell: AvatarTableViewCell) -> Bool {
-        guard !cell.isLoading else { return false }
-        guard !didTapCell else { return false }
-        return true
-    }
-
-    func showUserProfile(forUserAt indexPath: IndexPath) {
-        let viewModel = userViewModels[indexPath.row]
-        let cell = tableView.cellForRow(at: indexPath) as! AvatarTableViewCell
-
-        guard canInteract(with: cell) else { return }
-        setLoading(cell, loading: true)
-
-        // needs to search for a User since we don't have its id
-        userApi.searchUser(with: viewModel.username) { [weak self] (user, error) in
-            if let user = user {
-                let vc = UserViewController(with: user)
-                self?.navigationController?.pushViewController(vc, animated: true)
-            } else if let _ = error {
-                // handle error
-            }
-            self?.setLoading(cell, loading: false)
         }
     }
 }
@@ -421,13 +360,6 @@ extension RacePilotsViewController: ScrollToTop {
     }
 }
 
-extension RacePilotsViewController: RacePilotsPickerControllerDelegate {
-
-    func pickerControllerDidUpdate(_ viewController: RacePilotsPickerController) {
-        reloadRaceView()
-    }
-}
-
 extension RacePilotsViewController: EmptyDataSetSource {
 
     func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
@@ -458,10 +390,6 @@ extension RacePilotsViewController: EmptyDataSetSource {
 
 extension RacePilotsViewController: EmptyDataSetDelegate {
 
-    func emptyDataSetShouldDisplay(_ scrollView: UIScrollView) -> Bool {
-        return !isLoading
-    }
-
     func emptyDataSetShouldAllowScroll(_ scrollView: UIScrollView) -> Bool {
         return false
     }
@@ -472,7 +400,7 @@ extension RacePilotsViewController: EmptyDataSetDelegate {
 
         AppControl.shared.tryJoining(race: race, raceApi: raceApi) { [weak self] (newState) in
             if currentState != newState {
-                self?.reloadRaceView()
+                self?.reloadRace()
             }
         }
     }

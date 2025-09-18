@@ -23,7 +23,19 @@ class RacePaymentsViewController: UIViewController, RaceTabbable {
 
     // MARK: - Public Variables
 
-    var race: Race
+    var raceController: RaceController
+
+    var race: Race {
+        get { return raceController.race! }
+    }
+
+    var raceApi: RaceApi {
+        get { return raceController.raceApi }
+    }
+
+    override var tabBarController: RaceTabBarController {
+        return super.tabBarController as! RaceTabBarController
+    }
 
     // MARK: - Private Variables
 
@@ -63,10 +75,6 @@ class RacePaymentsViewController: UIViewController, RaceTabbable {
         return header
     }()
 
-    override var tabBarController: RaceTabBarController {
-        return super.tabBarController as! RaceTabBarController
-    }
-
     fileprivate var isLoading: Bool = false {
         didSet {
             if isLoading {
@@ -80,7 +88,6 @@ class RacePaymentsViewController: UIViewController, RaceTabbable {
         }
     }
 
-    fileprivate var raceApi = RaceApi()
     fileprivate var userApi = UserApi()
     fileprivate var userPaymentPairs: [(user: UserViewModel, payment: RacePayment?)] = []
 
@@ -100,8 +107,8 @@ class RacePaymentsViewController: UIViewController, RaceTabbable {
 
     // MARK: - Initialization
 
-    init(with race: Race) {
-        self.race = race
+    init(with controller: RaceController) {
+        self.raceController = controller
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -154,31 +161,11 @@ class RacePaymentsViewController: UIViewController, RaceTabbable {
 
     fileprivate func configureNavigationItems() {
 
-        title = "Pilot Payments"
-        tabBarItem = UITabBarItem(title: "Payments", image: SystemImg.banknote, selectedImage: SystemImg.banknoteFill)
+        title = "Payments"
+        tabBarItem = UITabBarItem(title: title, image: SystemImg.banknote, selectedImage: SystemImg.banknoteFill)
         tabBarItem.isEnabled = true
 
-        var buttons = [UIButton]()
-
-        if race.isMyChapter {
-            let editButton = CustomButton(type: .system)
-            editButton.addTarget(self, action: #selector(didPressEditButton), for: .touchUpInside)
-            editButton.setImage(ButtonImg.edit, for: .normal)
-            buttons += [editButton]
-        }
-
-        let shareButton = CustomButton(type: .system)
-        shareButton.addTarget(tabBarController, action: #selector(tabBarController.didPressShareButton), for: .touchUpInside)
-        shareButton.setImage(ButtonImg.share, for: .normal)
-        buttons += [shareButton]
-
-        let stackView = UIStackView(arrangedSubviews: buttons)
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-        stackView.alignment = .lastBaseline
-        stackView.spacing = Constants.buttonSpacing
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: stackView)
-        
+        navigationItem.rightBarButtonItem = raceController.navigationItems()
     }
 
     // MARK: - Content
@@ -285,11 +272,6 @@ class RacePaymentsViewController: UIViewController, RaceTabbable {
 
     func reloadContent() {
         loadContent()
-        tableView.reloadData()
-    }
-
-    func reloadRaceView() {
-        tabBarController.reloadRaceView()
     }
 
     // MARK: - Action
@@ -329,7 +311,7 @@ class RacePaymentsViewController: UIViewController, RaceTabbable {
     }
 
     @objc fileprivate func didPullRefreshControl() {
-        reloadRaceView()
+        reloadContent()
     }
 }
 
@@ -395,23 +377,18 @@ extension RacePaymentsViewController: UITableViewDataSource {
         let pair = userPaymentPairs[indexPath.row]
         let user = pair.user
         let payment = pair.payment
-
-        if !user.isJoined {
-            cell.backgroundView?.backgroundColor = Color.red.withAlphaComponent(0.2)
-        } else {
-            cell.backgroundView?.backgroundColor = (indexPath.row % 2 == 0) ? Color.gray20 : Color.white
-        }
+        let backgroundColor = user.isJoined ? Color.white : Color.red.withAlphaComponent(0.2)
 
         cell.textLabel?.text = user.isJoined ? user.username : "\(user.username) (Not Joined)"
         cell.detailTextLabel?.text = user.fullName
         cell.columnLabel1.text = String(format: "$%.2f", payment?.amountPaid ?? 0)
         cell.columnLabel2.text = String(format: "$%.2f", payment?.netAmount ?? 0)
+        cell.backgroundView?.backgroundColor = backgroundColor
         return cell
     }
 
     func totalTableViewCell(for indexPath: IndexPath) -> ColumnTableViewCell {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as ColumnTableViewCell
-        cell.backgroundView?.backgroundColor = Color.white
 
         cell.textLabel?.text = "Total:"
         cell.detailTextLabel?.text = nil
@@ -424,7 +401,7 @@ extension RacePaymentsViewController: UITableViewDataSource {
 extension RacePaymentsViewController: RacePilotsPickerControllerDelegate {
 
     func pickerControllerDidUpdate(_ viewController: RacePilotsPickerController) {
-        reloadRaceView()
+        reloadContent()
     }
 }
 

@@ -92,7 +92,7 @@ class RacePilotsPickerController: UIViewController, Shimmable {
         super.viewDidLoad()
 
         setupLayout()
-        loadUsers()
+        loadContent()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -209,11 +209,10 @@ class RacePilotsPickerController: UIViewController, Shimmable {
     @objc fileprivate func didPressCloseButton() {
         dismiss(animated: true)
     }
-}
 
-extension RacePilotsPickerController {
+    // MARK: - Data Update
 
-    fileprivate func loadUsers() {
+    fileprivate func loadContent() {
         if userViewModels.isEmpty {
             isLoadingList(true)
 

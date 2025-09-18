@@ -16,10 +16,14 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     // MARK: - Public Variables
 
-    var race: Race
+    var raceController: RaceController
+    
+    var race: Race {
+        get { return raceController.race! }
+    }
 
-    override var tabBarController: RaceTabBarController {
-        return super.tabBarController as! RaceTabBarController
+    var raceApi: RaceApi {
+        get { return raceController.raceApi }
     }
 
     // MARK: - Private Variables
@@ -81,8 +85,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate lazy var memberBadgeView: MemberBadgeView = {
         let view = MemberBadgeView(type: .system)
-        view.addTarget(self, action: #selector(didPressMemberView), for: .touchUpInside)
-        view.isUserInteractionEnabled = true
+        view.isUserInteractionEnabled = false
         return view
     }()
 
@@ -227,12 +230,11 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     fileprivate var didTapCell: Bool = false
 
     fileprivate var raceViewModel: RaceViewModel
-    fileprivate let raceApi = RaceApi()
     fileprivate var chapterApi = ChapterApi()
     fileprivate var userApi = UserApi()
 
     fileprivate var htmlViewHeightConstraint: Constraint?
-    fileprivate let ignoreFinalizingError: Bool = true // The API finalize(id) still returns 500 error. Reported https://github.com/MultiGP/multigp-com/issues/93
+//    fileprivate let ignoreFinalizingError: Bool = true // The API finalize(id) still returns 500 error. Reported https://github.com/MultiGP/multigp-com/issues/93
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -246,9 +248,9 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     // MARK: - Initialization
 
-    init(with race: Race) {
-        self.race = race
-        self.raceViewModel = RaceViewModel(with: race)
+    init(with controller: RaceController) {
+        self.raceController = controller
+        self.raceViewModel = RaceViewModel(with: controller.race!)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -387,36 +389,10 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     }
 
     fileprivate func configureNavigationItems() {
-        title = "Race Details"
-        tabBarItem = UITabBarItem(title: "Details", image: SystemImg.calendarCclock, selectedImage: nil)
+        title = "Details"
+        tabBarItem = UITabBarItem(title: title, image: SystemImg.calendarCclock, selectedImage: nil)
 
-        var buttons = [UIButton]()
-
-        if race.canBeEdited {
-            let editButton = CustomButton(type: .system)
-            editButton.addTarget(self, action: #selector(didPressEditButton), for: .touchUpInside)
-            editButton.setImage(ButtonImg.edit, for: .normal)
-            buttons += [editButton]
-        }
-
-        if race.canCreateCalendarEvent() {
-            let calendarButton = CustomButton(type: .system)
-            calendarButton.addTarget(self, action: #selector(didPressCalendarButton), for: .touchUpInside)
-            calendarButton.setImage(ButtonImg.calendar, for: .normal)
-            buttons += [calendarButton]
-        }
-
-        let shareButton = CustomButton(type: .system)
-        shareButton.addTarget(tabBarController, action: #selector(tabBarController.didPressShareButton), for: .touchUpInside)
-        shareButton.setImage(ButtonImg.share, for: .normal)
-        buttons += [shareButton]
-
-        let stackView = UIStackView(arrangedSubviews: buttons)
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-        stackView.alignment = .lastBaseline
-        stackView.spacing = Constants.buttonSpacing
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: stackView)
+        navigationItem.rightBarButtonItem = raceController.navigationItems()
     }
 
     fileprivate func loadRows() {
@@ -508,16 +484,16 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     // MARK: - Actions
 
     @objc fileprivate func didTapMapView(_ sender: UITapGestureRecognizer) {
-        presentMapView()
+        showMapView()
     }
 
     @objc fileprivate func didPressLocationButton(_ sender: UIButton) {
         guard canDisplayMap else { return }
-        presentMapView()
+        showMapView()
     }
 
     @objc func didPressDateButton(_ sender: UITapGestureRecognizer) {
-        didPressCalendarButton()
+        raceController.didPressCalendarButton()
     }
 
     @objc fileprivate func didPressJoinButton(_ sender: JoinButton) {
@@ -526,196 +502,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         toggleJoinButton(sender, forRace: raceViewModel.race, raceApi: raceApi) { [weak self] (newState) in
             if joinState != newState {
                 self?.race.isJoined = (newState == .joined)
-                self?.reloadRaceView()
-            }
-        }
-    }
-
-    @objc fileprivate func didPressMemberView(_ sender: MemberBadgeView) {
-        tabBarController.selectTab(.results)
-    }
-
-    @objc fileprivate func didPressEditButton() {
-
-        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        alert.view.tintColor = Color.blue
-
-        if race.canBeEdited {
-            let action = UIAlertAction(title: "Edit", style: .default) { [weak self] action in
-                self?.editRace()
-            }
-            alert.addAction(action)
-        }
-
-        if race.canChangeEnrollment {
-            let isClose = (race.status == .closed)
-            let title = isClose ? "Open Enrollment" : "Close Enrollment"
-            let message = isClose ? "Are you sure you want to open race enrollment?" : "Are you sure you want to close race enrollment?"
-
-            let action = UIAlertAction(title: title, style: .default) { [weak self] action in
-                ActionSheetUtil.presentActionSheet(withTitle: message) { [weak self] (action) in
-                    self?.toggleRaceEnrollment()
-                }
-            }
-            alert.addAction(action)
-        }
-
-        if race.canBeDuplicated {
-            let action = UIAlertAction(title: "Duplicate", style: .default) { [weak self] action in
-                self?.duplicateRace()
-            }
-            alert.addAction(action)
-        }
-
-        if race.canBeFinalized {
-            let action = UIAlertAction(title: "Finalize", style: .destructive) { action in
-                ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Are you sure you want to finalize \"\(self.race.name)\"?",
-                                                              message: "Finalizing this race will close enrollment, email the results to the pilots, and initialize the next race if configured.",
-                                                              destructiveTitle: "Yes, Finalize",
-                                                              completion: { [weak self] (action) in
-                    self?.finalizeRace()
-                })
-            }
-            alert.addAction(action)
-        }
-
-        if race.canBeDeleted {
-            let action = UIAlertAction(title: "Delete", style: .destructive) { action in
-                ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Are you sure you want to delete \"\(self.race.name)\"?",
-                                                              destructiveTitle: "Yes, Delete",
-                                                              completion: { [weak self] (action) in
-                    self?.deleteRace()
-                })
-            }
-            alert.addAction(action)
-        }
-
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        present(alert, animated: true)
-    }
-
-    @objc fileprivate func didPressCalendarButton() {
-        guard let event = race.createCalendarEvent(with: race.id) else { return }
-
-        ActionSheetUtil.presentActionSheet(withTitle: "Save the race details to your calendar?", buttonTitle: "Save to Calendar", completion: { (action) in
-            CalendarUtil.add(event)
-        })
-    }
-
-    // MARK: - Data Update
-
-    // ViewJoinable
-    func loadContent(forced: Bool = false) {
-        if forced {
-            reloadRaceView()
-        } else {
-            reloadContent()
-        }
-    }
-
-    // RaceTabbable
-    func reloadContent() {
-        raceViewModel = RaceViewModel(with: race)
-
-        loadRows()
-        populateContent()
-
-        // updating the height of the table view, since the number of rows could have changed
-        tableView.snp.updateConstraints { make in
-            make.height.equalTo(Constants.cellHeight*CGFloat(tableViewRows.count))
-        }
-
-        tableView.reloadData()
-    }
-
-    func reloadRaceView() {
-        tabBarController.reloadRaceView()
-    }
-
-    func setLoading(_ cell: FormTableViewCell, loading: Bool) {
-        cell.isLoading = loading
-        didTapCell = loading
-    }
-}
-
-fileprivate extension RaceDetailViewController {
-
-    func presentMapView() {
-        guard let coordinates = raceCoordinates, let address = race.address else { return }
-
-        let vc = MapViewController(with: coordinates, address: address)
-        vc.title = "Race Location"
-        vc.showsDirection = true
-        let nc = NavigationController(rootViewController: vc)
-        present(nc, animated: true)
-    }
-
-    func finalizeRace() {
-        raceApi.finalizeRace(with: race.id) { status, error in
-            if status == true || self.ignoreFinalizingError == true {
-                self.reloadRaceView()
-            } else if let error = error {
-                AlertUtil.presentAlertMessage("Couldn't finalize this race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
-            }
-        }
-    }
-
-    func editRace() {
-        guard let chapters = APIServices.shared.myManagedChapters, chapters.count > 0 else { return }
-        guard let chapter = chapters.filter ({ return $0.id == race.chapterId }).first else { return }
-
-        let data = RaceData(with: race)
-        let initialData = RaceData(with: race)
-
-        let vc = RaceFormViewController(with: [chapter], raceData: data, initialRaceData: initialData, section: .general)
-        vc.editMode = .update
-        vc.delegate = self
-
-        let nc = NavigationController(rootViewController: vc)
-        nc.modalPresentationStyle = .fullScreen
-        present(nc, animated: true)
-    }
-
-    func toggleRaceEnrollment() {
-        if race.status == .closed {
-            raceApi.open(race: race.id) { [weak self] status, error in
-                if status == true {
-                    self?.reloadRaceView()
-                } else if let error = error {
-                    AlertUtil.presentAlertMessage("Couldn't open this race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
-                }
-            }
-        } else {
-            raceApi.close(race: race.id) { [weak self] status, error in
-                if status == true {
-                    self?.reloadRaceView()
-                } else if let error = error {
-                    AlertUtil.presentAlertMessage("Couldn't close this race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
-                }
-            }
-        }
-    }
-
-    func duplicateRace() {
-        guard let chapters = APIServices.shared.myManagedChapters, chapters.count > 0 else { return }
-
-        let data = RaceData(with: race)
-
-        let vc = RaceFormViewController(with: chapters, raceData: data, section: .general)
-        vc.editMode = .new
-        vc.delegate = self
-
-        let nc = NavigationController(rootViewController: vc)
-        nc.modalPresentationStyle = .fullScreen
-        present(nc, animated: true)
-    }
-
-    func deleteRace() {
-        raceApi.deleteRace(with: race.id) { status, error in
-            if status == true {
-                self.navigationController?.popViewController(animated: true)
-            } else if let error = error {
-                AlertUtil.presentAlertMessage("Couldn't delete this race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
+                self?.reloadRace()
             }
         }
     }
@@ -791,6 +578,16 @@ fileprivate extension RaceDetailViewController {
         }
     }
 
+    func showMapView() {
+        guard let coordinates = raceCoordinates, let address = race.address else { return }
+
+        let vc = MapViewController(with: coordinates, address: address)
+        vc.title = "Race Location"
+        vc.showsDirection = true
+        let nc = NavigationController(rootViewController: vc)
+        present(nc, animated: true)
+    }
+
     func openRace(_ cell: FormTableViewCell) {
         guard canInteract(with: cell) else { return }
         setLoading(cell, loading: true)
@@ -798,7 +595,7 @@ fileprivate extension RaceDetailViewController {
         raceApi.open(race: race.id) { [weak self] (status, error) in
             if status {
                 self?.race.status = .open
-                self?.reloadRaceView()
+                self?.reloadRace()
             }
             self?.setLoading(cell, loading: false)
         }
@@ -811,7 +608,7 @@ fileprivate extension RaceDetailViewController {
         raceApi.close(race: race.id) { [weak self] (status, error) in
             if status {
                 self?.race.status = .closed
-                self?.reloadRaceView()
+                self?.reloadRace()
             }
 
             self?.setLoading(cell, loading: false)
@@ -826,6 +623,41 @@ fileprivate extension RaceDetailViewController {
     func openLiveFPV(_ cell: FormTableViewCell) {
         guard let url = race.liveTimeEventUrl else { return }
         WebViewController.openUrl(url)
+    }
+
+    // MARK: - Data Update
+
+    // ViewJoinable
+    func loadContent(forced: Bool = false) {
+        if forced {
+            reloadRace()
+        } else {
+            reloadContent()
+        }
+    }
+
+    // RaceTabbable
+    func reloadContent() {
+        raceViewModel = RaceViewModel(with: race)
+
+        loadRows()
+        populateContent()
+
+        // updating the height of the table view, since the number of rows could have changed
+        tableView.snp.updateConstraints { make in
+            make.height.equalTo(Constants.cellHeight*CGFloat(tableViewRows.count))
+        }
+
+        tableView.reloadData()
+    }
+
+    func reloadRace() {
+        raceController.reloadRace()
+    }
+
+    func setLoading(_ cell: FormTableViewCell, loading: Bool) {
+        cell.isLoading = loading
+        didTapCell = loading
     }
 }
 
@@ -903,25 +735,6 @@ extension RaceDetailViewController: UITableViewDataSource {
     }
 }
 
-extension RaceDetailViewController: RaceFormViewControllerDelegate {
-
-    func raceFormViewController(_ viewController: RaceFormViewController, didUpdateRace race: Race) {
-
-        if viewController.editMode == .update {
-            self.race = race
-            self.reloadContent()
-            viewController.dismiss(animated: true, completion: nil)
-        } else {
-            navigationController?.popViewController(animated: true)
-            viewController.dismiss(animated: true, completion: nil)
-        }
-    }
-
-    func raceFormViewControllerDidDismiss(_ viewController: RaceFormViewController) {
-        viewController.dismiss(animated: true, completion: nil)
-    }
-}
-
 extension RaceDetailViewController: RichEditorDelegate {
 
     func richEditor(_ editor: RichEditorView, heightDidChange height: Int) {
@@ -966,7 +779,6 @@ extension RaceDetailViewController: MKMapViewDelegate {
 
         return annotationView
     }
-
 }
 
 fileprivate enum Row: Int, EnumTitle, CaseIterable {

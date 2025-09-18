@@ -227,8 +227,8 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
     }
 
     fileprivate func configureNavigationItems() {
-        title = "Race List"
-        tabBarItem = UITabBarItem(title: "Races", image: SystemImg.flagCheckeredCrossed, selectedImage: nil)
+        title = "Races"
+        tabBarItem = UITabBarItem(title: title, image: SystemImg.flagCheckeredCrossed, selectedImage: nil)
     }
 
     // MARK: - Actions
