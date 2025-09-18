@@ -175,7 +175,7 @@ extension RaceViewModel {
     static func joinState(for race: Race) -> JoinState {
         if race.status == .closed { return .closed }
 
-        if race.requiresPayment {
+        if race.requiresPayment || (race.isJoined && race.isPayable) {
             return .notPaid(fee: race.fee)
         } else {
             return race.isJoined ? .joined : .notJoined

@@ -83,6 +83,17 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         return button
     }()
 
+    fileprivate lazy var miniJoinButton: JoinButton = {
+        let button = JoinButton(type: .system)
+        button.addTarget(self, action: #selector(didPressJoinButton), for: .touchUpInside)
+        button.hitTestEdgeInsets = UIEdgeInsets(proportionally: -10)
+        button.isCompact = true
+        button.imageEdgeInsets = .zero
+        button.contentEdgeInsets = .zero
+        button.isHidden = true
+        return button
+    }()
+
     fileprivate lazy var memberBadgeView: MemberBadgeView = {
         let view = MemberBadgeView(type: .system)
         view.isUserInteractionEnabled = false
@@ -164,7 +175,16 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     }()
 
     fileprivate lazy var rightStackView: UIStackView = {
-        var subviews: [UIView] = [joinButton, feeLabel, memberBadgeView]
+        let topStackView = UIStackView(arrangedSubviews: [miniJoinButton, joinButton])
+        topStackView.axis = .horizontal
+        topStackView.distribution = .equalSpacing
+        topStackView.spacing = Constants.padding/4
+
+        miniJoinButton.snp.makeConstraints {
+            $0.width.height.equalTo(Constants.minButtonHeight)
+        }
+
+        var subviews: [UIView] = [topStackView, feeLabel, memberBadgeView]
         let stackView = UIStackView(arrangedSubviews: subviews)
         stackView.axis = .vertical
         stackView.alignment = .trailing
@@ -241,7 +261,8 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         static let contentInsets = UIEdgeInsets(top: padding/2, left: 10, bottom: padding/2, right: padding/2)
         static let mapHeight: CGFloat = UIScreen.main.bounds.height/3 // 1/3 of the screen
         static let cellHeight: CGFloat = 50
-        static let minButtonSize: CGFloat = 72
+        static let maxButtonSize: CGFloat = 100
+        static let minButtonHeight: CGFloat = 32
         static let buttonSpacing: CGFloat = 12
         static let htmlpadding: CGFloat = 12
     }
@@ -342,7 +363,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         headerView.addSubview(rightStackView)
         rightStackView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(Constants.padding)
-            $0.width.greaterThanOrEqualTo(Constants.minButtonSize)
+            $0.width.greaterThanOrEqualTo(Constants.maxButtonSize)
             $0.trailing.equalToSuperview().offset(-Constants.padding)
         }
 
@@ -412,6 +433,15 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         joinButton.joinState = raceViewModel.joinState
         memberBadgeView.count = raceViewModel.participantCount
         startDateButton.setTitle(raceViewModel.startDateDesc , for: .normal)
+
+        if race.isJoined && race.isPayable {
+            miniJoinButton.joinState = .joined
+            miniJoinButton.isUserInteractionEnabled = true // set to false when compact mode
+            miniJoinButton.isHidden = false
+        } else {
+            miniJoinButton.joinState = .closed
+            miniJoinButton.isHidden = true
+        }
 
         if canDisplayEndDate {
             endDateButton.setTitle(raceViewModel.endDateDesc, for: .normal)

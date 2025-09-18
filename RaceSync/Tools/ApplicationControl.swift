@@ -95,7 +95,7 @@ extension ApplicationControl {
 
     func tryJoining(race: Race, raceApi: RaceApi, _ completion: @escaping JoinStateCompletionBlock) {
 
-        if race.requiresPayment  {
+        if race.requiresPayment || (race.isJoined && race.isPayable)  {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
                 self.presentPayment(for: race, completion)
             })

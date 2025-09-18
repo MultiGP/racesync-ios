@@ -72,13 +72,8 @@ extension ViewJoinable {
                 }
             }
         case .joined:
-            if race.isPayable && !race.isPaid {
-                AppControl.shared.presentPayment(for: race, completion)
-                button.isLoading = false // let's disable this for now
-            } else {
-                AppControl.shared.resign(race: race, raceApi: raceApi) { (newState) in
-                    self.handleStateChange(state, newState: newState, in: button, with: race, completion)
-                }
+            AppControl.shared.resign(race: race, raceApi: raceApi) { (newState) in
+                self.handleStateChange(state, newState: newState, in: button, with: race, completion)
             }
 
         default:

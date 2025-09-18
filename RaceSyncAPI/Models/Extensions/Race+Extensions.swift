@@ -72,7 +72,7 @@ public extension Race {
     }
 
     var requiresPayment: Bool {
-        return !isPaid && isPaymentRequiredToJoin
+        return fee > 0 && amountPaid == 0 && isPaymentRequiredToJoin
     }
 
     var canManagePayments: Bool {
