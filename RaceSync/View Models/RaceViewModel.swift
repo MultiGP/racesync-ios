@@ -249,7 +249,7 @@ extension RaceViewModel {
     static func feeLabelString(for race: Race) -> String {
         if race.fee > 0 {
             if race.amountPaid > 0 {
-                return String(format: "✓ Paid %.2f USD", race.amountPaid)
+                return String(format: "✓ Paid $%.2f", race.amountPaid)
             } else if race.amountDue > 0 {
                 return String(format: "Fee: %.2f USD", race.fee)
             }
