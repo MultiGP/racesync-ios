@@ -126,4 +126,16 @@ public extension Date {
 
         return Calendar.current.date(byAdding: dateComponent, to: self) ?? self
     }
+
+    func isBetween(day startDay: Int, month startMonth: Int, andDay endDay: Int, month endMonth: Int) -> Bool {
+        let calendar = Calendar.current
+        let year = calendar.component(.year, from: self)
+
+        guard let startDate = calendar.date(from: DateComponents(year: year, month: startMonth, day: startDay)),
+              let endDate = calendar.date(from: DateComponents(year: year, month: endMonth, day: endDay)) else {
+            return false
+        }
+
+        return self >= startDate && self <= endDate
+    }
 }

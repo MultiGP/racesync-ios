@@ -168,11 +168,11 @@ fileprivate extension RaceFeedController {
         }
 
         let filters: [RaceListFilters] = [.series]
-        let sorting: RaceViewSorting = (settings.showPastEvents || !series.isThisYear()) ? .ascending : .descending
+        let sorting: RaceViewSorting = (settings.showPastEvents || !series.isActive()) ? .ascending : .descending
 
         raceApi.getRaces(with: filters, startDate: "\(series.year)", pageSize: 150) { [weak self]  (races, error) in
 
-            if let filteredRaces = series.isThisYear() ? self?.locallyFilteredRaces(races) : races {
+            if let filteredRaces = series.isActive() ? self?.locallyFilteredRaces(races) : races {
                 let sortedViewModels = RaceViewModel.sortedViewModels(with: filteredRaces, sorting: sorting)
                 self?.raceCollection[.series(series)] = sortedViewModels
                 completion(sortedViewModels, false, nil)
