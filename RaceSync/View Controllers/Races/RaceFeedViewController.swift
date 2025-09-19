@@ -182,7 +182,8 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if raceFeedCount == 0 {
+        // reload whenever we transition back
+        if raceFeedCount == 0 || animated {
             loadContent(forced: true)
         }
     }
