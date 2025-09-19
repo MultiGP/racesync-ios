@@ -239,11 +239,11 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
             }
 
             if let userId = myUserId, viewModel.userId == userId {
-                cell.backgroundColor = Color.gray200
                 cell.titleLabel.textColor = Color.white
                 cell.subtitleLabel.textColor = Color.gray20
                 cell.rankView.titleLabel.textColor = Color.gray20
-                cell.selectedBackgroundView?.backgroundColor = Color.gray50
+                cell.backgroundColor = Color.gray200
+                cell.selectedBackgroundView?.backgroundColor = Color.gray300
             }
         } else if race.raceClass != .esport {
             cell.textPill.text = viewModel.channelLabel // only real races have frequencies

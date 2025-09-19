@@ -2,21 +2,22 @@
 # App Store Release Notes
 
 ## 1.8
+   
+### Introducing RaceSync Pay:
+You can now pay for races in-app with PayPal or credit card in USD (only for races with payments enabled). Please note that transaction fees apply, and refunds must be handled directly with the organizer. 
 
-### New Features:
-
-   * RaceSync Payments support on iOS : Pay for races directly in-app via PayPal (available for races with payments enabled).
-   * Race Management Improvements: Overhauled race creation and editing forms, now including payment options (organizers only).
-   * New Registrations Tab: View paid and unpaid pilot registrations in the race detail screen (organizers only).
-   * Pinned View for Race Results: See your personal result in a pinned format, similar to the GQ Standings view.
+### For Chapter Organizers:
+    * View paid and unpaid pilot registrations in the race detail screen
+    * Overhauled race creation and editing forms, now including payment options
 
 ### Fixes and enhancements:
-
-   * Adding a new tab to the race detail view, to see paid and unpaid registered pilots (organizers only).
-   * Removed Aircraft support. Joining a race no longer requires selecting an aircraft beforehand!
-   * The Standings tab is now selected by default. The app will also remember your last selected tab and open it on launch.
-   * Fixing the rank display when higher than 100th, in the personal GQ card from standings.
-   * The 2025 GQ race filter is no longer a default filter, since the 2025 season is over.
+    * See your personal result in a pinned format, similar to the GQ Standings view
+    * Joining a race no longer requires selecting an aircraft beforehand
+    * The Standings tab is now selected by default. The app will also remember your last selected tab and open it on launch
+    * Fixing the rank display when higher than 100th, in the personal GQ card from standings
+    * Fixing a crash cause when receiving push notifications for a race without ZippyQ enabled
+    * The 2025 GQ race filter is no longer a default filter, since the 2025 season is over
+    * Various navigation UI enhancements to improve overall user experience
    
 ---
 
@@ -41,21 +42,21 @@
 
 ## 1.7
 
-### New Features:
+### RaceSync Pay:
+Pay for races directly in-app using PayPal or credit card in USD (available for races with payments enabled). Please note that fees apply to each transaction, and refunds must be arranged with the race organizer, as fees are non-refundable.
 
-   * Introducing push notifications for RaceSync on iOS. In this initial release, pilots will receive alerts when their next race round is approaching when using ZippyQ. All notifications are stored locally on your device for added reliability in case any are missed.
-   * You can now access the 2025 Global Qualifier standings directly in the app. Filter by pilot name or country, and quickly share your personal results to social media.
-   * The ZippyQ web schedule (view-only) is available from the race detail screen, when applicable.
-   * A quick-access link to full race results (via FPVLive or FPVScores) has been added to the Results tab within the race detail screen.
-   * Race listings are now consistently sorted by most recent across all relevant sections.
-   
-For Chapter Organizers:
-   * Easily open or close race enrolment when editing a race, in a race detail screen.
+### For Chapter Organizers:
+    * Race Management Improvements: Overhauled race creation and editing forms, now including payment options.
+    * New Registrations Tab: View paid and unpaid pilot registrations in the race detail screen.
+    * Adding a new tab to the race detail view, to see paid and unpaid registered pilots.
 
 ### Fixes and enhancements:
-
-   * Various navigation UI enhancements to improve overall user experience.
-   * Deprecating RaceSync WatchOS companion app
+    * Pinned View for Race Results: See your personal result in a pinned format, similar to the GQ Standings view.
+    * Removed Aircraft support. Joining a race no longer requires selecting an aircraft beforehand!
+    * The Standings tab is now selected by default. The app will also remember your last selected tab and open it on launch.
+    * Fixing the rank display when higher than 100th, in the personal GQ card from standings.
+    * The 2025 GQ race filter is no longer a default filter, since the 2025 season is over.
+    * Various navigation UI enhancements to improve overall user experience.
 
 ---
 
