@@ -16,10 +16,10 @@ class ApplicationControl: NSObject {
     // MARK: - Public Variables
 
     static let shared = ApplicationControl()
+    var authApi = AuthApi()
 
     // MARK: - Private Variables
 
-    fileprivate var authApi = AuthApi()
     fileprivate var deeplinkObserver: NSObjectProtocol?
 
     // MARK: - Public Methods
@@ -56,10 +56,10 @@ class ApplicationControl: NSObject {
             // Invalidates the session, regardless if the logout call was successful or not
             self?.invalidateSession(forced: forced)
 
+            APIServices.shared.settings.environment = environment
+
             // The authAPI must be resetted, in case we switched environments (prod, dev)
             self?.authApi = AuthApi()
-
-            APIServices.shared.settings.environment = environment
         }
     }
 

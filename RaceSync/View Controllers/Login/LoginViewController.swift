@@ -132,7 +132,10 @@ class LoginViewController: UIViewController {
     fileprivate var racesyncLogoHeightConstant: CGFloat = 0
     fileprivate var isKeyboardVisible: Bool = false
 
-    fileprivate var authApi = AuthApi()
+    fileprivate var authApi: AuthApi {
+        get { ApplicationControl.shared.authApi }
+    }
+
     fileprivate var shouldShowForm: Bool {
         get { return loginFormView.superview == nil }
     }
@@ -174,9 +177,6 @@ class LoginViewController: UIViewController {
             if shouldShowForm {
                 setupLayout()
             } else {
-                // resetting API object, for when logging out
-                authApi = AuthApi()
-
                 // resetting title label, in case of env switch
                 titleLabel.text = titleText
             }
