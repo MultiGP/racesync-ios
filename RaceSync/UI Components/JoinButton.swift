@@ -79,25 +79,31 @@ class JoinButton: CustomButton {
     fileprivate func updateLayout() {
 
         UIView.performWithoutAnimation {
-            if isCompact && joinState == .notJoined {
-                isHidden = true
-                return
-            } else {
-                isHidden = false
+            var state = joinState
+            isHidden = false
+
+            if isCompact {
+                if state == .notJoined {
+                    isHidden = true
+                    return
+                }
+                else if case .notPaid = state {
+                    state = .joined // display as joined
+                }
             }
 
-            let icon = joinState.icon?.image(withColor: joinState.titleColor.withAlphaComponent(isCompact ? 1 : 0.4))
+            let icon = state.icon?.image(withColor: state.titleColor.withAlphaComponent(isCompact ? 1 : 0.4))
 
-            setTitle(isCompact ? nil : joinState.title, for: .normal)
-            setTitleColor(joinState.titleColor, for: .normal)
+            setTitle(isCompact ? nil : state.title, for: .normal)
+            setTitleColor(state.titleColor, for: .normal)
             setImage(icon, for: .normal)
-            backgroundColor = joinState.fillColor
-            titleLabel?.font = joinState.font
-            tintColor = joinState.titleColor
-            imageView?.tintColor = joinState.titleColor
+            backgroundColor = state.fillColor
+            titleLabel?.font = state.font
+            tintColor = state.titleColor
+            imageView?.tintColor = state.titleColor
             isUserInteractionEnabled = !isCompact
 
-            if let borderColor = joinState.outlineColor {
+            if let borderColor = state.outlineColor {
                 layer.borderColor = borderColor.cgColor
                 layer.borderWidth = 1
             } else {

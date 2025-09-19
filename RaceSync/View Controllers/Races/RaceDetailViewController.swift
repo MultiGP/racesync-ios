@@ -434,7 +434,8 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         memberBadgeView.count = raceViewModel.participantCount
         startDateButton.setTitle(raceViewModel.startDateDesc , for: .normal)
 
-        if race.isJoined && race.isPayable {
+        // showing an indicator if the user has joined, only if the race fee is still pending
+        if race.isJoined && race.status == .open && race.isPayable {
             miniJoinButton.joinState = .joined
             miniJoinButton.isUserInteractionEnabled = true // set to false when compact mode
             miniJoinButton.isHidden = false
