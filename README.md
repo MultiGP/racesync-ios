@@ -4,16 +4,16 @@
 
 <table style="border-collapse: collapse; width: auto;">
   <tr>
-    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.5_screenshots_1.png" style="display: block; width: auto; height: auto;"></th>
-    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.5_screenshots_2.png" style="display: block; width: auto; height: auto;"></th>
-    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.5_screenshots_3.png" style="display: block; width: auto; height: auto;"></th>
-    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.5_screenshots_4.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_screenshots_1.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_screenshots_2.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_screenshots_3.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_screenshots_4.png" style="display: block; width: auto; height: auto;"></th>
   </tr>
   <tr>
-    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.5_screenshots_5.png" style="display: block; width: auto; height: auto;"></th>
-    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.5_screenshots_6.png" style="display: block; width: auto; height: auto;"></th>
-    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.5_screenshots_7.png" style="display: block; width: auto; height: auto;"></th>
-    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_6.5_screenshots_9.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_screenshots_5.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_screenshots_6.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_screenshots_7.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Screenshots/RaceSync_screenshots_8.png" style="display: block; width: auto; height: auto;"></th>
   </tr>
 </table>
 
@@ -27,7 +27,6 @@ Find and join local drone races hosted by MultiGP chapters worldwide with a free
 * Check assigned video frequency during races
 * View race participants
 * Add races to your calendar and get directions to the venue
-* Manage aircraft from your profile
 * Use MultiGP QR code for special events and ZippyQ races
 
 ### Features for chapter organizers:

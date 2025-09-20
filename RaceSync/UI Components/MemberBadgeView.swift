@@ -38,7 +38,7 @@ class MemberBadgeView: CustomButton {
         imageEdgeInsets = UIEdgeInsets(left: -7)
         contentEdgeInsets = UIEdgeInsets(top: 5, left: 15, bottom: 5, right: 12)
 
-        backgroundColor = Color.gray100
+        backgroundColor = Color.gray50
         layer.cornerRadius = 6
     }
 

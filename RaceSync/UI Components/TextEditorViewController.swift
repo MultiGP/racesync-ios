@@ -20,11 +20,16 @@ class TextEditorViewController: UIViewController {
 
     weak var delegate: TextEditorViewControllerDelegate?
 
+    var placeholder: String? {
+        didSet {
+            self.textEditorView.placeholder = placeholder ?? "Type something..."
+        }
+    }
+
     // MARK: - Private Variables
 
     fileprivate lazy var textEditorView: RichEditorView = {
         let view = RichEditorView()
-        view.placeholder = "Type something..."
         view.isEditable = true
         view.isScrollEnabled = true
         view.delegate = self

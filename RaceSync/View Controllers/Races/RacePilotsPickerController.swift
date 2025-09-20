@@ -21,14 +21,7 @@ class RacePilotsPickerController: UIViewController, Shimmable {
     // MARK: - Public Variables
 
     var delegate: RacePilotsPickerControllerDelegate?
-
-    var externalUserViewModels: [UserViewModel]? {
-        didSet {
-            if let viewModels = externalUserViewModels {
-                joinedIds = viewModels.map({$0.userId})
-            }
-        }
-    }
+    var externalUserViewModels: [UserViewModel]?
 
     lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
@@ -58,7 +51,6 @@ class RacePilotsPickerController: UIViewController, Shimmable {
     }()
 
     fileprivate var race: Race
-    fileprivate var raceId: ObjectId
     fileprivate let raceApi = RaceApi()
     fileprivate var chapterApi = ChapterApi()
     fileprivate var userApi = UserApi()
@@ -66,7 +58,6 @@ class RacePilotsPickerController: UIViewController, Shimmable {
     fileprivate var sections = [Section]()
     fileprivate var userViewModels = [UserViewModel]()
     fileprivate var searchResult = [UserViewModel]()
-    fileprivate var joinedIds = [ObjectId]()
     fileprivate var didForceJoin: Bool = false
 
     fileprivate let emptyStateMembers = EmptyStateViewModel(.noChapterMembers)
@@ -79,16 +70,15 @@ class RacePilotsPickerController: UIViewController, Shimmable {
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
-        static let joinButtonTitle: String = "Force Join"
+        static let forceJoinTitle: String = "Force Join"
         static let avatarImageSize = CGSize(width: 50, height: 50)
         static let searchBarHeight: CGFloat = 56
     }
 
     // MARK: - Initialization
 
-    init(with race: Race, raceId: ObjectId) {
+    init(with race: Race) {
         self.race = race
-        self.raceId = raceId
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -102,7 +92,7 @@ class RacePilotsPickerController: UIViewController, Shimmable {
         super.viewDidLoad()
 
         setupLayout()
-        loadUsers()
+        loadContent()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -156,18 +146,20 @@ class RacePilotsPickerController: UIViewController, Shimmable {
         guard let button = sender as? JoinButton, let userId = button.objectId else { return }
         guard let viewModel = userViewModels.filter ({ return $0.userId == userId }).first else { return }
 
+        let otherViewModel = externalUserViewModels?.first { $0.userId == viewModel.userId }
+        let isJoined = otherViewModel?.isJoined ?? viewModel.isJoined
+
         button.isLoading = true
         let state = button.joinState
 
-        if joinedIds.contains(viewModel.userId) {
+        if isJoined {
             ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Remove \(viewModel.username) from the race?", message: nil, destructiveTitle: "Yes, Remove", completion: { (action) in
                 self.resignUser(with: userId) { (newState) in
                     button.isLoading = false
 
                     if state != newState {
                         button.joinState = newState
-                        button.setTitle(Constants.joinButtonTitle, for: .normal)
-                        self.joinedIds = self.joinedIds.filter { $0 != userId }
+                        button.setTitle(Constants.forceJoinTitle, for: .normal)
                         self.didForceJoin = true
 
                         RateMe.shared.userDidPerformEvent()
@@ -183,7 +175,6 @@ class RacePilotsPickerController: UIViewController, Shimmable {
 
                     if state != newState {
                         button.joinState = newState
-                        self.joinedIds += [userId]
                         self.didForceJoin = true
 
                         RateMe.shared.userDidPerformEvent()
@@ -197,34 +188,20 @@ class RacePilotsPickerController: UIViewController, Shimmable {
 
     fileprivate func forceJoinUser(with id: ObjectId, completion: @escaping JoinStateCompletionBlock) {
 
-        raceApi.forceJoin(race: raceId, pilotId: id) { [weak self] (status, error) in
-            guard let strongSelf = self else { return }
-
-            if status == true {
-                completion(.joined)
-
-                strongSelf.raceApi.checkIn(race: strongSelf.raceId, pilotId: id) { (raceEntry, error) in
-                    // when joining a race, we checkin to get a frequency assigned
-                }
-            } else if let error = error {
-                completion(.join)
+        raceApi.forceJoin(race: race.id, pilotId: id) { (status, error) in
+            completion(status ? .joined : .notJoined)
+            if let error = error {
                 AlertUtil.presentAlertMessage("Couldn't add this user to the race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
-            } else {
-                completion(.join)
             }
         }
     }
 
     fileprivate func resignUser(with id: ObjectId, completion: @escaping JoinStateCompletionBlock) {
 
-        raceApi.forceResign(race: raceId, pilotId: id) { (status, error) in
-            if status == true {
-                completion(.join)
-            } else if let error = error {
-                completion(.joined)
+        raceApi.forceResign(race: race.id, pilotId: id) { (status, error) in
+            completion(status ? .notJoined : .joined)
+            if let error = error {
                 AlertUtil.presentAlertMessage("Couldn't remove this user from the race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
-            } else {
-                completion(.joined)
             }
         }
     }
@@ -232,11 +209,10 @@ class RacePilotsPickerController: UIViewController, Shimmable {
     @objc fileprivate func didPressCloseButton() {
         dismiss(animated: true)
     }
-}
 
-extension RacePilotsPickerController {
+    // MARK: - Data Update
 
-    fileprivate func loadUsers() {
+    fileprivate func loadContent() {
         if userViewModels.isEmpty {
             isLoadingList(true)
 
@@ -322,20 +298,26 @@ extension RacePilotsPickerController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as ChapterUserTableViewCell
         guard let viewModel = userViewModel(for: indexPath) else { return cell }
 
+        // Find external match, for checking if joined or not.
+        let otherViewModel = externalUserViewModels?.first { $0.userId == viewModel.userId }
+
         cell.titleLabel.text = viewModel.displayName
-        cell.avatarImageView.imageView.setImage(with: viewModel.pictureUrl, placeholderImage: PlaceholderImg.medium, size: Constants.avatarImageSize)
         cell.subtitleLabel.text = viewModel.fullName
+        cell.avatarImageView.imageView.setImage(with: viewModel.pictureUrl,
+            placeholderImage: PlaceholderImg.medium,
+            size: Constants.avatarImageSize
+        )
 
         cell.joinButton.addTarget(self, action: #selector(didPressJoinButton), for: .touchUpInside)
         cell.joinButton.hitTestEdgeInsets = UIEdgeInsets(proportionally: -10)
         cell.joinButton.type = .race
         cell.joinButton.objectId = viewModel.userId
 
-        if joinedIds.contains(viewModel.userId) {
-            cell.joinButton.joinState = .joined
-        } else {
-            cell.joinButton.joinState = .join
-            cell.joinButton.setTitle(Constants.joinButtonTitle, for: .normal)
+        // Determine join state
+        let isJoined = otherViewModel?.isJoined ?? viewModel.isJoined
+        cell.joinButton.joinState = isJoined ? .joined : .notJoined
+        if !isJoined {
+            cell.joinButton.setTitle(Constants.forceJoinTitle, for: .normal)
         }
 
         return cell
@@ -403,6 +385,6 @@ extension RacePilotsPickerController: EmptyDataSetSource {
 }
 
 fileprivate struct Section {
-    let letter : String
-    let viewModels : [UserViewModel]
+    let letter: String
+    let viewModels: [UserViewModel]
 }

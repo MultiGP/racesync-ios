@@ -95,8 +95,10 @@ class AvatarTableViewCell: UITableViewCell {
     // MARK: - Layout
 
     open func setupLayout() {
+        backgroundColor = Color.white
+
         let selectedBackgroundView = UIView()
-        selectedBackgroundView.backgroundColor = Color.gray50
+        selectedBackgroundView.backgroundColor = Color.gray20
         self.selectedBackgroundView = selectedBackgroundView
 
         accessoryType = .disclosureIndicator

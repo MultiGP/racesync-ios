@@ -75,6 +75,13 @@ public extension Date {
         return self < Date()
     }
 
+    func isPassed(by days: Int) -> Bool {
+        guard let comparisonDate = Calendar.current.date(byAdding: .day, value: days, to: Date()) else {
+            return false
+        }
+        return self < comparisonDate
+    }
+
     var isInPastHour: Bool {
         return Calendar.current.isDate(self, equalTo: Date(), toGranularity: .hour)
     }
@@ -118,5 +125,17 @@ public extension Date {
         }
 
         return Calendar.current.date(byAdding: dateComponent, to: self) ?? self
+    }
+
+    func isBetween(day startDay: Int, month startMonth: Int, andDay endDay: Int, month endMonth: Int) -> Bool {
+        let calendar = Calendar.current
+        let year = calendar.component(.year, from: self)
+
+        guard let startDate = calendar.date(from: DateComponents(year: year, month: startMonth, day: startDay)),
+              let endDate = calendar.date(from: DateComponents(year: year, month: endMonth, day: endDay)) else {
+            return false
+        }
+
+        return self >= startDate && self <= endDate
     }
 }

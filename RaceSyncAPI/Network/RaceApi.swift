@@ -77,7 +77,6 @@ public protocol RaceApiInterface {
     /**
      */
     func join(race raceId: ObjectId,
-              aircraftId: ObjectId,
               completion: @escaping StatusCompletionBlock)
 
     /**
@@ -108,18 +107,6 @@ public protocol RaceApiInterface {
                completion: @escaping StatusCompletionBlock)
 
     /**
-    */
-    func checkIn(race raceId: ObjectId,
-                 pilotId: ObjectId?,
-                 completion: @escaping ObjectCompletionBlock<RaceEntry>)
-
-    /**
-    */
-    func checkOut(race raceId: ObjectId,
-                  pilotId: ObjectId?,
-                  completion: @escaping ObjectCompletionBlock<RaceEntry>)
-
-    /**
     Creates a full Race object, using a data transfer object converted into parameters.
 
      - parameter data: The data transfer object
@@ -144,6 +131,11 @@ public protocol RaceApiInterface {
     */
     func finalizeRace(with raceId: ObjectId,
                     completion: @escaping StatusCompletionBlock)
+
+    /**
+    */
+    func getRacePayments(with raceId: ObjectId,
+                    completion: @escaping ObjectCompletionBlock<[RacePayment]>)
 
     /**
      Cancels all the HTTP requests of race API endpoint
@@ -220,12 +212,11 @@ public class RaceApi: RaceApiInterface {
         repositoryAdapter.getObject(endpoint, type: Race.self, completion)
     }
 
-    public func join(race raceId: ObjectId, aircraftId: ObjectId, completion: @escaping StatusCompletionBlock) {
+    public func join(race raceId: ObjectId, completion: @escaping StatusCompletionBlock) {
 
         let endpoint = "\(EndPoint.raceJoin)?\(ParamKey.id)=\(raceId)"
-        let parameters = [ParamKey.aircraftId: aircraftId]
 
-        repositoryAdapter.performAction(endpoint, parameters: parameters, completion: completion)
+        repositoryAdapter.performAction(endpoint, completion: completion)
     }
 
     public func resign(race raceId: ObjectId, completion: @escaping StatusCompletionBlock) {
@@ -238,17 +229,17 @@ public class RaceApi: RaceApiInterface {
     public func forceJoin(race raceId: ObjectId, pilotId: ObjectId, completion: @escaping StatusCompletionBlock) {
 
         let endpoint = "\(EndPoint.raceForceJoin)?\(ParamKey.id)=\(raceId)"
-        let parameters = [ParamKey.pilotId: pilotId]
+        let params = [ParamKey.pilotId: pilotId]
 
-        repositoryAdapter.performAction(endpoint, parameters: parameters, completion: completion)
+        repositoryAdapter.performAction(endpoint, parameters: params, completion: completion)
     }
 
     public func forceResign(race raceId: ObjectId, pilotId: ObjectId, completion: @escaping StatusCompletionBlock) {
 
         let endpoint = "\(EndPoint.raceResign)?\(ParamKey.id)=\(raceId)"
-        let parameters = [ParamKey.pilotId: pilotId]
+        let params = [ParamKey.pilotId: pilotId]
 
-        repositoryAdapter.performAction(endpoint, parameters: parameters, completion: completion)
+        repositoryAdapter.performAction(endpoint, parameters: params, completion: completion)
     }
 
     public func open(race raceId: ObjectId, completion: @escaping StatusCompletionBlock) {
@@ -263,24 +254,6 @@ public class RaceApi: RaceApiInterface {
         let endpoint = "\(EndPoint.raceClose)?\(ParamKey.id)=\(raceId)"
 
         repositoryAdapter.performAction(endpoint, completion: completion)
-    }
-
-    public func checkIn(race raceId: ObjectId, pilotId: ObjectId? = nil, completion: @escaping ObjectCompletionBlock<RaceEntry>) {
-
-        let endpoint = "\(EndPoint.raceCheckIn)?\(ParamKey.id)=\(raceId)"
-        var params = Params()
-        params[ParamKey.pilotId] = pilotId
-
-        repositoryAdapter.getObject(endpoint, parameters: params, type: RaceEntry.self, completion)
-    }
-
-    public func checkOut(race raceId: ObjectId, pilotId: ObjectId? = nil, completion: @escaping ObjectCompletionBlock<RaceEntry>) {
-
-        let endpoint = "\(EndPoint.raceCheckOut)?\(ParamKey.id)=\(raceId)"
-        var params = Params()
-        params[ParamKey.pilotId] = pilotId
-
-        repositoryAdapter.getObject(endpoint, parameters: params, type: RaceEntry.self, completion)
     }
 
     public func createRace(withData data: RaceData, completion: @escaping ObjectCompletionBlock<Race>) {
@@ -317,6 +290,14 @@ public class RaceApi: RaceApiInterface {
         let endpoint = "\(EndPoint.raceFinalize)?\(ParamKey.id)=\(raceId)"
 
         repositoryAdapter.performAction(endpoint, completion: completion)
+    }
+
+    public func getRacePayments(with raceId: ObjectId,
+                         completion: @escaping ObjectCompletionBlock<[RacePayment]>) {
+
+        let endpoint = "\(EndPoint.racePayments)?\(ParamKey.id)=\(raceId)"
+
+        repositoryAdapter.getObjects(endpoint, type: RacePayment.self, keyPath: "data.paymentStatus", completion)
     }
 
     public func cancelAll() {

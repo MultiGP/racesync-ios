@@ -10,8 +10,10 @@ import UIKit
 import SnapKit
 import RaceSyncAPI
 
-protocol ScrollToTop {
-    func scrollToTop()
+enum HomeTabs: Int {
+    case races, standings, series
+    
+    static let `default`: Self = .standings
 }
 
 class HomeTabBarController: UITabBarController {
@@ -28,8 +30,8 @@ class HomeTabBarController: UITabBarController {
         return StandingsViewController()
     }()
 
-    fileprivate lazy var settingsVC: SettingsViewController = {
-        return SettingsViewController()
+    fileprivate lazy var seriesVC: SeriesViewController = {
+        return SeriesViewController()
     }()
 
     fileprivate lazy var titleView: UIView = {
@@ -46,6 +48,13 @@ class HomeTabBarController: UITabBarController {
         let button = CustomButton(type: .system)
         button.addTarget(self, action: #selector(didPressNotificationsButton), for: .touchUpInside)
         button.setImage(ButtonImg.notifications, for: .normal)
+        return button
+    }()
+
+    fileprivate lazy var settingsButton: CustomButton = {
+        let button = CustomButton(type: .system)
+        button.addTarget(self, action: #selector(didPressSettingsButton), for: .touchUpInside)
+        button.setImage(ButtonImg.settings, for: .normal)
         return button
     }()
 
@@ -137,31 +146,15 @@ class HomeTabBarController: UITabBarController {
     // MARK: - Layout
 
     fileprivate func setupLayout() {
-
-        configureNavigationItems()
-
-        let vcs: [UIViewController] = [raceFeedVC, standingsVC, settingsVC]
-
-        for vc in vcs { vc.willMove(toParent: self) }
-        self.viewControllers = vcs
-        for vc in vcs { vc.didMove(toParent: self) }
-
-        // Dirty little trick to select the first tab bar item
-        selectedIndex = vcs.count-1
-        selectedIndex = 0
-
         delegate = self
-
-        // Trick to pre-load each view controller
-        self.preloadTabs()
-        self.tabBar.isHidden = false
+        configureNavigationItems()
     }
 
     fileprivate func configureNavigationItems() {
 
         navigationItem.titleView = titleView
 
-        let leftStackSubviews = [notificationsButton]
+        let leftStackSubviews = [notificationsButton, settingsButton]
         let leftStackView = UIStackView(arrangedSubviews: leftStackSubviews)
         leftStackView.axis = .horizontal
         leftStackView.distribution = .fillEqually
@@ -222,32 +215,44 @@ class HomeTabBarController: UITabBarController {
         present(nc, animated: true)
     }
 
+    @objc fileprivate func didPressSettingsButton(_ sender: Any) {
+        let vc = SettingsViewController()
+        let nc = NavigationController(rootViewController: vc)
+        present(nc, animated: true)
+    }
+
     // MARK: - Data Update
 
-    func loadContent() {
+    fileprivate func loadContent() {
+        let vcs: [UIViewController] = [raceFeedVC, standingsVC, seriesVC]
+        let idx = AppPrefs.lastSelectedTab
+
+        configureTabBarController(with: vcs, selectedIndex: idx)
+
         if APIServices.shared.myUser == nil {
-            raceFeedVC.isLoadingList(true)
             loadMyUser()
-        } else {
-            raceFeedVC.loadRaces(forceReload: true)
         }
     }
 
-    func loadMyUser() {
+    fileprivate func loadMyUser() {
         userApi.getMyUser { [weak self] (user, error) in
             if let user = user {
-                self?.raceFeedVC.loadRaces()
+                // Load content only if it's the current tab
+                if self?.selectedIndex == HomeTabs.races.rawValue {
+                    self?.raceFeedVC.loadContent(forced: true)
+                }
+
                 self?.loadMyHomeChapter(user.homeChapterId)
                 self?.loadMyManagedChapters()
                 self?.updateUserProfileImage()
             } else if error != nil {
                 // This is somewhat the best way to detect an invalid session
-                ApplicationControl.shared.invalidateSession(forced: false)
+                AppControl.shared.invalidateSession(forced: false)
             }
         }
     }
 
-    func loadMyHomeChapter(_ chapterId: String) {
+    fileprivate func loadMyHomeChapter(_ chapterId: String) {
         guard !chapterId.isEmpty else { return }
 
         chapterApi.getChapter(with: chapterId) { [weak self] (chapter, error) in
@@ -256,7 +261,7 @@ class HomeTabBarController: UITabBarController {
         }
     }
 
-    func loadMyManagedChapters() {
+    fileprivate func loadMyManagedChapters() {
         chapterApi.getMyManagedChapters { (managedChapters, error) in
 
             guard let chapters = managedChapters else {
@@ -273,7 +278,7 @@ class HomeTabBarController: UITabBarController {
         }
     }
 
-    func updateUserProfileImage() {
+    fileprivate func updateUserProfileImage() {
         let imageUrl = APIServices.shared.myUser?.miniProfilePictureUrl
         let placeholder = PlaceholderImg.small?.withRenderingMode(.alwaysOriginal)
 
@@ -283,7 +288,7 @@ class HomeTabBarController: UITabBarController {
         }
     }
 
-    func updateChapterProfileImage() {
+    fileprivate func updateChapterProfileImage() {
         let imageUrl = APIServices.shared.myChapter?.miniProfilePictureUrl
         let placeholder = PlaceholderImg.small?.withRenderingMode(.alwaysOriginal)
 
@@ -291,7 +296,7 @@ class HomeTabBarController: UITabBarController {
         chapterProfileButton.setImage(with: imageUrl, placeholderImage: placeholder, forState: .normal, size: Constants.miniProfileSize)
     }
 
-    func updateMyHomeChapter(with chapter: Chapter) {
+    fileprivate func updateMyHomeChapter(with chapter: Chapter) {
         APIServices.shared.myChapter = chapter
         updateChapterProfileImage()
     }
@@ -319,6 +324,8 @@ extension HomeTabBarController: UITabBarControllerDelegate {
 
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
 
+        (tabBar as? RoundedSelectionTabBar)?.updateSelectionFrame(animated: true)
+
         if hidesNavigationShadowAtRoot, let vcs = viewControllers, vcs.contains(viewController) {
             hideNavigationShadow()
         } else {
@@ -331,5 +338,8 @@ extension HomeTabBarController: UITabBarControllerDelegate {
                 topVC.scrollToTop()
             }
         }
+
+        // To open the last tab at launch
+        AppPrefs.lastSelectedTab = tabBarController.selectedIndex
     }
 }

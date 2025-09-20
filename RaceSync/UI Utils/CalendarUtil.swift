@@ -43,7 +43,7 @@ class CalendarUtil {
                 var buttonTitle: String? = nil
                 var completion: AlertCompletionBlock?
 
-                if let calendarURL = URL(string: ExternalAppSchemes.CalendarScheme), UIApplication.shared.canOpenURL(calendarURL) {
+                if let calendarURL = URL(string: ExternalAppUri.Calendar), UIApplication.shared.canOpenURL(calendarURL) {
                     buttonTitle = "View Calendar"
                     completion = { action in
                         UIApplication.shared.open(calendarURL, options: [:], completionHandler: nil)

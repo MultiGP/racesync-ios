@@ -11,11 +11,26 @@ import RaceSyncAPI
 
 extension Race {
 
+    var canShowResults: Bool {
+        guard let results = results, results.count > 0 else { return false }
+        guard let startDate = startDate else { return false }
+        return startDate.isPassed
+    }
+
+    var canShowSchedule: Bool {
+        return isZippyQEnabled && !isFinalized
+    }
+
     func canCreateCalendarEvent() -> Bool {
-        guard let startDate = startDate, startDate.timeIntervalSinceNow.sign == .plus else {
+        if let endDate = endDate, endDate.isPassed {
             return false
         }
-        return true
+        else if let startDate = startDate, startDate.isPassed(by: 1) {
+            return false
+        }
+        else {
+            return true
+        }
     }
 
     func createCalendarEvent(with raceId: ObjectId) -> CalendarEvent? {

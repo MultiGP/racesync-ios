@@ -36,15 +36,13 @@
 		4F1342822360DA4C00A9DBDE /* RaceSyncAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F13426D2360DA4B00A9DBDE /* RaceSyncAPI.framework */; };
 		4F1342832360DA4C00A9DBDE /* RaceSyncAPI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4F13426D2360DA4B00A9DBDE /* RaceSyncAPI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4F13428C2360DAD100A9DBDE /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F13428B2360DAD100A9DBDE /* LoginViewController.swift */; };
+		4F149A112E5E70FC00A00B5D /* Pinnable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F149A102E5E70FC00A00B5D /* Pinnable.swift */; };
 		4F1571AE24D8D74F004A7CEE /* ProfileBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1571AD24D8D74F004A7CEE /* ProfileBackgroundView.swift */; };
 		4F1DC112297E42BA005EDAE0 /* BooleanTransform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1DC111297E42BA005EDAE0 /* BooleanTransform.swift */; };
 		4F1E150524107BCE0082C486 /* URL+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1E150424107BCE0082C486 /* URL+Extensions.swift */; };
 		4F2724362515D88A000C7408 /* Chapter+UIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2724352515D88A000C7408 /* Chapter+UIExtensions.swift */; };
 		4F27243B2517DB1C000C7408 /* CopyLinkActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F27243A2517DB1C000C7408 /* CopyLinkActivity.swift */; };
 		4F2724402517DC5B000C7408 /* UIActivityViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F27243F2517DC5B000C7408 /* UIActivityViewController+Extensions.swift */; };
-		4F3D640723FB0A4800DE6DF2 /* AircraftPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3D640623FB0A4700DE6DF2 /* AircraftPickerViewController.swift */; };
-		4F3D640923FB0A9D00DE6DF2 /* AircraftDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3D640823FB0A9D00DE6DF2 /* AircraftDetailViewController.swift */; };
-		4F3D640B23FB0C8800DE6DF2 /* AircraftListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3D640A23FB0C8800DE6DF2 /* AircraftListViewController.swift */; };
 		4F3D640D23FB253900DE6DF2 /* UICollectionView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3D640C23FB253900DE6DF2 /* UICollectionView+Extensions.swift */; };
 		4F3D640F23FC65F700DE6DF2 /* TextPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3D640E23FC65F700DE6DF2 /* TextPickerViewController.swift */; };
 		4F3D641123FE664A00DE6DF2 /* TextFieldViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3D641023FE664A00DE6DF2 /* TextFieldViewController.swift */; };
@@ -56,6 +54,8 @@
 		4F5001E523823C940025A593 /* FlagEmojiGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5001E423823C940025A593 /* FlagEmojiGenerator.swift */; };
 		4F5001E723827DE70025A593 /* ImageUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5001E623827DE70025A593 /* ImageUtil.swift */; };
 		4F5001E923830E180025A593 /* Race.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5001E823830E180025A593 /* Race.swift */; };
+		4F521F822E6E18D800AE7C03 /* SeriesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F521F812E6E18D800AE7C03 /* SeriesViewController.swift */; };
+		4F521F842E6E5F0A00AE7C03 /* ActivityLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F521F832E6E5F0A00AE7C03 /* ActivityLoadingView.swift */; };
 		4F5488962D2146C80056EA59 /* RaceScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5488952D2146C80056EA59 /* RaceScheduleViewController.swift */; };
 		4F5488982D2236950056EA59 /* String+HTML.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5488972D2236950056EA59 /* String+HTML.swift */; };
 		4F5614A42DDC4C2800EAD42A /* MessageEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5614A32DDC4C2800EAD42A /* MessageEnums.swift */; };
@@ -72,13 +72,16 @@
 		4F605603258C9FB4008AF93F /* UIScrollView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F605602258C9FB4008AF93F /* UIScrollView+Extensions.swift */; };
 		4F60562A258D59EC008AF93F /* GalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F605629258D59EC008AF93F /* GalleryViewController.swift */; };
 		4F605635258D89B5008AF93F /* CollectionViewCell+Reuse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F605634258D89B5008AF93F /* CollectionViewCell+Reuse.swift */; };
-		4F64290E24019090005E8036 /* AircraftFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F64290D24019090005E8036 /* AircraftFormViewController.swift */; };
-		4F642910240199AC005E8036 /* AircraftForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F64290F240199AC005E8036 /* AircraftForm.swift */; };
 		4F6429122402DB00005E8036 /* ImageConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6429112402DB00005E8036 /* ImageConstants.swift */; };
 		4F6429142403AE9A005E8036 /* FormBaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6429132403AE9A005E8036 /* FormBaseViewController.swift */; };
 		4F64B34B2D22879C00FC5BF1 /* launch_bkgd.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4F64B34A2D22879C00FC5BF1 /* launch_bkgd.jpg */; };
 		4F64B34D2D235EE300FC5BF1 /* UIView+Parallax.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F64B34C2D235EE300FC5BF1 /* UIView+Parallax.swift */; };
 		4F64F680257B97E000574F4D /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F64F67F257B97E000574F4D /* WebViewController.swift */; };
+		4F6503382E45CE4900FA8AED /* FloatTransform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6503372E45CE4900FA8AED /* FloatTransform.swift */; };
+		4F65033A2E45CE5900FA8AED /* RacePaymentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6503392E45CE5900FA8AED /* RacePaymentsViewController.swift */; };
+		4F65033C2E45CEBA00FA8AED /* RacePayment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F65033B2E45CEBA00FA8AED /* RacePayment.swift */; };
+		4F65033E2E467EFB00FA8AED /* ColumnTableViewHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F65033D2E467EFB00FA8AED /* ColumnTableViewHeaderView.swift */; };
+		4F6503402E469A2700FA8AED /* ColumnTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F65033F2E469A2700FA8AED /* ColumnTableViewCell.swift */; };
 		4F68BE692399CEB5009D44F7 /* AlertUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F68BE682399CEB5009D44F7 /* AlertUtil.swift */; };
 		4F68BE6B2399CF07009D44F7 /* ActionSheetUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F68BE6A2399CF07009D44F7 /* ActionSheetUtil.swift */; };
 		4F68BE6D2399DBCF009D44F7 /* UIViewController+Lookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F68BE6C2399DBCF009D44F7 /* UIViewController+Lookup.swift */; };
@@ -92,8 +95,13 @@
 		4F6C8A98236A9E840017FD78 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6C8A97236A9E840017FD78 /* Color.swift */; };
 		4F6CAD8D2983040100E80B5F /* ChapterPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6CAD8C2983040100E80B5F /* ChapterPickerViewController.swift */; };
 		4F6CAD8F298342DE00E80B5F /* UserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6CAD8E298342DE00E80B5F /* UserData.swift */; };
+		4F6FA16C2E4C12550056E115 /* Bool+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6FA16B2E4C12550056E115 /* Bool+Extensions.swift */; };
+		4F6FA16E2E4C66940056E115 /* AppplicationPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6FA16D2E4C66940056E115 /* AppplicationPreferences.swift */; };
 		4F714DE123CD4906000C4036 /* CalendarActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F714DE023CD4906000C4036 /* CalendarActivity.swift */; };
 		4F714DE323CD5EAA000C4036 /* SafariActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F714DE223CD5EAA000C4036 /* SafariActivity.swift */; };
+		4F71B3262E47C1880029D3CB /* PaypalActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F71B3252E47C1880029D3CB /* PaypalActivity.swift */; };
+		4F71B3282E490F760029D3CB /* RoundedSelectionTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F71B3272E490F760029D3CB /* RoundedSelectionTabBar.swift */; };
+		4F71B32B2E4910100029D3CB /* Collection+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F71B32A2E4910100029D3CB /* Collection+Extensions.swift */; };
 		4F73DAEA2DEE7300007B15F2 /* String+UIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F73DAE92DEE7300007B15F2 /* String+UIExtensions.swift */; };
 		4F791C9823A6105700F15FD7 /* TextPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F791C9723A6105700F15FD7 /* TextPill.swift */; };
 		4F791C9A23A66BA900F15FD7 /* NSAttributedString+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F791C9923A66BA900F15FD7 /* NSAttributedString+Extensions.swift */; };
@@ -129,7 +137,6 @@
 		4F8B4A142DDD15B100B735DA /* PushMessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8B4A132DDD15B100B735DA /* PushMessageViewModel.swift */; };
 		4F8B4A162DDD250D00B735DA /* MessageViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8B4A152DDD250D00B735DA /* MessageViewCell.swift */; };
 		4F8B8665295C112B00EAF695 /* EnumTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8B8664295C112B00EAF695 /* EnumTitle.swift */; };
-		4F8B8667295CF32600EAF695 /* AircraftRaceData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8B8666295CF32600EAF695 /* AircraftRaceData.swift */; };
 		4F8B866C296583EB00EAF695 /* TextEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8B866B296583EB00EAF695 /* TextEditorViewController.swift */; };
 		4F8F2C0C2383DF1E00DC4907 /* RaceApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8F2C0B2383DF1E00DC4907 /* RaceApi.swift */; };
 		4F8F2C0E23846AEB00DC4907 /* DateUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8F2C0D23846AEB00DC4907 /* DateUtil.swift */; };
@@ -149,13 +156,8 @@
 		4F9DB7AE23D614CF00570483 /* APISettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9DB7AD23D614CF00570483 /* APISettings.swift */; };
 		4F9DB7B023D618D100570483 /* UISegmentedControl+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9DB7AF23D618D100570483 /* UISegmentedControl+Extensions.swift */; };
 		4F9DB7B223D68EB200570483 /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9DB7B123D68EB100570483 /* NavigationController.swift */; };
-		4FA1AB3523C6AD5B007CF389 /* AircraftApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA1AB3423C6AD5B007CF389 /* AircraftApi.swift */; };
-		4FA1AB3723C7149D007CF389 /* AircraftCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA1AB3623C7149D007CF389 /* AircraftCollectionViewCell.swift */; };
 		4FA1AB3D23C94F5F007CF389 /* UIEdgeInsets+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA1AB3C23C94F5F007CF389 /* UIEdgeInsets+Extensions.swift */; };
-		4FA1AB3F23C9538A007CF389 /* AircraftViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA1AB3E23C9538A007CF389 /* AircraftViewModel.swift */; };
 		4FA1AB4123CAC956007CF389 /* Dictionary+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA1AB4023CAC956007CF389 /* Dictionary+Extensions.swift */; };
-		4FA1AB4323CAF803007CF389 /* AircraftPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA1AB4223CAF803007CF389 /* AircraftPickerController.swift */; };
-		4FA1AB4523CB1666007CF389 /* AircraftData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA1AB4423CB1666007CF389 /* AircraftData.swift */; };
 		4FA1FC8B23D6D7C0006D4704 /* ApplicationControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA1FC8A23D6D7C0006D4704 /* ApplicationControl.swift */; };
 		4FA1FC8F23D74D29006D4704 /* StringConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA1FC8E23D74D29006D4704 /* StringConstants.swift */; };
 		4FA1FC9123D7B571006D4704 /* APIEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA1FC9023D7B571006D4704 /* APIEnvironment.swift */; };
@@ -188,6 +190,8 @@
 		4FBADDF624D4E2DB00A7D291 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FBADDF524D4E2DB00A7D291 /* Array+Extensions.swift */; };
 		4FBE7608259B348200312B66 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4F13424E2360B67D00A9DBDE /* Assets.xcassets */; };
 		4FBE760F259B387E00312B66 /* User+UIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FBE760E259B387E00312B66 /* User+UIExtensions.swift */; };
+		4FC05C152E64FFB800EB97A4 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC05C142E64FFB700EB97A4 /* DeepLink.swift */; };
+		4FC05C172E65004500EB97A4 /* DeepLinkURLHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC05C162E65004400EB97A4 /* DeepLinkURLHandler.swift */; };
 		4FC1797D24B0801900D2EA2D /* ImagePickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC1797C24B0801900D2EA2D /* ImagePickerController.swift */; };
 		4FC3F17725A7AB3B0039B94C /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC3F17625A7AB3B0039B94C /* String+Extensions.swift */; };
 		4FC4C59C24D8F3F2007D3B71 /* DimmableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC4C59B24D8F3F2007D3B71 /* DimmableView.swift */; };
@@ -227,8 +231,6 @@
 		4FD53FB123A0D48F00158206 /* UserRaceTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD53FB023A0D48F00158206 /* UserRaceTableViewCell.swift */; };
 		4FD53FB323A0E9B700158206 /* AvatarImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD53FB223A0E9B700158206 /* AvatarImageView.swift */; };
 		4FDC05D823CDB16E00B10881 /* CalendarUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDC05D723CDB16E00B10881 /* CalendarUtil.swift */; };
-		4FDD499223B045E7009DD2DB /* Aircraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDD499123B045E7009DD2DB /* Aircraft.swift */; };
-		4FDD499423B045FE009DD2DB /* AircraftEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDD499323B045FE009DD2DB /* AircraftEnums.swift */; };
 		4FDD499623B0461D009DD2DB /* Season.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDD499523B0461D009DD2DB /* Season.swift */; };
 		4FDD499823B0470E009DD2DB /* ChapterEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDD499723B0470E009DD2DB /* ChapterEnums.swift */; };
 		4FDD499A23B065C9009DD2DB /* RaceEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDD499923B065C9009DD2DB /* RaceEnums.swift */; };
@@ -246,6 +248,10 @@
 		4FEBB27A23A2DAFF007514B4 /* DescriptableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEBB27923A2DAFF007514B4 /* DescriptableTests.swift */; };
 		4FEBB27D23A30F99007514B4 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEBB27C23A30F99007514B4 /* Date+Extensions.swift */; };
 		4FEBB27F23A310BB007514B4 /* User+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEBB27E23A310BB007514B4 /* User+Extensions.swift */; };
+		4FF16CBC2E6F838E00B4FC51 /* NotificationCenter+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF16CBB2E6F838E00B4FC51 /* NotificationCenter+Extensions.swift */; };
+		4FF16CBE2E70EC7D00B4FC51 /* WeakRef.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF16CBD2E70EC7D00B4FC51 /* WeakRef.swift */; };
+		4FF16CC02E70EC9300B4FC51 /* ViewJoinableRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF16CBF2E70EC9300B4FC51 /* ViewJoinableRegistry.swift */; };
+		4FF16CC22E79FF0400B4FC51 /* RaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF16CC12E79FF0300B4FC51 /* RaceController.swift */; };
 		9545A27A3685C3F227C6CCDC /* Pods_RaceSync.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03ADD4F5A98600BFEB5B6C6E /* Pods_RaceSync.framework */; };
 		FA8A945598D582AC78BB26B0 /* Pods_RaceSyncAPITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 912450B59256F98707505DCE /* Pods_RaceSyncAPITests.framework */; };
 /* End PBXBuildFile section */
@@ -337,15 +343,13 @@
 		4F13427C2360DA4C00A9DBDE /* RaceSyncAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceSyncAPITests.swift; sourceTree = "<group>"; };
 		4F13427E2360DA4C00A9DBDE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4F13428B2360DAD100A9DBDE /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		4F149A102E5E70FC00A00B5D /* Pinnable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pinnable.swift; sourceTree = "<group>"; };
 		4F1571AD24D8D74F004A7CEE /* ProfileBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileBackgroundView.swift; sourceTree = "<group>"; };
 		4F1DC111297E42BA005EDAE0 /* BooleanTransform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooleanTransform.swift; sourceTree = "<group>"; };
 		4F1E150424107BCE0082C486 /* URL+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Extensions.swift"; sourceTree = "<group>"; };
 		4F2724352515D88A000C7408 /* Chapter+UIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Chapter+UIExtensions.swift"; sourceTree = "<group>"; };
 		4F27243A2517DB1C000C7408 /* CopyLinkActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyLinkActivity.swift; sourceTree = "<group>"; };
 		4F27243F2517DC5B000C7408 /* UIActivityViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIActivityViewController+Extensions.swift"; sourceTree = "<group>"; };
-		4F3D640623FB0A4700DE6DF2 /* AircraftPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AircraftPickerViewController.swift; sourceTree = "<group>"; };
-		4F3D640823FB0A9D00DE6DF2 /* AircraftDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AircraftDetailViewController.swift; sourceTree = "<group>"; };
-		4F3D640A23FB0C8800DE6DF2 /* AircraftListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AircraftListViewController.swift; sourceTree = "<group>"; };
 		4F3D640C23FB253900DE6DF2 /* UICollectionView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Extensions.swift"; sourceTree = "<group>"; };
 		4F3D640E23FC65F700DE6DF2 /* TextPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPickerViewController.swift; sourceTree = "<group>"; };
 		4F3D641023FE664A00DE6DF2 /* TextFieldViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldViewController.swift; sourceTree = "<group>"; };
@@ -357,6 +361,8 @@
 		4F5001E423823C940025A593 /* FlagEmojiGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagEmojiGenerator.swift; sourceTree = "<group>"; };
 		4F5001E623827DE70025A593 /* ImageUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUtil.swift; sourceTree = "<group>"; };
 		4F5001E823830E180025A593 /* Race.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Race.swift; sourceTree = "<group>"; };
+		4F521F812E6E18D800AE7C03 /* SeriesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesViewController.swift; sourceTree = "<group>"; };
+		4F521F832E6E5F0A00AE7C03 /* ActivityLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityLoadingView.swift; sourceTree = "<group>"; };
 		4F5488952D2146C80056EA59 /* RaceScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceScheduleViewController.swift; sourceTree = "<group>"; };
 		4F5488972D2236950056EA59 /* String+HTML.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+HTML.swift"; sourceTree = "<group>"; };
 		4F5614A32DDC4C2800EAD42A /* MessageEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEnums.swift; sourceTree = "<group>"; };
@@ -373,13 +379,16 @@
 		4F605602258C9FB4008AF93F /* UIScrollView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Extensions.swift"; sourceTree = "<group>"; };
 		4F605629258D59EC008AF93F /* GalleryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryViewController.swift; sourceTree = "<group>"; };
 		4F605634258D89B5008AF93F /* CollectionViewCell+Reuse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewCell+Reuse.swift"; sourceTree = "<group>"; };
-		4F64290D24019090005E8036 /* AircraftFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AircraftFormViewController.swift; sourceTree = "<group>"; };
-		4F64290F240199AC005E8036 /* AircraftForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AircraftForm.swift; sourceTree = "<group>"; };
 		4F6429112402DB00005E8036 /* ImageConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageConstants.swift; sourceTree = "<group>"; };
 		4F6429132403AE9A005E8036 /* FormBaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormBaseViewController.swift; sourceTree = "<group>"; };
 		4F64B34A2D22879C00FC5BF1 /* launch_bkgd.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = launch_bkgd.jpg; sourceTree = "<group>"; };
 		4F64B34C2D235EE300FC5BF1 /* UIView+Parallax.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Parallax.swift"; sourceTree = "<group>"; };
 		4F64F67F257B97E000574F4D /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
+		4F6503372E45CE4900FA8AED /* FloatTransform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatTransform.swift; sourceTree = "<group>"; };
+		4F6503392E45CE5900FA8AED /* RacePaymentsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RacePaymentsViewController.swift; sourceTree = "<group>"; };
+		4F65033B2E45CEBA00FA8AED /* RacePayment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RacePayment.swift; sourceTree = "<group>"; };
+		4F65033D2E467EFB00FA8AED /* ColumnTableViewHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColumnTableViewHeaderView.swift; sourceTree = "<group>"; };
+		4F65033F2E469A2700FA8AED /* ColumnTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColumnTableViewCell.swift; sourceTree = "<group>"; };
 		4F68BE682399CEB5009D44F7 /* AlertUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertUtil.swift; sourceTree = "<group>"; };
 		4F68BE6A2399CF07009D44F7 /* ActionSheetUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetUtil.swift; sourceTree = "<group>"; };
 		4F68BE6C2399DBCF009D44F7 /* UIViewController+Lookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Lookup.swift"; sourceTree = "<group>"; };
@@ -393,8 +402,13 @@
 		4F6C8A97236A9E840017FD78 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		4F6CAD8C2983040100E80B5F /* ChapterPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterPickerViewController.swift; sourceTree = "<group>"; };
 		4F6CAD8E298342DE00E80B5F /* UserData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserData.swift; sourceTree = "<group>"; };
+		4F6FA16B2E4C12550056E115 /* Bool+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bool+Extensions.swift"; sourceTree = "<group>"; };
+		4F6FA16D2E4C66940056E115 /* AppplicationPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppplicationPreferences.swift; sourceTree = "<group>"; };
 		4F714DE023CD4906000C4036 /* CalendarActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarActivity.swift; sourceTree = "<group>"; };
 		4F714DE223CD5EAA000C4036 /* SafariActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariActivity.swift; sourceTree = "<group>"; };
+		4F71B3252E47C1880029D3CB /* PaypalActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaypalActivity.swift; sourceTree = "<group>"; };
+		4F71B3272E490F760029D3CB /* RoundedSelectionTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedSelectionTabBar.swift; sourceTree = "<group>"; };
+		4F71B32A2E4910100029D3CB /* Collection+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+Extensions.swift"; sourceTree = "<group>"; };
 		4F73DAE92DEE7300007B15F2 /* String+UIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+UIExtensions.swift"; sourceTree = "<group>"; };
 		4F791C9723A6105700F15FD7 /* TextPill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPill.swift; sourceTree = "<group>"; };
 		4F791C9923A66BA900F15FD7 /* NSAttributedString+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+Extensions.swift"; sourceTree = "<group>"; };
@@ -431,7 +445,6 @@
 		4F8B4A132DDD15B100B735DA /* PushMessageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushMessageViewModel.swift; sourceTree = "<group>"; };
 		4F8B4A152DDD250D00B735DA /* MessageViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewCell.swift; sourceTree = "<group>"; };
 		4F8B8664295C112B00EAF695 /* EnumTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumTitle.swift; sourceTree = "<group>"; };
-		4F8B8666295CF32600EAF695 /* AircraftRaceData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AircraftRaceData.swift; sourceTree = "<group>"; };
 		4F8B866B296583EB00EAF695 /* TextEditorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEditorViewController.swift; sourceTree = "<group>"; };
 		4F8F2C0B2383DF1E00DC4907 /* RaceApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceApi.swift; sourceTree = "<group>"; };
 		4F8F2C0D23846AEB00DC4907 /* DateUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateUtil.swift; sourceTree = "<group>"; };
@@ -451,13 +464,8 @@
 		4F9DB7AD23D614CF00570483 /* APISettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APISettings.swift; sourceTree = "<group>"; };
 		4F9DB7AF23D618D100570483 /* UISegmentedControl+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UISegmentedControl+Extensions.swift"; sourceTree = "<group>"; };
 		4F9DB7B123D68EB100570483 /* NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
-		4FA1AB3423C6AD5B007CF389 /* AircraftApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AircraftApi.swift; sourceTree = "<group>"; };
-		4FA1AB3623C7149D007CF389 /* AircraftCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AircraftCollectionViewCell.swift; sourceTree = "<group>"; };
 		4FA1AB3C23C94F5F007CF389 /* UIEdgeInsets+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIEdgeInsets+Extensions.swift"; sourceTree = "<group>"; };
-		4FA1AB3E23C9538A007CF389 /* AircraftViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AircraftViewModel.swift; sourceTree = "<group>"; };
 		4FA1AB4023CAC956007CF389 /* Dictionary+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+Extensions.swift"; sourceTree = "<group>"; };
-		4FA1AB4223CAF803007CF389 /* AircraftPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AircraftPickerController.swift; sourceTree = "<group>"; };
-		4FA1AB4423CB1666007CF389 /* AircraftData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AircraftData.swift; sourceTree = "<group>"; };
 		4FA1FC8A23D6D7C0006D4704 /* ApplicationControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationControl.swift; sourceTree = "<group>"; };
 		4FA1FC8C23D74A39006D4704 /* Bundle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extensions.swift"; sourceTree = "<group>"; };
 		4FA1FC8E23D74D29006D4704 /* StringConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringConstants.swift; sourceTree = "<group>"; };
@@ -493,6 +501,8 @@
 		4FBA7464298EF14D007A9E90 /* RELEASE-NOTES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "RELEASE-NOTES.md"; sourceTree = SOURCE_ROOT; };
 		4FBADDF524D4E2DB00A7D291 /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
 		4FBE760E259B387E00312B66 /* User+UIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+UIExtensions.swift"; sourceTree = "<group>"; };
+		4FC05C142E64FFB700EB97A4 /* DeepLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLink.swift; sourceTree = "<group>"; };
+		4FC05C162E65004400EB97A4 /* DeepLinkURLHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkURLHandler.swift; sourceTree = "<group>"; };
 		4FC1797C24B0801900D2EA2D /* ImagePickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerController.swift; sourceTree = "<group>"; };
 		4FC3F17625A7AB3B0039B94C /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		4FC4C59B24D8F3F2007D3B71 /* DimmableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DimmableView.swift; sourceTree = "<group>"; };
@@ -531,8 +541,6 @@
 		4FD53FB023A0D48F00158206 /* UserRaceTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRaceTableViewCell.swift; sourceTree = "<group>"; };
 		4FD53FB223A0E9B700158206 /* AvatarImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarImageView.swift; sourceTree = "<group>"; };
 		4FDC05D723CDB16E00B10881 /* CalendarUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarUtil.swift; sourceTree = "<group>"; };
-		4FDD499123B045E7009DD2DB /* Aircraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Aircraft.swift; sourceTree = "<group>"; };
-		4FDD499323B045FE009DD2DB /* AircraftEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AircraftEnums.swift; sourceTree = "<group>"; };
 		4FDD499523B0461D009DD2DB /* Season.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Season.swift; sourceTree = "<group>"; };
 		4FDD499723B0470E009DD2DB /* ChapterEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterEnums.swift; sourceTree = "<group>"; };
 		4FDD499923B065C9009DD2DB /* RaceEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceEnums.swift; sourceTree = "<group>"; };
@@ -550,6 +558,10 @@
 		4FEBB27923A2DAFF007514B4 /* DescriptableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescriptableTests.swift; sourceTree = "<group>"; };
 		4FEBB27C23A30F99007514B4 /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		4FEBB27E23A310BB007514B4 /* User+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Extensions.swift"; sourceTree = "<group>"; };
+		4FF16CBB2E6F838E00B4FC51 /* NotificationCenter+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotificationCenter+Extensions.swift"; sourceTree = "<group>"; };
+		4FF16CBD2E70EC7D00B4FC51 /* WeakRef.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeakRef.swift; sourceTree = "<group>"; };
+		4FF16CBF2E70EC9300B4FC51 /* ViewJoinableRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewJoinableRegistry.swift; sourceTree = "<group>"; };
+		4FF16CC12E79FF0300B4FC51 /* RaceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceController.swift; sourceTree = "<group>"; };
 		912450B59256F98707505DCE /* Pods_RaceSyncAPITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RaceSyncAPITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0AD3F0FAC42488B672FD23B /* Pods-RaceSyncAPITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RaceSyncAPITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RaceSyncAPITests/Pods-RaceSyncAPITests.debug.xcconfig"; sourceTree = "<group>"; };
 		D073602CBE253F96567B3B54 /* Pods_RaceSyncAPI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RaceSyncAPI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -590,8 +602,6 @@
 			children = (
 				4F004EA1295B828E009C46AA /* RaceData.swift */,
 				4F6CAD8E298342DE00E80B5F /* UserData.swift */,
-				4FA1AB4423CB1666007CF389 /* AircraftData.swift */,
-				4F8B8666295CF32600EAF695 /* AircraftRaceData.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -628,6 +638,7 @@
 				4F27243F2517DC5B000C7408 /* UIActivityViewController+Extensions.swift */,
 				4F5488972D2236950056EA59 /* String+HTML.swift */,
 				4F73DAE92DEE7300007B15F2 /* String+UIExtensions.swift */,
+				4FF16CBB2E6F838E00B4FC51 /* NotificationCenter+Extensions.swift */,
 			);
 			path = "UI Extensions";
 			sourceTree = "<group>";
@@ -665,6 +676,7 @@
 				4F6C8A94236A9D2B0017FD78 /* UI Utils */,
 				4F0B613D2385DA7900930D91 /* UI Extensions */,
 				4F2724342515D85D000C7408 /* RaceSyncAPI Extensions */,
+				4F71B3292E490FED0029D3CB /* Swift Extensions */,
 				4F9DB7B323D6BAA000570483 /* Tools */,
 				4FA26825237A4005008970AC /* Constants */,
 				4F13424B2360B67D00A9DBDE /* Main.storyboard */,
@@ -778,6 +790,14 @@
 			path = AppIcons;
 			sourceTree = "<group>";
 		};
+		4F521F802E6E18BD00AE7C03 /* Series */ = {
+			isa = PBXGroup;
+			children = (
+				4F521F812E6E18D800AE7C03 /* SeriesViewController.swift */,
+			);
+			path = Series;
+			sourceTree = "<group>";
+		};
 		4F5C1E41238CF68F00D756EB /* Profiles */ = {
 			isa = PBXGroup;
 			children = (
@@ -803,6 +823,9 @@
 				4FC57C32258E1362006E210F /* AppUtil.swift */,
 				4F6C8A97236A9E840017FD78 /* Color.swift */,
 				4FD4E1DE237FEC0A008816B3 /* Appearance.swift */,
+				4F91BC892398FBCE00539E95 /* ViewJoinable.swift */,
+				4FF16CBF2E70EC9300B4FC51 /* ViewJoinableRegistry.swift */,
+				4F4129DA2DC0AE32006A2763 /* NotificationsController.swift */,
 				4F5001E423823C940025A593 /* FlagEmojiGenerator.swift */,
 				4F5C1E4E2390B01700D756EB /* ImageNetworking.swift */,
 				4FDC05D723CDB16E00B10881 /* CalendarUtil.swift */,
@@ -812,7 +835,7 @@
 				4F714DE223CD5EAA000C4036 /* SafariActivity.swift */,
 				4F27243A2517DB1C000C7408 /* CopyLinkActivity.swift */,
 				4F482EFA251158FF00DBA0DF /* SocialActivity.swift */,
-				4F4129DA2DC0AE32006A2763 /* NotificationsController.swift */,
+				4F71B3252E47C1880029D3CB /* PaypalActivity.swift */,
 			);
 			path = "UI Utils";
 			sourceTree = "<group>";
@@ -825,12 +848,20 @@
 			path = Map;
 			sourceTree = "<group>";
 		};
+		4F71B3292E490FED0029D3CB /* Swift Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				4F71B32A2E4910100029D3CB /* Collection+Extensions.swift */,
+				4FF16CBD2E70EC7D00B4FC51 /* WeakRef.swift */,
+			);
+			path = "Swift Extensions";
+			sourceTree = "<group>";
+		};
 		4F77D21929940E41009DEB41 /* Enums */ = {
 			isa = PBXGroup;
 			children = (
 				4FDD499923B065C9009DD2DB /* RaceEnums.swift */,
 				4FDD499723B0470E009DD2DB /* ChapterEnums.swift */,
-				4FDD499323B045FE009DD2DB /* AircraftEnums.swift */,
 				4F7974B424A4A4D4003D623A /* ImageEnums.swift */,
 				4F5614A32DDC4C2800EAD42A /* MessageEnums.swift */,
 			);
@@ -898,7 +929,6 @@
 				4F0B61462385F69E00930D91 /* ProfileViewModel.swift */,
 				4FD53FAC23A0B01E00158206 /* UserViewModel.swift */,
 				4F6A28E62D15046900FF692D /* ResultEntryViewModel.swift */,
-				4FA1AB3E23C9538A007CF389 /* AircraftViewModel.swift */,
 				4F9DB7AB23D5A1DE00570483 /* EmptyStateViewModel.swift */,
 				4F0B61422385EEFF00930D91 /* ViewModelHelper.swift */,
 			);
@@ -909,23 +939,13 @@
 			isa = PBXGroup;
 			children = (
 				4FA1FC8A23D6D7C0006D4704 /* ApplicationControl.swift */,
+				4F6FA16D2E4C66940056E115 /* AppplicationPreferences.swift */,
+				4FC05C162E65004400EB97A4 /* DeepLinkURLHandler.swift */,
+				4FC05C142E64FFB700EB97A4 /* DeepLink.swift */,
 				4FEADB732416B3D400F82F0D /* EventTracker.swift */,
 				4F00E065242930B3001DCFC4 /* RateMe */,
 			);
 			path = Tools;
-			sourceTree = "<group>";
-		};
-		4FA1AB3123C6ACFD007CF389 /* Aircraft */ = {
-			isa = PBXGroup;
-			children = (
-				4F3D640A23FB0C8800DE6DF2 /* AircraftListViewController.swift */,
-				4F3D640823FB0A9D00DE6DF2 /* AircraftDetailViewController.swift */,
-				4FA1AB4223CAF803007CF389 /* AircraftPickerController.swift */,
-				4F3D640623FB0A4700DE6DF2 /* AircraftPickerViewController.swift */,
-				4F64290D24019090005E8036 /* AircraftFormViewController.swift */,
-				4F64290F240199AC005E8036 /* AircraftForm.swift */,
-			);
-			path = Aircraft;
 			sourceTree = "<group>";
 		};
 		4FA1AB4623CC51D7007CF389 /* Settings */ = {
@@ -944,7 +964,6 @@
 				4FD4E1BB237DCAA3008816B3 /* UserApi.swift */,
 				4F8F2C0B2383DF1E00DC4907 /* RaceApi.swift */,
 				4F8668F923868359005E310A /* ChapterApi.swift */,
-				4FA1AB3423C6AD5B007CF389 /* AircraftApi.swift */,
 				4F004E9B295A3027009C46AA /* SeasonApi.swift */,
 				4F004E9D295A3066009C46AA /* CourseApi.swift */,
 				4FE1DAD72DEAD443009143C4 /* StandingApi.swift */,
@@ -983,6 +1002,7 @@
 				4FCAF9F923AB226500ACE7D3 /* MapperUtil.swift */,
 				4FA26832237A5983008970AC /* ObjectMapper+Extensions.swift */,
 				4FA213FA29582CCB00C8E45A /* IntegerTransform.swift */,
+				4F6503372E45CE4900FA8AED /* FloatTransform.swift */,
 				4F1DC111297E42BA005EDAE0 /* BooleanTransform.swift */,
 				4FD4E1E22381E175008816B3 /* Random.swift */,
 				4F81759A2411917900685F83 /* Clog.swift */,
@@ -997,10 +1017,10 @@
 				4F5001E823830E180025A593 /* Race.swift */,
 				4F6A28E42D15005D00FF692D /* RaceSchedule.swift */,
 				4FEBB27723A2023A007514B4 /* RaceEntry.swift */,
+				4F65033B2E45CEBA00FA8AED /* RacePayment.swift */,
 				4F6A28E02D13F38000FF692D /* ResultEntry.swift */,
 				4F8668F523861736005E310A /* Chapter.swift */,
 				4FC51B1E2409EA9B00D654D0 /* ManagedChapter.swift */,
-				4FDD499123B045E7009DD2DB /* Aircraft.swift */,
 				4FDD499523B0461D009DD2DB /* Season.swift */,
 				4F004E99295A2CA1009C46AA /* Course.swift */,
 				4FE1DAD52DEAD225009143C4 /* Standing.swift */,
@@ -1027,9 +1047,11 @@
 				4FE4C0A12945E0EF00F47F0A /* RaceListViewController.swift */,
 				4F6CAD8C2983040100E80B5F /* ChapterPickerViewController.swift */,
 				4FD4E1CC237F98E7008816B3 /* RaceTabBarController.swift */,
+				4FF16CC12E79FF0300B4FC51 /* RaceController.swift */,
 				4FD4E1CA237F98A0008816B3 /* RaceDetailViewController.swift */,
 				4FD4E1C8237F987C008816B3 /* RacePilotsViewController.swift */,
 				4F5488952D2146C80056EA59 /* RaceScheduleViewController.swift */,
+				4F6503392E45CE5900FA8AED /* RacePaymentsViewController.swift */,
 				4FC50257242700DC0088320B /* RacePilotsPickerController.swift */,
 				4F004E9F295AA641009C46AA /* RaceFormViewController.swift */,
 				4F004EA6295B83F6009C46AA /* RaceForm.swift */,
@@ -1044,9 +1066,9 @@
 				4F8175A42411DDB900685F83 /* HomeController.swift */,
 				4FE1DADC2DEB6F6D009143C4 /* HomeTabBarController.swift */,
 				4FD4E1D3237F9DF8008816B3 /* Races */,
+				4F521F802E6E18BD00AE7C03 /* Series */,
 				4FE1DAD92DEB6AE4009143C4 /* Standings */,
 				4F5C1E41238CF68F00D756EB /* Profiles */,
-				4FA1AB3123C6ACFD007CF389 /* Aircraft */,
 				4F714DE423CD769F000C4036 /* Map */,
 				4F8B4A082DDC7AB900B735DA /* Push Messages */,
 				4FD4E1D2237F9DEF008816B3 /* Search */,
@@ -1067,8 +1089,8 @@
 				4F86690323877041005E310A /* ChapterTableViewCell.swift */,
 				4F00E06324292C9A001DCFC4 /* ChapterUserTableViewCell.swift */,
 				4FB0EB6923BB3B1F009ABAF0 /* FormTableViewCell.swift */,
+				4F65033F2E469A2700FA8AED /* ColumnTableViewCell.swift */,
 				4F8B4A152DDD250D00B735DA /* MessageViewCell.swift */,
-				4FA1AB3623C7149D007CF389 /* AircraftCollectionViewCell.swift */,
 				4FCAF9FB23AC803700ACE7D3 /* TableViewCellShimmerView.swift */,
 			);
 			path = "View Cells";
@@ -1083,25 +1105,27 @@
 				4F64F67F257B97E000574F4D /* WebViewController.swift */,
 				4FD53FB223A0E9B700158206 /* AvatarImageView.swift */,
 				4F8668FB23870E1E005E310A /* SegmentedTableViewHeaderView.swift */,
+				4F65033D2E467EFB00FA8AED /* ColumnTableViewHeaderView.swift */,
 				4FD4E1DA237FBE36008816B3 /* JoinButton.swift */,
 				4FA26834237A80B9008970AC /* ActionButton.swift */,
 				4FD4E1C2237F960A008816B3 /* CustomButton.swift */,
+				4F71B3272E490F760029D3CB /* RoundedSelectionTabBar.swift */,
 				4F8B4A0F2DDCEECD00B735DA /* BadgeHub.swift */,
 				4F791C9723A6105700F15FD7 /* TextPill.swift */,
 				4F6AE78C2D2DCD4B008636B7 /* RankView.swift */,
 				4FD4E1DC237FBE8B008816B3 /* MemberBadgeView.swift */,
 				4F0B613B238528C300930D91 /* PasteboardLabel.swift */,
 				4F5C1E44238D1BD200D756EB /* PasteboardButton.swift */,
-				4F91BC892398FBCE00539E95 /* ViewJoinable.swift */,
 				4F5C1E46238D1C3200D756EB /* TextCopiable.swift */,
 				4FCAF9FD23AC8B8400ACE7D3 /* Shimmable.swift */,
+				4F521F832E6E5F0A00AE7C03 /* ActivityLoadingView.swift */,
 				4F8376DB23EE87CC00256AEC /* RotatingIconView.swift */,
 				4F3D641023FE664A00DE6DF2 /* TextFieldViewController.swift */,
 				4F3D640E23FC65F700DE6DF2 /* TextPickerViewController.swift */,
-				4FC86BA42D27E00E004297E7 /* MultiTextPickerViewController.swift */,
 				4F004EA8295BB282009C46AA /* DatePickerViewController.swift */,
 				4F8B866B296583EB00EAF695 /* TextEditorViewController.swift */,
 				4F6429132403AE9A005E8036 /* FormBaseViewController.swift */,
+				4FC86BA42D27E00E004297E7 /* MultiTextPickerViewController.swift */,
 				4FC1797C24B0801900D2EA2D /* ImagePickerController.swift */,
 				4F3E2D012DEE23D900A6646C /* ImageExportViewController.swift */,
 			);
@@ -1124,6 +1148,7 @@
 				4FE1DADE2DEB9EEF009143C4 /* StandingViewModel.swift */,
 				4F3E2D052DEE52AE00A6646C /* StandingBadgeView.swift */,
 				4F3E2D032DEE4E8500A6646C /* StandingBadgeView.xib */,
+				4F149A102E5E70FC00A00B5D /* Pinnable.swift */,
 			);
 			path = Standings;
 			sourceTree = "<group>";
@@ -1138,6 +1163,7 @@
 				4FBADDF524D4E2DB00A7D291 /* Array+Extensions.swift */,
 				4FC3F17625A7AB3B0039B94C /* String+Extensions.swift */,
 				4F9A886A297473AF00B52092 /* Parameters+Extensions.swift */,
+				4F6FA16B2E4C12550056E115 /* Bool+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1453,34 +1479,42 @@
 				4F3D641123FE664A00DE6DF2 /* TextFieldViewController.swift in Sources */,
 				4FC5025A2428710D0088320B /* RaceTabbable.swift in Sources */,
 				4F00E072242932D7001DCFC4 /* RateMe.swift in Sources */,
+				4F71B32B2E4910100029D3CB /* Collection+Extensions.swift in Sources */,
 				4FD4E1D1237F9DC8008816B3 /* SearchViewController.swift in Sources */,
+				4FC05C152E64FFB800EB97A4 /* DeepLink.swift in Sources */,
 				4F5488962D2146C80056EA59 /* RaceScheduleViewController.swift in Sources */,
 				4F8668F423860900005E310A /* UniversalConstants.swift in Sources */,
+				4FF16CC02E70EC9300B4FC51 /* ViewJoinableRegistry.swift in Sources */,
 				4F791C9823A6105700F15FD7 /* TextPill.swift in Sources */,
 				4F8B4A162DDD250D00B735DA /* MessageViewCell.swift in Sources */,
+				4F65033E2E467EFB00FA8AED /* ColumnTableViewHeaderView.swift in Sources */,
 				4F0B61472385F69E00930D91 /* ProfileViewModel.swift in Sources */,
+				4F65033A2E45CE5900FA8AED /* RacePaymentsViewController.swift in Sources */,
 				4FE1DADF2DEB9EEF009143C4 /* StandingViewModel.swift in Sources */,
 				4F86690223876E71005E310A /* ChapterViewModel.swift in Sources */,
 				4F8F2C112384903F00DC4907 /* RaceViewModel.swift in Sources */,
+				4FF16CBE2E70EC7D00B4FC51 /* WeakRef.swift in Sources */,
 				4F791C9A23A66BA900F15FD7 /* NSAttributedString+Extensions.swift in Sources */,
 				4FD4E1C7237F97AD008816B3 /* ChapterViewController.swift in Sources */,
 				4F3E2D062DEE52AE00A6646C /* StandingBadgeView.swift in Sources */,
 				4F91BC8A2398FBCE00539E95 /* ViewJoinable.swift in Sources */,
+				4F6503402E469A2700FA8AED /* ColumnTableViewCell.swift in Sources */,
 				4F13428C2360DAD100A9DBDE /* LoginViewController.swift in Sources */,
 				4F6C8A98236A9E840017FD78 /* Color.swift in Sources */,
 				4F0B613F2385DA8F00930D91 /* UIImage+Extensions.swift in Sources */,
-				4FA1AB4323CAF803007CF389 /* AircraftPickerController.swift in Sources */,
 				4F68BE6D2399DBCF009D44F7 /* UIViewController+Lookup.swift in Sources */,
 				4F64F680257B97E000574F4D /* WebViewController.swift in Sources */,
 				4F00E075242932F2001DCFC4 /* RateMeDefaults.swift in Sources */,
 				4F605635258D89B5008AF93F /* CollectionViewCell+Reuse.swift in Sources */,
 				4F004EA9295BB282009C46AA /* DatePickerViewController.swift in Sources */,
+				4FF16CC22E79FF0400B4FC51 /* RaceController.swift in Sources */,
 				4F3D640F23FC65F700DE6DF2 /* TextPickerViewController.swift in Sources */,
 				4F1342482360B67D00A9DBDE /* AppDelegate.swift in Sources */,
 				4FC4C59C24D8F3F2007D3B71 /* DimmableView.swift in Sources */,
 				4F80A661296F9951008B19AF /* RichEditorOptionItem.swift in Sources */,
 				4F9DB7A323D397B700570483 /* SettingsViewController.swift in Sources */,
 				4F80A655296F9951008B19AF /* RichEditorView.swift in Sources */,
+				4FF16CBC2E6F838E00B4FC51 /* NotificationCenter+Extensions.swift in Sources */,
 				4F8B4A0E2DDCECE900B735DA /* PushMessagesController.swift in Sources */,
 				4F27243B2517DB1C000C7408 /* CopyLinkActivity.swift in Sources */,
 				4FE96E9224E3E687009A7F53 /* HeaderStretchable.swift in Sources */,
@@ -1510,7 +1544,6 @@
 				4F9DB79923D2D94E00570483 /* ExternalAppConstants.swift in Sources */,
 				4F482EFB251158FF00DBA0DF /* SocialActivity.swift in Sources */,
 				4FD53FAF23A0B20900158206 /* AvatarTableViewCell.swift in Sources */,
-				4F642910240199AC005E8036 /* AircraftForm.swift in Sources */,
 				4F6A28E72D15046900FF692D /* ResultEntryViewModel.swift in Sources */,
 				4FD4E1D9237FB1EA008816B3 /* RaceTableViewCell.swift in Sources */,
 				4F5C1E4F2390B01700D756EB /* ImageNetworking.swift in Sources */,
@@ -1522,12 +1555,12 @@
 				4F6C8A96236A9D580017FD78 /* UIColor+Extensions.swift in Sources */,
 				4F2724402517DC5B000C7408 /* UIActivityViewController+Extensions.swift in Sources */,
 				4FA1AB3D23C94F5F007CF389 /* UIEdgeInsets+Extensions.swift in Sources */,
-				4FA1AB3723C7149D007CF389 /* AircraftCollectionViewCell.swift in Sources */,
 				4F6429122402DB00005E8036 /* ImageConstants.swift in Sources */,
 				4FD4E1C5237F9746008816B3 /* UserViewController.swift in Sources */,
+				4F6FA16E2E4C66940056E115 /* AppplicationPreferences.swift in Sources */,
 				4FD4E1DF237FEC0A008816B3 /* Appearance.swift in Sources */,
+				4F71B3262E47C1880029D3CB /* PaypalActivity.swift in Sources */,
 				4F2724362515D88A000C7408 /* Chapter+UIExtensions.swift in Sources */,
-				4F3D640B23FB0C8800DE6DF2 /* AircraftListViewController.swift in Sources */,
 				4FD53FB123A0D48F00158206 /* UserRaceTableViewCell.swift in Sources */,
 				4F6055F6258C9B5C008AF93F /* GalleryViewCell.swift in Sources */,
 				4F5C1E49238DD82500D756EB /* UIView+RecognizerBlock.swift in Sources */,
@@ -1535,11 +1568,12 @@
 				4F605603258C9FB4008AF93F /* UIScrollView+Extensions.swift in Sources */,
 				4F004EA7295B83F6009C46AA /* RaceForm.swift in Sources */,
 				4F8B4A0A2DDC7AEF00B735DA /* PushMessagesViewController.swift in Sources */,
+				4F71B3282E490F760029D3CB /* RoundedSelectionTabBar.swift in Sources */,
 				4FC57C33258E1362006E210F /* AppUtil.swift in Sources */,
 				4F80A660296F9951008B19AF /* RichEditorToolbar.swift in Sources */,
 				4F7BE2672722354F00592297 /* UIViewController+Navigation.swift in Sources */,
 				4F60562A258D59EC008AF93F /* GalleryViewController.swift in Sources */,
-				4F64290E24019090005E8036 /* AircraftFormViewController.swift in Sources */,
+				4F521F842E6E5F0A00AE7C03 /* ActivityLoadingView.swift in Sources */,
 				4F9DB7B223D68EB200570483 /* NavigationController.swift in Sources */,
 				4F9DB7AC23D5A1DE00570483 /* EmptyStateViewModel.swift in Sources */,
 				4F0B61452385F66300930D91 /* ProfileHeaderView.swift in Sources */,
@@ -1547,15 +1581,14 @@
 				4F9A888F2975E6D700B52092 /* Race+UIExtensions.swift in Sources */,
 				4F8668FC23870E1E005E310A /* SegmentedTableViewHeaderView.swift in Sources */,
 				4FBE760F259B387E00312B66 /* User+UIExtensions.swift in Sources */,
+				4FC05C172E65004500EB97A4 /* DeepLinkURLHandler.swift in Sources */,
 				4F8175A12411C35A00685F83 /* StandingsViewController.swift in Sources */,
 				4F8B866C296583EB00EAF695 /* TextEditorViewController.swift in Sources */,
 				4FB0EB6A23BB3B1F009ABAF0 /* FormTableViewCell.swift in Sources */,
 				4FD4E1CD237F98E7008816B3 /* RaceTabBarController.swift in Sources */,
-				4F3D640723FB0A4800DE6DF2 /* AircraftPickerViewController.swift in Sources */,
 				4FCAF9FE23AC8B8400ACE7D3 /* Shimmable.swift in Sources */,
 				4F4129DB2DC0AE32006A2763 /* NotificationsController.swift in Sources */,
 				4F9A88912975F30C00B52092 /* Season+UIExtensions.swift in Sources */,
-				4F3D640923FB0A9D00DE6DF2 /* AircraftDetailViewController.swift in Sources */,
 				4FCD99B829788F720094C562 /* AppWebConstants.swift in Sources */,
 				4FCAF9FC23AC803700ACE7D3 /* TableViewCellShimmerView.swift in Sources */,
 				4F3D640D23FB253900DE6DF2 /* UICollectionView+Extensions.swift in Sources */,
@@ -1578,6 +1611,8 @@
 				4F9DB7B023D618D100570483 /* UISegmentedControl+Extensions.swift in Sources */,
 				4F6AE78D2D2DCD4B008636B7 /* RankView.swift in Sources */,
 				4F5C1E45238D1BD200D756EB /* PasteboardButton.swift in Sources */,
+				4F149A112E5E70FC00A00B5D /* Pinnable.swift in Sources */,
+				4F521F822E6E18D800AE7C03 /* SeriesViewController.swift in Sources */,
 				4FD53FB323A0E9B700158206 /* AvatarImageView.swift in Sources */,
 				4FA1FC8F23D74D29006D4704 /* StringConstants.swift in Sources */,
 				4F8B4A142DDD15B100B735DA /* PushMessageViewModel.swift in Sources */,
@@ -1585,7 +1620,6 @@
 				4F8B4A102DDCEECD00B735DA /* BadgeHub.swift in Sources */,
 				4FD53FAD23A0B01E00158206 /* UserViewModel.swift in Sources */,
 				4F03693626D457CB00E30821 /* AppIconViewController.swift in Sources */,
-				4FA1AB3F23C9538A007CF389 /* AircraftViewModel.swift in Sources */,
 				4F64B34D2D235EE300FC5BF1 /* UIView+Parallax.swift in Sources */,
 				4F86690423877041005E310A /* ChapterTableViewCell.swift in Sources */,
 			);
@@ -1603,20 +1637,20 @@
 				4F6A28E32D14F55200FF692D /* TimeUtil.swift in Sources */,
 				4F004EA2295B828E009C46AA /* RaceData.swift in Sources */,
 				4F5001E923830E180025A593 /* Race.swift in Sources */,
-				4F8B8667295CF32600EAF695 /* AircraftRaceData.swift in Sources */,
 				4F004E9E295A3066009C46AA /* CourseApi.swift in Sources */,
 				4FEBB27F23A310BB007514B4 /* User+Extensions.swift in Sources */,
 				4FDD499A23B065C9009DD2DB /* RaceEnums.swift in Sources */,
 				4F9DB79723D2B01C00570483 /* MGPWebConstants.swift in Sources */,
-				4FA1AB4523CB1666007CF389 /* AircraftData.swift in Sources */,
 				4F5001E723827DE70025A593 /* ImageUtil.swift in Sources */,
 				4FA268222378F8A0008970AC /* APIServices.swift in Sources */,
 				4F8668F623861736005E310A /* Chapter.swift in Sources */,
+				4F65033C2E45CEBA00FA8AED /* RacePayment.swift in Sources */,
 				4FC86BA32D274B8C004297E7 /* APIRaceFilters.swift in Sources */,
 				4F5614A42DDC4C2800EAD42A /* MessageEnums.swift in Sources */,
 				4FC51B1F2409EA9B00D654D0 /* ManagedChapter.swift in Sources */,
 				4F1E150524107BCE0082C486 /* URL+Extensions.swift in Sources */,
 				4FC9A1B623D7CFBC00069FDE /* Bundle+Extensions.swift in Sources */,
+				4F6FA16C2E4C12550056E115 /* Bool+Extensions.swift in Sources */,
 				4F004E9C295A3027009C46AA /* SeasonApi.swift in Sources */,
 				4F6A28E52D15005D00FF692D /* RaceSchedule.swift in Sources */,
 				4F81759C241192AF00685F83 /* Clog.swift in Sources */,
@@ -1630,10 +1664,7 @@
 				4FA2682F237A5897008970AC /* ErrorUtil.swift in Sources */,
 				4F8F2C132385136300DC4907 /* NumberUtil.swift in Sources */,
 				4F8668F823864389005E310A /* Descriptable.swift in Sources */,
-				4FDD499223B045E7009DD2DB /* Aircraft.swift in Sources */,
-				4FDD499423B045FE009DD2DB /* AircraftEnums.swift in Sources */,
 				4FEBB27D23A30F99007514B4 /* Date+Extensions.swift in Sources */,
-				4FA1AB3523C6AD5B007CF389 /* AircraftApi.swift in Sources */,
 				4FBADDF624D4E2DB00A7D291 /* Array+Extensions.swift in Sources */,
 				4FA26833237A5983008970AC /* ObjectMapper+Extensions.swift in Sources */,
 				4FA26831237A58E1008970AC /* ApiError.swift in Sources */,
@@ -1649,6 +1680,7 @@
 				4FA1FC9123D7B571006D4704 /* APIEnvironment.swift in Sources */,
 				4FA2681A2378BE4A008970AC /* APIConstants.swift in Sources */,
 				4F5C1E40238A7BAF00D756EB /* RepositoryAdapter.swift in Sources */,
+				4F6503382E45CE4900FA8AED /* FloatTransform.swift in Sources */,
 				4F8F2C0C2383DF1E00DC4907 /* RaceApi.swift in Sources */,
 				4F6CAD8F298342DE00E80B5F /* UserData.swift in Sources */,
 				4FA268242378F9DD008970AC /* NetworkAdapter.swift in Sources */,
@@ -1844,7 +1876,7 @@
 				CODE_SIGN_ENTITLEMENTS = RaceSync/RaceSync.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 76;
+				CURRENT_PROJECT_VERSION = 82;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = TJ4PB66YQS;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
@@ -1855,7 +1887,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.7.1;
+				MARKETING_VERSION = 1.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.multigp.RaceSyncApp;
 				PRODUCT_NAME = RaceSync;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1881,7 +1913,7 @@
 				CODE_SIGN_ENTITLEMENTS = RaceSync/RaceSync.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 76;
+				CURRENT_PROJECT_VERSION = 82;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = TJ4PB66YQS;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
@@ -1892,7 +1924,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.7.1;
+				MARKETING_VERSION = 1.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.multigp.RaceSyncApp;
 				PRODUCT_NAME = RaceSync;
 				PROVISIONING_PROFILE_SPECIFIER = "";

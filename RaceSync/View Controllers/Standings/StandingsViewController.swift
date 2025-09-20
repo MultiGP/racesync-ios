@@ -13,7 +13,7 @@ import ShimmerSwift
 import EmptyDataSet_Swift
 import Presentr
 
-class StandingsViewController: UIViewController, Shimmable {
+class StandingsViewController: UIViewController, Shimmable, Pinnable {
 
     // MARK: - Public Variables
 
@@ -31,7 +31,6 @@ class StandingsViewController: UIViewController, Shimmable {
         let backgroundView = UIView()
         backgroundView.backgroundColor = Color.gray20
         tableView.backgroundView = backgroundView
-
         return tableView
     }()
 
@@ -95,8 +94,10 @@ class StandingsViewController: UIViewController, Shimmable {
     fileprivate let season: StandingSeason = .y2025
     fileprivate var standingViewModels = [StandingViewModel]()
     fileprivate var searchResult = [StandingViewModel]()
-    fileprivate var pinnedView: UIView?
-    fileprivate var cachedPinnedIndexPath: IndexPath?
+
+    // Pinnable variables
+    var pinnedView: UIView?
+    var cachedPinnedIndexPath: IndexPath?
 
     fileprivate let minQuery: Int = 2
     fileprivate let emptyStateSearch = EmptyStateViewModel(.noSearchResults)
@@ -104,17 +105,11 @@ class StandingsViewController: UIViewController, Shimmable {
     fileprivate var presenter: Presentr?
 
     fileprivate var myUserId: ObjectId? {
-        get {
-//            return "9649"
-            return APIServices.shared.myUser?.id
-        }
+        get { return APIServices.shared.myUser?.id }
     }
 
     fileprivate var myProfileUrl: String? {
-        get {
-//            return "https://multigp-storage-new.s3.us-east-2.amazonaws.com/user/9649/profileImage-64.png"
-            return APIServices.shared.myUser?.profilePictureUrl
-        }
+        get { return APIServices.shared.myUser?.profilePictureUrl }
     }
 
     fileprivate enum Constants {
@@ -137,7 +132,7 @@ class StandingsViewController: UIViewController, Shimmable {
         super.viewWillAppear(animated)
 
         if standingViewModels.count == 0 {
-            loadStandings()
+            isLoadingList(true)
         } else {
             tableView.reloadData()
         }
@@ -145,6 +140,10 @@ class StandingsViewController: UIViewController, Shimmable {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
+        if standingViewModels.count == 0 {
+            loadContent()
+        }
     }
 
     deinit {
@@ -157,6 +156,8 @@ class StandingsViewController: UIViewController, Shimmable {
 
         configureNavigationItems()
         enableSearchBar(false)
+
+        registerPinnedView(viewType: AvatarTableViewCell.self)
 
         view.addSubview(headerView)
         headerView.snp.makeConstraints {
@@ -182,12 +183,12 @@ class StandingsViewController: UIViewController, Shimmable {
 
     fileprivate func configureNavigationItems() {
         title = "Standings"
-        tabBarItem = UITabBarItem(title: "Standings", image: UIImage(systemName:"trophy"), selectedImage: UIImage(systemName:"trophy.fill"))
+        tabBarItem = UITabBarItem(title: title, image: SystemImg.trophy, selectedImage: SystemImg.trophyFill)
     }
 
     // MARK: - Data Update
 
-    func loadStandings() {
+    fileprivate func loadContent() {
 
         if !refreshControl.isRefreshing {
             isLoadingList(true)
@@ -211,8 +212,13 @@ class StandingsViewController: UIViewController, Shimmable {
         }
     }
 
+    fileprivate func standingViewModel(at indexPath: IndexPath) -> StandingViewModel? {
+        let viewModels = isSearching ? searchResult : standingViewModels
+        return viewModels[indexPath.row]
+    }
+
     @objc fileprivate func didPullRefreshControl() {
-        loadStandings()
+        loadContent()
     }
 
     // MARK: - Search
@@ -226,7 +232,7 @@ class StandingsViewController: UIViewController, Shimmable {
         }
     }
 
-    fileprivate var isSearching: Bool {
+    var isSearching: Bool {
         guard let text = searchBar.text else { return false }
         let query = text.trimmingCharacters(in: .whitespacesAndNewlines)
         return query.count >= minQuery || query.containsEmoji
@@ -255,115 +261,63 @@ class StandingsViewController: UIViewController, Shimmable {
 
     // MARK: - Cell Pinning
 
-    func layoutPinnedCell() {
-        guard !isSearching else { return }
+    func canPinView() -> Bool {
+        guard let userId = myUserId else { return false }
 
-        guard let indexPath = pinnedCellIndexPath() else { return }
-        guard let _ = tableView.superview else { return }
-
-        let cellRect = tableView.rectForRow(at: indexPath)
-        let topInset = tableView.contentInset.top
-        let bottomInset = tableView.contentInset.bottom
-        let contentOffsetY = tableView.contentOffset.y
-        let visibleHeight = tableView.bounds.height - topInset - bottomInset
-        let tabBarHeight = tabBarController?.tabBar.frame.size.height ?? 0
-
-        let targetTopOffsetY = cellRect.minY - topInset
-        let targetBottomOffsetY = cellRect.maxY + tabBarHeight - visibleHeight
-
-        let cellHeight = tableView.delegate?.tableView?(tableView, heightForRowAt: indexPath) ?? cellRect.height
-        let cellWidth = tableView.frame.width
-
-        let topPinY = tableView.frame.minY
-        let bottomPinY = tableView.frame.maxY - bottomInset - cellHeight - tabBarHeight
-
-        // Pin to top
-        if contentOffsetY >= targetTopOffsetY {
-            showPinnedCell(at: topPinY, indexPath: indexPath, size: CGSize(width: cellWidth, height: cellHeight))
-
-        // Pin to bottom
-        } else if contentOffsetY <= targetBottomOffsetY {
-            showPinnedCell(at: bottomPinY, indexPath: indexPath, size: CGSize(width: cellWidth, height: cellHeight))
-        } else {
-            removePinnedCell()
+        let source = isSearching ? searchResult : standingViewModels
+        guard source.firstIndex(where: { $0.standing.userId == userId }) != nil else {
+            return false
         }
+        return true
     }
 
-    fileprivate func showPinnedCell(at y: CGFloat, indexPath: IndexPath, size: CGSize) {
-        if pinnedView == nil {
-            let snapshot = createSnapshotFromCell(forRowAt: indexPath)
-            pinnedView = snapshot
-            pinnedView?.frame = CGRect(origin: CGPoint(x: 0, y: y), size: size)
-            pinnedView?.layer.zPosition = 999
-        } else {
-            pinnedView?.frame.origin.y = y
-        }
-
-        if let pinnedView = pinnedView, pinnedView.superview == nil {
-            view.insertSubview(pinnedView, aboveSubview: tableView)
-        }
-    }
-
-    fileprivate func createSnapshotFromCell(forRowAt indexPath: IndexPath) -> UIView? {
-        let cell = AvatarTableViewCell(style: .default, reuseIdentifier: nil)
-        configure(tableViewCell: cell, forRowAt: indexPath)
-
-        let cellWidth = tableView.bounds.width
-        let cellHeight = tableView.delegate?.tableView?(tableView, heightForRowAt: indexPath) ?? tableView.rowHeight
-        cell.frame = CGRect(x: 0, y: 0, width: cellWidth, height: cellHeight)
-        
-        // Force the cell to layout its subviews
-        cell.setNeedsLayout()
-        cell.layoutIfNeeded()
-
-        // Create a snapshot of the cell’s current rendered content
-        guard let snapshot = cell.snapshotView(afterScreenUpdates: true) else {
-            return nil
-        }
-        snapshot.tag = indexPath.row
-
-        // Add tap gesture recognizer to the snapshot
-        let tap = UITapGestureRecognizer(target: self, action: #selector(didTapPinnedCell(_:)))
-        snapshot.addGestureRecognizer(tap)
-
-        return snapshot
-    }
-
-    @objc fileprivate func didTapPinnedCell(_ gesture: UITapGestureRecognizer) {
-        guard let indexPath = pinnedCellIndexPath() else { return }
-        tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
-    }
-
-    fileprivate func removePinnedCell() {
-        guard let view = pinnedView else { return }
-
-        if view.superview != nil {
-            view.removeFromSuperview()
-        }
-
-        pinnedView = nil
-    }
-
-    fileprivate func pinnedCellIndexPath() -> IndexPath? {
-        if let cached = cachedPinnedIndexPath {
-            return cached
-        }
-
+    func pinnedViewIndexPath() -> IndexPath? {
         guard let userId = myUserId else { return nil }
+
+        if let cachedPinnedIndexPath { return cachedPinnedIndexPath }
+
         let source = isSearching ? searchResult : standingViewModels
 
-        if let index = source.firstIndex(where: { $0.standing.userId == userId }) {
-            let indexPath = IndexPath(row: index, section: 0)
-            cachedPinnedIndexPath = indexPath
-            return indexPath
+        guard let index = source.firstIndex(where: { $0.standing.userId == userId }) else {
+            return nil
         }
-        return nil
+
+        let indexPath = IndexPath(row: index, section: 0)
+        cachedPinnedIndexPath = indexPath
+        return indexPath
     }
 
-    fileprivate func standingViewModel(at indexPath: IndexPath) -> StandingViewModel? {
-        let viewModels = isSearching ? searchResult : standingViewModels
-        return viewModels[indexPath.row]
+    func configure<T>(_ view: T, forRowAt indexPath: IndexPath) where T : UITableViewCell {
+        guard let cell = view as? AvatarTableViewCell,
+                  let viewModel = standingViewModel(at: indexPath) else { return }
+
+        cell.rankView.rank = viewModel.rank
+        cell.titleLabel.text = viewModel.titleLabel
+        cell.subtitleLabel.text = viewModel.subtitleLabel
+        cell.avatarImageView.isHidden = true
+        cell.accessoryView = nil
+
+        if let userId = myUserId, viewModel.standing.userId == userId {
+            cell.titleLabel.textColor = Color.white
+            cell.subtitleLabel.textColor = Color.gray20
+            cell.rankView.titleLabel.textColor = Color.gray20
+            cell.backgroundColor = Color.gray200
+            cell.selectedBackgroundView?.backgroundColor = Color.gray300
+
+            let image = ButtonImg.share?.withTintColor(.white)
+            let imageView = UIImageView(image: image)
+            imageView.tintColor = .white
+            cell.accessoryView = imageView
+        } else {
+            cell.titleLabel.textColor = Color.black
+            cell.subtitleLabel.textColor = Color.gray300
+            cell.rankView.titleLabel.textColor = Color.gray300
+            cell.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : Color.gray20
+            cell.selectedBackgroundView?.backgroundColor = Color.gray50
+        }
     }
+
+    // MARK: - Personal Standing Badge
 
     fileprivate func shouldPresentMyStandingBadge(_ indexPath: IndexPath) {
         guard let viewModel = standingViewModel(at: indexPath) else { return }
@@ -408,16 +362,7 @@ class StandingsViewController: UIViewController, Shimmable {
         tableView.reloadData()
 
         // resets it each time, so it can be recalculated
-        invalidatePinnedCell()
-    }
-
-    func invalidatePinnedCell() {
-        cachedPinnedIndexPath = nil
-        removePinnedCell()
-
-        if pinnedCellIndexPath() != nil {
-            layoutPinnedCell()
-        }
+        invalidatePinnedView()
     }
 }
 
@@ -457,7 +402,7 @@ extension StandingsViewController: UITableViewDelegate {
         guard !isSearching else {
             return searchResult.isEmpty ? nil : "Showing \(searchResult.count) Pilots"
         }
-        return "\(season.rawValue) MultiGP Global Qualifier - Sponsored by FINZ\nFastest 3 Consecutive Laps"
+        return season.sectionTitle
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -474,44 +419,19 @@ extension StandingsViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as AvatarTableViewCell
-        configure(tableViewCell: cell, forRowAt: indexPath)
+        configure(cell, forRowAt: indexPath)
         return cell
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return Constants.cellHeight
     }
-
-    func configure(tableViewCell cell: AvatarTableViewCell, forRowAt indexPath: IndexPath) {
-        guard let viewModel = standingViewModel(at: indexPath) else { return }
-        cell.rankView.rank = viewModel.rank
-        cell.titleLabel.text = viewModel.titleLabel
-        cell.subtitleLabel.text = viewModel.subtitleLabel
-        cell.avatarImageView.isHidden = true
-
-        if let userId = myUserId, viewModel.standing.userId == userId {
-            cell.backgroundColor = UIColor(hex: "898b8c")
-            cell.titleLabel.textColor = Color.white
-            cell.subtitleLabel.textColor = Color.gray20
-            cell.rankView.titleLabel.textColor = Color.gray20
-
-            let image = UIImage(named: "icn_navbar_share")?.withTintColor(.white)
-            let imageView = UIImageView(image: image)
-            imageView.tintColor = .white
-            cell.accessoryView = imageView
-        } else {
-            cell.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : UIColor(hex: "f7f9fa")
-            cell.titleLabel.textColor = Color.black
-            cell.subtitleLabel.textColor = Color.gray300
-            cell.rankView.titleLabel.textColor = Color.gray300
-        }
-    }
 }
 
 extension StandingsViewController: UIScrollViewDelegate {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        layoutPinnedCell()
+        layoutPinnedView()
     }
 }
 
@@ -581,6 +501,13 @@ extension StandingsViewController: EmptyDataSetSource {
             return emptyStateSearch.description
         }
         return nil
+    }
+}
+
+extension StandingsViewController: EmptyDataSetDelegate {
+
+    func emptyDataSetShouldAllowScroll(_ scrollView: UIScrollView) -> Bool {
+        return false
     }
 
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {

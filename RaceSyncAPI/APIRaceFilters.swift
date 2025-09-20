@@ -121,6 +121,11 @@ public struct GQSeries: EnumTitle, Hashable, Equatable {
         return year == Date.currentYear
     }
 
+    // GQ season usually starts on Mid-March and ends of late August
+    public func isActive() -> Bool {
+        return Date().isBetween(day: 15, month: 3, andDay: 30, month: 8)
+    }
+
     private static let startYear: Int = 2017
 
     private static func isValidYear(_ year: Int) -> Bool {

@@ -1,5 +1,5 @@
 //
-//  ExternalAppSchemes.swift
+//  ExternalAppUri.swift
 //  RaceSync
 //
 //  Created by Ignacio Romero Zurbuchen on 2020-01-17.
@@ -8,15 +8,14 @@
 
 import Foundation
 
-class ExternalAppSchemes {
-    static let AppleMapsUrl = "http://maps.apple.com/"
-    static let GoogleMapsScheme = "comgooglemaps://"
-    static let WazeScheme = "waze://"
-    static let WalletScheme = "shoebox://" // undocumented!
-
-    static let CalendarScheme = "calshow://" // undocumented!
+class ExternalAppUri {
+    static let GoogleMaps = "comgooglemaps://"
+    static let Waze = "waze://"
+    static let Calendar = "calshow://" // undocumented!
+    static let Paypal = "paypal://"
 }
 
-class ExternalAppUrls {
-
+class ExternalAppUrl {
+    static let AppleMaps = "http://maps.apple.com/"
+    static let Paypal = "https://www.paypal.com/"
 }

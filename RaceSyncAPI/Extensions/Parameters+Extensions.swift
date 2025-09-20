@@ -16,26 +16,20 @@ public extension Params {
         return Params.diff(between: self, and: p2)
     }
 
-    // Returns a new dict with only the difference between the new and the old dict, giving priority to the newer one.
-    // TODO: Make this way more dynamic, scalable. Perhaps as a protocol and default protocol implementation?
-    // TODO: Define different priority levels (diff combined, exclusive or inclusive of older values)
-    // TODO: Test with more value types?
+    // Returns a new dict with only the difference between the new and the old dict,
+    // giving priority to the newer one (p2)
     static func diff(between p1: Params, and p2: Params) -> Params {
-
         var result: Params = [:]
 
-        p2.keys.forEach { key in
-            if let s1 = p1[key] as? String {
-                if let s2 = p2[key] as? String, s1 != s2 { result[key] = s2 }
-            }
-            else if let i1 = p1[key] as? Int {
-                if let i2 = p2[key] as? Int, i1 != i2 { result[key] = i2 }
-            }
-            else if let b1 = p1[key] as? Bool {
-                if let b2 = p2[key] as? Bool, b1 != b2 { result[key] = b2 }
-            }
-            else {
-                result[key] = p2[key]
+        for (key, value2) in p2 {
+            if let value1 = p1[key] {
+                if value1 != value2 {
+                    // Different values → take p2’s version
+                    result[key] = value2
+                }
+            } else {
+                // New key in p2 → take it
+                result[key] = value2
             }
         }
 

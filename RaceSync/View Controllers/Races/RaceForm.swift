@@ -6,7 +6,7 @@
 //  Copyright © 2022 MultiGP Inc. All rights reserved.
 //
 
-import Foundation
+import UIKit
 import RaceSyncAPI
 
 enum RaceFormMode: Int {
@@ -14,50 +14,71 @@ enum RaceFormMode: Int {
 }
 
 enum RaceFormSection: Int {
-    case general, specific //, frequencies
+    case general, specific
 
     public var header: String {
         switch self {
         case .general:      return "General Details "
-        case .specific:     return "Specific Details"
-        // TODO: Implement Video Frequency Profile selection (may need new API support)
-        //case .frequencies:  return "Video Frequencies"
+        case .specific:     return "Race Details"
         }
     }
 
     public var footer: String? {
         switch self {
-        case .general:      return "* Required fields"
-        case .specific:     return "** Broadcasts a notification to all chapter members."
+        default:            return nil
         }
     }
 }
 
 enum RaceFormRow: Int, EnumTitle {
-    case name, startDate, endDate, chapter, `class`, format, schedule, privacy, status,
-         scoring, timing, rounds, season, location, shortDesc, longDesc, itinerary, notify
+    case chapter, `class`, content, endDate, fee, feeRequired, format, location, name,
+         notify, privacy, rounds, schedule, scoring, season, startDate, zDepth, zIterator, zNoKiosk
 
     public var title: String {
         switch self {
-        case .name:         return "Name"
-        case .startDate:    return "Start Date"
-        case .endDate:      return "End Date"
         case .chapter:      return "Chapter"
-        case .class:        return "Class"
-        case .format:       return "Format"
-        case .schedule:     return "Schedule"
-        case .privacy:      return "Privacy"
-        case .status:       return "Status"
-
-        case .scoring:      return "Fun Fly (Disable Scoring)"
-        case .timing:       return "Time Capturing"
-        case .rounds:       return "Rounds/Pack count"
-        case .season:       return "Season"
+        case .class:        return "Race Class"
+        case .content:      return "Description"
+        case .endDate:      return "End Date"
+        case .fee:          return "Race Fee"
+        case .feeRequired:  return "Payment Required to Join"
+        case .format:       return "Race Format"
         case .location:     return "Location"
-        case .shortDesc:    return "Short Description"
-        case .longDesc:     return "Description"
-        case .itinerary:    return "Itinerary"
-        case .notify:       return "Send Notification? **"
+        case .name:         return "Name"
+        case .notify:       return "Notify Pilots"
+        case .privacy:      return "Event Privacy"
+        case .rounds:       return "Pack Limit"
+        case .schedule:     return "Schedule"
+        case .scoring:      return "Fun Fly"
+        case .season:       return "Season"
+        case .startDate:    return "Start Date"
+        case .zDepth:       return "ZippyQ Depth"
+        case .zIterator:    return "Rest rounds"
+        case .zNoKiosk:     return "Allow Pilot Devices to Q"
+        }
+    }
+
+    public var tooltip: String? {
+        switch self {
+        case .chapter:      return nil
+        case .class:        return nil
+        case .content:      return "Enter the details of this event"
+        case .endDate:      return nil
+        case .fee:          return "Race Fee (USD)"
+        case .feeRequired:  return nil
+        case .format:       return nil
+        case .location:     return nil
+        case .name:         return "Name of this event"
+        case .notify:       return nil
+        case .privacy:      return "Allow everyone or only chapter members to see this event"
+        case .rounds:       return "Limit ZippyQ packs"
+        case .schedule:     return nil
+        case .scoring:      return "Fun Fly disables scoring"
+        case .season:       return nil
+        case .startDate:    return nil
+        case .zDepth:       return "Set how many times a pilot can be in the line"
+        case .zIterator:    return "Number of rounds to rest"
+        case .zNoKiosk:     return "Allow ZippyQ sign up from your phone"
         }
     }
 }
@@ -88,67 +109,75 @@ extension RaceFormRow {
             return QualifyingType(rawValue: raceData.qualifying)?.title
         case .privacy:
             return EventType(rawValue: raceData.privacy)?.title
-        case .status:
-            return RaceStatus(rawValue: raceData.status)?.title
+        case .fee:
+            return String(format: "$%.2f USD", raceData.fee)
+        case .feeRequired:
+            return raceData.feeRequired ? "" : nil // will be converted to Bool
         case .scoring:
             return raceData.funfly ? "" : nil // will be converted to Bool
-        case .timing:
-            return raceData.timing ? "" : nil // will be converted to Bool
         case .rounds:
             return "\(raceData.rounds)"
         case .season:
             return raceData.seasonName
         case .location:
             return raceData.courseName
-        case .shortDesc:
-            if let text = raceData.shortDesc, text.count > 0 {
-                return text.stripHTML(true).safeSubstring(to: 20).capitalized + "…"
-            }
-            return nil
-        case .longDesc:
-            if let text = raceData.longDesc, text.count > 0 {
-                return text.stripHTML(true).safeSubstring(to: 20).capitalized + "…"
-            }
-            return nil
-        case .itinerary:
-            if let text = raceData.itinerary, text.count > 0 {
+        case .content:
+            if let text = raceData.content, text.count > 0 {
                 return text.stripHTML(true).safeSubstring(to: 20).capitalized + "…"
             }
             return nil
         case .notify:
             return raceData.sendNotification ? "" : nil // will be converted to Bool
+        case .zDepth:
+            return "\(raceData.zippyqDepth)"
+        case .zIterator:
+            return "\(raceData.zippyqIterator)"
+        case .zNoKiosk:
+            return raceData.zippyqNoKiosk ? "" : nil // will be converted to Bool
         }
     }
 
-    var isRowRequired: Bool {
+    var isRequired: Bool {
         switch self {
-        case .name, .startDate:
+        case .name, .startDate, .chapter, .class, .format, .schedule:
             return true
         default:
             return false
         }
     }
 
-    func requiredValue(from data: RaceData) -> String? {
-        switch self {
-        case .name:         return data.name
-        case .startDate:    return data.startDateString
-        default:            return nil
-        }
-    }
-
     var formType: FormType {
         switch self {
-        case .name:
+        case .name, .fee, .rounds, .zDepth, .zIterator:
             return .textfield
         case .startDate, .endDate:
             return .datePicker
-        case .scoring, .timing, .notify:
+        case .scoring, .feeRequired, .notify, .zNoKiosk:
             return .switch
-        case .shortDesc, .longDesc, .itinerary:
+        case .content:
             return .textEditor
         default:
             return .textPicker
+        }
+    }
+
+    var keyboardType: UIKeyboardType {
+        switch self {
+        case .fee:
+            return UIKeyboardType.decimalPad
+        case .rounds, .zDepth, .zIterator:
+            return UIKeyboardType.numberPad
+        default:
+            return UIKeyboardType.default
+        }
+    }
+
+    var canQuickForm: Bool {
+        switch self.formType {
+        case .textEditor:
+            return false
+        default:
+            return true
         }
     }
 }

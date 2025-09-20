@@ -117,8 +117,8 @@ fileprivate extension StandingApi {
         let base = MGPWebConstant.viewZipperSeasonResults.rawValue
 
         let params: [(String, String)] = [
-            ("season1", "\(season.rawValue)Spring"),
-            ("season2", "\(season.rawValue)Summer"),
+            ("season1", "\(season.rawValue)Summer"),
+            ("season2", "\(season.rawValue)Spring"),
             ("exportcsv", "true")
         ]
 

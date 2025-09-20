@@ -17,6 +17,8 @@ extension UIViewController {
             return status_height + navi_height
         }
     }
+}
 
-    
+protocol ScrollToTop where Self: UIViewController {
+    func scrollToTop()
 }

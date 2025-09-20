@@ -12,35 +12,39 @@ import Alamofire
 public struct RaceData: Descriptable {
 
     public var raceId: String? = nil
-
     public var name: String? = nil
     public var startDateString: String? = nil
     public var endDateString: String? = nil
     public var chapterId: String
     public var chapterName: String
-
-    // Default race values, useful for new race creation
-    public var raceClass: String = RaceClass.open.rawValue
-    public var format: String = ScoringFormat.fastest3Laps.rawValue
-    public var qualifying: String = QualifyingType.controlled.rawValue
-    public var privacy: String = EventType.public.rawValue
-    public var status: String = RaceStatus.open.rawValue
-    public var funfly: Bool = false
-    public var timing: Bool = true
-    public var rounds: Int32 = 5
-
     public var seasonId: String? = nil
     public var seasonName: String? = nil
     public var courseId: String? = nil
     public var courseName: String? = nil
-    public var shortDesc: String? = nil
-    public var longDesc: String? = nil
-    public var itinerary: String? = nil
+    public var content: String? = nil
+
+    // Default race values, useful for new race creation
+    public var fee: Float32 = 0.0
+    public var feeRequired: Bool = false
+    public var format: String = ScoringFormat.fastest3Laps.rawValue
+    public var funfly: Bool = false
+    public var privacy: String = EventType.public.rawValue
+    public var qualifying: String = QualifyingType.open.rawValue
+    public var raceClass: String = RaceClass.open.rawValue
+    public var rounds: Int32 = 5
+    public var status: String = RaceStatus.open.rawValue
+    public var timing: Bool = true
+    public var zippyqDepth: Int32 = 5
+    public var zippyqIterator: Int32 = 1
+    public var zippyqNoKiosk: Bool = true
 
     // To be used to broadcast email and/or APNS after saving
     // See php code base that needs to be implemented on the API side
     // https://github.com/MultiGP/multigp-com/blob/09841623ae274fa8f62a3a4df1393cf1cf986b74/public_html/mgp/protected/modules/multigp/models/Race.php#L311
     public var sendNotification: Bool = false
+
+    // These properties don't belong on the Race table
+    fileprivate static let nonDiffableProperties = [ParamKey.fee, ParamKey.paymentRequiredToJoin]
 
     public init(with chapterId: ObjectId, chapterName: String) {
         self.chapterId = chapterId
@@ -65,61 +69,68 @@ public struct RaceData: Descriptable {
         self.qualifying = race.disableSlotAutoPopulation.rawValue
         self.privacy = race.type.rawValue
         self.status = race.status.rawValue
-
+        self.fee = race.fee
+        self.feeRequired = race.isPaymentRequiredToJoin
         self.funfly = race.scoringDisabled
         self.timing = race.captureTimeEnabled
-        self.rounds = race.cycleCount
         self.seasonId = race.seasonId
         self.seasonName = race.seasonName
         self.courseId = race.courseId
         self.courseName = race.courseName
-        self.shortDesc = race.description
-        self.longDesc = race.content
-        self.itinerary = race.itinerary
+        self.content = race.content
+        self.rounds = race.cycleCount
+        self.zippyqDepth = race.maxZippyqDepth
+        self.zippyqIterator = race.zippyqIterator
+        self.zippyqNoKiosk = race.zippyNoKiosk
     }
 
-    func toParams() -> Params {
+    public func toParams() -> Params {
         var params: Params = [:]
 
+        // These can't be overriden
         if name != nil { params[ParamKey.name] = name }
         if startDateString != nil { params[ParamKey.startDate] = startDateString }
 
-        params[ParamKey.endDate] = endDateString
+        params[ParamKey.endDate] = endDateString // TODO: This attribute is being ignored by the API
         params[ParamKey.chapterId] = chapterId
         params[ParamKey.chapterName] = chapterName
 
         params[ParamKey.raceClass] = raceClass
         params[ParamKey.scoringFormat] = format
+        params[ParamKey.disableSlotAutoPopulation] = qualifying
         params[ParamKey.type] = privacy
         params[ParamKey.status] = status
-        params[ParamKey.disableSlotAutoPopulation] = qualifying
-
-        // set a default values for ZippyQ
-        if qualifying == QualifyingType.open.rawValue {
-            params[ParamKey.maxZippyqDepth] = 5
-            params[ParamKey.zippyqIterator] = 0
-            params[ParamKey.maxBatteriesForQualifying] = 10
-        }
-
+        params[ParamKey.fee] = fee
+        params[ParamKey.paymentRequiredToJoin] = feeRequired.intValue
         params[ParamKey.scoringDisabled] = funfly
         params[ParamKey.captureTimeEnabled] = timing
-        params[ParamKey.cycleCount] = rounds
 
-        if seasonId != nil { params[ParamKey.seasonId] = seasonId }
-        if courseId != nil { params[ParamKey.courseId] = courseId }
-
-        params[ParamKey.description] = shortDesc
-        params[ParamKey.content] = longDesc
-        params[ParamKey.itineraryContent] = itinerary
+        params[ParamKey.seasonId] = seasonId
+        params[ParamKey.courseId] = courseId
+        params[ParamKey.content] = content
         params[ParamKey.sendNotification] = sendNotification
+
+        params[ParamKey.cycleCount] = rounds
+        params[ParamKey.maxZippyqDepth] = zippyqDepth
+        params[ParamKey.zippyqIterator] = zippyqIterator
+        params[ParamKey.zippyNoKiosk] = zippyqNoKiosk.intValue
 
         return params
     }
 
-    func toDiffParams(_ beforeData: RaceData) -> Params {
+    public func toDiffParams(_ beforeData: RaceData) -> Params {
         let before = beforeData.toParams()
         let after = toParams()
-        return before.diff(with: after)
+        var diff = before.diff(with: after)
+
+        // reinsert "nonDiffableProperties" keys from `after`
+        Self.nonDiffableProperties.forEach { key in
+            if let value = after[key] {
+                diff[key] = value
+            }
+        }
+
+        return diff
     }
 }
 

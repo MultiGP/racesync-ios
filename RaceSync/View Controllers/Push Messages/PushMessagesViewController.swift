@@ -61,22 +61,12 @@ class PushMessagesViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = "Messages"
-
-        let leftBtnItem = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
-        navigationItem.leftBarButtonItem = leftBtnItem
-
-        let rightBtnItem = UIBarButtonItem(title: "Clear All", style: .done, target: self, action: #selector(didPressClearButton))
-        rightBtnItem.isEnabled = false
-        if #available(iOS 16.0, *) { rightBtnItem.isHidden = true }
-        navigationItem.rightBarButtonItem = rightBtnItem
-
         NotificationCenter.default.addObserver(self, selector: #selector(handlePushMessageRegistration(_:)), name: .registeredForPushMessages, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleNewPushMessage(_:)), name: .newPushMessageReceived, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
 
         setupLayout()
-        populateDataSource()
+        loadContent()
 
         if let message = message {
             presentContent(from: message, animated: false)
@@ -107,6 +97,8 @@ class PushMessagesViewController: UIViewController {
 
     fileprivate func setupLayout() {
 
+        configureNavigationItems()
+
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
@@ -115,14 +107,18 @@ class PushMessagesViewController: UIViewController {
         }
     }
 
-    fileprivate func populateDataSource() {
-        let messages = PushMessagesController.shared.store.getAllMessages()
-        messageViewModels = PushMessageViewModel.viewModels(with: messages)
+    fileprivate func configureNavigationItems() {
+        title = "Messages"
 
-        updateClearButton()
-        tableView.reloadData()
+        let leftBtnItem = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
+        navigationItem.leftBarButtonItem = leftBtnItem
+
+        let rightBtnItem = UIBarButtonItem(title: "Clear All", style: .done, target: self, action: #selector(didPressClearButton))
+        rightBtnItem.isEnabled = false
+        if #available(iOS 16.0, *) { rightBtnItem.isHidden = true }
+        navigationItem.rightBarButtonItem = rightBtnItem
     }
-
+    
     fileprivate func updateClearButton() {
         let item = navigationItem.rightBarButtonItem
 
@@ -132,29 +128,13 @@ class PushMessagesViewController: UIViewController {
         item?.isEnabled = messageViewModels.count > 0
     }
 
-    fileprivate func populateDummySource() {
-
-        //        messages += [
-        //            PushMessage(title: "📣 Round 28 is up next", detail: "Get ready to race on round 28. Your channel is R1 LHCP.", timestamp: 1747793038),
-        //            PushMessage(title: "📣 Round 17 is up next", detail: "Get ready to race on round 17. Your channel is R5 LHCP.", timestamp: 1747790038),
-        //            PushMessage(title: "📣 Round 7 is up next", detail: "Get ready to race on round 7. Your channel is R2 RHCP.", timestamp: 1747779532),
-        //            PushMessage(title: "📣 Round 2 is up next", detail: "Get ready to race on round 2. Your channel is R1 LHCP.", timestamp: 1747778078),
-        //            PushMessage(title: "📌 NERDs published a new race!", detail: "Save the date! July 22nd NERDs will host '2025 MultiGP Summer Global Qualifier'.", timestamp: 1747774078),
-        //            PushMessage(title: "💸 Payment received!", detail: "HeadsupFPV paid $23.00 USD for '2025 MultiGP Spring GQ - Last Chance'. 6 pilots have paid so far.", timestamp: 1747772048),
-        //            PushMessage(title: "✅ HeadsupFPV joing your race", detail: "HeadsupFPV joined '2025 MultiGP Spring GQ - Last Chance'. 12 pilots have joined so far!", timestamp: 1747773038)
-        //        ]
-        //
-        //        messageViewModels = PushMessageViewModel.viewModels(with: messages)
-        //        tableView.reloadData()
-    }
-
     // MARK: - Actions
 
     fileprivate func presentContent(from message: PushMessage, animated: Bool) {
 
         if message.type == "zippyq_next_round" {
             guard !message.raceId.isEmpty else { return }
-            let vc = RaceTabBarController(with: message.raceId, raceTab: .schedule)
+            let vc = RaceTabBarController(with: message.raceId, selectedTab: .schedule)
             navigationController?.pushViewController(vc, animated: animated)
             
         } else if message.type == "app_store_review" {
@@ -163,6 +143,41 @@ class PushMessagesViewController: UIViewController {
                 UIApplication.shared.open(url)
             }
         }
+    }
+
+    @objc fileprivate func didPressClearButton() {
+
+        ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Clear all messages?", destructiveTitle: "Yes", completion: { (action) in
+            PushMessagesController.shared.clearAllPushMessages()
+            self.loadContent()
+        }, cancel: nil)
+    }
+
+    @objc fileprivate func didPressCloseButton() {
+        dismiss(animated: true)
+    }
+
+    @objc fileprivate func didPressRequestNotificationsButton() {
+        isLoading = true
+        PushMessagesController.shared.requestAuthorizationPushNotifications()
+    }
+
+    @objc fileprivate func didPressShowSettingsButton() {
+        AppControl.shared.openAppSettings()
+    }
+
+    @objc fileprivate func appDidBecomeActive() {
+        resetTableViewForPushStatus()
+    }
+
+    // MARK: - Data Update
+
+    fileprivate func loadContent() {
+        let messages = PushMessagesController.shared.store.getAllMessages()
+        messageViewModels = PushMessageViewModel.viewModels(with: messages)
+
+        updateClearButton()
+        tableView.reloadData()
     }
 
     fileprivate func resetTableViewForPushStatus() {
@@ -201,29 +216,19 @@ class PushMessagesViewController: UIViewController {
         }
     }
 
-    @objc fileprivate func didPressClearButton() {
-
-        ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Clear all messages?", destructiveTitle: "Yes", completion: { (action) in
-            PushMessagesController.shared.clearAllPushMessages()
-            self.populateDataSource()
-        }, cancel: nil)
-    }
-
-    @objc fileprivate func didPressCloseButton() {
-        dismiss(animated: true)
-    }
-
-    @objc fileprivate func didPressRequestNotificationsButton() {
-        isLoading = true
-        PushMessagesController.shared.requestAuthorizationPushNotifications()
-    }
-
-    @objc fileprivate func didPressShowSettingsButton() {
-        ApplicationControl.shared.openAppSettings()
-    }
-
-    @objc fileprivate func appDidBecomeActive() {
-        resetTableViewForPushStatus()
+    fileprivate func populateDummySource() {
+//        messages += [
+//            PushMessage(title: "📣 Round 28 is up next", detail: "Get ready to race on round 28. Your channel is R1 LHCP.", timestamp: 1747793038),
+//            PushMessage(title: "📣 Round 17 is up next", detail: "Get ready to race on round 17. Your channel is R5 LHCP.", timestamp: 1747790038),
+//            PushMessage(title: "📣 Round 7 is up next", detail: "Get ready to race on round 7. Your channel is R2 RHCP.", timestamp: 1747779532),
+//            PushMessage(title: "📣 Round 2 is up next", detail: "Get ready to race on round 2. Your channel is R1 LHCP.", timestamp: 1747778078),
+//            PushMessage(title: "📌 NERDs published a new race!", detail: "Save the date! July 22nd NERDs will host '2025 MultiGP Summer Global Qualifier'.", timestamp: 1747774078),
+//            PushMessage(title: "💸 Payment received!", detail: "HeadsupFPV paid $23.00 USD for '2025 MultiGP Spring GQ - Last Chance'. 6 pilots have paid so far.", timestamp: 1747772048),
+//            PushMessage(title: "✅ HeadsupFPV joing your race", detail: "HeadsupFPV joined '2025 MultiGP Spring GQ - Last Chance'. 12 pilots have joined so far!", timestamp: 1747773038)
+//        ]
+//
+//        messageViewModels = PushMessageViewModel.viewModels(with: messages)
+//        tableView.reloadData()
     }
 }
 

@@ -22,7 +22,7 @@ class JoinButton: CustomButton {
     /// compact style to be used in small cells, with no interactivity
     var isCompact: Bool = false
 
-    var joinState: JoinState = .join {
+    var joinState: JoinState = .notJoined {
         didSet {
             updateLayout()
         }
@@ -79,25 +79,31 @@ class JoinButton: CustomButton {
     fileprivate func updateLayout() {
 
         UIView.performWithoutAnimation {
-            if isCompact && joinState == .join {
-                isHidden = true
-                return
-            } else {
-                isHidden = false
+            var state = joinState
+            isHidden = false
+
+            if isCompact {
+                if state == .notJoined {
+                    isHidden = true
+                    return
+                }
+                else if case .notPaid = state {
+                    state = .joined // display as joined
+                }
             }
 
-            let icon = joinState.icon?.image(withColor: joinState.titleColor.withAlphaComponent(isCompact ? 1 : 0.4))
+            let icon = state.icon?.image(withColor: state.titleColor.withAlphaComponent(isCompact ? 1 : 0.4))
 
-            setTitle(isCompact ? nil : joinState.title, for: .normal)
-            setTitleColor(joinState.titleColor, for: .normal)
+            setTitle(isCompact ? nil : state.title, for: .normal)
+            setTitleColor(state.titleColor, for: .normal)
             setImage(icon, for: .normal)
-            backgroundColor = joinState.fillColor
-            titleLabel?.font = joinState.font
-            tintColor = joinState.titleColor
-            imageView?.tintColor = joinState.titleColor
+            backgroundColor = state.fillColor
+            titleLabel?.font = state.font
+            tintColor = state.titleColor
+            imageView?.tintColor = state.titleColor
             isUserInteractionEnabled = !isCompact
 
-            if let borderColor = joinState.outlineColor {
+            if let borderColor = state.outlineColor {
                 layer.borderColor = borderColor.cgColor
                 layer.borderWidth = 1
             } else {
@@ -185,40 +191,48 @@ extension JoinState {
 
     var icon: UIImage? {
         switch self {
-        case .joined:   return UIImage(named: "icn_button_join")?.withRenderingMode(.alwaysOriginal)
-        case .closed:   return UIImage(named: "icn_button_closed")?.withRenderingMode(.alwaysOriginal)
-        default:        return nil
+        case .joined:       return UIImage(named: "icn_button_join")?.withRenderingMode(.alwaysOriginal)
+        case .closed:       return UIImage(named: "icn_button_closed")?.withRenderingMode(.alwaysOriginal)
+        default:            return nil
         }
     }
 
     var fillColor: UIColor {
         switch self {
-        case .joined:   return Color.green
-        case .join:     return Color.white
-        case .closed:    return Color.gray100
+        case .notJoined:    return Color.white
+        case .joined:       return Color.green
+        case .closed:       return Color.gray100
+        case .notPaid(fee: _):
+                            return Color.white
         }
     }
 
     var outlineColor: UIColor? {
         switch self {
-        case .join:     return Color.green
-        default:        return nil
+        case .notJoined:    return Color.green
+        case .notPaid(fee: _):
+                            return Color.green
+        default:            return nil
         }
     }
 
     var titleColor: UIColor {
         switch self {
-        case .joined:   return Color.white
-        case .join:     return Color.green
-        case .closed:   return Color.black
+        case .notJoined:    return Color.green
+        case .joined:       return Color.white
+        case .closed:       return Color.black
+        case .notPaid(fee: _):
+                            return Color.green
         }
     }
 
     var font: UIFont {
         switch self {
-        case .joined:   return UIFont.systemFont(ofSize: 14, weight: .regular)
-        case .join:     return UIFont.systemFont(ofSize: 14, weight: .bold)
-        case .closed:   return UIFont.systemFont(ofSize: 14, weight: .regular)
+        case .joined:       return UIFont.systemFont(ofSize: 14, weight: .regular)
+        case .notJoined:    return UIFont.systemFont(ofSize: 14, weight: .bold)
+        case .closed:       return UIFont.systemFont(ofSize: 14, weight: .regular)
+        case .notPaid(fee: _):
+                            return UIFont.systemFont(ofSize: 14, weight: .bold)
         }
     }
 

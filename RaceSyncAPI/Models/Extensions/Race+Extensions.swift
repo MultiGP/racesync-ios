@@ -58,3 +58,40 @@ public extension Race {
         return (maxZippyqDepth > 0 && disableSlotAutoPopulation == .open)
     }
 }
+
+// MARK: - Payments
+
+public extension Race {
+
+    var isPayable: Bool {
+        return fee > 0 && amountPaid == 0
+    }
+
+    var isPaid: Bool {
+        return fee > 0 && amountPaid > 0
+    }
+
+    var requiresPayment: Bool {
+        return fee > 0 && amountPaid == 0 && isPaymentRequiredToJoin
+    }
+
+    var canManagePayments: Bool {
+        return fee > 0 && isMyChapter
+    }
+
+    func getMyPaymentUrl() -> URL? {
+        guard let myUser = APIServices.shared.myUser else { return nil }
+
+        let baseUrl = MGPWeb.getUrl(for: .processPayment)
+        let params: [(String, String)] = [
+            ("raceId", "\(self.id)"),
+            ("pilotId", "\(myUser.id)"),
+            ("user-agent", "ios")
+        ]
+
+        var components = URLComponents(string: baseUrl)
+        components?.queryItems = params.map { URLQueryItem(name: $0.0, value: $0.1) }
+
+        return components?.url
+    }
+}

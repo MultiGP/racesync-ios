@@ -11,31 +11,25 @@ import UIKit
 extension String {
 
     func replaceHTMLColorTag(with color: UIColor) -> String {
-
         let colorHex = color.toHexString()
-        let regexPattern = #"color:\s*#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})"#
-
-        let updatedString = self.replacingOccurrences(
-            of: regexPattern,
-            with: colorHex,
-            options: .regularExpression,
-            range: nil
-        )
-
-        return updatedString
+        let pattern = #"color:\s*#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})"#
+        return self.replacingOccurrences(of: pattern, with: colorHex, options: .regularExpression, range: nil)
     }
 
     func stripHTMLFontTag() -> String {
+        let pattern = #"font-family:\s*[^;"]*;?"#
+        return self.replacingOccurrences(of: pattern, with: "", options: .regularExpression, range: nil )
+    }
 
-        let regexPattern = #"font-family:\s*[^;"]*;?"#
+    func stripHTMLEdges() -> String {
+        var result = self
 
-        let updatedString = self.replacingOccurrences(
-                of: regexPattern,
-                with: "",
-                options: .regularExpression,
-                range: nil
-            )
+        let emptyParagraphPattern = #"<p>(&nbsp;|\s)*</p>"#
+        if let regex = try? NSRegularExpression(pattern: emptyParagraphPattern, options: [.caseInsensitive]) {
+            let range = NSRange(result.startIndex..<result.endIndex, in: result)
+            result = regex.stringByReplacingMatches(in: result, options: [], range: range, withTemplate: "")
+        }
 
-        return updatedString
+        return result.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

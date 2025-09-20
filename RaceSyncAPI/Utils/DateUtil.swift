@@ -80,6 +80,12 @@ public extension DateUtil {
         return formatter
     }()
 
+    static let displayDayFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EE, MMM d"
+        return formatter
+    }()
+
     static let displayDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM d, yyyy"

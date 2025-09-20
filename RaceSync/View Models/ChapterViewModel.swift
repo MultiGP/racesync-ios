@@ -46,7 +46,7 @@ extension ChapterViewModel {
     }
 
     static func joinState(for chapter: Chapter) -> JoinState {
-        return chapter.isJoined ? .joined : .join
+        return chapter.isJoined ? .joined : .notJoined
     }
 }
 

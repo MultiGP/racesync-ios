@@ -22,8 +22,8 @@ class TextPickerViewController: FormBaseViewController {
                 activityIndicatorView.startAnimating()
             }
             else {
-                navigationItem.rightBarButtonItem = rightBarButtonItem
                 activityIndicatorView.stopAnimating()
+                navigationItem.rightBarButtonItem = rightBarButtonItem
             }
         }
     }
@@ -105,6 +105,8 @@ class TextPickerViewController: FormBaseViewController {
 
         if let selectedItem = selectedItem, let index = items.firstIndex(of: selectedItem) {
             pickerView.selectRow(index, animated: false)
+        } else {
+            pickerView.selectRow(0, animated: false)
         }
 
         configureButtonBarItems()

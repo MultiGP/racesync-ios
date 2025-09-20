@@ -32,7 +32,8 @@ public class Race: Mappable, Joinable, Descriptable {
     public var cycleCount: Int32 = 0
     public var disableSlotAutoPopulation: QualifyingType = .controlled
     public var maxZippyqDepth: Int32 = 0
-    public var zippyqIterator: Bool = false
+    public var zippyqIterator: Int32 = 0
+    public var zippyNoKiosk: Bool = true
     public var maxBatteriesForQualifying: Int32 = 0
 
     public var urlName: String = ""
@@ -70,6 +71,11 @@ public class Race: Mappable, Joinable, Descriptable {
     public var batteryRestriction: String = ""
     public var propSizeRestriction: String = ""
 
+    public var fee: Float = 0
+    public var isPaymentRequiredToJoin: Bool = false
+    public var amountDue: Float = 0
+    public var amountPaid: Float = 0
+
     public var entries: [RaceEntry]? = nil
     public var schedule: RaceSchedule? = nil
     public var results: [ResultEntry]? = nil
@@ -79,7 +85,7 @@ public class Race: Mappable, Joinable, Descriptable {
 
     // MARK: - Initialization
 
-    fileprivate static let requiredProperties = [/*ParamKey.id, */ParamKey.name, ParamKey.chapterId, ParamKey.ownerId]
+    fileprivate static let requiredProperties = [ParamKey.id, ParamKey.name, ParamKey.chapterId, ParamKey.ownerId]
 
     public required convenience init?(map: Map) {
         for requiredProperty in Self.requiredProperties {
@@ -120,6 +126,7 @@ public class Race: Mappable, Joinable, Descriptable {
         disableSlotAutoPopulation <- (map[ParamKey.disableSlotAutoPopulation], EnumTransform<QualifyingType>())
         maxZippyqDepth <- (map[ParamKey.maxZippyqDepth], IntegerTransform())
         zippyqIterator <- map[ParamKey.zippyqIterator]
+        zippyNoKiosk <- map[ParamKey.zippyNoKiosk]
         maxBatteriesForQualifying <- (map[ParamKey.maxBatteriesForQualifying], IntegerTransform())
 
         urlName <- map[ParamKey.urlName]
@@ -156,6 +163,11 @@ public class Race: Mappable, Joinable, Descriptable {
         sizeRestriction <- map[ParamKey.sizeRestriction]
         batteryRestriction <- map[ParamKey.batteryRestriction]
         propSizeRestriction <- map[ParamKey.propellerSizeRestriction]
+
+        fee <- (map[ParamKey.fee], FloatTransform())
+        isPaymentRequiredToJoin <- (map[ParamKey.paymentRequiredToJoin], BooleanTransform())
+        amountDue <- (map[ParamKey.amountDue], FloatTransform())
+        amountPaid <- (map[ParamKey.amountPaid], FloatTransform())
 
         entries <- map[ParamKey.entries]
         schedule <- map[ParamKey.schedule]

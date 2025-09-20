@@ -13,14 +13,23 @@ import RaceSyncAPI
 
 enum RaceTabs: Int {
     case details, results, schedule
+
+    static let `default`: Self = .details
 }
 
 class RaceTabBarController: UITabBarController {
 
     // MARK: - Public Variables
 
-    var raceId: ObjectId
-    var race: Race?
+    let raceController: RaceController
+
+    var raceId: ObjectId {
+        get { return raceController.raceId }
+    }
+
+    var race: Race? {
+        get { return raceController.race }
+    }
 
     var isDismissable: Bool = false {
         didSet {
@@ -33,16 +42,17 @@ class RaceTabBarController: UITabBarController {
         }
     }
 
-    var isLoading: Bool = false {
-        didSet {
-            if isLoading { activityIndicatorView.startAnimating() }
-            else { activityIndicatorView.stopAnimating() }
-        }
-    }
-
     override var selectedIndex: Int {
         didSet {
             didSelectedIndex(selectedIndex)
+        }
+    }
+
+    override var title: String? {
+        didSet {
+            titleButton.setTitle(title, for: .normal)
+            titleButton.invalidateIntrinsicContentSize()
+            titleButton.sizeToFit()
         }
     }
 
@@ -55,36 +65,41 @@ class RaceTabBarController: UITabBarController {
         button.titleLabel?.textAlignment = .center
         button.setTitleColor(Color.black, for: .normal)
         button.setTitle(self.title, for: .normal)
+        button.titleLabel?.lineBreakMode = .byClipping
         return button
     }()
 
-    fileprivate lazy var activityIndicatorView: UIActivityIndicatorView = {
-        return UIActivityIndicatorView(style: .medium)
+    fileprivate lazy var activityIndicatorView: ActivityLoadingView = {
+        let view = ActivityLoadingView(style: .medium)
+        view.title = "Loading Race..."
+        view.hidesWhenStopped = true
+        return view
     }()
 
     fileprivate var initialSelectedIndex: Int
     fileprivate var emptyStateError: EmptyStateViewModel?
 
-    fileprivate let raceApi = RaceApi()
-
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
+        static let buttonSpacing: CGFloat = 12
     }
 
     // MARK: - Initialization
 
-    init(with race: Race, raceTab: RaceTabs = .details) {
-        self.raceId = race.id
-        self.race = race
-        self.initialSelectedIndex = raceTab.rawValue
+    init(with race: Race, selectedTab: RaceTabs = .details) {
+        self.raceController = RaceController(with: race)
+        self.initialSelectedIndex = selectedTab.rawValue
         super.init(nibName: nil, bundle: nil)
+
+        self.raceController.parentViewController = self
     }
 
-    init(with raceId: ObjectId, raceTab: RaceTabs = .details) {
-        self.raceId = raceId
-        self.race = nil
-        self.initialSelectedIndex = raceTab.rawValue
+    init(with raceId: ObjectId, selectedTab: RaceTabs = .details) {
+        self.raceController = RaceController(id: raceId)
+        self.initialSelectedIndex = selectedTab.rawValue
         super.init(nibName: nil, bundle: nil)
+
+        self.raceController.parentViewController = self
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -97,7 +112,7 @@ class RaceTabBarController: UITabBarController {
         super.viewDidLoad()
 
         setupLayout()
-        loadRaceView()
+        loadRace()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -112,10 +127,11 @@ class RaceTabBarController: UITabBarController {
 
     fileprivate func setupLayout() {
 
-        title = ""
-        view.backgroundColor = Color.white
+        // Using a custom button title in this case, to display the id of a Race on tap
+        navigationItem.titleView = titleButton
 
-        tabBar.isHidden = true
+        view.backgroundColor = Color.white
+        tabBar.isHidden = true // hiding temporarily, while the view loads
         delegate = self
 
         view.addSubview(activityIndicatorView)
@@ -124,32 +140,27 @@ class RaceTabBarController: UITabBarController {
         }
     }
 
-    fileprivate func configureViewControllers(with race: Race) {
+    fileprivate func configureViewControllers() {
+
+        let controller = raceController
 
         var vcs = [UIViewController]()
-        vcs += [RaceDetailViewController(with: race)]
-        vcs += [RacePilotsViewController(with: race)]
-        vcs += [RaceScheduleViewController(with: race)]
+        vcs += [RaceDetailViewController(with: controller)]
+        vcs += [RacePilotsViewController(with: controller)]
+        vcs += [RaceScheduleViewController(with: controller)]
 
-        for vc in vcs { vc.willMove(toParent: self) }
-        viewControllers = vcs
-        for vc in vcs { vc.didMove(toParent: self) }
+        if let race = race, race.canManagePayments {
+            vcs += [RacePaymentsViewController(with: controller)]
+        }
 
-        // Dirty little trick to select the first tab bar item
-        self.selectedIndex = initialSelectedIndex+1
-        self.selectedIndex = initialSelectedIndex
+        configureTabBarController(with: vcs, selectedIndex: initialSelectedIndex)
 
-        // Trick to pre-load each view controller
-        preloadTabs()
         tabBar.isHidden = false
-
-        // Using a custom button title in this case, to display the id of a Race on tap
-        navigationItem.titleView = titleButton
     }
 
     // MARK: - Actions
 
-    func selectTab(_ tab: RaceTabs) {
+    fileprivate func selectTab(_ tab: RaceTabs) {
         selectedIndex = tab.rawValue
     }
 
@@ -157,14 +168,7 @@ class RaceTabBarController: UITabBarController {
         guard let vc = viewControllers?[index] else { return }
 
         title = vc.title
-        titleButton.setTitle(title, for: .normal)
-        titleButton.sizeToFit()
-
         navigationItem.rightBarButtonItem = vc.navigationItem.rightBarButtonItem
-    }
-
-    @objc fileprivate func didPressCloseButton() {
-        dismiss(animated: true)
     }
 
     @objc fileprivate func didPressTitleButton() {
@@ -179,7 +183,48 @@ class RaceTabBarController: UITabBarController {
         }
     }
 
-    // MARK: - Error
+    @objc fileprivate func didPressCloseButton() {
+        dismiss(animated: true)
+    }
+
+    // MARK: - Data Update
+
+    fileprivate func loadRace() {
+        setLoading(true)
+
+        raceController.loadRace { [weak self] race, error in
+            guard let self = self else { return }
+            self.setLoading(false)
+
+            if let error = error {
+                self.handleError(error)
+            } else {
+                self.configureViewControllers()
+            }
+        }
+    }
+
+    public func reloadRace() {
+        raceController.loadRace { [weak self] race, error in
+            guard let self = self else { return }
+
+            if error != nil {
+                self.reloadRaceTabs()
+            }
+        }
+    }
+
+    public func reloadRaceTabs() {
+        viewControllers?
+            .compactMap { $0 as? RaceTabbable }
+            .forEach { $0.reloadContent() }
+    }
+
+    fileprivate func setLoading(_ loading: Bool) {
+        activityIndicatorView.isLoading = loading
+    }
+
+    // MARK: - Error Handling
 
     fileprivate func handleError(_ error: Error) {
 
@@ -198,73 +243,6 @@ class RaceTabBarController: UITabBarController {
         }
 
         scrollView.reloadEmptyDataSet()
-    }
-}
-
-extension RaceTabBarController {
-
-    public func loadRaceView() {
-        guard !isLoading else { return }
-
-        isLoading = true
-
-        raceApi.view(race: raceId) { [weak self] (race, error) in
-            self?.isLoading = false
-
-            if let race = race, let raceId = self?.raceId {
-
-                // TODO: Temporary hack since race/view API doesn't include the raceId & raceOwnerName attributes just yet
-                // See issue https://github.com/MultiGP/multigp-com/issues/88
-                race.id = raceId
-                race.ownerUserName = self?.race?.ownerUserName ?? ""
-
-                self?.race = race
-                self?.configureViewControllers(with: race)
-            } else if let error = error {
-                self?.handleError(error)
-            }
-        }
-    }
-
-    public func reloadRaceView() {
-        guard !isLoading else { return }
-
-        raceApi.view(race: raceId) { [weak self] (race, error) in
-            guard let race = race, let raceId = self?.raceId , let vcs = self?.viewControllers else { return }
-
-            // TODO: Temporary hack since race/view API doesn't include the raceId & raceOwnerName attributes just yet
-            // See issue https://github.com/MultiGP/multigp-com/issues/88
-            race.id = raceId
-            race.ownerUserName = self?.race?.ownerUserName ?? ""
-
-            self?.race = race
-
-            for viewcontroller in vcs {
-                guard var vc = viewcontroller as? RaceTabbable else { continue }
-                vc.race = race
-                vc.reloadContent()
-            }
-        }
-    }
-
-    @objc public func didPressShareButton() {
-
-        guard  let raceURL = MGPWeb.getURL(for: .raceView, value: raceId) else { return }
-
-        var items: [Any] = [raceURL]
-        var activities: [UIActivity] = [CopyLinkActivity()]
-
-        // Calendar integration
-        if let event = race?.createCalendarEvent(with: raceId) {
-            items += [event]
-            activities += [CalendarActivity()]
-        }
-
-        activities += [MultiGPActivity()]
-
-        let vc = UIActivityViewController(activityItems: items, applicationActivities: activities)
-        vc.excludeAllActivityTypes(except: [.airDrop])
-        present(vc, animated: true)
     }
 }
 
@@ -297,6 +275,9 @@ extension RaceTabBarController: UITabBarControllerDelegate {
     }
 
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+
+        (tabBar as? RoundedSelectionTabBar)?.updateSelectionFrame(animated: true)
+
         if let index = viewControllers?.lastIndex(of: viewController) {
             didSelectedIndex(index)
         }

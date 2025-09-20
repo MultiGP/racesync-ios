@@ -15,27 +15,10 @@ class SettingsViewController: UIViewController {
 
     // MARK: - Private Variables
 
-    fileprivate lazy var headerView: UIView = {
-        let view = UIView()
-        view.backgroundColor = Color.navigationBarColor
-        view.tintColor = Color.blue
-
-        let separatorLine = UIView()
-        separatorLine.backgroundColor = Color.gray100
-        view.addSubview(separatorLine)
-        separatorLine.snp.makeConstraints {
-            $0.height.equalTo(0.5)
-            $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(view.snp.bottom)
-        }
-        return view
-    }()
-
    fileprivate lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.tableHeaderView = tableHeaderView
         tableView.tableFooterView = UIView()
         tableView.register(cellType: FormTableViewCell.self)
 
@@ -44,21 +27,6 @@ class SettingsViewController: UIViewController {
         tableView.backgroundView = backgroundView
 
         return tableView
-    }()
-
-    fileprivate lazy var tableHeaderView: UIView = {
-        let view = UIView()
-
-        let imageView = UIImageView(image: UIImage(named: "icn_settings_header"))
-        view.addSubview(imageView)
-        imageView.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(-150)
-        }
-
-        UIView.addParallaxToView(imageView)
-
-        return view
     }()
 
     fileprivate var sections = [Section: [Row]]()
@@ -108,23 +76,20 @@ class SettingsViewController: UIViewController {
 
     fileprivate func setupLayout() {
 
-        view.addSubview(headerView)
-        headerView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            $0.height.equalTo(51)
-            $0.leading.trailing.equalToSuperview()
-        }
-
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
-            $0.top.equalTo(headerView.snp.bottom)
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(view.snp.bottom)
         }
     }
 
     fileprivate func configureNavigationItems() {
-        tabBarItem = UITabBarItem(title: "Settings", image: UIImage(systemName:"gearshape"), selectedImage: UIImage(systemName:"gearshape.fill"))
+        title = "Settings"
+        tabBarItem = UITabBarItem(title: title, image: SystemImg.gearshape, selectedImage: SystemImg.gearshapeFill)
+
+        let leftBtnItem = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
+        navigationItem.leftBarButtonItem = leftBtnItem
     }
 
     // MARK: - Actions
@@ -132,18 +97,17 @@ class SettingsViewController: UIViewController {
     func loadSections() {
 
         sections = {
-            var resources: [Row] = [.tracksGuide, .buildGuide, .seasonRules, .visitSite]
+            let resources: [Row] = [.tracksGuide, .buildGuide, .seasonRules, .visitSite]
             var auth: [Row] = [.logout]
-            var about: [Row] = []
+            var about: [Row] = [.joinBeta]
 
-           if UIApplication.shared.supportsAlternateIcons { about += [.appicon] }
-           about += [.joinBeta]
+            if let user = APIServices.shared.myUser, user.isDevTeam, isDevModeEnabled {
+                auth += [.switchEnv]
+            }
 
-           if let user = APIServices.shared.myUser, user.isDevTeam, isDevModeEnabled {
-               auth += [.switchEnv]
-           }
+            if UIApplication.shared.supportsAlternateIcons { about += [.appicon] }
 
-           return [.notifications: [Row.notifications], .resources: resources, .about: about, .auth: auth]
+            return [.notifications: [Row.notifications], .resources: resources, .about: about, .auth: auth]
        }()
     }
 
@@ -165,7 +129,7 @@ class SettingsViewController: UIViewController {
                 controller.requestAuthorizationPushNotifications()
                 isTogglingPush = true
             } else {
-                ApplicationControl.shared.openAppSettings()
+                AppControl.shared.openAppSettings()
             }
         } else {
             ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Do you want to stop receiving push notifications?", destructiveTitle: "Yes, stop", completion: { (action) in
@@ -194,7 +158,7 @@ class SettingsViewController: UIViewController {
 
     fileprivate func logout() {
         ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Logout from RaceSync?", destructiveTitle: "Yes, log out", completion: { (action) in
-            ApplicationControl.shared.logout(forced: true)
+            AppControl.shared.logout(forced: true)
         }, cancel: nil)
     }
 
@@ -203,7 +167,7 @@ class SettingsViewController: UIViewController {
         let environment = nextEnvironment()
 
         ActionSheetUtil.presentDestructiveActionSheet(withTitle: "Switch to \(environment.title)?", destructiveTitle: "Yes, switch", completion: { (action) in
-            ApplicationControl.shared.logout(switchTo: environment)
+            AppControl.shared.logout(switchTo: environment)
         }, cancel: nil)
     }
 

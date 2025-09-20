@@ -15,6 +15,8 @@ class RaceViewModel: Descriptable {
     let race: Race
 
     let titleLabel: String
+    let subtitleLabel: NSAttributedString
+    let dateLabel: String?
     let startDateLabel: String?
     let startDateDesc: String?
     let endDateLabel: String?
@@ -23,9 +25,8 @@ class RaceViewModel: Descriptable {
     let fullLocationLabel: String
     let distanceLabel: String
     let distance: Double
-    let joinState: JoinState
     let participantCount: Int
-    let classLabel: String
+    let feeLabel: String
     let chapterLabel: String
     let ownerLabel: String
     let seasonLabel: String
@@ -36,27 +37,22 @@ class RaceViewModel: Descriptable {
     init(with race: Race) {
         self.race = race
         self.titleLabel = race.name
+        self.subtitleLabel = Self.subtitleLabelAttributedString(for: race)
+        self.dateLabel = Self.combinedDateLabelString(for: race.startDate, and: race.endDate) // "Sat Sept 14 @ 9:00 AM" or "Sept 14 - Sept 16"
         self.startDateLabel = Self.dateLabelString(for: race.startDate) // "Sat Sept 14 @ 9:00 AM"
         self.startDateDesc = Self.fullDateLabelString(for: race.startDate) // "Saturday, September 14th @ 9:00 AM"
         self.endDateLabel = Self.dateLabelString(for: race.endDate) // "Sat Sept 14 @ 5:00 PM"
         self.endDateDesc = Self.fullDateLabelString(for: race.startDate, and: race.endDate) // "Saturday, September 14th @ 5:00 PM" or "@ 5:00 PM"
-        self.locationLabel = Self.locationLabelString(for: race)
-        self.fullLocationLabel = Self.fullLocationLabelString(for: race)
+        self.locationLabel = Self.locationLabelString(for: race).stripHTML()
+        self.fullLocationLabel = Self.fullLocationLabelString(for: race).stripHTML()
         self.distanceLabel = Self.distanceLabelString(for: race) // "309.4 mi" or "122 kms"
         self.distance = Self.distance(for: race)
-        self.joinState = Self.joinState(for: race)
         self.participantCount = Int(race.participantCount) ?? 0
         self.chapterLabel = race.chapterName
         self.ownerLabel = race.ownerUserName
         self.seasonLabel = race.seasonName
         self.imageUrl = Self.imageUrl(for: race)
-
-        switch race.raceClass {
-        case .prospec, .freedom, .spec5in, .spec7in:
-            self.classLabel = "\(race.raceClass.title) Spec"
-        default:
-            self.classLabel = "\(race.raceClass.title) Class"
-        }
+        self.feeLabel = Self.feeLabelString(for: race)
     }
 
     static func viewModels(with objects:[Race]) -> [RaceViewModel] {
@@ -108,6 +104,10 @@ class RaceViewModel: Descriptable {
 
          return nil
     }
+
+    var joinState: JoinState {
+        return Self.joinState(for: race)
+    }
 }
 
 enum RaceViewSorting {
@@ -124,7 +124,7 @@ extension RaceViewModel {
 
     static func fullDateLabelString(for date: Date?) -> String? {
         guard let date = date else { return nil }
-        return DateUtil.displayFullDateTime2LineFormatter.string(from: date)
+        return DateUtil.displayFullDateTimeFormatter.string(from: date)
     }
 
     static func fullDateLabelString(for startDate: Date?, and endDate: Date?) -> String? {
@@ -133,7 +133,26 @@ extension RaceViewModel {
         if startDate.isInSameDay(date: endDate) {
             return DateUtil.displayTimeFormatter.string(from: endDate)
         }
-        return DateUtil.displayFullDateTime2LineFormatter.string(from: endDate)
+        return DateUtil.displayFullDateTimeFormatter.string(from: endDate)
+    }
+
+    static func combinedDateLabelString(for startDate: Date?, and endDate: Date?) -> String? {
+        guard let startDate = startDate else { return nil }
+
+        guard let endDate, !endDate.isInSameDay(date: startDate) else {
+            return DateUtil.localizedString(from: startDate)
+        }
+
+        let startLabel = DateUtil.displayDayFormatter.string(from: startDate)
+        var endLabel: String
+
+        if endDate.isInThisYear {
+            endLabel = DateUtil.displayDayFormatter.string(from: endDate)
+        } else {
+            endLabel = DateUtil.displayDateFormatter.string(from: endDate)
+        }
+
+        return "\(startLabel) - \(endLabel)"
     }
 
     static func locationLabelString(for race: Race) -> String {
@@ -155,7 +174,12 @@ extension RaceViewModel {
 
     static func joinState(for race: Race) -> JoinState {
         if race.status == .closed { return .closed }
-        return race.isJoined ? .joined : .join
+
+        if race.requiresPayment || (race.isJoined && race.isPayable) {
+            return .notPaid(fee: race.fee)
+        } else {
+            return race.isJoined ? .joined : .notJoined
+        }
     }
 
     static func distance(for race: Race) -> Double {
@@ -193,6 +217,44 @@ extension RaceViewModel {
         } else {
             return nil
         }
+    }
+
+    fileprivate static func subtitleLabelAttributedString(for race: Race) -> NSAttributedString {
+        var string = race.raceClass.title
+        let funFly = "Fun Fly"
+
+        if race.scoringDisabled {
+            string +=  " - \(funFly)"
+        }
+
+        let grey: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: 15, weight: .semibold),
+            .foregroundColor: Color.gray300
+        ]
+        let blue: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: 15, weight: .semibold),
+            .foregroundColor: Color.lightBlue
+        ]
+
+        let attributedString = NSMutableAttributedString(string: string, attributes: grey)
+
+        let range = (attributedString.string as NSString).range(of: funFly)
+        if range.location != NSNotFound && range.length > 0 {
+            attributedString.setAttributes(blue, range: range)
+        }
+
+        return attributedString
+    }
+
+    static func feeLabelString(for race: Race) -> String {
+        if race.fee > 0 {
+            if race.amountPaid > 0 {
+                return String(format: "✓ Paid $%.2f", race.amountPaid)
+            } else if race.amountDue > 0 {
+                return String(format: "Fee: %.2f USD", race.fee)
+            }
+        }
+        return ""
     }
 }
 

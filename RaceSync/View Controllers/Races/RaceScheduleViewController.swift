@@ -11,11 +11,15 @@ import SnapKit
 import RaceSyncAPI
 @preconcurrency import WebKit
 
-class RaceScheduleViewController: UIViewController {
+class RaceScheduleViewController: UIViewController, RaceTabbable {
 
     // MARK: - Public Variables
 
-    var race: Race
+    var raceController: RaceController
+
+    var race: Race {
+        get { return raceController.race! }
+    }
 
     // MARK: - Private Variables
 
@@ -49,7 +53,6 @@ class RaceScheduleViewController: UIViewController {
         config.userContentController = contentController
 
         let view = WKWebView(frame: .zero, configuration: config)
-        view.navigationDelegate = self
         view.scrollView.alwaysBounceHorizontal = false
         view.scrollView.alwaysBounceVertical = false
         view.scrollView.showsHorizontalScrollIndicator = false
@@ -60,10 +63,6 @@ class RaceScheduleViewController: UIViewController {
     fileprivate var reloadTimer: Timer?
     fileprivate let isWebPollEnabled: Bool = true
 
-    fileprivate var canDisplayZippyQ: Bool {
-        get { return race.isZippyQEnabled && !race.isFinalized }
-    }
-
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
         static let cellHeight: CGFloat = UniversalConstants.cellHeight
@@ -71,8 +70,8 @@ class RaceScheduleViewController: UIViewController {
 
     // MARK: - Initialization
 
-    init(with race: Race) {
-        self.race = race
+    init(with controller: RaceController) {
+        self.raceController = controller
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -89,9 +88,9 @@ class RaceScheduleViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if canDisplayZippyQ {
+        if race.canShowSchedule {
             setupLayout()
-            initializeWebview()
+            loadContent()
         }
 
         configureNavigationItems()
@@ -121,23 +120,25 @@ class RaceScheduleViewController: UIViewController {
     }
 
     fileprivate func configureNavigationItems() {
+        title = "Schedule"
+        tabBarItem = UITabBarItem(title: title, image: SystemImg.flagCheckered, selectedImage: nil)
+        tabBarItem.isEnabled = race.canShowSchedule
 
-        title = "Race Schedule"
-        let itemTitle = "Schedule"
-        tabBarItem = UITabBarItem(title: itemTitle, image: UIImage(named: "icn_tabbar_schedule"), selectedImage: nil)
-        tabBarItem.isEnabled = canDisplayZippyQ
-
-        let rightBtnItem = UIBarButtonItem(image: UIImage(systemName:"safari"), style: .plain, target: self, action: #selector(openZippyQSchedule))
-        navigationItem.rightBarButtonItem = rightBtnItem
-        navigationItem.rightBarButtonItem?.isEnabled = canDisplayZippyQ
+        navigationItem.rightBarButtonItem = raceController.navigationItems(for: [.zippyQ, .share])
     }
 
-    fileprivate func initializeWebview() {
+    // MARK: - Data Update
 
+    fileprivate func loadContent() {
         let zippyqUrl = MGPWeb.getUrl(for: .zippyqView, value: race.id)
 
         if let url = URL(string: zippyqUrl) {
             webView.load(URLRequest(url: url))
+
+            if reloadTimer != nil {
+                reloadTimer?.invalidate()
+                reloadTimer = nil
+            }
 
             // Start reload timer
             if isWebPollEnabled {
@@ -148,17 +149,8 @@ class RaceScheduleViewController: UIViewController {
         }
     }
 
-    @objc fileprivate func openZippyQSchedule() {
-        let zippyqUrl = MGPWeb.getUrl(for: .zippyqView, value: race.id)
-        if let url = URL(string: zippyqUrl), UIApplication.shared.canOpenURL(url) {
-            UIApplication.shared.open(url)
-        }
-    }
-}
-
-extension RaceScheduleViewController: WKNavigationDelegate {
-
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        
+    // RaceTabbable
+    func reloadContent() {
+        loadContent()
     }
 }

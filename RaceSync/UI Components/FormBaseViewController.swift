@@ -12,7 +12,7 @@ import RaceSyncAPI
 typealias ItemSelectionBlock = (_ item: String) -> Void
 
 enum FormType {
-    case textfield, textPicker, datePicker, `switch`, textEditor, undefined
+    case textfield, textPicker, `datePicker`, `switch`, textEditor, undefined
 }
 
 class FormBaseViewController: UIViewController {

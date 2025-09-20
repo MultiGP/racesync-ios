@@ -10,6 +10,9 @@ import UIKit
 import RaceSyncAPI
 import CoreLocation
 
+// cached is true when the returned array is from the cached collection or a new data collection from the server
+public typealias RaceFeedControllerCompletionBlock<T> = (_ object: T?, _ cached: Bool, _ error: NSError?) -> Void
+
 // 
 class RaceFeedController {
 
@@ -46,7 +49,7 @@ class RaceFeedController {
         return raceCollection[filter] == nil
     }
 
-    func raceViewModels(for filter: RaceFilter, forceFetch: Bool = false, completion: @escaping ObjectCompletionBlock<[RaceViewModel]>) {
+    func raceViewModels(for filter: RaceFilter, forceFetch: Bool = false, completion: @escaping RaceFeedControllerCompletionBlock<[RaceViewModel]>) {
         switch filter {
         case .joined:
             getJoinedRaces(forceFetch, completion)
@@ -68,35 +71,35 @@ class RaceFeedController {
 
 fileprivate extension RaceFeedController {
 
-    func getJoinedRaces(_ forceFetch: Bool = false, _ completion: @escaping ObjectCompletionBlock<[RaceViewModel]>) {
+    func getJoinedRaces(_ forceFetch: Bool = false, _ completion: @escaping RaceFeedControllerCompletionBlock<[RaceViewModel]>) {
 
         if let viewModels = raceCollection[.joined] {
-            completion(viewModels, nil)
+            completion(viewModels, true, nil)
             guard forceFetch else { return }
         }
 
-        let filters = remoteFilters(with: .joined)
+        let filters: [RaceListFilters] = [.joined]
         let sorting: RaceViewSorting = settings.showPastEvents ? .ascending : .descending
 
         raceApi.getMyRaces(filters: filters) { [weak self] (races, error) in
             if let filteredRaces = self?.locallyFilteredRaces(races) {
                 let sortedViewModels = RaceViewModel.sortedViewModels(with: filteredRaces, sorting: sorting)
                 self?.raceCollection[.joined] = sortedViewModels
-                completion(sortedViewModels, nil)
+                completion(sortedViewModels, false, nil)
             } else {
-                completion(nil, error)
+                completion(nil, false, error)
             }
         }
     }
 
-    func getNearbydRaces(_ forceFetch: Bool = false, _ completion: @escaping ObjectCompletionBlock<[RaceViewModel]>) {
+    func getNearbydRaces(_ forceFetch: Bool = false, _ completion: @escaping RaceFeedControllerCompletionBlock<[RaceViewModel]>) {
 
         if let viewModels = raceCollection[.nearby] {
-            completion(viewModels, nil)
+            completion(viewModels, true, nil)
             guard forceFetch else { return }
         }
 
-        let filters = remoteFilters(with: .nearby)
+        let filters: [RaceListFilters] = [.nearby]
         let sorting: RaceViewSorting = settings.showPastEvents ? .ascending : .descending
 
         let coordinate = LocationManager.shared.location?.coordinate
@@ -107,39 +110,39 @@ fileprivate extension RaceFeedController {
             if let filteredRaces = self?.locallyFilteredRaces(races) {
                 let sortedViewModels = RaceViewModel.sortedViewModels(with: filteredRaces, sorting: sorting)
                 self?.raceCollection[.nearby] = sortedViewModels
-                completion(sortedViewModels, nil)
+                completion(sortedViewModels, false, nil)
             } else {
-                completion(nil, error)
+                completion(nil, false, error)
             }
         }
     }
 
-    func getChapterRaces(_ forceFetch: Bool = false, _ completion: @escaping ObjectCompletionBlock<[RaceViewModel]>) {
+    func getChapterRaces(_ forceFetch: Bool = false, _ completion: @escaping RaceFeedControllerCompletionBlock<[RaceViewModel]>) {
         guard let user = APIServices.shared.myUser else { return }
 
         if let viewModels = raceCollection[.chapters] {
-            completion(viewModels, nil)
+            completion(viewModels, true, nil)
             guard forceFetch else { return }
         }
 
-        let filters = remoteFilters()
+        let filters = [RaceListFilters]()
         let sorting: RaceViewSorting = settings.showPastEvents ? .ascending : .descending
 
         raceApi.getRaces(with: filters, chapterIds: user.chapterIds) { [weak self] races, error in
             if let filteredRaces = self?.locallyFilteredRaces(races) {
                 let sortedViewModels = RaceViewModel.sortedViewModels(with: filteredRaces, sorting: sorting)
                 self?.raceCollection[.chapters] = sortedViewModels
-                completion(sortedViewModels, nil)
+                completion(sortedViewModels, false, nil)
             } else {
-                completion(nil, error)
+                completion(nil, false, error)
             }
         }
     }
 
-    func getRaces(for class: RaceClass, _ forceFetch: Bool = false, _ completion: @escaping ObjectCompletionBlock<[RaceViewModel]>) {
+    func getRaces(for class: RaceClass, _ forceFetch: Bool = false, _ completion: @escaping RaceFeedControllerCompletionBlock<[RaceViewModel]>) {
 
         if let viewModels = raceCollection[.classes(`class`)] {
-            completion(viewModels, nil)
+            completion(viewModels, true, nil)
             guard forceFetch else { return }
         }
 
@@ -150,31 +153,31 @@ fileprivate extension RaceFeedController {
             if let filteredRaces = self?.locallyFilteredRaces(races) {
                 let sortedViewModels = RaceViewModel.sortedViewModels(with: filteredRaces, sorting: sorting)
                 self?.raceCollection[.classes(`class`)] = sortedViewModels
-                completion(sortedViewModels, nil)
+                completion(sortedViewModels, false, nil)
             } else {
-                completion(nil, error)
+                completion(nil, false, error)
             }
         }
     }
 
-    func getRaces(for series: GQSeries, _ forceFetch: Bool = false, _ completion: @escaping ObjectCompletionBlock<[RaceViewModel]>) {
+    func getRaces(for series: GQSeries, _ forceFetch: Bool = false, _ completion: @escaping RaceFeedControllerCompletionBlock<[RaceViewModel]>) {
 
         if let viewModels = raceCollection[.series(series)] {
-            completion(viewModels, nil)
+            completion(viewModels, true, nil)
             guard forceFetch else { return }
         }
 
         let filters: [RaceListFilters] = [.series]
-        let sorting: RaceViewSorting = (settings.showPastEvents || !series.isThisYear()) ? .ascending : .descending
+        let sorting: RaceViewSorting = (settings.showPastEvents || !series.isActive()) ? .ascending : .descending
 
         raceApi.getRaces(with: filters, startDate: "\(series.year)", pageSize: 150) { [weak self]  (races, error) in
 
-            if let filteredRaces = series.isThisYear() ? self?.locallyFilteredRaces(races) : races {
+            if let filteredRaces = series.isActive() ? self?.locallyFilteredRaces(races) : races {
                 let sortedViewModels = RaceViewModel.sortedViewModels(with: filteredRaces, sorting: sorting)
                 self?.raceCollection[.series(series)] = sortedViewModels
-                completion(sortedViewModels, nil)
+                completion(sortedViewModels, false, nil)
             } else {
-                completion(nil, error)
+                completion(nil, false, error)
             }
         }
     }
@@ -184,19 +187,12 @@ fileprivate extension RaceFeedController {
 
         return races?.filter({ (race) -> Bool in
             guard let startDate = race.startDate else { return false }
-            return startDate.isInToday || startDate.timeIntervalSinceNow.sign == .plus
+
+            if let endDate = race.endDate {
+                return endDate.isInToday || endDate.timeIntervalSinceNow.sign == .plus
+            } else {
+                return startDate.isInToday || startDate.timeIntervalSinceNow.sign == .plus
+            }
         })
-    }
-
-    func remoteFilters(with filter: RaceListFilters? = nil) -> [RaceListFilters] {
-        var filters = [RaceListFilters]()
-
-        if let filter = filter {
-            filters += [filter]
-        }
-        if !settings.showPastEvents {
-            filters += [.upcoming]
-        }
-        return filters
     }
 }

@@ -227,4 +227,5 @@ extension PushMessagesController: UNUserNotificationCenterDelegate {
 
 extension Notification.Name {
     static let registeredForPushMessages = Notification.Name("com.racecync.registeredForPushMessages")
+    static let newPushMessageReceived = Notification.Name("com.racecync.newPushMessageReceived")
 }

@@ -28,6 +28,13 @@ class PasteboardButton: UIButton, TextCopiable {
         set { if shouldHighlight { super.isHighlighted = newValue } }
     }
 
+    // MARK: - View
+
+    override var intrinsicContentSize: CGSize {
+        let size = super.intrinsicContentSize
+        return CGSize(width: size.width + 8, height: size.height) // padding
+    }
+
     // MARK: - Pasteboard Management
 
     override public var canBecomeFirstResponder: Bool {

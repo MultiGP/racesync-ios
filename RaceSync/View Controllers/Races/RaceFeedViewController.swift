@@ -166,16 +166,26 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
         super.viewDidLoad()
 
         setupLayout()
+        registerJoinable()
 
         APIServices.shared.settings.add(self)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
+        if raceFeedCount == 0 {
+            isLoadingList(true)
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
+        // reload whenever we transition back
+        if raceFeedCount == 0 || animated {
+            loadContent(forced: true)
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -184,6 +194,10 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+    }
+
+    deinit {
+        unregisterJoinable()
     }
 
     // MARK: - Layout
@@ -214,9 +228,8 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
     }
 
     fileprivate func configureNavigationItems() {
-
-        title = "Race List"
-        tabBarItem = UITabBarItem(title: "Races", image: UIImage(systemName:"flag.pattern.checkered.2.crossed"), selectedImage: nil)
+        title = "Races"
+        tabBarItem = UITabBarItem(title: title, image: SystemImg.flagCheckeredCrossed, selectedImage: nil)
     }
 
     // MARK: - Actions
@@ -231,39 +244,11 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
         if selectedRaceFilter == .nearby, !locationManager.didRequestAuthorization {
             isLoadingList(true)
             locationManager.requestsAuthorization { [weak self] (error) in
-                self?.loadRaces()
+                self?.loadContent()
             }
         } else {
-            loadRaces(forceReload: true)
+            loadContent(forced: true)
         }
-    }
-
-    @objc func loadRaces(forceReload: Bool = false) {
-        let selectedList = selectedRaceFilter
-
-        if raceFeedController.shouldShowShimmer(for: selectedList) {
-            isLoadingList(true)
-        }
-
-        raceFeedController.raceViewModels(for: selectedList, forceFetch: forceReload) { [weak self] (viewModels, error) in
-            guard let strongSelf = self else { return }
-
-            strongSelf.isLoadingList(false)
-
-            if let _ = viewModels, selectedList == strongSelf.selectedRaceFilter {
-                if strongSelf.refreshControl.isRefreshing {
-                    strongSelf.refreshControl.endRefreshing()
-                }
-
-                strongSelf.tableView.reloadData()
-            } else {
-                print("getMyRaces error : \(error.debugDescription)")
-            }
-        }
-    }
-
-    @objc func unloadRaces() {
-        raceFeedController.invalidateDataSource()
     }
 
     @objc fileprivate func didPressSearchButton(_ sender: Any) {
@@ -284,13 +269,13 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
         toggleJoinButton(sender, forRace: race, raceApi: raceApi) { [weak self] (newState) in
             if joinState != newState {
                 // reload races to reflect race changes, specially join counts
-                self?.loadRaces(forceReload: true)
+                self?.loadContent(forced: true)
             }
         }
     }
 
     @objc fileprivate func didPullRefreshControl() {
-        loadRaces(forceReload: true)
+        loadContent(forced: true)
     }
 
     fileprivate func openRaceDetail(_ viewModel: RaceViewModel) {
@@ -319,6 +304,34 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
         let idx = raceFeedController.raceFilters.firstIndex(of: filter) ?? 0
         segmentedControl.setSelectedSegment(idx)
     }
+
+    // MARK: - Data Update
+
+    // ViewJoinable
+    func loadContent(forced: Bool = false) {
+        let selectedList = selectedRaceFilter
+
+        if raceFeedController.shouldShowShimmer(for: selectedList) {
+            isLoadingList(true)
+        }
+
+        raceFeedController.raceViewModels(for: selectedList, forceFetch: forced) { [weak self] (viewModels, cached, error) in
+            guard let strongSelf = self else { return }
+
+            strongSelf.isLoadingList(false)
+
+            if let _ = viewModels, selectedList == strongSelf.selectedRaceFilter {
+
+                if strongSelf.refreshControl.isRefreshing, !cached {
+                    strongSelf.refreshControl.endRefreshing()
+                }
+
+                strongSelf.tableView.reloadData()
+            } else {
+                print("getMyRaces error : \(error.debugDescription)")
+            }
+        }
+    }
 }
 
 extension RaceFeedViewController: UITableViewDelegate {
@@ -346,8 +359,8 @@ extension RaceFeedViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as RaceTableViewCell
         guard let viewModel = raceFeed?[indexPath.row] else { return cell }
 
-        cell.dateLabel.text = viewModel.startDateLabel //"Saturday Sept 14 @ 9:00 AM"
         cell.titleLabel.text = viewModel.titleLabel
+        cell.dateLabel.text = viewModel.dateLabel //"Saturday Sept 14 @ 9:00 AM"
         cell.joinButton.type = .race
         cell.joinButton.objectId = viewModel.race.id
         cell.joinButton.joinState = viewModel.joinState
@@ -374,13 +387,13 @@ extension RaceFeedViewController: APISettingsDelegate {
         switch settings {
         case .raceFeedFilters:
             updateSegmentedControl()
-            unloadRaces() // invalidates collection
-            loadRaces(forceReload: true)
+            raceFeedController.invalidateDataSource()
+            loadContent(forced: true)
         case .showPastEvents, .searchRadius:
-            unloadRaces() // invalidates collection
-            loadRaces(forceReload: true)
+            raceFeedController.invalidateDataSource()
+            loadContent(forced: true)
         case .measurement:
-            loadRaces() // simple refresh
+            loadContent() // simple refresh
         default:
             break
         }
