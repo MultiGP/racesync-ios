@@ -22,8 +22,6 @@ class RaceController {
 
     // MARK: - Private
 
-    fileprivate let ignoreFinalizingError: Bool = true // The API finalize(id) still returns 500 error. Reported https://github.com/MultiGP/multigp-com/issues/93
-
     fileprivate var visibleViewController: UIViewController? {
         get { return UIViewController.topMostViewController() }
     }
@@ -374,7 +372,7 @@ class RaceController {
     func finalizeRace() {
         guard let race = race else { return }
         raceApi.finalizeRace(with: race.id) { status, error in
-            if status == true || self.ignoreFinalizingError == true {
+            if status {
                 self.reloadRace()
             } else if let error = error {
                 AlertUtil.presentAlertMessage("Couldn't finalize this race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)

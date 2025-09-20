@@ -39,6 +39,9 @@ public extension Race {
     }
 
     var canBeFinalized: Bool {
+        // The API finalize(id) still returns 500 error. Reported https://github.com/MultiGP/multigp-com/issues/93
+        return false
+
         guard isMyChapter else { return false }
         guard ownerId == APIServices.shared.myUser?.id else { return false }
         guard let startDate = startDate, startDate.isPassed else { return false }
