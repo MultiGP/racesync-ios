@@ -7,7 +7,7 @@
 //
 
 import XCTest
-import RaceSyncAPI
+@testable import RaceSyncAPI
 import Alamofire
 
 class ParamsTests: XCTestCase {
@@ -51,7 +51,7 @@ class ParamsTests: XCTestCase {
         let after: Params = ["foo": true]
         let result: Params = Params.diff(between: before, and: after)
 
-        XCTAssertEqual(result, ["foo": 1])
+        XCTAssertEqual(result, ["foo": true])
     }
 
     func testDifferentIntParams() throws {
@@ -69,7 +69,7 @@ class ParamsTests: XCTestCase {
         let after: Params = ["foo1": 25, "foo2": false, "foo3": "hello world"]
         let result: Params = Params.diff(between: before, and: after)
 
-        XCTAssertEqual(result, ["foo2": 0, "foo3": "hello world"])
+        XCTAssertEqual(result, ["foo2": false, "foo3": "hello world"])
     }
 }
 

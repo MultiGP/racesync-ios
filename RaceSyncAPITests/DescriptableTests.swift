@@ -7,7 +7,7 @@
 //
 
 import XCTest
-import RaceSyncAPI
+@testable import RaceSyncAPI
 
 class DescriptableTests: XCTestCase {
 

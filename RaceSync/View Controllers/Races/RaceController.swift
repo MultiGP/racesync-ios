@@ -162,9 +162,10 @@ class RaceController {
 
     @objc public func didPressShareButton() {
         guard let race = race else { return }
-        guard  let raceURL = MGPWeb.getURL(for: .raceView, value: race.id) else { return }
 
-        var items: [Any] = [raceURL]
+        let url = MGPWeb.getURL(for: .raceView, value: race.id)
+
+        var items: [Any] = [url]
         var activities = [UIActivity]()
 
         if race.canManagePayments {
@@ -186,7 +187,8 @@ class RaceController {
 
     @objc fileprivate func didPressZippyQButton() {
         guard let race = race else { return }
-        guard  let url = MGPWeb.getURL(for: .zippyqView, value: race.id) else { return }
+
+        let url = MGPWeb.getURL(for: .zippyqView, value: race.id)
 
         if UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url)

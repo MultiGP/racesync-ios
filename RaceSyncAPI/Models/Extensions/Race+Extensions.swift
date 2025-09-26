@@ -84,17 +84,6 @@ public extension Race {
 
     func getMyPaymentUrl() -> URL? {
         guard let myUser = APIServices.shared.myUser else { return nil }
-
-        let baseUrl = MGPWeb.getUrl(for: .processPayment)
-        let params: [(String, String)] = [
-            ("raceId", "\(self.id)"),
-            ("pilotId", "\(myUser.id)"),
-            ("user-agent", "ios")
-        ]
-
-        var components = URLComponents(string: baseUrl)
-        components?.queryItems = params.map { URLQueryItem(name: $0.0, value: $0.1) }
-
-        return components?.url
+        return RaceApi.getPaymentUrl(for: self.id, user: myUser.id)
     }
 }

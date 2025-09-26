@@ -305,9 +305,9 @@ public class RaceApi: RaceApiInterface {
     }
 }
 
-fileprivate extension RaceApi {
+extension RaceApi {
 
-    func parametersForRaces(with filters: [RaceListFilters],
+    fileprivate func parametersForRaces(with filters: [RaceListFilters],
                             userId: ObjectId = "",
                             latitude: String? = nil, longitude: String? = nil,
                             pageSize: Int = StandardPageSize) -> Params {
@@ -343,5 +343,20 @@ fileprivate extension RaceApi {
         }
 
         return parameters
+    }
+
+    static func getPaymentUrl(for race: ObjectId, user: ObjectId) -> URL? {
+        let baseUrl = MGPWeb.getURL(for: .processPayment)
+
+        let params: [(String, String)] = [
+            ("raceId", "\(race)"),
+            ("pilotId", "\(user)"),
+            ("user-agent", "ios")
+        ]
+
+        var components = URLComponents(string: baseUrl.absoluteString)
+        components?.queryItems = params.map { URLQueryItem(name: $0.0, value: $0.1) }
+
+        return components?.url
     }
 }

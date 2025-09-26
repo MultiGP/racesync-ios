@@ -33,7 +33,7 @@ public class StandingApi: StandingApiInterface {
 
     public func getStandings(for season: StandingSeason, _ completion: @escaping ObjectCompletionBlock<[Standing]>) {
 
-        guard let baseUrl = getStandingsUrl(for: season) else { return }
+        guard let baseUrl = Self.getStandingsUrl(for: season) else { return }
 
         // This is too fragile but no choice for now
         let headers = ["position", "firstName", "userName", "lastName", "userId", "chapterName",
@@ -54,9 +54,9 @@ public class StandingApi: StandingApiInterface {
     }
 }
 
-fileprivate extension StandingApi {
+extension StandingApi {
 
-    func fetchCSVAndConvertToJSON(from url: URL, knownHeaders: [String]? = nil, completion: @escaping (Result<[[String: Any]], Error>) -> Void) {
+    fileprivate func fetchCSVAndConvertToJSON(from url: URL, knownHeaders: [String]? = nil, completion: @escaping (Result<[[String: Any]], Error>) -> Void) {
         Clog.log("Starting request \(String(describing: url))")
         URLSession.shared.dataTask(with: url) { data, _, error in
             if let error = error {
@@ -75,7 +75,7 @@ fileprivate extension StandingApi {
         }.resume()
     }
 
-    func extractCleanCSV(from html: String, injectingHeaders headers: [String]? = nil) -> String {
+    fileprivate func extractCleanCSV(from html: String, injectingHeaders headers: [String]? = nil) -> String {
         var text = html.stripHTML(false)
 
         if let range = text.range(of: "\n1,") ?? text.range(of: "1,") {
@@ -92,7 +92,7 @@ fileprivate extension StandingApi {
         return text
     }
 
-    private func parseCSV(_ csv: String) -> Result<[[String: Any]], Error> {
+    fileprivate func parseCSV(_ csv: String) -> Result<[[String: Any]], Error> {
         let lines = csv.components(separatedBy: .newlines).filter { !$0.isEmpty }
 
         guard let firstLine = lines.first else {
@@ -113,8 +113,8 @@ fileprivate extension StandingApi {
         return .success(jsonArray)
     }
 
-    func getStandingsUrl(for season: StandingSeason) -> URL? {
-        let base = MGPWebConstant.viewZipperSeasonResults.rawValue
+    static func getStandingsUrl(for season: StandingSeason) -> URL? {
+        let baseUrl = MGPWeb.getURL(for: .viewZipperSeasonResults)
 
         let params: [(String, String)] = [
             ("season1", "\(season.rawValue)Summer"),
@@ -122,7 +122,7 @@ fileprivate extension StandingApi {
             ("exportcsv", "true")
         ]
 
-        var components = URLComponents(string: base)
+        var components = URLComponents(string: baseUrl.absoluteString)
         components?.queryItems = params.map { URLQueryItem(name: $0.0, value: $0.1) }
 
         return components?.url
