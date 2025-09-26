@@ -7,22 +7,82 @@
 //
 
 import UIKit
+import SnapKit
+import RaceSyncAPI
+import ShimmerSwift
 
-class SeriesViewController: UIViewController {
+class SeriesViewController: UIViewController, Shimmable {
 
-    // MARK: - Private Variables
+    // MARK: - Public Variables
 
-    fileprivate lazy var tableView: UITableView = {
+    lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.dataSource = self
         tableView.delegate = self
+//        tableView.emptyDataSetSource = self
+//        tableView.emptyDataSetDelegate = self
+        tableView.register(cellType: AvatarTableViewCell.self)
+        tableView.refreshControl = self.refreshControl
         tableView.tableFooterView = UIView()
+        tableView.contentInsetAdjustmentBehavior = .always
         return tableView
     }()
+
+    var shimmeringView: ShimmeringView = defaultShimmeringView()
+
+    // MARK: - Private Variables
+
+    fileprivate lazy var headerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = Color.navigationBarColor
+        view.tintColor = Color.blue
+
+        let spacing = 10
+
+        view.addSubview(segmentedControl)
+        segmentedControl.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(spacing)
+            $0.leading.equalToSuperview().offset(spacing*5)
+            $0.trailing.equalToSuperview().offset(-spacing*5)
+            $0.centerX.equalToSuperview()
+        }
+
+        let separatorLine = UIView()
+        separatorLine.backgroundColor = Color.gray100
+        view.addSubview(separatorLine)
+        separatorLine.snp.makeConstraints {
+            $0.height.equalTo(0.5)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.snp.bottom)
+        }
+        return view
+    }()
+
+    fileprivate lazy var segmentedControl: UISegmentedControl = {
+
+        let items = ["My Series", "Popular", "All Series"]
+        let control = UISegmentedControl(items: items)
+        control.selectedSegmentIndex = 0
+//        control.setItems(filters.compactMap { $0.title })
+        control.addTarget(self, action: #selector(didChangeSegment), for: .valueChanged)
+        return control
+    }()
+
+    fileprivate lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.backgroundColor = Color.gray20
+        refreshControl.tintColor = Color.blue
+        refreshControl.addTarget(self, action: #selector(didPullRefreshControl), for: .valueChanged)
+        return refreshControl
+    }()
+
+    fileprivate let seriesApi = SeriesApi()
+    fileprivate var seriesViewModels = [SeriesViewModel]()
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
         static let cellHeight: CGFloat = UniversalConstants.cellHeight
+        static let headerViewHeight: CGFloat = 51
     }
 
     // MARK: - Lifecycle Methods
@@ -35,22 +95,106 @@ class SeriesViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
+        if seriesViewModels.count == 0 {
+            isLoadingList(true)
+        } else {
+            tableView.reloadData()
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
+        if seriesViewModels.count == 0 {
+            loadContent()
+        }
     }
 
     // MARK: - Layout
 
     fileprivate func setupLayout() {
         configureNavigationItems()
+
+        view.addSubview(headerView)
+        headerView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.height.equalTo(Constants.headerViewHeight)
+            $0.leading.trailing.equalToSuperview()
+        }
+
+        view.addSubview(tableView)
+        tableView.snp.makeConstraints {
+            $0.top.equalTo(headerView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.snp.bottom)
+        }
+
+        view.addSubview(shimmeringView)
+        shimmeringView.snp.makeConstraints {
+            $0.top.equalTo(tableView.snp.top)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(tableView.snp.bottom)
+        }
     }
 
     fileprivate func configureNavigationItems() {
         title = "Series"
         tabBarItem = UITabBarItem(title: title, image: SystemImg.stack, selectedImage: SystemImg.stackFill)
-        tabBarItem.isEnabled = false
+        tabBarItem.isEnabled = APIServices.shared.settings.isDev
+    }
+
+    // MARK: - Data Update
+
+    fileprivate func loadContent() {
+
+        if !refreshControl.isRefreshing {
+            isLoadingList(true)
+        }
+
+        seriesApi.getSeries { objects, error in
+            if let objects = objects {
+                self.seriesViewModels = SeriesViewModel.viewModels(with: objects)
+            } else if error != nil {
+                // self.emptyStateError = EmptyStateViewModel(.errorStandings)
+            }
+
+            if self.refreshControl.isRefreshing {
+                self.refreshControl.endRefreshing()
+            } else {
+                self.isLoadingList(false)
+            }
+
+            self.tableView.reloadData()
+        }
+    }
+
+    fileprivate func seriesViewModel(at indexPath: IndexPath) -> SeriesViewModel? {
+        return seriesViewModels[indexPath.row]
+    }
+
+    // MARK: - Actions
+
+    @objc fileprivate func didChangeSegment() {
+//        seriesApi.cancelAll()
+
+        
+    }
+
+    @objc fileprivate func didPullRefreshControl() {
+        loadContent()
+    }
+
+    // MARK: - Cell Configuration
+
+    func configure<T>(_ view: T, forRowAt indexPath: IndexPath) where T : UITableViewCell {
+        guard let cell = view as? AvatarTableViewCell,
+              let viewModel = seriesViewModel(at: indexPath) else { return }
+
+        cell.titleLabel.text = viewModel.titleLabel
+        cell.subtitleLabel.text = viewModel.subtitleLabel
+        cell.avatarImageView.isHidden = true
+        cell.accessoryView = nil
     }
 }
 
@@ -64,11 +208,13 @@ extension SeriesViewController: UITableViewDelegate {
 extension SeriesViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+        return seriesViewModels.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell()
+        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as AvatarTableViewCell
+        configure(cell, forRowAt: indexPath)
+        return cell
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

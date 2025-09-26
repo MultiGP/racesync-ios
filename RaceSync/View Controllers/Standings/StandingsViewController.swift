@@ -34,6 +34,10 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         return tableView
     }()
 
+    var shimmeringView: ShimmeringView = defaultShimmeringView()
+
+    // MARK: - Private Variables
+
     fileprivate lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
         searchBar.delegate = self
@@ -83,10 +87,6 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         }
         return view
     }()
-
-    var shimmeringView: ShimmeringView = defaultShimmeringView()
-
-    // MARK: - Private Variables
 
     fileprivate let standingApi = StandingApi()
     fileprivate let userApi = UserApi()
@@ -217,10 +217,6 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         return viewModels[indexPath.row]
     }
 
-    @objc fileprivate func didPullRefreshControl() {
-        loadContent()
-    }
-
     // MARK: - Search
 
     fileprivate func enableSearchBar(_ enable: Bool) {
@@ -289,7 +285,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
 
     func configure<T>(_ view: T, forRowAt indexPath: IndexPath) where T : UITableViewCell {
         guard let cell = view as? AvatarTableViewCell,
-                  let viewModel = standingViewModel(at: indexPath) else { return }
+              let viewModel = standingViewModel(at: indexPath) else { return }
 
         cell.rankView.rank = viewModel.rank
         cell.titleLabel.text = viewModel.titleLabel
@@ -363,6 +359,10 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
 
         // resets it each time, so it can be recalculated
         invalidatePinnedView()
+    }
+
+    @objc fileprivate func didPullRefreshControl() {
+        loadContent()
     }
 }
 

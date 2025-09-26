@@ -235,7 +235,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
     // MARK: - Actions
 
     @objc fileprivate func didChangeSegment() {
-        // Cancelling previous race API requests to avoid overlaps
+        // Cancelling previous API requests to avoid overlaps
         raceApi.cancelAll()
 
         // This should be triggered just once, when first requesting access to the user's location

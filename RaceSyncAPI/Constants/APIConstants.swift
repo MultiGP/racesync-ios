@@ -41,6 +41,9 @@ enum EndPoint {
     static let raceFinalize = "race/finalize"
     static let racePayments = "race/getRacePayments"
 
+    static let seriesList = "series/list"
+    static let seriesView = "series/view"
+
     static let chapterList = "chapter/list"
     static let chapterFindLocal = "chapter/findLocal"
     static let chapterUsers = "chapter/users"
@@ -123,10 +126,12 @@ public enum ParamKey {
     static let isQualifier = "isQualifier"
     static let retired = "retired"
     static let type = "type"
+    static let typeString = "typeString"
     static let count = "count"
     static let size = "size"
-    static let managedChapters = "managedChapters"
     static let races = "races"
+    static let chapters = "chapters"
+    static let managedChapters = "managedChapters"
     static let entries = "entries"
     static let schedule = "schedule"
     static let raceType = "raceType"
@@ -185,6 +190,10 @@ public enum ParamKey {
     static let amountDue = "amountdue"
     static let datePaid = "datepaid"
     static let paymentsEnabled = "paymentsEnabled"
+    static let approved = "approved"
+    static let pilotCount = "pilotCount"
+    static let chapterApprovedCount = "chapterApprovedCount"
+    static let raceApprovedCount = "raceApprovedCount"
 
     // Geo-location
     static let address = "address"

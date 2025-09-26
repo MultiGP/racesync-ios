@@ -121,3 +121,19 @@ public enum QualifyingType: String, EnumTitle {
         }
     }
 }
+
+public enum SeriesType: String, EnumTitle {
+    case overall = "0"
+    case collegiate = "1"
+    case prospec = "2"
+    case fastest3laps = "3"
+
+    public var title: String {
+        switch self {
+        case .overall:      return "Overall Points Scoring"
+        case .collegiate:   return "Collegiate Scoring"
+        case .prospec:      return "MultiGP ProSpec Scoring"
+        case .fastest3laps: return "Fastest 3 Consecutive laps"
+        }
+    }
+}
