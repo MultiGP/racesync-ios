@@ -22,6 +22,16 @@ public enum MGPWebConstant: String {
 
 public class MGPWeb {
 
+    public static func baseURL(for relativePath: MGPWebConstant? = nil) -> URL {
+        let host = APIServices.shared.settings.isDev ? "dev.multigp.com" : "www.multigp.com"
+        var baseURL = URL(string: "https://\(host)/")!
+
+        if let path = relativePath {
+            baseURL.appendPathComponent(path.rawValue)
+        }
+        return baseURL
+    }
+
     public static func getURL(for constant: MGPWebConstant) -> URL {
         let url = getUrl(for: constant)
         return URL(string: url)!
