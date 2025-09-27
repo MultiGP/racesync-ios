@@ -36,6 +36,7 @@ class JoinButton: CustomButton {
 
     static let minHeight: CGFloat = 32
     static let minWidth: CGFloat = 76
+    static let cornerRadius: CGFloat = 6
 
     // MARK: - Private Variables
 
@@ -69,11 +70,22 @@ class JoinButton: CustomButton {
     // MARK: - Layout
 
     fileprivate func setupLayout() {
+        titleLabel?.lineBreakMode = .byClipping
+        titleLabel?.numberOfLines = 1
+        titleLabel?.adjustsFontSizeToFitWidth = false
+
         adjustsImageWhenHighlighted = false
         adjustsImageWhenDisabled = true
+
         imageEdgeInsets = UIEdgeInsets(top: 0, left: -4, bottom: 0, right: 0)
         contentEdgeInsets = UIEdgeInsets(top: 5, left: 8, bottom: 5, right: 8)
-        layer.cornerRadius = 6
+
+        // Critical: prevent shrinking
+        setContentHuggingPriority(.required, for: .horizontal)
+        setContentCompressionResistancePriority(.required, for: .horizontal)
+
+        layer.cornerRadius = Self.cornerRadius
+        layer.borderWidth = 0
     }
 
     fileprivate func updateLayout() {
@@ -167,12 +179,6 @@ class JoinButton: CustomButton {
         }
         set {
             super.isSelected = newValue
-        }
-    }
-
-    override var isEnabled: Bool {
-        didSet {
-            // nothing
         }
     }
 

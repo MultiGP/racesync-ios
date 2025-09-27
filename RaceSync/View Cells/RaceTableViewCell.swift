@@ -109,7 +109,6 @@ class RaceTableViewCell: UITableViewCell {
 
         contentView.addSubview(buttonStackView)
         buttonStackView.snp.makeConstraints {
-            $0.width.greaterThanOrEqualTo(Constants.minButtonSize)
             $0.trailing.equalToSuperview().offset(-Constants.padding)
             $0.centerY.equalToSuperview()
         }
