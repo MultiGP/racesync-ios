@@ -123,7 +123,7 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
         case .noRaceResults:
             text = "There are no race results available just yet."
         case .noRacePayments:
-            text = "There are no race payments yet."
+            text = "No payments found yet, or a network error occurred."
         case .noChapterMembers:
             text = "There are no registered members yet."
         case .noProfileRaces:

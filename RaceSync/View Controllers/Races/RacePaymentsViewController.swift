@@ -183,7 +183,7 @@ class RacePaymentsViewController: UIViewController, RaceTabbable {
         }
 
         raceApi.getRacePayments(with: race.id) { payments, error in
-            guard let payments = payments else {
+            guard let payments = payments, payments.count > 0 else {
                 return self.finishLoading()
             }
 
