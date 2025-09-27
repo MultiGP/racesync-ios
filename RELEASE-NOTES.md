@@ -1,6 +1,18 @@
 
 # App Store Release Notes
 
+---
+
+## 1.8.1
+
+### Fixes and enhancements:
+
+   * Fixing not being able to duplicate or delete a race anymore. This was a regression introduced in v1.8
+   * Web links to races now open directly in the app, showing the race detail view.
+   * 
+
+---
+
 ## 1.8
    
 ### Introducing RaceSync Pay:

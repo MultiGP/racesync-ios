@@ -30,14 +30,17 @@ class NavigationController: UINavigationController {
         super.pushViewController(viewController, animated: animated)
     }
 
+    @discardableResult
     override func popViewController(animated: Bool) -> UIViewController? {
         return super.popViewController(animated: animated)
     }
 
+    @discardableResult
     override func popToViewController(_ viewController: UIViewController, animated: Bool) -> [UIViewController]? {
         return super.popToViewController(viewController, animated: animated)
     }
 
+    @discardableResult
     override func popToRootViewController(animated: Bool) -> [UIViewController]? {
         return super.popToRootViewController(animated: animated)
     }

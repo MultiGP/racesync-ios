@@ -23,11 +23,12 @@ class RaceController {
     // MARK: - Private
 
     fileprivate var visibleViewController: UIViewController? {
-        get { return UIViewController.topMostViewController() }
+        UIViewController.topMostViewController()
     }
 
-    fileprivate var visibleNavigationController: UINavigationController? {
-        get { return UIViewController.topMostViewController()?.navigationController }
+    fileprivate var visibleNavigationController: NavigationController? {
+        (visibleViewController as? NavigationController)
+        ?? (visibleViewController?.navigationController as? NavigationController)
     }
 
     // MARK: - Initialization
@@ -155,7 +156,9 @@ class RaceController {
     @objc func didPressCalendarButton() {
         guard let race = race, let event = race.createCalendarEvent(with: race.id) else { return }
 
-        ActionSheetUtil.presentActionSheet(withTitle: "Save the race details to your calendar?", buttonTitle: "Save to Calendar", completion: { (action) in
+        ActionSheetUtil.presentActionSheet(
+            withTitle: "Save the race details to your calendar?",
+            buttonTitle: "Save to Calendar", completion: { (action) in
             CalendarUtil.add(event)
         })
     }
@@ -271,9 +274,10 @@ class RaceController {
         let message = isClosed ? "Are you sure you want to open race enrollment?" : "Are you sure you want to close race enrollment?"
 
         return UIAlertAction(title: title, style: .default) { [weak self] _ in
-            ActionSheetUtil.presentActionSheet(withTitle: message) { [weak self] _ in
+            ActionSheetUtil.presentActionSheet(
+                withTitle: message, completion: { [weak self] _ in
                 self?.toggleRaceEnrollment()
-            }
+            })
         }
     }
 
@@ -288,7 +292,7 @@ class RaceController {
             ActionSheetUtil.presentDestructiveActionSheet(
                 withTitle: "Are you sure you want to finalize \"\(race.name)\"?",
                 message: "Finalizing this race will close enrollment, email the results to the pilots, and initialize the next race if configured.",
-                destructiveTitle: "Yes, Finalize", cancel:  { [weak self] _ in
+                destructiveTitle: "Yes, Finalize", completion: { [weak self] _ in
                     self?.finalizeRace()
                 })
         }
@@ -298,7 +302,7 @@ class RaceController {
         UIAlertAction(title: "Delete", style: .destructive) { [weak self] _ in
             ActionSheetUtil.presentDestructiveActionSheet(
                 withTitle: "Are you sure you want to delete \"\(race.name)\"?",
-                destructiveTitle: "Yes, Delete", cancel:  { [weak self] _ in
+                destructiveTitle: "Yes, Delete", completion: { [weak self] _ in
                     self?.deleteRace()
                 })
         }
@@ -404,8 +408,13 @@ extension RaceController: RaceFormViewControllerDelegate {
             self.reloadRace()
             viewController.dismiss(animated: true, completion: nil)
         case .new:
-            visibleNavigationController?.popViewController(animated: true)
-            viewController.dismiss(animated: true, completion: nil)
+            let vc = RaceTabBarController(with: race)
+            vc.isDismissable = true
+            viewController.navigationController?.pushViewController(vc, animated: true)
+
+            if let nc = viewController.presentingViewController as? NavigationController {
+                nc.popViewController(animated: false) // let's pop, so when the current view is dismissed, we see the list of races
+            }
         }
     }
 

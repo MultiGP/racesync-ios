@@ -33,5 +33,5 @@ public struct Color {
     public static let clear: UIColor =          #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0) // #000000
 
     // UI specific
-    public static let navigationBarColor =      Color.white.withAlphaComponent(0.97)
+    public static let navigationBarColor =      Color.white.withAlphaComponent(0.98)
 }
