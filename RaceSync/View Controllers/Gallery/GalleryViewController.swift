@@ -165,7 +165,7 @@ class GalleryViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        AppUtil.lockOrientation(.allButUpsideDown)
+        AppUtil.lock(.allButUpsideDown)
 
         if currentPage < 0 {
             currentPage = initialPage

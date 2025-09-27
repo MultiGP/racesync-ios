@@ -357,7 +357,6 @@ extension ChapterViewController: RaceFormViewControllerDelegate {
     func raceFormViewController(_ viewController: RaceFormViewController, didUpdateRace race: Race) {
         let vc = RaceTabBarController(with: race)
         vc.isDismissable = true
-
         viewController.navigationController?.pushViewController(vc, animated: true)
     }
 

@@ -75,7 +75,7 @@ class ApplicationControl: NSObject {
             guard let deeplink = note.object as? DeepLink else { return }
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: { [weak self] in
-                self?.handleDeepLink(deeplink)
+                self?.handle(deeplink)
             })
         }
     }
@@ -158,27 +158,50 @@ extension ApplicationControl {
     func presentPayment(for race: Race, _ completion: @escaping JoinStateCompletionBlock) {
         guard let url = race.getMyPaymentUrl() else { return }
 
-        WebViewController.openURL(url, style: .formSheet) {
+        WebViewController.open(url, style: .formSheet) {
             // return the original state for now
             let state = RaceViewModel.joinState(for: race)
             completion(state)
         }
     }
 
-    fileprivate func handleDeepLink(_ deeplink: DeepLink)  {
+    // Use this method to know if a specific deep link is supported or not
+    func canHandleDeepLink(_ link: DeepLink) -> Bool  {
 
-        if deeplink.action == .join {
-            // Makes sure to dismiss the payment webview, if still present
-            if let webvc = UIViewController.topMostViewController(), webvc.isKind(of: WebViewController.self) {
+        if link.isRace {
+            if link.action == .view, let _ = link.parameters[ParamKey.id] {
+                return true
+            } else if link.action == .join {
+                return true
+            }
+        }
+        return false
+    }
 
-                webvc.dismiss(animated: true)
+    func handle(_ link: DeepLink)  {
 
-                // force reloading the visible ViewJoinable
-                // to reflect the updated state change.
-                // TODO: Consider reactive join button states, to avoid heavylift reloads
-                let joinables = ViewJoinableRegistry.shared.all()
-                for vc in joinables {
-                    vc.loadContent(forced: true)
+        if link.isRace {
+            if link.action == .view, let raceId = link.parameters[ParamKey.id]  {
+                if let nc = UIViewController.topMostViewController() as? NavigationController {
+
+                    let vc = RaceTabBarController(with: raceId)
+                    vc.hidesBottomBarWhenPushed = true
+                    nc.pushViewController(vc, animated: true)
+                }
+            }
+            else if link.action == .join  {
+                // Makes sure to dismiss the payment webview, if still present
+                if let webvc = UIViewController.topMostViewController(), webvc.isKind(of: WebViewController.self) {
+
+                    webvc.dismiss(animated: true)
+
+                    // force reloading the visible ViewJoinable
+                    // to reflect the updated state change.
+                    // TODO: Consider reactive join button states, to avoid heavylift reloads
+                    let joinables = ViewJoinableRegistry.shared.all()
+                    for vc in joinables {
+                        vc.loadContent(forced: true)
+                    }
                 }
             }
         }

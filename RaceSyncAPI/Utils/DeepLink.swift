@@ -31,6 +31,11 @@ public extension DeepLink {
 
     static let scheme: String = "racesync"
 
+    // there are 2 types of race domains, so a convience getter is needed
+    var isRace: Bool {
+        return [.race, .races].contains(domain)
+    }
+
     var absoluteString: String {
         var urlString = "\(DeepLink.scheme)://\(domain.rawValue)/\(action.rawValue)"
 

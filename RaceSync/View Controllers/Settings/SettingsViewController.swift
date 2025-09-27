@@ -188,19 +188,19 @@ extension SettingsViewController: UITableViewDelegate {
             togglePushNotifications()
             cell.isLoading = isTogglingPush
         case .tracksGuide:
-            WebViewController.openUrl(AppWebConstants.tracks)
+            WebViewController.open(AppWebConstants.tracks)
         case .buildGuide:
-            WebViewController.openUrl(AppWebConstants.obstaclesDoc)
+            WebViewController.open(AppWebConstants.obstaclesDoc)
         case .seasonRules:
-            WebViewController.openUrl(AppWebConstants.seasonRulesDoc)
+            WebViewController.open(AppWebConstants.seasonRulesDoc)
         case .appicon:
             let vc = AppIconViewController()
             vc.title = row.title
             navigationController?.pushViewController(vc, animated: true)
         case .joinBeta:
-            WebViewController.openUrl(AppWebConstants.betaSignup)
+            WebViewController.open(AppWebConstants.betaSignup)
         case .visitSite:
-            WebViewController.openUrl(AppWebConstants.homepage)
+            WebViewController.open(AppWebConstants.homepage)
         case .logout:
             logout()
         case .switchEnv:

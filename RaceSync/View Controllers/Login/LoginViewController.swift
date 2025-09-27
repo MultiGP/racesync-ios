@@ -290,11 +290,11 @@ class LoginViewController: UIViewController {
     }
 
     @objc func didPressPasswordRecoveryButton() {
-        WebViewController.openUrl(AppWebConstants.passwordReset)
+        WebViewController.open(AppWebConstants.passwordReset)
     }
 
     @objc func didPressCreateAccountButton() {
-        WebViewController.openUrl(AppWebConstants.accountRegistration)
+        WebViewController.open(AppWebConstants.accountRegistration)
     }
 
     @objc func didPressLoginButton() {
@@ -302,7 +302,7 @@ class LoginViewController: UIViewController {
     }
 
     @objc func didPressLegalButton() {
-        WebViewController.openUrl(AppWebConstants.termsOfUse)
+        WebViewController.open(AppWebConstants.termsOfUse)
     }
 
     @objc func keyboardWillShow(_ notification: Notification) {

@@ -648,12 +648,12 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     func openZippyQSchedule(_ cell: FormTableViewCell) {
         let zippyqUrl = MGPWeb.getUrl(for: .zippyqView, value: race.id)
-        WebViewController.openUrl(zippyqUrl)
+        WebViewController.open(zippyqUrl)
     }
 
     func openLiveFPV(_ cell: FormTableViewCell) {
         guard let url = race.liveTimeEventUrl else { return }
-        WebViewController.openUrl(url)
+        WebViewController.open(url)
     }
 
     // MARK: - Data Update
@@ -777,14 +777,15 @@ extension RaceDetailViewController: RichEditorDelegate {
 
     func richEditor(_ editor: RichEditorView, shouldInteractWith url: URL) -> Bool {
 
-        if Validator.isEmail().apply(url.absoluteString) {
+        if let link = DeepLink.create(from: url), ApplicationControl.shared.canHandleDeepLink(link) {
+            ApplicationControl.shared.handle(link)
+        } else if Validator.isEmail().apply(url.absoluteString) {
             // leave the system handle emails
             UIApplication.shared.open(url)
         } else {
             // open url using in-app browser, else the url is open on the WKWebView
-            WebViewController.openURL(url)
+            WebViewController.open(url)
         }
-
         return false
     }
 }
@@ -797,7 +798,6 @@ extension RaceDetailViewController: MKMapViewDelegate {
         guard annotation is MKPointAnnotation else { return nil }
 
         let identifier = "Annotation"
-
         var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
 
         if annotationView == nil {

@@ -257,7 +257,7 @@ extension RacePilotsViewController: UITableViewDelegate {
 
         if showingExternalResults(), indexPath.section == externalResultSection {
             guard let url = race.liveTimeEventUrl else { return }
-            WebViewController.openUrl(url)
+            WebViewController.open(url)
         } else {
             showUserProfile(forUserAt: indexPath)
         }
