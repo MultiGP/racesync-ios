@@ -31,7 +31,7 @@ class SegmentedTableViewHeaderView: UITableViewHeaderFooterView {
         static let height: CGFloat = 32 + padding * 2 // slightly higher than native height
     }
 
-    // MARK: - Initializers
+    // MARK: - Initialization
 
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)

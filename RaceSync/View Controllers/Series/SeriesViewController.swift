@@ -22,6 +22,7 @@ class SeriesViewController: UIViewController, Shimmable {
 //        tableView.emptyDataSetSource = self
 //        tableView.emptyDataSetDelegate = self
         tableView.register(cellType: AvatarTableViewCell.self)
+        tableView.tableHeaderView = self.sliderHeaderView
         tableView.refreshControl = self.refreshControl
         tableView.tableFooterView = UIView()
         tableView.contentInsetAdjustmentBehavior = .always
@@ -75,6 +76,17 @@ class SeriesViewController: UIViewController, Shimmable {
         refreshControl.addTarget(self, action: #selector(didPullRefreshControl), for: .valueChanged)
         return refreshControl
     }()
+
+    fileprivate lazy var sliderHeaderView: SliderTableViewHeaderView = {
+        let view = SliderTableViewHeaderView()
+        view.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+        view.delegate = self
+        return view
+    }()
+
+    fileprivate var isLoading: Bool {
+        shimmeringView.isShimmering
+    }
 
     fileprivate let seriesApi = SeriesApi()
     fileprivate var seriesViewModels = [SeriesViewModel]()
@@ -166,6 +178,9 @@ class SeriesViewController: UIViewController, Shimmable {
             }
 
             self.tableView.reloadData()
+
+            self.tableView.tableHeaderView = self.sliderHeaderView
+            self.sliderHeaderView.reloadData()
         }
     }
 
@@ -178,7 +193,6 @@ class SeriesViewController: UIViewController, Shimmable {
     @objc fileprivate func didChangeSegment() {
 //        seriesApi.cancelAll()
 
-        
     }
 
     @objc fileprivate func didPullRefreshControl() {
@@ -219,5 +233,23 @@ extension SeriesViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return Constants.cellHeight
+    }
+}
+
+extension SeriesViewController: SliderTableViewHeaderViewDelegate {
+
+    func sliderNumberOfItems(_ slider: SliderTableViewHeaderView) -> Int {
+        return isLoading ? 0 : seriesViewModels.count
+    }
+
+    func slider(_ slider: SliderTableViewHeaderView, imageFor view: UIImageView, at index: Int) {
+        let indexPath = IndexPath(row: index, section: 0)
+        guard let viewModel = seriesViewModel(at: indexPath) else { return }
+
+        view.setImage(with: viewModel.imageUrl, placeholderImage: PlaceholderImg.medium)
+    }
+
+    func slider(_ slider: SliderTableViewHeaderView, didSelectImageAt index: Int) {
+        Clog.log("didSelectImageAt index \(index)")
     }
 }

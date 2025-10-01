@@ -19,6 +19,7 @@ class SeriesViewModel: Descriptable {
     let typeLabel: String
     let raceCount: Int
     let pilotCount: Int
+    let imageUrl: String?
 
     // MARK: - Initialization
 
@@ -28,9 +29,9 @@ class SeriesViewModel: Descriptable {
         self.dateLabel = Self.dateLabelString(for: series.startDate) // 14/09/2024
         self.typeLabel = series.typeString
         self.subtitleLabel = "\(self.typeLabel) | Started: \(self.dateLabel)"
-
         self.raceCount = Int(series.raceApprovedCount)
         self.pilotCount = Int(series.pilotCount)
+        self.imageUrl = series.mainImageUrl
     }
 
     static func viewModels(with objects:[Series]) -> [SeriesViewModel] {

@@ -32,6 +32,7 @@
 		4F0F2F442E87525D006788A7 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC05C142E64FFB700EB97A4 /* DeepLink.swift */; };
 		4F0F2F452E875264006788A7 /* DeepLinkURLHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC05C162E65004400EB97A4 /* DeepLinkURLHandler.swift */; };
 		4F0F2F472E87532F006788A7 /* DeepLinkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0F2F462E87532F006788A7 /* DeepLinkTests.swift */; };
+		4F0F2F492E888100006788A7 /* SliderTableViewHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0F2F482E888100006788A7 /* SliderTableViewHeaderView.swift */; };
 		4F1342482360B67D00A9DBDE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1342472360B67D00A9DBDE /* AppDelegate.swift */; };
 		4F13424D2360B67D00A9DBDE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4F13424B2360B67D00A9DBDE /* Main.storyboard */; };
 		4F1342522360B67D00A9DBDE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4F1342502360B67D00A9DBDE /* LaunchScreen.storyboard */; };
@@ -298,16 +299,6 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4F95B7682596968200631A27 /* Embed Watch Content */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			name = "Embed Watch Content";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -339,6 +330,7 @@
 		4F0F2F402E871E23006788A7 /* HTMLLinkTransform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLLinkTransform.swift; sourceTree = "<group>"; };
 		4F0F2F422E872FBA006788A7 /* MGPWebTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MGPWebTests.swift; sourceTree = "<group>"; };
 		4F0F2F462E87532F006788A7 /* DeepLinkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkTests.swift; sourceTree = "<group>"; };
+		4F0F2F482E888100006788A7 /* SliderTableViewHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderTableViewHeaderView.swift; sourceTree = "<group>"; };
 		4F1342442360B67D00A9DBDE /* RaceSync.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RaceSync.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F1342472360B67D00A9DBDE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4F13424C2360B67D00A9DBDE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -1124,6 +1116,7 @@
 				4FD53FB223A0E9B700158206 /* AvatarImageView.swift */,
 				4F8668FB23870E1E005E310A /* SegmentedTableViewHeaderView.swift */,
 				4F65033D2E467EFB00FA8AED /* ColumnTableViewHeaderView.swift */,
+				4F0F2F482E888100006788A7 /* SliderTableViewHeaderView.swift */,
 				4FD4E1DA237FBE36008816B3 /* JoinButton.swift */,
 				4FA26834237A80B9008970AC /* ActionButton.swift */,
 				4FD4E1C2237F960A008816B3 /* CustomButton.swift */,
@@ -1229,7 +1222,6 @@
 			buildPhases = (
 				9096BCDFA897EAE64E1192AF /* [CP] Check Pods Manifest.lock */,
 				4F1342872360DA4C00A9DBDE /* Embed Frameworks */,
-				4F95B7682596968200631A27 /* Embed Watch Content */,
 				4F1342402360B67D00A9DBDE /* Sources */,
 				4F1342412360B67D00A9DBDE /* Frameworks */,
 				4F1342422360B67D00A9DBDE /* Resources */,
@@ -1508,6 +1500,7 @@
 				4F0B61472385F69E00930D91 /* ProfileViewModel.swift in Sources */,
 				4F65033A2E45CE5900FA8AED /* RacePaymentsViewController.swift in Sources */,
 				4FE1DADF2DEB9EEF009143C4 /* StandingViewModel.swift in Sources */,
+				4F0F2F492E888100006788A7 /* SliderTableViewHeaderView.swift in Sources */,
 				4F86690223876E71005E310A /* ChapterViewModel.swift in Sources */,
 				4F8F2C112384903F00DC4907 /* RaceViewModel.swift in Sources */,
 				4FF16CBE2E70EC7D00B4FC51 /* WeakRef.swift in Sources */,
@@ -1900,7 +1893,7 @@
 				CODE_SIGN_ENTITLEMENTS = RaceSync/RaceSync.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 83;
+				CURRENT_PROJECT_VERSION = 84;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = TJ4PB66YQS;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
@@ -1911,7 +1904,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.8.1;
+				MARKETING_VERSION = 1.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.multigp.RaceSyncApp;
 				PRODUCT_NAME = RaceSync;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1937,7 +1930,7 @@
 				CODE_SIGN_ENTITLEMENTS = RaceSync/RaceSync.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 83;
+				CURRENT_PROJECT_VERSION = 84;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = TJ4PB66YQS;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
@@ -1948,7 +1941,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.8.1;
+				MARKETING_VERSION = 1.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.multigp.RaceSyncApp;
 				PRODUCT_NAME = RaceSync;
 				PROVISIONING_PROFILE_SPECIFIER = "";

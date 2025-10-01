@@ -3,6 +3,15 @@
 
 ---
 
+## 1.9
+
+### Introducing MultiGP Series:
+You can now browse official MultiGP Series, join the open races and check out the live leaderboards. 
+
+### Fixes and enhancements:
+
+   * 
+
 ## 1.8.1
 
 ### Fixes and enhancements:
@@ -11,7 +20,7 @@
    * Fixed not being able to duplicate or delete a race anymore. This was a regression introduced in v1.8.
    * Fixed text truncation issues in join buttons, when the race fee is over $99.
    * Web links to races now open directly in the app, showing the race detail view.
-   * 
+   * You can now email feedback directly from Settings with your preferred email app.
 
 ---
 
