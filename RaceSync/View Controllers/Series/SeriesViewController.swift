@@ -17,15 +17,18 @@ class SeriesViewController: UIViewController, Shimmable {
 
     lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
+        tableView.backgroundView = UIView()
+        tableView.backgroundView?.backgroundColor = Color.clear
+        tableView.backgroundColor = Color.gray50
+        tableView.contentInsetAdjustmentBehavior = .always
         tableView.dataSource = self
         tableView.delegate = self
 //        tableView.emptyDataSetSource = self
 //        tableView.emptyDataSetDelegate = self
-        tableView.register(cellType: AvatarTableViewCell.self)
+        tableView.register(cellType: SimpleTableViewCell.self)
         tableView.tableHeaderView = self.sliderHeaderView
         tableView.refreshControl = self.refreshControl
         tableView.tableFooterView = UIView()
-        tableView.contentInsetAdjustmentBehavior = .always
         return tableView
     }()
 
@@ -60,18 +63,16 @@ class SeriesViewController: UIViewController, Shimmable {
     }()
 
     fileprivate lazy var segmentedControl: UISegmentedControl = {
-
         let items = ["My Series", "Popular", "All Series"]
         let control = UISegmentedControl(items: items)
         control.selectedSegmentIndex = 0
-//        control.setItems(filters.compactMap { $0.title })
         control.addTarget(self, action: #selector(didChangeSegment), for: .valueChanged)
         return control
     }()
 
     fileprivate lazy var refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
-        refreshControl.backgroundColor = Color.gray20
+        refreshControl.backgroundColor = Color.gray50
         refreshControl.tintColor = Color.blue
         refreshControl.addTarget(self, action: #selector(didPullRefreshControl), for: .valueChanged)
         return refreshControl
@@ -93,7 +94,7 @@ class SeriesViewController: UIViewController, Shimmable {
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
-        static let cellHeight: CGFloat = UniversalConstants.cellHeight
+        static let cellHeight: CGFloat = 100
         static let headerViewHeight: CGFloat = 51
     }
 
@@ -126,6 +127,7 @@ class SeriesViewController: UIViewController, Shimmable {
     // MARK: - Layout
 
     fileprivate func setupLayout() {
+        
         configureNavigationItems()
 
         view.addSubview(headerView)
@@ -184,15 +186,22 @@ class SeriesViewController: UIViewController, Shimmable {
         }
     }
 
-    fileprivate func seriesViewModel(at indexPath: IndexPath) -> SeriesViewModel? {
-        return seriesViewModels[indexPath.row]
+    fileprivate func seriesViewModel(at index: Int) -> SeriesViewModel? {
+        return seriesViewModels[index]
     }
 
     // MARK: - Actions
 
+    fileprivate func showSeries(for index: Int) {
+        guard let viewModel = seriesViewModel(at: index) else { return }
+
+        let vc = SeriesTabBarController(with: viewModel.series.id)
+        vc.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(vc, animated: true)
+    }
+
     @objc fileprivate func didChangeSegment() {
 //        seriesApi.cancelAll()
-
     }
 
     @objc fileprivate func didPullRefreshControl() {
@@ -201,14 +210,23 @@ class SeriesViewController: UIViewController, Shimmable {
 
     // MARK: - Cell Configuration
 
-    func configure<T>(_ view: T, forRowAt indexPath: IndexPath) where T : UITableViewCell {
-        guard let cell = view as? AvatarTableViewCell,
-              let viewModel = seriesViewModel(at: indexPath) else { return }
+    func configure<T>(_ cell: T, forRowAt indexPath: IndexPath) where T : SimpleTableViewCell {
+        guard let viewModel = seriesViewModel(at: indexPath.row) else { return }
 
         cell.titleLabel.text = viewModel.titleLabel
-        cell.subtitleLabel.text = viewModel.subtitleLabel
-        cell.avatarImageView.isHidden = true
-        cell.accessoryView = nil
+        cell.titleLabel.numberOfLines = 2
+        cell.subtitleLabel.text = viewModel.typeLabel
+        cell.accessoryType = .disclosureIndicator
+
+        let ratio = CGFloat(16.0/9.0)
+        let height = Constants.cellHeight - Constants.padding*2
+        let size = CGSize(width: height * ratio, height: height)
+        cell.imageRatio = ratio
+        cell.iconImageView.setImage(with: viewModel.imageUrl, placeholderImage: PlaceholderImg.small, size: size)
+        cell.iconImageView.contentMode = .scaleAspectFill
+        cell.iconImageView.layer.cornerRadius = 6
+        cell.iconImageView.layer.masksToBounds = true
+
     }
 }
 
@@ -216,6 +234,7 @@ extension SeriesViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        showSeries(for: indexPath.row)
     }
 }
 
@@ -226,7 +245,7 @@ extension SeriesViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as AvatarTableViewCell
+        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as SimpleTableViewCell
         configure(cell, forRowAt: indexPath)
         return cell
     }
@@ -243,13 +262,11 @@ extension SeriesViewController: SliderTableViewHeaderViewDelegate {
     }
 
     func slider(_ slider: SliderTableViewHeaderView, imageFor view: UIImageView, at index: Int) {
-        let indexPath = IndexPath(row: index, section: 0)
-        guard let viewModel = seriesViewModel(at: indexPath) else { return }
-
+        guard let viewModel = seriesViewModel(at: index) else { return }
         view.setImage(with: viewModel.imageUrl, placeholderImage: PlaceholderImg.medium)
     }
 
     func slider(_ slider: SliderTableViewHeaderView, didSelectImageAt index: Int) {
-        Clog.log("didSelectImageAt index \(index)")
+        showSeries(for: index)
     }
 }

@@ -150,6 +150,9 @@
 		4F8F2C0E23846AEB00DC4907 /* DateUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8F2C0D23846AEB00DC4907 /* DateUtil.swift */; };
 		4F8F2C112384903F00DC4907 /* RaceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8F2C102384903F00DC4907 /* RaceViewModel.swift */; };
 		4F8F2C132385136300DC4907 /* NumberUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F8F2C122385136300DC4907 /* NumberUtil.swift */; };
+		4F90F0CE2E8DD04100D9F5AF /* SeriesDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F90F0CD2E8DD04100D9F5AF /* SeriesDetailViewController.swift */; };
+		4F90F0D22E8DD56D00D9F5AF /* SeriesStandingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F90F0D12E8DD56D00D9F5AF /* SeriesStandingsViewController.swift */; };
+		4F90F0D42E8DD60700D9F5AF /* SeriesTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F90F0D32E8DD60700D9F5AF /* SeriesTabBarController.swift */; };
 		4F91BC8A2398FBCE00539E95 /* ViewJoinable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F91BC892398FBCE00539E95 /* ViewJoinable.swift */; };
 		4F9979BE26D57CFF00496451 /* AppIcon-KRU@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F9979BA26D57CFF00496451 /* AppIcon-KRU@2x.png */; };
 		4F9979BF26D57CFF00496451 /* AppIcon-KRU@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F9979BB26D57CFF00496451 /* AppIcon-KRU@3x.png */; };
@@ -453,6 +456,9 @@
 		4F8F2C0D23846AEB00DC4907 /* DateUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateUtil.swift; sourceTree = "<group>"; };
 		4F8F2C102384903F00DC4907 /* RaceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceViewModel.swift; sourceTree = "<group>"; };
 		4F8F2C122385136300DC4907 /* NumberUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberUtil.swift; sourceTree = "<group>"; };
+		4F90F0CD2E8DD04100D9F5AF /* SeriesDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesDetailViewController.swift; sourceTree = "<group>"; };
+		4F90F0D12E8DD56D00D9F5AF /* SeriesStandingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesStandingsViewController.swift; sourceTree = "<group>"; };
+		4F90F0D32E8DD60700D9F5AF /* SeriesTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesTabBarController.swift; sourceTree = "<group>"; };
 		4F91BC892398FBCE00539E95 /* ViewJoinable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewJoinable.swift; sourceTree = "<group>"; };
 		4F9979BA26D57CFF00496451 /* AppIcon-KRU@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-KRU@2x.png"; sourceTree = "<group>"; };
 		4F9979BB26D57CFF00496451 /* AppIcon-KRU@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-KRU@3x.png"; sourceTree = "<group>"; };
@@ -800,6 +806,9 @@
 			isa = PBXGroup;
 			children = (
 				4F521F812E6E18D800AE7C03 /* SeriesViewController.swift */,
+				4F90F0D32E8DD60700D9F5AF /* SeriesTabBarController.swift */,
+				4F90F0CD2E8DD04100D9F5AF /* SeriesDetailViewController.swift */,
+				4F90F0D12E8DD56D00D9F5AF /* SeriesStandingsViewController.swift */,
 			);
 			path = Series;
 			sourceTree = "<group>";
@@ -1551,6 +1560,7 @@
 				4FD4E1DD237FBE8B008816B3 /* MemberBadgeView.swift in Sources */,
 				4FC50258242700DC0088320B /* RacePilotsPickerController.swift in Sources */,
 				4FD4E1DB237FBE36008816B3 /* JoinButton.swift in Sources */,
+				4F90F0D42E8DD60700D9F5AF /* SeriesTabBarController.swift in Sources */,
 				4F7C8E3724D8AE16008FE125 /* ProfileAvatarView.swift in Sources */,
 				4F9DB79923D2D94E00570483 /* ExternalAppConstants.swift in Sources */,
 				4F482EFB251158FF00DBA0DF /* SocialActivity.swift in Sources */,
@@ -1593,6 +1603,7 @@
 				4F8668FC23870E1E005E310A /* SegmentedTableViewHeaderView.swift in Sources */,
 				4FBE760F259B387E00312B66 /* User+UIExtensions.swift in Sources */,
 				4F8175A12411C35A00685F83 /* StandingsViewController.swift in Sources */,
+				4F90F0D22E8DD56D00D9F5AF /* SeriesStandingsViewController.swift in Sources */,
 				4F8B866C296583EB00EAF695 /* TextEditorViewController.swift in Sources */,
 				4FB0EB6A23BB3B1F009ABAF0 /* FormTableViewCell.swift in Sources */,
 				4FD4E1CD237F98E7008816B3 /* RaceTabBarController.swift in Sources */,
@@ -1609,6 +1620,7 @@
 				4F5488982D2236950056EA59 /* String+HTML.swift in Sources */,
 				4F5001E523823C940025A593 /* FlagEmojiGenerator.swift in Sources */,
 				4F5C1E4B238EEC5200D756EB /* MapViewController.swift in Sources */,
+				4F90F0CE2E8DD04100D9F5AF /* SeriesDetailViewController.swift in Sources */,
 				4FAAA88523AA15EA00A004DC /* MapKit+Extensions.swift in Sources */,
 				4F5C1E43238CF6BD00D756EB /* ProfileViewController.swift in Sources */,
 				4F8175A32411C39C00685F83 /* RaceFeedController.swift in Sources */,

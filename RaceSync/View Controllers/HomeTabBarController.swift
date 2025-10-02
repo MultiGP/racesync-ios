@@ -26,12 +26,12 @@ class HomeTabBarController: UITabBarController {
         return RaceFeedViewController(filters, selectedFilter: filters.first!)
     }()
 
-    fileprivate lazy var standingsVC: StandingsViewController = {
-        return StandingsViewController()
-    }()
-
     fileprivate lazy var seriesVC: SeriesViewController = {
         return SeriesViewController()
+    }()
+
+    fileprivate lazy var standingsVC: StandingsViewController = {
+        return StandingsViewController()
     }()
 
     fileprivate lazy var titleView: UIView = {
@@ -224,7 +224,7 @@ class HomeTabBarController: UITabBarController {
     // MARK: - Data Update
 
     fileprivate func loadContent() {
-        let vcs: [UIViewController] = [raceFeedVC, standingsVC, seriesVC]
+        let vcs: [UIViewController] = [raceFeedVC, seriesVC, standingsVC]
         let idx = AppPrefs.lastSelectedTab
 
         configureTabBarController(with: vcs, selectedIndex: idx)

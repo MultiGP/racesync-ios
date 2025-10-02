@@ -65,7 +65,7 @@ class ChapterTableViewCell: UITableViewCell {
         self.accessoryType = .disclosureIndicator
 
         let selectedBackgroundView = UIView()
-        selectedBackgroundView.backgroundColor = Color.gray50
+        selectedBackgroundView.backgroundColor = Color.gray20
         self.selectedBackgroundView = selectedBackgroundView
 
         contentView.addSubview(avatarImageView)

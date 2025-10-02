@@ -24,7 +24,7 @@ class SliderTableViewHeaderView: UIView {
     weak var delegate: SliderTableViewHeaderViewDelegate?
 
     static var height: CGFloat {
-        UIScreen.main.bounds.height / 3.5
+        UIScreen.main.bounds.height / 4
     }
 
     // MARK: - Private
@@ -52,8 +52,8 @@ class SliderTableViewHeaderView: UIView {
     fileprivate lazy var pageControl: UIPageControl = {
         let control = UIPageControl()
         control.addTarget(self, action: #selector(didTapPageControl), for: .valueChanged)
-        control.currentPageIndicatorTintColor = UIColor.gray.withAlphaComponent(0.9)
-        control.pageIndicatorTintColor = UIColor.gray.withAlphaComponent(0.3)
+        control.currentPageIndicatorTintColor = Color.gray400
+        control.pageIndicatorTintColor = Color.gray200
         control.hidesForSinglePage = true
         return control
     }()
@@ -111,8 +111,7 @@ class SliderTableViewHeaderView: UIView {
 
     fileprivate func setupLayout() {
 
-        backgroundColor = UIColor.lightGray
-//        backgroundColor = Color.gray50
+        backgroundColor = Color.gray50
 
         addSubview(collectionView)
         collectionView.snp.makeConstraints { make in
@@ -124,6 +123,15 @@ class SliderTableViewHeaderView: UIView {
         pageControl.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.bottom.equalToSuperview().offset(-Constants.spacing/5)
+        }
+
+        let separatorLine = UIView()
+        separatorLine.backgroundColor = Color.gray100
+        addSubview(separatorLine)
+        separatorLine.snp.makeConstraints {
+            $0.height.equalTo(0.5)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(self.snp.bottom)
         }
     }
 
@@ -243,21 +251,39 @@ extension SliderTableViewHeaderView: UIScrollViewDelegate {
 
         let cellWidth = collectionView.bounds.width * Constants.cellRatio
         let pageWidth = cellWidth + layout.minimumLineSpacing
+        let tolerance = 0.5
 
-        // where the scrollView *would* stop
+        // Where the scroll would naturally stop
         let estimatedIndex = scrollView.contentOffset.x / pageWidth
         var index = round(estimatedIndex)
 
-        if velocity.x > 0 { index = floor(estimatedIndex + 1) }
-        if velocity.x < 0 { index = ceil(estimatedIndex - 1) }
+        if velocity.x > 0 { // force forward
+            if velocity.x < tolerance {
+                index = ceil(estimatedIndex + 1)
+            } else {
+                index = floor(estimatedIndex + 1)
+            }
+        } else if velocity.x < 0 { // force backward
+            if velocity.x > -tolerance {
+                index = floor(estimatedIndex - 1)
+            } else {
+                index = ceil(estimatedIndex - 1)
+            }
+        }
 
-        let newOffset = index * pageWidth - (collectionView.bounds.width - cellWidth)/2
+        // Clamp index
+        let maxIndex = totalElements - 1
+        let newIndex = max(0, min(Int(index), maxIndex))
+
+        // Offset to center the cell
+        let newOffset = CGFloat(newIndex) * pageWidth - (collectionView.bounds.width - cellWidth)/2
         targetContentOffset.pointee = CGPoint(x: newOffset, y: 0)
 
-        let newIndex = Int(index)
+        // Update state
         currentIndex = newIndex
         pageControl.currentPage = newIndex % numberOfItems
     }
+
 
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         adjustInfiniteScroll()
@@ -306,9 +332,9 @@ private final class SliderImageCell: UICollectionViewCell {
 
     fileprivate let shadowView: UIView = {
         let view = UIView()
-        view.layer.shadowRadius = 2.5
-        view.layer.shadowOpacity = 0.25
-        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowRadius = 2
+        view.layer.shadowOpacity = 0.35
+        view.layer.shadowColor = Color.black.cgColor
         view.layer.shadowOffset = CGSize(width: 0, height: 2.0)
         view.layer.masksToBounds = false
         return view

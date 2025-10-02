@@ -322,7 +322,7 @@ extension ChapterViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UniversalConstants.cellHeight
+        return RaceTableViewCell.height
     }
 
     func raceTableViewCell(for indexPath: IndexPath) -> RaceTableViewCell {

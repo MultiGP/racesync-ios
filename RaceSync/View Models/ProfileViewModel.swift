@@ -96,16 +96,50 @@ class ProfileViewModel: Descriptable {
             self.rightBadgeLabel = "\(chapter.memberCount) Members"
         }
     }
+
+    init(with series: Series) {
+        self.type = .series
+        self.id = series.id
+
+        self.title = series.name
+        self.pictureUrl = nil
+        self.backgroundUrl = series.mainImageUrl
+
+        var description: String = series.typeString
+        if let date = series.startDate {
+            description += "\n"
+            description += "Started on: \(DateUtil.isoDateFormatter.string(from: date))"
+        }
+        if let date = series.endDate {
+            description += " to: \(DateUtil.isoDateFormatter.string(from: date))"
+        }
+
+        self.displayName = description
+
+        self.leftBadgeImage = UIImage(named: "icn_race_small")
+        self.leftBadgeLabel = "\(series.raceApprovedCount) Race"
+
+        self.rightBadgeImage = UIImage(named: "icn_member_small")
+        self.rightBadgeLabel = "\(series.pilotCount) Pilots"
+
+        self.locationName = ""
+        self.rightSegmentLabel = ""
+        self.leftSegmentLabel = ""
+        self.topBadgeLabel = nil
+        self.topBadgeImage = nil
+    }
 }
 
 public enum ProfileViewModelType: String {
     case user = "user"
     case chapter = "chapter"
+    case series = "series"
 
     var placeholder: UIImage? {
         switch self {
-        case .user:         return PlaceholderImg.profileAvatar
-        case .chapter:      return PlaceholderImg.profileAvatar
+        case .user:     return PlaceholderImg.profileAvatar
+        case .chapter:  return PlaceholderImg.profileAvatar
+        default:        return nil
         }
     }
 }

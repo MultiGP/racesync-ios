@@ -31,8 +31,6 @@ class ProfileHeaderView: UIView {
     var isEditable: Bool = false {
         didSet {
             cameraButton.isHidden = !isEditable
-            avatarView.isUserInteractionEnabled = isEditable
-            backgroundView.isUserInteractionEnabled = isEditable
         }
     }
 
@@ -235,11 +233,13 @@ class ProfileHeaderView: UIView {
             guard image == nil else { return }
             let placeholder = PlaceholderImg.profileBkgd
             backgroundView.imageView.image = placeholder
+            backgroundView.isHidden = false
         }
 
         func handleAvatarImage(_ image: UIImage?) {
             guard image == nil else { return }
             avatarView.imageView.image = viewModel.type.placeholder
+            avatarView.isHidden = false
         }
 
         let headerImageSize = CGSize(width: UIScreen.main.bounds.width*3, height: Self.backgroundViewHeight)
@@ -262,15 +262,17 @@ class ProfileHeaderView: UIView {
                 handleAvatarImage(image)
             }
         } else {
-            handleAvatarImage(nil)
+            avatarView.isHidden = true
         }
 
         mainTextLabel.text = viewModel.displayName
 
         if !viewModel.locationName.isEmpty {
             locationButton.setTitle(viewModel.locationName, for: .normal)
+            locationButton.isHidden = false
         } else {
-            locationButton.setTitle("Earth", for: .normal)
+            locationButton.setTitle(nil, for: .normal)
+            locationButton.isHidden = true
         }
 
         if viewModel.topBadgeLabel != nil {

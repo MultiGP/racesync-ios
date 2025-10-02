@@ -13,7 +13,6 @@ import RaceSyncAPI
 
 enum RaceTabs: Int {
     case details, results, schedule
-
     static let `default`: Self = .details
 }
 

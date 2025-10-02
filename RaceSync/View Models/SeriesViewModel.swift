@@ -28,7 +28,7 @@ class SeriesViewModel: Descriptable {
         self.titleLabel = series.name
         self.dateLabel = Self.dateLabelString(for: series.startDate) // 14/09/2024
         self.typeLabel = series.typeString
-        self.subtitleLabel = "\(self.typeLabel) | Started: \(self.dateLabel)"
+        self.subtitleLabel = "\(series.typeString) | Started: \(self.dateLabel)"
         self.raceCount = Int(series.raceApprovedCount)
         self.pilotCount = Int(series.pilotCount)
         self.imageUrl = series.mainImageUrl

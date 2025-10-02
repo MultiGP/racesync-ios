@@ -87,7 +87,7 @@ class MessageViewCell: UITableViewCell {
 
     fileprivate func setupLayout() {
         let selectedBackgroundView = UIView()
-        selectedBackgroundView.backgroundColor = Color.gray50
+        selectedBackgroundView.backgroundColor = Color.gray20
         self.selectedBackgroundView = selectedBackgroundView
 
         accessoryType = .disclosureIndicator

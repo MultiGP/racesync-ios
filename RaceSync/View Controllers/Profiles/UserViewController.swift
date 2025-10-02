@@ -56,7 +56,6 @@ class UserViewController: ProfileViewController, ViewJoinable {
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
-        static let cellHeight: CGFloat = UniversalConstants.cellHeight
         static let buttonHeight: CGFloat = 32
         static let buttonSpacing: CGFloat = 12
         static let avatarImageSize = CGSize(width: 50, height: 50)
@@ -308,7 +307,7 @@ extension UserViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return Constants.cellHeight
+        return UserRaceTableViewCell.height
     }
 
     func userRaceTableViewCell(for indexPath: IndexPath) -> UserRaceTableViewCell {

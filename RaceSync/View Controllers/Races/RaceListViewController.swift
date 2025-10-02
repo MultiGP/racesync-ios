@@ -22,7 +22,7 @@ class RaceListViewController: UIViewController, ViewJoinable {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(cellType: RaceTableViewCell.self)
+        tableView.register(cellType: UserRaceTableViewCell.self)
         tableView.tableFooterView = UIView()
         return tableView
     }()
@@ -32,6 +32,7 @@ class RaceListViewController: UIViewController, ViewJoinable {
     fileprivate var raceList: [RaceViewModel]
     fileprivate let raceApi = RaceApi()
     fileprivate var seasonId: ObjectId?
+    fileprivate var seriesId: ObjectId?
     fileprivate var raceClass: RaceClass?
     fileprivate var raceName: String?
 
@@ -46,7 +47,12 @@ class RaceListViewController: UIViewController, ViewJoinable {
     init(_ raceViewModels: [RaceViewModel], seasonId: ObjectId) {
         self.raceList = raceViewModels
         self.seasonId = seasonId
+        super.init(nibName: nil, bundle: nil)
+    }
 
+    init(_ raceViewModels: [RaceViewModel], seriesId: ObjectId) {
+        self.raceList = raceViewModels
+        self.seriesId = seriesId
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -59,7 +65,6 @@ class RaceListViewController: UIViewController, ViewJoinable {
     init(_ raceViewModels: [RaceViewModel], raceClass: RaceClass) {
         self.raceList = raceViewModels
         self.raceClass = raceClass
-
         super.init(nibName: nil, bundle: nil)
         self.title = raceClass.title
     }
@@ -67,7 +72,6 @@ class RaceListViewController: UIViewController, ViewJoinable {
     init(_ raceViewModels: [RaceViewModel], raceName: String) {
         self.raceList = raceViewModels
         self.raceName = raceName
-
         super.init(nibName: nil, bundle: nil)
         self.title = raceName
     }
@@ -101,12 +105,19 @@ class RaceListViewController: UIViewController, ViewJoinable {
 
     fileprivate func setupLayout() {
 
+        configureNavigationItems()
+
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(view.snp.bottom)
         }
+    }
+
+    fileprivate func configureNavigationItems() {
+        title = "Races"
+        tabBarItem = UITabBarItem(title: title, image: SystemImg.flagCheckeredCrossed, selectedImage: nil)
     }
 
     // MARK: - Actions
@@ -162,6 +173,11 @@ class RaceListViewController: UIViewController, ViewJoinable {
             }
         }
     }
+
+    fileprivate func raceViewModel(for indexPath: IndexPath) -> RaceViewModel? {
+        guard indexPath.row < raceList.count else { return nil }
+        return raceList[indexPath.row]
+    }
 }
 
 extension RaceListViewController: UITableViewDelegate {
@@ -169,12 +185,13 @@ extension RaceListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        let viewModel = raceList[indexPath.row]
-        openRaceDetail(viewModel)
+        if let viewModel = raceViewModel(for: indexPath) {
+            openRaceDetail(viewModel)
+        }
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return RaceTableViewCell.height
+        return UserRaceTableViewCell.height
     }
 }
 
@@ -185,8 +202,8 @@ extension RaceListViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as RaceTableViewCell
-        let viewModel = raceList[indexPath.row]
+        guard let viewModel = raceViewModel(for: indexPath) else { return UITableViewCell() }
+        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as UserRaceTableViewCell
 
         cell.dateLabel.text = viewModel.startDateLabel //"Saturday Sept 14 @ 9:00 AM"
         cell.titleLabel.text = viewModel.titleLabel
@@ -196,7 +213,6 @@ extension RaceListViewController: UITableViewDataSource {
         cell.joinButton.addTarget(self, action: #selector(didPressJoinButton), for: .touchUpInside)
         cell.memberBadgeView.count = viewModel.participantCount
         cell.avatarImageView.imageView.setImage(with: viewModel.imageUrl, placeholderImage: PlaceholderImg.medium)
-        cell.subtitleLabel.text = viewModel.distanceLabel
         return cell
     }
 }
