@@ -102,41 +102,53 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate lazy var locationButton: PasteboardButton = {
         let button = PasteboardButton(type: .system)
-        button.tintColor = Color.red
+        button.tintColor = Color.link
         button.shouldHighlight = true
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         button.titleLabel?.numberOfLines = 2
-        button.setImage(UIImage(named: "icn_pin_small"), for: .normal)
-        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -Constants.padding, bottom: 0, right: 0)
-        button.imageView?.tintColor = button.tintColor
         button.addTarget(self, action: #selector(didPressLocationButton), for: .touchUpInside)
         return button
     }()
 
-    fileprivate lazy var startDateButton: PasteboardButton = {
+    fileprivate lazy var date1Button: PasteboardButton = {
         let button = PasteboardButton(type: .system)
         button.tintColor = Color.black
         button.shouldHighlight = true
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         button.titleLabel?.numberOfLines = 2
-        button.setImage(UIImage(named: "icn_calendar_start_small"), for: .normal) // 15 x 15
         button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -Constants.padding, bottom: 0, right: 0)
         button.imageView?.tintColor = button.tintColor
         button.addTarget(self, action: #selector(didPressDateButton), for: .touchUpInside)
         return button
     }()
 
-    fileprivate lazy var endDateButton: PasteboardButton = {
+    fileprivate lazy var date2Button: PasteboardButton = {
         let button = PasteboardButton(type: .system)
         button.tintColor = Color.black
         button.shouldHighlight = true
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         button.titleLabel?.numberOfLines = 2
-        button.setImage(UIImage(named: "icn_calendar_end_small"), for: .normal) // 15 x 15
         button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -Constants.padding, bottom: 0, right: 0)
         button.imageView?.tintColor = button.tintColor
         button.addTarget(self, action: #selector(didPressDateButton), for: .touchUpInside)
+        button.isHidden = true
         return button
+    }()
+
+    fileprivate lazy var dateIconView: UIImageView = {
+        let view = UIImageView()
+        view.contentMode = .scaleAspectFit
+        view.backgroundColor = Color.clear
+        return view
+    }()
+
+    fileprivate lazy var locationIconView: UIImageView = {
+        let view = UIImageView()
+        view.image = UIImage(named: "icn_pin_small")?.withRenderingMode(.alwaysTemplate)
+        view.contentMode = .scaleAspectFit
+        view.backgroundColor = Color.clear
+        view.tintColor = Color.link
+        return view
     }()
 
     fileprivate lazy var htmlView: RichEditorView = {
@@ -194,13 +206,33 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     }()
 
     fileprivate lazy var leftStackView: UIStackView = {
-        var subviews = [startDateButton, endDateButton, locationButton]
-        let stackView = UIStackView(arrangedSubviews: subviews)
-        stackView.axis = .vertical
-        stackView.alignment = .leading
-        stackView.distribution = .equalSpacing
-        stackView.spacing = Constants.padding*3/4
-        return stackView
+        // vertical stack for the date buttons
+        let stackView1 = UIStackView(arrangedSubviews: [date1Button, date2Button])
+        stackView1.axis = .vertical
+        stackView1.alignment = .leading
+        stackView1.distribution = .equalCentering
+
+        // horizontal stack for the icon + the date stack
+        let stackView2 = UIStackView(arrangedSubviews: [dateIconView, stackView1])
+        stackView2.axis = .horizontal
+        stackView2.alignment = .center
+        stackView2.distribution = .fill
+        stackView2.spacing = Constants.padding * 3/4
+
+        let stackView3 = UIStackView(arrangedSubviews: [locationIconView, locationButton])
+        stackView3.axis = .horizontal
+        stackView3.alignment = .center
+        stackView3.distribution = .fill
+        stackView3.spacing = Constants.padding * 3/4
+
+        // vertical stack containing the icon+dates row and the location button
+        let stackView4 = UIStackView(arrangedSubviews: [stackView2, stackView3])
+        stackView4.axis = .vertical
+        stackView4.alignment = .leading
+        stackView4.distribution = .equalSpacing
+        stackView4.spacing = Constants.padding / 2
+
+        return stackView4
     }()
 
     fileprivate var raceCoordinates: CLLocationCoordinate2D? {
@@ -221,7 +253,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     }
 
     fileprivate var canDisplayEndDate: Bool {
-        guard let text = raceViewModel.endDateDesc else { return false }
+        guard let text = raceViewModel.endDateLabel else { return false }
         return text.count > 0
     }
 
@@ -370,7 +402,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         headerView.addSubview(leftStackView)
         leftStackView.snp.makeConstraints {
             $0.top.equalTo(rightStackView.snp.top)
-            $0.leading.equalToSuperview().offset(Constants.padding*1.5)
+            $0.leading.equalToSuperview().offset(Constants.padding)
             $0.trailing.equalTo(rightStackView.snp.leading).offset(-Constants.padding/2)
         }
 
@@ -430,9 +462,30 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     fileprivate func populateContent() {
         titleLabel.text = raceViewModel.titleLabel.uppercased()
         subtitleLabel.attributedText = raceViewModel.subtitleLabel
-        joinButton.joinState = raceViewModel.joinState
         memberBadgeView.count = raceViewModel.participantCount
-        startDateButton.setTitle(raceViewModel.startDateDesc , for: .normal)
+
+        configureJoinButton()
+        configureDateLabels()
+        configureLocationLabels()
+        configureMap()
+
+        // Load the HTML on the next runloop
+        DispatchQueue.main.async { [weak self] in
+            guard let s = self else { return }
+            s.configureHTML()
+        }
+
+        // lays out the content and helps calculating the content size
+        let contentRect: CGRect = scrollView.subviews.reduce(into: .zero) { rect, view in
+            rect = rect.union(view.frame)
+        }
+        
+        // Seems like this is not doing anything?
+        scrollView.contentSize = CGSize(width: contentRect.size.width, height: contentRect.size.height)
+    }
+
+    fileprivate func configureJoinButton() {
+        joinButton.joinState = raceViewModel.joinState
 
         // showing an indicator if the user has joined, only if the race fee is still pending
         if race.isJoined && race.status == .open && race.isPayable {
@@ -443,73 +496,89 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             miniJoinButton.joinState = .closed
             miniJoinButton.isHidden = true
         }
+    }
+
+    fileprivate func configureDateLabels() {
+        var date1Label: String?
+        var date2Label: String?
+        var dateImage: UIImage?
 
         if canDisplayEndDate {
-            endDateButton.setTitle(raceViewModel.endDateDesc, for: .normal)
-        }
-        if canDisplayAddress {
-            locationButton.setTitle(raceViewModel.fullLocationLabel, for: .normal)
-
-            // Bring the icon to the first line, if there are more than 1 line of text
-            if let label = locationButton.titleLabel, label.numberOfVisibleLines > 2 {
-                locationButton.imageEdgeInsets = UIEdgeInsets(top: -Constants.padding, left: -Constants.padding, bottom: 0, right: 0)
+            if raceViewModel.sameDay {
+                date1Label = raceViewModel.dateLabel?.components(separatedBy: "@").first?.trimmingCharacters(in: .whitespaces)
+                date2Label = raceViewModel.timeLabel
+                dateImage = UIImage(named: "icn_date_path_continuous")
+            } else {
+                date1Label = raceViewModel.startDateLabel
+                date2Label = raceViewModel.endDateLabel
+                dateImage = UIImage(named: "icn_date_path_progress")
             }
+        } else {
+            date1Label = raceViewModel.startDateLabel
+            dateImage = UIImage(named: "icn_calendar_small")
         }
+
+        date1Button.setTitle(date1Label, for: .normal)
+        date2Button.setTitle(date2Label, for: .normal)
+        date2Button.isHidden = !canDisplayEndDate
+        dateIconView.image = dateImage
+    }
+
+    fileprivate func configureLocationLabels() {
+        guard canDisplayAddress else { return }
+
+        locationButton.setTitle(raceViewModel.fullLocationLabel, for: .normal)
+
+        // Bring the icon to the first line, if there are more than 1 line of text
+        if let label = locationButton.titleLabel, label.numberOfVisibleLines > 2 {
+            locationButton.imageEdgeInsets = UIEdgeInsets(top: -Constants.padding, left: -Constants.padding, bottom: 0, right: 0)
+        }
+
         if canDisplayFee {
             feeLabel.text = raceViewModel.feeLabel
         }
 
-        endDateButton.isHidden = !canDisplayEndDate
         locationButton.isHidden = !canDisplayAddress
         feeLabel.isHidden = !canDisplayFee
+    }
 
-        // Load the HTML on the next runloop
-        DispatchQueue.main.async { [weak self] in
-            guard let s = self else { return }
+    fileprivate func configureHTML() {
+        var html = ""
+        let spacing = Constants.padding * 3/4
 
-            var html = ""
-            let spacing = Constants.padding * 3/4
-
-            if s.canDisplayDescription {
-                let description = s.race.description.replaceHTMLColorTag(with: Color.gray300).stripHTMLFontTag().stripHTMLEdges()
-                html += "<div id=\"description\">\(description)</div>"
-            }
-            if s.canDisplayContent {
-                let content = s.race.content.replaceHTMLColorTag(with: Color.black).stripHTMLFontTag().stripHTMLEdges()
-                html += "<div id=\"content\" style=\"color:\(Color.black.toHexString()); padding-top: \(spacing)px; padding-bottom: \(spacing)px;\">\(content)</div>"
-            }
-            if s.canDisplayItinerary {
-                let itinerary = s.race.description.replaceHTMLColorTag(with: Color.gray100).stripHTMLFontTag().stripHTMLEdges()
-                html += "<hr style=\"border-top: 0.25px solid;\">"
-                html += "<div id=\"itinerary\" style=\"padding-top: \(spacing)px;\">\(itinerary)</div>"
-            }
-
-            s.htmlView.html = html
+        if canDisplayDescription {
+            let description = race.description.replaceHTMLColorTag(with: Color.gray300).stripHTMLFontTag().stripHTMLEdges()
+            html += "<div id=\"description\">\(description)</div>"
+        }
+        if canDisplayContent {
+            let content = race.content.replaceHTMLColorTag(with: Color.black).stripHTMLFontTag().stripHTMLEdges()
+            html += "<div id=\"content\" style=\"color:\(Color.black.toHexString()); padding-top: \(spacing)px; padding-bottom: \(spacing)px;\">\(content)</div>"
+        }
+        if canDisplayItinerary {
+            let itinerary = race.description.replaceHTMLColorTag(with: Color.gray100).stripHTMLFontTag().stripHTMLEdges()
+            html += "<hr style=\"border-top: 0.25px solid;\">"
+            html += "<div id=\"itinerary\" style=\"padding-top: \(spacing)px;\">\(itinerary)</div>"
         }
 
-        if canDisplayMap, let coordinates = raceCoordinates {
-            let distance = CLLocationDistance(1000)
-            let region = MKCoordinateRegion(center: coordinates, latitudinalMeters: distance, longitudinalMeters: distance)
+        htmlView.html = html
+    }
 
-            let mapRect = MKCoordinateRegion.mapRectForCoordinateRegion(region)
-            let paddedMapRect = mapRect.offsetBy(dx: 0, dy: -1500) // TODO: Convert Screen points to Map points instead of harcoded value
+    fileprivate func configureMap() {
+        guard canDisplayMap, let coordinates = raceCoordinates else { return }
 
-            let location = MKPointAnnotation()
-            location.coordinate = coordinates
+        let distance = CLLocationDistance(1000)
+        let region = MKCoordinateRegion(center: coordinates, latitudinalMeters: distance, longitudinalMeters: distance)
 
-            DispatchQueue.main.async {
-                self.mapView.addAnnotation(location)
-                self.mapView.setVisibleMapRect(paddedMapRect, animated: false)
-            }
+        let mapRect = MKCoordinateRegion.mapRectForCoordinateRegion(region)
+        let paddedMapRect = mapRect.offsetBy(dx: 0, dy: -1500) // TODO: Convert Screen points to Map points instead of harcoded value
+
+        let location = MKPointAnnotation()
+        location.coordinate = coordinates
+
+        DispatchQueue.main.async {
+            self.mapView.addAnnotation(location)
+            self.mapView.setVisibleMapRect(paddedMapRect, animated: false)
         }
-
-        // lays out the content and helps calculating the content size
-        let contentRect: CGRect = scrollView.subviews.reduce(into: .zero) { rect, view in
-            rect = rect.union(view.frame)
-        }
-        
-        // Seems like this is not doing anything?
-        scrollView.contentSize = CGSize(width: contentRect.size.width, height: contentRect.size.height)
     }
 
     // MARK: - Actions

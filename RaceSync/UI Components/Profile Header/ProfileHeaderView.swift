@@ -38,7 +38,7 @@ class ProfileHeaderView: UIView {
 
     lazy var locationButton: PasteboardButton = {
         let button = PasteboardButton(type: .system)
-        button.tintColor = Color.red
+        button.tintColor = Color.link
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         button.setImage(UIImage(named: "icn_pin_small"), for: .normal)
         button.titleEdgeInsets = UIEdgeInsets(top: -1, left: 0, bottom: 0, right: -Constants.padding)

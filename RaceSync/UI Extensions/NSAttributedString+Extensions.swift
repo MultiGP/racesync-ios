@@ -123,7 +123,7 @@ public extension String {
         <style type=\"text/css\">
         body { color: \(colorString); }
         img { max-height: 100%; max-width: \(maxWidth) !important; width: auto; height: auto; }
-        a { color: \(Color.red.toHexString()); }
+        a { color: \(Color.link.toHexString()); }
         </style>
         </head>
         <body> \(self) </body>

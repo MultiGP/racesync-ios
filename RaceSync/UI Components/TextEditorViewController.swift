@@ -160,14 +160,14 @@ extension TextEditorViewController: RichEditorToolbarDelegate {
     func richEditorToolbarChangeTextColor(_ toolbar: RichEditorToolbar) {
 
         // TODO: Present a color picker
-        toolbar.editor?.setTextColor(Color.red)
+        toolbar.editor?.setTextColor(Color.link)
         updateSaveButton()
     }
 
     func richEditorToolbarChangeBackgroundColor(_ toolbar: RichEditorToolbar) {
 
         // TODO: Present a color picker
-        toolbar.editor?.setTextBackgroundColor(Color.red)
+        toolbar.editor?.setTextBackgroundColor(Color.link)
         updateSaveButton()
     }
 

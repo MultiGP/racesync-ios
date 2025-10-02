@@ -70,7 +70,7 @@ class LoginViewController: UIViewController {
     fileprivate lazy var passwordRecoveryButton: UIButton = {
         let button = UIButton(type: .system)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .medium)
-        button.setTitleColor(Color.red, for: .normal)
+        button.setTitleColor(Color.link, for: .normal)
         button.setTitle("Forgot your password?", for: .normal)
         button.addTarget(self, action:#selector(didPressPasswordRecoveryButton), for: .touchUpInside)
         return button
@@ -79,7 +79,7 @@ class LoginViewController: UIViewController {
     fileprivate lazy var createAccountButton: UIButton = {
         let button = UIButton(type: .system)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .medium)
-        button.setTitleColor(Color.red, for: .normal)
+        button.setTitleColor(Color.link, for: .normal)
         button.setTitle("Create an account", for: .normal)
         button.addTarget(self, action:#selector(didPressCreateAccountButton), for: .touchUpInside)
         button.isHidden = true
@@ -110,7 +110,7 @@ class LoginViewController: UIViewController {
                           NSAttributedString.Key.foregroundColor: Color.gray200]
 
         let linkAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .medium),
-                          NSAttributedString.Key.foregroundColor: Color.red]
+                          NSAttributedString.Key.foregroundColor: Color.link]
 
         let attributedString = NSMutableAttributedString(string: label, attributes: attributes)
         attributedString.setAttributes(linkAttributes, range: NSString(string: label).range(of: link))

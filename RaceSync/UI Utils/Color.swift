@@ -34,4 +34,5 @@ public struct Color {
 
     // UI specific
     public static let navigationBarColor =      Color.white.withAlphaComponent(0.98)
+    public static let link =                    Color.red
 }

@@ -25,10 +25,10 @@ class SimpleTableViewCell: UITableViewCell {
     fileprivate var imageViewWidthConstraint: Constraint?
 
     lazy var iconImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.backgroundColor = Color.clear
-        imageView.clipsToBounds = true
-        return imageView
+        let view = UIImageView()
+        view.backgroundColor = Color.clear
+        view.clipsToBounds = true
+        return view
     }()
 
     lazy var titleLabel: UILabel = {
