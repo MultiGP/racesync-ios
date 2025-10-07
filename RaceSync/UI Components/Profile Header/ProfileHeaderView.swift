@@ -78,8 +78,8 @@ class ProfileHeaderView: UIView {
 
     static var backgroundViewHeight: CGFloat {
         // TODO: Use dynamic values instead of hardcoding them.
-        if Constants.backgroundImageHeight - 44 < Constants.avatarImageHeight {
-            return Constants.avatarImageHeight + 44
+        if Constants.backgroundImageHeight - 44 < Constants.avatarImageSize {
+            return Constants.avatarImageSize + 44
         }
         return Constants.backgroundImageHeight
     }
@@ -96,7 +96,7 @@ class ProfileHeaderView: UIView {
 
     fileprivate lazy var mainTextLabel: PasteboardLabel = {
         let label = PasteboardLabel()
-        label.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        label.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         label.textColor = Color.black
         label.numberOfLines = 2
         return label
@@ -118,7 +118,7 @@ class ProfileHeaderView: UIView {
     fileprivate lazy var leftBadgeButton: UIButton = {
         let button = UIButton(type: .system)
         button.tintColor = Color.gray400
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         button.titleEdgeInsets = UIEdgeInsets(right: -Constants.padding/2)
         button.isUserInteractionEnabled = false
         return button
@@ -127,7 +127,7 @@ class ProfileHeaderView: UIView {
     fileprivate lazy var rightBadgeButton: UIButton = {
         let button = UIButton(type: .system)
         button.tintColor = Color.gray400
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -Constants.padding/2, bottom: 0, right: 0)
         button.isUserInteractionEnabled = false
         return button
@@ -150,7 +150,7 @@ class ProfileHeaderView: UIView {
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
         static let backgroundImageHeight: CGFloat = CGFloat(Int(UIScreen.main.bounds.size.height/3.5))
-        static let avatarImageHeight: CGFloat = 170
+        static let avatarImageSize: CGFloat = 170
     }
 
     // MARK: - Initialization
@@ -184,9 +184,9 @@ class ProfileHeaderView: UIView {
 
         addSubview(avatarView)
         avatarView.snp.makeConstraints {
-            $0.top.equalTo(backgroundView.snp.bottom).offset(-Constants.avatarImageHeight*6/7) // 85%
+            $0.top.equalTo(backgroundView.snp.bottom).offset(-Constants.avatarImageSize*6/7) // 85%
             $0.centerX.equalToSuperview()
-            $0.height.equalTo(Constants.avatarImageHeight)
+            $0.height.equalTo(Constants.avatarImageSize)
         }
 
         addSubview(cameraButton)
@@ -254,7 +254,7 @@ class ProfileHeaderView: UIView {
             handleBackgroundImage(nil)
         }
 
-        let avatarImageSize = CGSize(width: Constants.avatarImageHeight, height: Constants.avatarImageHeight)
+        let avatarImageSize = CGSize(width: Constants.avatarImageSize, height: Constants.avatarImageSize)
         let avatarPlaceholder = UIImage.image(withColor: Color.gray100, imageSize: avatarImageSize)
 
         if let avatarImageUrl = ImageUtil.getImageUrl(for: viewModel.pictureUrl) {

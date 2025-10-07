@@ -148,6 +148,7 @@ public enum ParamKey {
     static let scoringDisabled = "scoringDisabled"
     static let scoringFormat = "scoringFormat"
     static let score = "score"
+    static let eloScore = "eloScore"
     static let totalLaps = "totalLaps"
     static let totalTime = "totalTime"
     static let fastest3Laps = "fastest3Laps"

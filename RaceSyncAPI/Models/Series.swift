@@ -30,8 +30,8 @@ public class Series: Mappable, Descriptable {
 
     public var races: [Race]? = nil
     public var chapters: [Chapter]? = nil
-//    public var pilotRanks: [PilotRank]? = nil
-//    public var chapterRanks: [ChapterRank]? = nil
+    public var pilotResults: [SeriesResult]? = nil
+    public var chapterResults: [SeriesResult]? = nil
 
     // MARK: - Initialization
 
@@ -66,5 +66,8 @@ public class Series: Mappable, Descriptable {
 
         races <- map[ParamKey.races]
         chapters <- map[ParamKey.chapters]
+
+        pilotResults <- map["pilot-results"]
+        chapterResults <- map["chapter-results"]
     }
 }

@@ -165,6 +165,13 @@ extension SeriesTabBarController: UITabBarControllerDelegate {
 
         (tabBar as? RoundedSelectionTabBar)?.updateSelectionFrame(animated: true)
 
+        if tabBarController.selectedViewController == viewController {
+            // Notify the currently visible VC to scroll to top
+            if let topVC = viewController as? ScrollToTop {
+                topVC.scrollToTop()
+            }
+        }
+
         if let index = viewControllers?.lastIndex(of: viewController) {
             didSelectedIndex(index)
         }

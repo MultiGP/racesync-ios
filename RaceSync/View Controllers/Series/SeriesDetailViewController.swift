@@ -75,11 +75,10 @@ class SeriesDetailViewController: UIViewController {
 
         let profileViewModel = ProfileViewModel(with: series)
         headerView.viewModel = profileViewModel
-//        headerView.topLayoutInset = navigationController?.navigationBar.frame.maxY ?? 0
+        let headerViewSize = headerView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
 
         scrollView.addSubview(headerView)
         headerView.snp.makeConstraints {
-            let headerViewSize = headerView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
             $0.top.leading.trailing.equalToSuperview()
             $0.size.equalTo(headerViewSize)
         }
@@ -119,6 +118,13 @@ extension SeriesDetailViewController: UIScrollViewDelegate {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         stretchHeaderView(with: scrollView.contentOffset)
+    }
+}
+
+extension SeriesDetailViewController: ScrollToTop {
+
+    func scrollToTop() {
+        scrollView.setContentOffset(.zero, animated: true)
     }
 }
 

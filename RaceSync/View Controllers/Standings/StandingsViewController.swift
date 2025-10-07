@@ -22,8 +22,8 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.emptyDataSetSource = self
-        tableView.tableFooterView = UIView()
         tableView.register(cellType: AvatarTableViewCell.self)
+        tableView.tableFooterView = UIView()
         tableView.keyboardDismissMode = .onDrag
         tableView.verticalScrollIndicatorInsets = UIEdgeInsets(top: -1, left: 0, bottom: 0, right: 0)
         tableView.refreshControl = self.refreshControl
@@ -189,7 +189,6 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     // MARK: - Data Update
 
     fileprivate func loadContent() {
-
         if !refreshControl.isRefreshing {
             isLoadingList(true)
         }
@@ -283,36 +282,6 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         return indexPath
     }
 
-    func configure<T>(_ view: T, forRowAt indexPath: IndexPath) where T : UITableViewCell {
-        guard let cell = view as? AvatarTableViewCell,
-              let viewModel = standingViewModel(at: indexPath) else { return }
-
-        cell.rankView.rank = viewModel.rank
-        cell.titleLabel.text = viewModel.titleLabel
-        cell.subtitleLabel.text = viewModel.subtitleLabel
-        cell.avatarImageView.isHidden = true
-        cell.accessoryView = nil
-
-        if let userId = myUserId, viewModel.standing.userId == userId {
-            cell.titleLabel.textColor = Color.white
-            cell.subtitleLabel.textColor = Color.gray20
-            cell.rankView.titleLabel.textColor = Color.gray20
-            cell.backgroundColor = Color.gray200
-            cell.selectedBackgroundView?.backgroundColor = Color.gray300
-
-            let image = ButtonImg.share?.withTintColor(.white)
-            let imageView = UIImageView(image: image)
-            imageView.tintColor = .white
-            cell.accessoryView = imageView
-        } else {
-            cell.titleLabel.textColor = Color.black
-            cell.subtitleLabel.textColor = Color.gray300
-            cell.rankView.titleLabel.textColor = Color.gray300
-            cell.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : Color.gray20
-            cell.selectedBackgroundView?.backgroundColor = Color.gray50
-        }
-    }
-
     // MARK: - Personal Standing Badge
 
     fileprivate func shouldPresentMyStandingBadge(_ indexPath: IndexPath) {
@@ -361,6 +330,25 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         invalidatePinnedView()
     }
 
+    // MARK: - Actions
+
+    func showUserProfile(forUserAt indexPath: IndexPath, from cell: AvatarTableViewCell) {
+        guard let viewModel = standingViewModel(at: indexPath) else { return }
+        guard !viewModel.standing.userId.isEmpty else { return }
+
+        cell.isLoading = true
+
+        userApi.getUser(with: viewModel.standing.userId) { [weak self] (user, error) in
+            if let user = user {
+                let vc = UserViewController(with: user)
+                self?.navigationController?.pushViewController(vc, animated: true)
+            } else if let _ = error {
+                // handle error
+            }
+            cell.isLoading = false
+        }
+    }
+
     @objc fileprivate func didPullRefreshControl() {
         loadContent()
     }
@@ -378,20 +366,7 @@ extension StandingsViewController: UITableViewDelegate {
             return
         }
 
-        cell.isLoading = true
-
-        guard let viewModel = standingViewModel(at: indexPath) else { return }
-        guard !viewModel.standing.userId.isEmpty else { return }
-
-        userApi.getUser(with: viewModel.standing.userId) { [weak self] (user, error) in
-            if let user = user {
-                let vc = UserViewController(with: user)
-                self?.navigationController?.pushViewController(vc, animated: true)
-            } else if let _ = error {
-                // handle error
-            }
-            cell.isLoading = false
-        }
+        showUserProfile(forUserAt: indexPath, from: cell)
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -425,6 +400,36 @@ extension StandingsViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return Constants.cellHeight
+    }
+
+    func configure<T>(_ view: T, forRowAt indexPath: IndexPath) where T : UITableViewCell {
+        guard let cell = view as? AvatarTableViewCell,
+              let viewModel = standingViewModel(at: indexPath) else { return }
+
+        cell.rankView.rank = viewModel.rank
+        cell.titleLabel.text = viewModel.titleLabel
+        cell.subtitleLabel.text = viewModel.subtitleLabel
+        cell.avatarImageView.isHidden = true
+        cell.accessoryView = nil
+
+        if let userId = myUserId, viewModel.standing.userId == userId {
+            cell.titleLabel.textColor = Color.white
+            cell.subtitleLabel.textColor = Color.gray20
+            cell.rankView.titleLabel.textColor = Color.gray20
+            cell.backgroundColor = Color.gray200
+            cell.selectedBackgroundView?.backgroundColor = Color.gray300
+
+            let image = ButtonImg.share?.withTintColor(.white)
+            let imageView = UIImageView(image: image)
+            imageView.tintColor = .white
+            cell.accessoryView = imageView
+        } else {
+            cell.titleLabel.textColor = Color.black
+            cell.subtitleLabel.textColor = Color.gray300
+            cell.rankView.titleLabel.textColor = Color.gray300
+            cell.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : Color.gray20
+            cell.selectedBackgroundView?.backgroundColor = Color.gray50
+        }
     }
 }
 
