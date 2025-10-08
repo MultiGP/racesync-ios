@@ -200,7 +200,7 @@ class RaceController {
 
     // MARK: - Navigation Action Builders
 
-    enum RaceAction: CaseIterable {
+    enum RaceAction: Int, CaseIterable {
         case edit, calendar, share, zippyQ
 
         func makeButton(target: Any?, action: Selector) -> UIButton {
@@ -236,7 +236,7 @@ class RaceController {
             if (option == .zippyQ && !race.isZippyQEnabled) { continue }
 
             let button = option.makeButton(target: self, action: #selector(raceActionTapped(_:)))
-            button.tag = options.firstIndex(of: option) ?? 0
+            button.tag = option.rawValue
             stackView.addArrangedSubview(button)
         }
 
@@ -244,13 +244,17 @@ class RaceController {
     }
 
     @objc private func raceActionTapped(_ sender: UIButton) {
-        guard let option = RaceAction.allCases[safe: sender.tag] else { return }
+        guard let option = RaceAction(rawValue: sender.tag) else { return }
 
         switch option {
-        case .edit: didPressEditButton()
-        case .calendar: didPressCalendarButton()
-        case .share: didPressShareButton()
-        case .zippyQ: didPressZippyQButton()
+        case .edit:
+            didPressEditButton()
+        case .calendar:
+            didPressCalendarButton()
+        case .share:
+            didPressShareButton()
+        case .zippyQ:
+            didPressZippyQButton()
         }
     }
 
