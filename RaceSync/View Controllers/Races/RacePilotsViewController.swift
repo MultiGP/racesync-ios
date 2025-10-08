@@ -32,11 +32,20 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
         tableView.delegate = self
         tableView.emptyDataSetDelegate = self
         tableView.emptyDataSetSource = self
-        tableView.tableFooterView = UIView()
-        tableView.backgroundColor = Color.gray50
         tableView.register(cellType: FormTableViewCell.self)
         tableView.register(cellType: AvatarTableViewCell.self)
+        tableView.refreshControl = self.refreshControl
+        tableView.tableFooterView = UIView()
+        tableView.backgroundColor = Color.gray50
         return tableView
+    }()
+
+    fileprivate lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.backgroundColor = Color.gray50
+        refreshControl.tintColor = Color.blue
+        refreshControl.addTarget(self, action: #selector(didPullRefreshControl), for: .valueChanged)
+        return refreshControl
     }()
 
     fileprivate var userApi = UserApi()
@@ -152,6 +161,10 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
         didTapCell = loading
     }
 
+    @objc fileprivate func didPullRefreshControl() {
+        reloadRace()
+    }
+
     func canInteract(with cell: AvatarTableViewCell) -> Bool {
         guard !cell.isLoading else { return false }
         guard !didTapCell else { return false }
@@ -176,9 +189,14 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
     }
 
     func resetTableView() {
-        tableView.setContentOffset(.zero, animated: false)
         tableView.reloadData()
         invalidatePinnedView()
+
+        tableView.setContentOffset(CGPoint(x: 0, y: -tableView.adjustedContentInset.top), animated: false)
+
+        if refreshControl.isRefreshing {
+            refreshControl.endRefreshing()
+        }
     }
 
     // MARK: - Pinnable
