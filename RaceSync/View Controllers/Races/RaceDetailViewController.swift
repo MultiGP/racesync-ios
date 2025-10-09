@@ -71,7 +71,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     fileprivate lazy var rotatingIconView: RotatingIconView = {
         let view = RotatingIconView()
         view.tintColor = Color.yellow
-        view.imageView.image = UIImage(named: "icn_trophy_qualifier")?.withRenderingMode(.alwaysTemplate)
+        view.imageView.image = ButtonImg.trophy?.withRenderingMode(.alwaysTemplate)
         view.imageView.tintColor = Color.yellow
         return view
     }()
@@ -144,7 +144,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate lazy var locationIconView: UIImageView = {
         let view = UIImageView()
-        view.image = UIImage(named: "icn_pin_small")?.withRenderingMode(.alwaysTemplate)
+        view.image = ButtonImg.pin_small?.withRenderingMode(.alwaysTemplate)
         view.contentMode = .scaleAspectFit
         view.backgroundColor = Color.clear
         view.tintColor = Color.link
@@ -507,15 +507,15 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             if raceViewModel.sameDay {
                 date1Label = raceViewModel.dateLabel?.components(separatedBy: "@").first?.trimmingCharacters(in: .whitespaces)
                 date2Label = raceViewModel.timeLabel
-                dateImage = UIImage(named: "icn_date_path_continuous")
+                dateImage = ButtonImg.date_path2
             } else {
                 date1Label = raceViewModel.startDateLabel
                 date2Label = raceViewModel.endDateLabel
-                dateImage = UIImage(named: "icn_date_path_progress")
+                dateImage = ButtonImg.date_path1
             }
         } else {
             date1Label = raceViewModel.startDateLabel
-            dateImage = UIImage(named: "icn_calendar_small")
+            dateImage = ButtonImg.cal_small
         }
 
         date1Button.setTitle(date1Label, for: .normal)
@@ -871,7 +871,7 @@ extension RaceDetailViewController: MKMapViewDelegate {
 
         if annotationView == nil {
             annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-            annotationView?.image = UIImage(named: "icn_map_annotation")
+            annotationView?.image = ButtonImg.map_annotation
             annotationView!.canShowCallout = true
         } else {
             annotationView!.annotation = annotation

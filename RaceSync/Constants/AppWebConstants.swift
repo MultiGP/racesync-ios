@@ -51,9 +51,9 @@ enum AppWeb: Int {
 
     var image: UIImage? {
         if self == .livefpv {
-            return UIImage(named: "logo_livefpv")
+            return LogoImg.livefpv
         } else if self == .fpvscores {
-            return UIImage(named: "logo_fpvscores")
+            return LogoImg.fpvscores
         } else {
             return nil
         }

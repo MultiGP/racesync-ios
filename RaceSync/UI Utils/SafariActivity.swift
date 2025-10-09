@@ -16,7 +16,7 @@ class SafariActivity: UIActivity {
     }
 
     override var activityImage: UIImage? {
-        return UIImage(named: "icn_activity_safari")
+        return LogoImg.activity_safari
     }
 
     override func canPerform(withActivityItems activityItems: [Any]) -> Bool {
@@ -55,6 +55,6 @@ class MultiGPActivity: SafariActivity {
     }
 
     override var activityImage: UIImage? {
-        return UIImage(named: "icn_activity_mgp")
+        return LogoImg.activity_mgp
     }
 }

@@ -31,7 +31,7 @@ class AppIcon: ImmutableMappable, Descriptable {
             preview = UIImage(named: filename!)
         } else {
             filename = nil
-            preview = UIImage(named: "AppIcon60x60")
+            preview = LogoImg.app_icon
         }
     }
 
@@ -40,6 +40,6 @@ class AppIcon: ImmutableMappable, Descriptable {
         type = 1
         name = ""
         filename = nil
-        preview = UIImage(named: "AppIcon60x60")
+        preview = LogoImg.app_icon
     }
 }

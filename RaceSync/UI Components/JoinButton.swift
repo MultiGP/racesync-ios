@@ -197,8 +197,8 @@ extension JoinState {
 
     var icon: UIImage? {
         switch self {
-        case .joined:       return UIImage(named: "icn_button_join")?.withRenderingMode(.alwaysOriginal)
-        case .closed:       return UIImage(named: "icn_button_closed")?.withRenderingMode(.alwaysOriginal)
+        case .joined:       return ButtonImg.join_check?.withRenderingMode(.alwaysOriginal)
+        case .closed:       return ButtonImg.join_cross?.withRenderingMode(.alwaysOriginal)
         default:            return nil
         }
     }

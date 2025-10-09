@@ -21,7 +21,7 @@ class UserViewController: ProfileViewController, ViewJoinable {
     fileprivate lazy var qrButton: UIButton = {
         let button = UIButton(type: .system)
         button.addTarget(self, action: #selector(didPressQRButton), for: .touchUpInside)
-        button.setImage(UIImage(named: "icn_qrcode"), for: .normal)
+        button.setImage(ButtonImg.qrcode, for: .normal)
         button.setBackgroundImage(nil, for: .normal)
         return button
     }()

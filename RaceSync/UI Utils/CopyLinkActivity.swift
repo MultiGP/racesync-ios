@@ -15,7 +15,7 @@ class CopyLinkActivity: UIActivity {
     }
 
     override var activityImage: UIImage? {
-        return UIImage(named: "icn_activity_copylink")
+        return LogoImg.activity_copylink
     }
 
     override func canPerform(withActivityItems activityItems: [Any]) -> Bool {

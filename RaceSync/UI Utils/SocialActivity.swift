@@ -66,13 +66,13 @@ class SocialActivity: UIActivity {
 
     override var activityImage: UIImage? {
         switch platform {
-            case .livefpv:      return  UIImage(named: "icn_activity_livefpv")
-            case .facebook:     return  UIImage(named: "icn_activity_facebook")
-            case .twitter:      return  UIImage(named: "icn_activity_twitter")
-            case .youtube:      return  UIImage(named: "icn_activity_youtube")
-            case .instagram:    return  UIImage(named: "icn_activity_instagram")
-            case .meetup:       return  UIImage(named: "icn_activity_meetup")
-            case .website:      return  UIImage(named: "icn_activity_safari")
+        case .livefpv:      return  LogoImg.activity_livefpv
+        case .facebook:     return  LogoImg.activity_facebook
+        case .twitter:      return  LogoImg.activity_twitter
+        case .youtube:      return  LogoImg.activity_youtube
+        case .instagram:    return  LogoImg.activity_instagram
+        case .meetup:       return  LogoImg.activity_meetup
+        case .website:      return  LogoImg.activity_safari
         }
     }
 

@@ -40,7 +40,7 @@ class ProfileHeaderView: UIView {
         let button = PasteboardButton(type: .system)
         button.tintColor = Color.link
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-        button.setImage(UIImage(named: "icn_pin_small"), for: .normal)
+        button.setImage(ButtonImg.pin_small, for: .normal)
         button.titleEdgeInsets = UIEdgeInsets(top: -1, left: 0, bottom: 0, right: -Constants.padding)
         button.shouldHighlight = true
         return button
@@ -48,7 +48,7 @@ class ProfileHeaderView: UIView {
 
     lazy var cameraButton: CustomButton = {
         let button = CustomButton(type: .system)
-        button.setImage(UIImage(named: "icn_button_camera"), for: .normal)
+        button.setImage(ButtonImg.camera, for: .normal)
         button.tintColor = Color.white
         button.hitTestEdgeInsets = UIEdgeInsets(proportionally: -20)
         button.addTarget(self, action: #selector(didTapCameraButton), for: .touchUpInside)

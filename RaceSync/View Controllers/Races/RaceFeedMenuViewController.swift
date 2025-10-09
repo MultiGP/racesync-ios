@@ -36,7 +36,7 @@ class RaceFeedMenuViewController: UIViewController {
     fileprivate lazy var headerView: UIView = {
         let view = UIView()
 
-        let imageView = UIImageView(image: UIImage(named: "icn_settings_header"))
+        let imageView = UIImageView(image: LogoImg.watermark)
         view.addSubview(imageView)
         imageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()

@@ -10,9 +10,13 @@ import UIKit
 
 class PaypalActivity: UIActivity {
 
-    override var activityTitle: String? { "Open PayPal"}
+    override var activityTitle: String? {
+        "Open PayPal"
+    }
 
-    override var activityImage: UIImage? { UIImage(named: "icn_activity_paypal") }
+    override var activityImage: UIImage? {
+        LogoImg.activity_paypal
+    }
 
     private var paypalURL: URL? {
         [ExternalAppUri.Paypal, ExternalAppUrl.Paypal]

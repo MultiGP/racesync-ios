@@ -8,6 +8,31 @@
 
 import UIKit
 
+enum LogoImg {
+    static let header = UIImage(named: "racesync_logo_header")
+    static let app_icon = UIImage(named: "AppIcon60x60")
+    static let watermark = UIImage(named: "icn_mgp_watermark")
+
+    static let photos = UIImage(named: "icn_apple_photos")
+    static let share = UIImage(named: "icn_apple_share")
+    static let insta = UIImage(named: "icn_meta_instagram")
+    static let livefpv = UIImage(named: "logo_livefpv")
+    static let fpvscores = UIImage(named: "logo_fpvscores")
+
+    static let activity_calendar = UIImage(named: "icn_activity_calendar")
+    static let activity_safari = UIImage(named: "icn_activity_safari")
+    static let activity_mgp = UIImage(named: "icn_activity_mgp")
+    static let activity_copylink = UIImage(named: "icn_activity_copylink")
+
+    static let activity_livefpv = UIImage(named: "icn_activity_livefpv")
+    static let activity_facebook = UIImage(named: "icn_activity_facebook")
+    static let activity_twitter = UIImage(named: "icn_activity_twitter")
+    static let activity_youtube = UIImage(named: "icn_activity_youtube")
+    static let activity_instagram = UIImage(named: "icn_activity_instagram")
+    static let activity_meetup = UIImage(named: "icn_activity_meetup")
+    static let activity_paypal = UIImage(named: "icn_activity_paypal")
+}
+
 enum PlaceholderImg {
     static let small = UIImage(named: "placeholder_small")
     static let medium = UIImage(named: "placeholder_medium")
@@ -30,8 +55,29 @@ enum ButtonImg {
     static let filter = UIImage(named: "icn_navbar_filter")
     static let map = UIImage(named: "icn_navbar_map")
     static let safari = UIImage(named: "icn_navbar_safari")
-    static let radius = UIImage(named: "icn_settings_radius")
     static let empty = UIImage(named: "icn_navbar_empty")
+    static let qrcode = UIImage(named: "icn_navbar_qrcode")
+    static let directions = UIImage(named: "icn_navbar_directions")
+    static let camera = UIImage(named: "icn_navbar_camera")
+    static let member = UIImage(named: "icn_member")
+
+    static let join_check = UIImage(named: "icn_join_check")
+    static let join_cross = UIImage(named: "icn_join_cross")
+
+    static let radius = UIImage(named: "icn_settings_radius")
+
+    static let checkmark = UIImage(named: "icn_cell_checkmark")
+
+    static let pin_small = UIImage(named: "icn_pin_small")
+    static let cal_small = UIImage(named: "icn_calendar_small")
+    static let race_small = UIImage(named: "icn_race_small")
+    static let chapter_small = UIImage(named: "icn_chapter_small")
+    static let member_small = UIImage(named: "icn_member_small")
+    static let badge_small = UIImage(named: "icn_badge_small")
+    static let date_path2 = UIImage(named: "icn_date_path_progress")
+    static let date_path1 = UIImage(named: "icn_date_path_continuous")
+    static let map_annotation = UIImage(named: "icn_map_annotation")
+    static let trophy = UIImage(named: "icn_trophy_qualifier")
 }
 
 enum SystemImg {

@@ -80,7 +80,7 @@ class ImageExportViewController: UIViewController {
     }()
 
     fileprivate lazy var photosButton: UIButton = {
-        let image = UIImage(named: "icn_apple_photos")?.withRenderingMode(.alwaysOriginal)
+        let image = LogoImg.photos?.withRenderingMode(.alwaysOriginal)
         let button = UIButton(type: .system)
         button.setImage(image, for: .normal)
         button.setTitle("Save to Photos", for: .normal)
@@ -96,7 +96,7 @@ class ImageExportViewController: UIViewController {
     }()
 
     fileprivate lazy var shareButton: UIButton = {
-        let image = UIImage(named: "icn_apple_share")?.withRenderingMode(.alwaysOriginal)
+        let image = LogoImg.share?.withRenderingMode(.alwaysOriginal)
         let button = UIButton(type: .system)
         button.setImage(image, for: .normal)
         button.setTitle("Share to...", for: .normal)
@@ -112,7 +112,7 @@ class ImageExportViewController: UIViewController {
     }()
 
     fileprivate lazy var instagramButton: UIButton = {
-        let image = UIImage(named: "icn_meta_instagram")?.withRenderingMode(.alwaysOriginal)
+        let image = LogoImg.insta?.withRenderingMode(.alwaysOriginal)
         let button = UIButton(type: .system)
         button.setImage(image, for: .normal)
         button.setTitle("Share to Instagram", for: .normal)

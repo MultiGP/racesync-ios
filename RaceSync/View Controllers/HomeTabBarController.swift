@@ -36,7 +36,7 @@ class HomeTabBarController: UITabBarController {
 
     fileprivate lazy var titleView: UIView = {
         let view = UIView()
-        let imageView = UIImageView(image: UIImage(named: "racesync_logo_header"))
+        let imageView = UIImageView(image: LogoImg.header)
         view.addSubview(imageView)
         imageView.snp.makeConstraints {
             $0.centerX.centerY.equalToSuperview()

@@ -47,7 +47,7 @@ class MapViewController: UIViewController {
     }()
 
     fileprivate lazy var navigationBarButtonItem: UIBarButtonItem = {
-        return UIBarButtonItem(image: UIImage(named: "icn_navbar_directions"), style: .done, target: self, action: #selector(didPressDirectionsButton))
+        return UIBarButtonItem(image: ButtonImg.directions, style: .done, target: self, action: #selector(didPressDirectionsButton))
     }()
 
     fileprivate enum Constants {
@@ -202,7 +202,7 @@ extension MapViewController: MKMapViewDelegate {
             view.annotation = annotation
         } else {
             annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: Constants.annotationIdentifier)
-            annotationView?.image = UIImage(named: "icn_map_annotation")
+            annotationView?.image = ButtonImg.map_annotation
             annotationView?.canShowCallout = true
         }
 
