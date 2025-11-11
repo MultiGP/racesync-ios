@@ -210,7 +210,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         let stackView1 = UIStackView(arrangedSubviews: [date1Button, date2Button])
         stackView1.axis = .vertical
         stackView1.alignment = .leading
-        stackView1.distribution = .equalCentering
+        stackView1.distribution = .fill
 
         // horizontal stack for the icon + the date stack
         let stackView2 = UIStackView(arrangedSubviews: [dateIconView, stackView1])
@@ -355,8 +355,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         contentView.addSubview(headerView)
         headerView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
-            $0.width.equalTo(view.bounds.width)
-            $0.height.lessThanOrEqualTo(200) // very max
 
             if canDisplayMap {
                 $0.top.equalTo(mapView.snp.bottom).offset(Constants.padding)
