@@ -22,7 +22,7 @@ class RaceListViewController: UIViewController, ViewJoinable {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(cellType: UserRaceTableViewCell.self)
+        tableView.register(cellType: RaceTableViewCell.self)
         tableView.tableFooterView = UIView()
         return tableView
     }()
@@ -191,7 +191,7 @@ extension RaceListViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UserRaceTableViewCell.height
+        return RaceTableViewCell.height
     }
 }
 
@@ -203,7 +203,7 @@ extension RaceListViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let viewModel = raceViewModel(for: indexPath) else { return UITableViewCell() }
-        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as UserRaceTableViewCell
+        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as RaceTableViewCell
 
         cell.dateLabel.text = viewModel.startDateLabel //"Saturday Sept 14 @ 9:00 AM"
         cell.titleLabel.text = viewModel.titleLabel
