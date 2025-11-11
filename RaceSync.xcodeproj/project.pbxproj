@@ -38,7 +38,6 @@
 		4F1342522360B67D00A9DBDE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4F1342502360B67D00A9DBDE /* LaunchScreen.storyboard */; };
 		4F1342762360DA4C00A9DBDE /* RaceSyncAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F13426D2360DA4B00A9DBDE /* RaceSyncAPI.framework */; };
 		4F13427D2360DA4C00A9DBDE /* RaceSyncAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F13427C2360DA4C00A9DBDE /* RaceSyncAPITests.swift */; };
-		4F13427F2360DA4C00A9DBDE /* RaceSyncAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F13426F2360DA4B00A9DBDE /* RaceSyncAPI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4F1342822360DA4C00A9DBDE /* RaceSyncAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F13426D2360DA4B00A9DBDE /* RaceSyncAPI.framework */; };
 		4F1342832360DA4C00A9DBDE /* RaceSyncAPI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4F13426D2360DA4B00A9DBDE /* RaceSyncAPI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4F13428C2360DAD100A9DBDE /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F13428B2360DAD100A9DBDE /* LoginViewController.swift */; };
@@ -192,6 +191,7 @@
 		4FA26831237A58E1008970AC /* ApiError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA26830237A58E1008970AC /* ApiError.swift */; };
 		4FA26833237A5983008970AC /* ObjectMapper+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA26832237A5983008970AC /* ObjectMapper+Extensions.swift */; };
 		4FA26835237A80B9008970AC /* ActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA26834237A80B9008970AC /* ActionButton.swift */; };
+		4FA706072EC33873006EAE70 /* RaceSyncAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F13426F2360DA4B00A9DBDE /* RaceSyncAPI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4FAAA88523AA15EA00A004DC /* MapKit+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAAA88423AA15EA00A004DC /* MapKit+Extensions.swift */; };
 		4FAAF8242E80FFF5002CF62E /* Series.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAAF8232E80FFF5002CF62E /* Series.swift */; };
 		4FAC24A823DC3E06009AD585 /* UILabel+LinesCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAC24A723DC3E06009AD585 /* UILabel+LinesCount.swift */; };
@@ -1221,7 +1221,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4F13427F2360DA4C00A9DBDE /* RaceSyncAPI.h in Headers */,
+				4FA706072EC33873006EAE70 /* RaceSyncAPI.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1979,13 +1979,14 @@
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEAD_CODE_STRIPPING = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = TJ4PB66YQS;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_MODULE_VERIFIER = NO;
 				INFOPLIST_FILE = RaceSyncAPI/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -1997,9 +1998,11 @@
 				MARKETING_VERSION = 1.5;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
 				PRODUCT_BUNDLE_IDENTIFIER = com.multigp.RaceSyncAPI;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -2020,7 +2023,8 @@
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEAD_CODE_STRIPPING = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = TJ4PB66YQS;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -2038,9 +2042,11 @@
 				MARKETING_VERSION = 1.5;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++14";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
 				PRODUCT_BUNDLE_IDENTIFIER = com.multigp.RaceSyncAPI;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
