@@ -74,19 +74,15 @@ class RaceFeedMenuViewController: UIViewController {
         var rows = [Row]()
         if isRaceFiltersEnabled { rows += [.raceFeedFilters]}
         rows += [.searchRadius, .measurement]
-        if isPastEventsEnabled { rows += [.showPastEvents]}
         return rows
     }()
 
     fileprivate let isRaceFiltersEnabled: Bool = true
-    fileprivate let isPastEventsEnabled: Bool = false
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
         static let cellHeight: CGFloat = 60
     }
-
-    // MARK: - Initialization
 
     // MARK: - Lifecycle Methods
 
@@ -123,15 +119,6 @@ class RaceFeedMenuViewController: UIViewController {
     }
 
     // MARK: - Actions
-
-    @objc fileprivate func didChangeSwitchValue(_ sender: UISwitch) {
-        let row = rows[sender.tag]
-
-        if row == .showPastEvents {
-            let settings = APIServices.shared.settings
-            settings.showPastEvents = !settings.showPastEvents // invert the value
-        }
-    }
 
     @objc fileprivate func didPressCloseButton() {
         dismiss(animated: true)
@@ -253,16 +240,7 @@ extension RaceFeedMenuViewController: UITableViewDataSource {
             cell.detailTextLabel?.text = "\(settings.searchRadius) \(settings.lengthUnit.symbol)"
         } else if row == .measurement {
             cell.detailTextLabel?.text = settings.measurementSystem.title
-        } else if row == .showPastEvents {
-            cell.accessoryType = .none
-            let accessory = UISwitch()
-
-            accessory.tag = rows.firstIndex(of: row) ?? 0
-            accessory.addTarget(self, action: #selector(didChangeSwitchValue(_:)), for: .valueChanged)
-            accessory.isOn = settings.showPastEvents
-            cell.accessoryView = accessory
         }
-
         return cell
     }
 

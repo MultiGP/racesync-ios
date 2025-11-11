@@ -13,11 +13,10 @@ public protocol APISettingsDelegate {
 }
 
 public enum APISettingsType: Int, EnumTitle {
-    case showPastEvents, raceFeedFilters, searchRadius, measurement, environment
+    case raceFeedFilters, searchRadius, measurement, environment
 
     public var title: String {
         switch self {
-        case .showPastEvents:   return "Include Past Events"
         case .raceFeedFilters:  return "Filter Races By"
         case .searchRadius:     return "Search Radius"
         case .measurement:      return "Measurement System"
@@ -27,7 +26,6 @@ public enum APISettingsType: Int, EnumTitle {
 
     var key: String {
         switch self {
-        case .showPastEvents:   return "\(APISettingsDomain).show_past_events"
         case .raceFeedFilters:  return "\(APISettingsDomain).race_feed_filters"
         case .searchRadius:     return "\(APISettingsDomain).search_radius"
         case .measurement:      return "\(APISettingsDomain).measurement_system"
@@ -41,14 +39,6 @@ public let APISettingsDomain: String = "com.multigp.RaceSync.settings"
 public class APISettings {
 
     // MARK: - Settings Setters / Getters
-
-    public var showPastEvents: Bool {
-        get {
-            return bool(for: .showPastEvents) ?? false
-        } set {
-            save(newValue, type: .showPastEvents)
-        }
-    }
 
     public var raceFeedFilters: [RaceFilter] {
         get {

@@ -389,7 +389,7 @@ extension RaceFeedViewController: APISettingsDelegate {
             updateSegmentedControl()
             raceFeedController.invalidateDataSource()
             loadContent(forced: true)
-        case .showPastEvents, .searchRadius:
+        case .searchRadius:
             raceFeedController.invalidateDataSource()
             loadContent(forced: true)
         case .measurement:
