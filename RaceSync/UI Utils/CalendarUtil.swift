@@ -40,17 +40,17 @@ class CalendarUtil {
             do {
                 try eventStore.save(ekevent, span: .thisEvent) // saves the event to the calendar
 
-                var buttonTitle: String? = nil
+                var okTitle: String? = nil
                 var completion: AlertCompletionBlock?
 
                 if let calendarURL = URL(string: ExternalAppUri.Calendar), UIApplication.shared.canOpenURL(calendarURL) {
-                    buttonTitle = "View Calendar"
+                    okTitle = "View Calendar"
                     completion = { action in
                         UIApplication.shared.open(calendarURL, options: [:], completionHandler: nil)
                     }
                 }
 
-                AlertUtil.presentAlertMessage("\(event.title) saved in your calendar!", title: "Event Saved", buttonTitle: buttonTitle, delay: 0.5, completion: completion)
+                AlertUtil.presentAlertMessage("\(event.title) saved in your calendar!", title: "Event Saved", okTitle: okTitle, delay: 0.5, completion: completion)
 
             }  catch {
                 Clog.log("error saving to calendar: \(error.localizedDescription)")

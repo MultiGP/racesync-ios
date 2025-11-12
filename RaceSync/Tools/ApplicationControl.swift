@@ -113,7 +113,9 @@ extension ApplicationControl {
                 if race.isPayable {
                     AlertUtil.presentAlertMessage("This race has a fee of \(race.fee) USD. Would you like to pay it now?",
                                                   title: "Joined race!",
-                                                  buttonTitle: "Pay Now", delay: 0.5) { action in
+                                                  okTitle: "Pay Now",
+                                                  cancelTitle: "Later",
+                                                  delay: 0.5) { action in
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
                             self.presentPayment(for: race, completion)
                         })
