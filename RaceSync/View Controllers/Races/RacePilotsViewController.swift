@@ -239,7 +239,7 @@ extension RacePilotsViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if race.canShowResults {
-            return section == externalResultSection ? nil : race.scoringFormat.title
+            return (showingExternalResults() && section == externalResultSection) ? nil : "Results (\(race.scoringFormat.title))"
         } else {
             return nil
         }
