@@ -40,9 +40,10 @@ class UserViewController: ProfileViewController, ViewJoinable {
         return nil
     }
 
-    fileprivate let user: User
+    fileprivate var user: User
     fileprivate let raceApi = RaceApi()
     fileprivate let chapterApi = ChapterApi()
+    fileprivate let userApi = UserApi()
 
     fileprivate var raceViewModels = [RaceViewModel]()
     fileprivate var chapterViewModels = [ChapterViewModel]()
@@ -111,6 +112,10 @@ class UserViewController: ProfileViewController, ViewJoinable {
 
     override func setupLayout() {
         super.setupLayout()
+
+        headerView.isEditable = user.isMe
+        headerView.avatarView.isUserInteractionEnabled = true
+        headerView.delegate = self
     }
 
     fileprivate func configureBarButtonItems() {
@@ -333,6 +338,32 @@ extension UserViewController: UITableViewDataSource {
         cell.subtitleLabel.text = viewModel.locationLabel
         cell.avatarImageView.imageView.setImage(with: viewModel.imageUrl, placeholderImage: PlaceholderImg.medium, size: Constants.avatarImageSize)
         return cell
+    }
+}
+
+extension UserViewController: ProfileHeaderViewDelegate {
+
+    func shouldUploadImage(_ image: UIImage, imageType: ImageType, for id: ObjectId) {
+
+        userApi.uploadProfileImage(image, imageType: imageType) { [weak self] (url, error) in
+            if let url = url {
+                self?.updateUserProfileUrl(url, for: imageType)
+            } else {
+                AlertUtil.presentAlertMessage(error?.localizedDescription)
+            }
+        }
+    }
+
+    func updateUserProfileUrl(_ url: String, for imageType: ImageType) {
+
+        if imageType == .main {
+            user.profilePictureUrl = url
+        } else {
+            user.profileBackgroundUrl = url
+        }
+        
+        let viewModel = ProfileViewModel(with: user)
+        headerView.viewModel = viewModel
     }
 }
 

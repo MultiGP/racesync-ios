@@ -23,6 +23,8 @@ enum EndPoint {
     static let userSearch = "user/search"
     static let userUpdateProfile = "user/updateProfile"
     static let userSetPushNotification = "user/setPushNotification"
+    static let userUploadMainImage = "user/uploadMainImage"
+    static let userUploadBackground = "user/uploadBackground"
 
     static let race = "race/"
     static let raceList = "race/list"

@@ -12,7 +12,7 @@ import RaceSyncAPI
 import TOCropViewController
 
 protocol ProfileHeaderViewDelegate {
-    func shouldUploadImage(_ image: UIImage, imageType: ImageType, for objectId: ObjectId)
+    func shouldUploadImage(_ image: UIImage, imageType: ImageType, for id: ObjectId)
 }
 
 class ProfileHeaderView: UIView {
@@ -31,6 +31,8 @@ class ProfileHeaderView: UIView {
     var isEditable: Bool = false {
         didSet {
             cameraButton.isHidden = !isEditable
+            avatarView.isUserInteractionEnabled = isEditable
+            backgroundView.isUserInteractionEnabled = isEditable
         }
     }
 
@@ -327,7 +329,7 @@ class ProfileHeaderView: UIView {
         guard let topMostVC = UIViewController.topMostViewController() else { return }
         guard let viewModel = viewModel else { return }
 
-        let alert = UIAlertController(title: "Upload \(imageType.title) image for your \(viewModel.type.rawValue)", message: nil, preferredStyle: .actionSheet)
+        let alert = UIAlertController(title: "Upload \(imageType.title) image", message: nil, preferredStyle: .actionSheet)
         alert.view.tintColor = Color.blue
 
         alert.addAction(UIAlertAction(title: "Camera", style: .default) { [weak self] (action) in

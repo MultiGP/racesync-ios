@@ -43,6 +43,10 @@ public protocol UserApiInterface {
     /**
      */
     func registerPushNotification(forAction action: PushAction, deviceToken: String?, _ completion: @escaping StatusCompletionBlock)
+
+    /**
+    */
+    func uploadProfileImage(_ image: UIImage, imageType: ImageType, progressBlock: ProgressBlock?, _ completion: @escaping ObjectCompletionBlock<String>)
 }
 
 public class UserApi: UserApiInterface {
@@ -99,5 +103,15 @@ public class UserApi: UserApiInterface {
         if let token = deviceToken { parameters += [ParamKey.devicetoken: token] }
 
         repositoryAdapter.performAction(endpoint, parameters: parameters, completion: completion)
+    }
+
+    public func uploadProfileImage(_ image: UIImage, imageType: ImageType, progressBlock: ProgressBlock? = nil, _ completion: @escaping ObjectCompletionBlock<String>) {
+        guard let myUser = APIServices.shared.myUser else { return }
+        guard let data = image.jpegData(compressionQuality: 0.7) else { return }
+
+        let endpoint = (imageType == .main) ? EndPoint.userUploadMainImage : EndPoint.userUploadBackground
+
+        let url = MGPWebPath.apiBase.rawValue + "\(endpoint)?\(ParamKey.id)=\(myUser.id)"
+        repositoryAdapter.uploadImage(data, name: imageType.key, endpoint: url, progressBlock: progressBlock, completion)
     }
 }
