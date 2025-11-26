@@ -68,7 +68,7 @@ enum ButtonImg {
 
     static let checkmark = UIImage(named: "icn_cell_checkmark")
 
-    static let pin_small = UIImage(named: "icn_pin_small")
+//    static let pin_small = UIImage(named: "icn_pin_small")
     static let cal_small = UIImage(named: "icn_calendar_small")
     static let race_small = UIImage(named: "icn_race_small")
     static let chapter_small = UIImage(named: "icn_chapter_small")
@@ -91,6 +91,9 @@ enum SystemImg {
     static let gearshapeFill = UIImage(systemName:"gearshape.fill") // iOS 14.0+
     static let stack = UIImage(systemName:"rectangle.stack") // iOS 13.0+
     static let stackFill = UIImage(systemName:"rectangle.stack.fill") // iOS 13.0+
+
+    static let pin_small = UIImage(systemName:"mappin.and.ellipse") // iOS 13.0+
+    static let globe = UIImage(systemName:"globe") // iOS 13.0+
 
     static var flagCheckeredCrossed: UIImage? {
         if #available(iOS 18.0, *) {

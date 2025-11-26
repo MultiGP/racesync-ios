@@ -100,36 +100,23 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         return view
     }()
 
-    fileprivate lazy var locationButton: PasteboardButton = {
+    func contextualButton() -> PasteboardButton {
         let button = PasteboardButton(type: .system)
-        button.tintColor = Color.link
         button.shouldHighlight = true
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         button.titleLabel?.numberOfLines = 2
-        button.addTarget(self, action: #selector(didPressLocationButton), for: .touchUpInside)
+        button.tintColor = Color.black
         return button
-    }()
+    }
 
     fileprivate lazy var date1Button: PasteboardButton = {
-        let button = PasteboardButton(type: .system)
-        button.tintColor = Color.black
-        button.shouldHighlight = true
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
-        button.titleLabel?.numberOfLines = 2
-        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -Constants.padding, bottom: 0, right: 0)
-        button.imageView?.tintColor = button.tintColor
+        let button = contextualButton()
         button.addTarget(self, action: #selector(didPressDateButton), for: .touchUpInside)
         return button
     }()
 
     fileprivate lazy var date2Button: PasteboardButton = {
-        let button = PasteboardButton(type: .system)
-        button.tintColor = Color.black
-        button.shouldHighlight = true
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
-        button.titleLabel?.numberOfLines = 2
-        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -Constants.padding, bottom: 0, right: 0)
-        button.imageView?.tintColor = button.tintColor
+        let button = contextualButton()
         button.addTarget(self, action: #selector(didPressDateButton), for: .touchUpInside)
         button.isHidden = true
         return button
@@ -142,9 +129,16 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         return view
     }()
 
+    fileprivate lazy var locationButton: PasteboardButton = {
+        let button = contextualButton()
+        button.addTarget(self, action: #selector(didPressLocationButton), for: .touchUpInside)
+        button.tintColor = Color.link
+        return button
+    }()
+
     fileprivate lazy var locationIconView: UIImageView = {
         let view = UIImageView()
-        view.image = ButtonImg.pin_small?.withRenderingMode(.alwaysTemplate)
+        view.image = SystemImg.pin_small?.withRenderingMode(.alwaysTemplate)
         view.contentMode = .scaleAspectFit
         view.backgroundColor = Color.clear
         view.tintColor = Color.link
@@ -219,20 +213,24 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         stackView2.distribution = .fill
         stackView2.spacing = Constants.padding * 3/4
 
-        let stackView3 = UIStackView(arrangedSubviews: [locationIconView, locationButton])
-        stackView3.axis = .horizontal
-        stackView3.alignment = .center
-        stackView3.distribution = .fill
-        stackView3.spacing = Constants.padding * 3/4
+        if canDisplayAddress {
+            let stackView3 = UIStackView(arrangedSubviews: [locationIconView, locationButton])
+            stackView3.axis = .horizontal
+            stackView3.alignment = .center
+            stackView3.distribution = .fill
+            stackView3.spacing = Constants.padding * 3/4
 
-        // vertical stack containing the icon+dates row and the location button
-        let stackView4 = UIStackView(arrangedSubviews: [stackView2, stackView3])
-        stackView4.axis = .vertical
-        stackView4.alignment = .leading
-        stackView4.distribution = .equalSpacing
-        stackView4.spacing = Constants.padding / 2
+            // vertical stack containing the icon+dates row and the location button
+            let stackView4 = UIStackView(arrangedSubviews: [stackView2, stackView3])
+            stackView4.axis = .vertical
+            stackView4.alignment = .leading
+            stackView4.distribution = .equalSpacing
+            stackView4.spacing = Constants.padding / 2
 
-        return stackView4
+            return stackView4
+        } else {
+            return stackView2
+        }
     }()
 
     fileprivate var raceCoordinates: CLLocationCoordinate2D? {
@@ -585,13 +583,13 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         showMapView()
     }
 
+    @objc func didPressDateButton(_ sender: UITapGestureRecognizer) {
+        raceController.didPressCalendarButton()
+    }
+
     @objc fileprivate func didPressLocationButton(_ sender: UIButton) {
         guard canDisplayMap else { return }
         showMapView()
-    }
-
-    @objc func didPressDateButton(_ sender: UITapGestureRecognizer) {
-        raceController.didPressCalendarButton()
     }
 
     @objc fileprivate func didPressJoinButton(_ sender: JoinButton) {

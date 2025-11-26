@@ -38,12 +38,20 @@ class ProfileHeaderView: UIView {
 
     lazy var locationButton: PasteboardButton = {
         let button = PasteboardButton(type: .system)
-        button.tintColor = Color.link
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-        button.setImage(ButtonImg.pin_small, for: .normal)
-        button.titleEdgeInsets = UIEdgeInsets(top: -1, left: 0, bottom: 0, right: -Constants.padding)
         button.shouldHighlight = true
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        button.titleLabel?.numberOfLines = 1
+        button.tintColor = Color.link
         return button
+    }()
+
+    fileprivate lazy var locationIconView: UIImageView = {
+        let view = UIImageView()
+        view.image = SystemImg.pin_small?.withRenderingMode(.alwaysTemplate)
+        view.contentMode = .scaleAspectFit
+        view.backgroundColor = Color.clear
+        view.tintColor = Color.link
+        return view
     }()
 
     lazy var cameraButton: CustomButton = {
@@ -134,13 +142,18 @@ class ProfileHeaderView: UIView {
     }()
 
     fileprivate lazy var headerLabelStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [mainTextLabel, locationButton])
-        stackView.axis = .vertical
-        stackView.distribution = .fill
+        let stackView1 = UIStackView(arrangedSubviews: [locationIconView, locationButton])
+        stackView1.axis = .horizontal
+        stackView1.alignment = .center
+        stackView1.distribution = .fill
+        stackView1.spacing = Constants.padding * 1/2
 
-        stackView.alignment = .leading
-        stackView.spacing = Constants.padding*1.5
-        return stackView
+        let stackView2 = UIStackView(arrangedSubviews: [mainTextLabel, stackView1])
+        stackView2.axis = .vertical
+        stackView2.alignment = .leading
+        stackView2.distribution = .fill
+        stackView2.spacing = Constants.padding*1.5
+        return stackView2
     }()
 
     fileprivate var hasLaidOut: Bool = false
