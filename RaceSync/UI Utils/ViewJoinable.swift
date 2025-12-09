@@ -88,11 +88,12 @@ extension ViewJoinable {
 
         switch state {
         case .notJoined:
-            AppControl.shared.resign(chapter: chapter, chapterApi: chapterApi) { (newState) in
+            AppControl.shared.join(chapter: chapter, chapterApi: chapterApi) { (newState) in
                 self.handleStateChange(state, newState: newState, in: button, with: chapter, completion)
             }
+
         case .joined:
-            AppControl.shared.join(chapter: chapter, chapterApi: chapterApi) { (newState) in
+            AppControl.shared.resign(chapter: chapter, chapterApi: chapterApi) { (newState) in
                 self.handleStateChange(state, newState: newState, in: button, with: chapter, completion)
             }
         default:
