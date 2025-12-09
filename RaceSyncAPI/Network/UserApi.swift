@@ -109,9 +109,9 @@ public class UserApi: UserApiInterface {
         guard let myUser = APIServices.shared.myUser else { return }
         guard let data = image.jpegData(compressionQuality: 0.7) else { return }
 
-        let endpoint = (imageType == .main) ? EndPoint.userUploadMainImage : EndPoint.userUploadBackground
+        let endpoint = (imageType == .main) ? EndPoint.userUploadProfileImage : EndPoint.userUploadProfileBackground
+        let url = MGPWeb.getURL(for: .apiBase).absoluteString + "\(endpoint)?\(ParamKey.id)=\(myUser.id)"
 
-        let url = MGPWebPath.apiBase.rawValue + "\(endpoint)?\(ParamKey.id)=\(myUser.id)"
-        repositoryAdapter.uploadImage(data, name: imageType.key, endpoint: url, progressBlock: progressBlock, completion)
+        repositoryAdapter.uploadImage(data, name: imageType.key, url: url, progressBlock: progressBlock, completion)
     }
 }

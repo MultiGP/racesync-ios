@@ -118,11 +118,11 @@ class RepositoryAdapter {
         }
     }
 
-    func uploadImage(_ data: Data, name: String, endpoint: String, progressBlock: ProgressBlock?, _ completion: @escaping ObjectCompletionBlock<String>) {
-        Clog.log("Starting request \(endpoint)")
+    func uploadImage(_ data: Data, name: String, url: String, progressBlock: ProgressBlock?, _ completion: @escaping ObjectCompletionBlock<String>) {
+        Clog.log("Starting request \(url)")
 
         // Multipart
-        networkAdapter.httpMultipartUpload(data, name: name, url: endpoint) { (result) in
+        networkAdapter.httpMultipartUpload(data, name: name, url: url) { (result) in
             switch result {
             case .success(let upload, _, _):
 

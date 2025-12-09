@@ -90,7 +90,10 @@ class NetworkAdapter {
 
         var httpHeaders: [String : String] = headers ?? [:]
         httpHeaders[ParamKey.apiKey] = APIServices.shared.credential.apiKey
-        httpHeaders[ParamKey.sessionId] = APISessionManager.getSessionId()
+
+        if let sessionId = APISessionManager.getSessionId() {
+            httpHeaders[ParamKey.sessionId] = sessionId
+        }
 
         let fileName = "Image-\(UUID().uuidString).jpg"
 
