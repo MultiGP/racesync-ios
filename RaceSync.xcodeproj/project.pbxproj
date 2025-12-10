@@ -48,6 +48,7 @@
 		4F2724362515D88A000C7408 /* Chapter+UIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2724352515D88A000C7408 /* Chapter+UIExtensions.swift */; };
 		4F27243B2517DB1C000C7408 /* CopyLinkActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F27243A2517DB1C000C7408 /* CopyLinkActivity.swift */; };
 		4F2724402517DC5B000C7408 /* UIActivityViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F27243F2517DC5B000C7408 /* UIActivityViewController+Extensions.swift */; };
+		4F2726E12EE8C59E00001C86 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2726E02EE8C59E00001C86 /* SearchViewController.swift */; };
 		4F2B7E872E86309300643697 /* SeriesApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2B7E862E86309300643697 /* SeriesApi.swift */; };
 		4F2B7E892E8635D200643697 /* SeriesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2B7E882E8635D200643697 /* SeriesViewModel.swift */; };
 		4F3D640D23FB253900DE6DF2 /* UICollectionView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3D640C23FB253900DE6DF2 /* UICollectionView+Extensions.swift */; };
@@ -231,7 +232,7 @@
 		4FD4E1C9237F987C008816B3 /* RacePilotsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1C8237F987C008816B3 /* RacePilotsViewController.swift */; };
 		4FD4E1CB237F98A0008816B3 /* RaceDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1CA237F98A0008816B3 /* RaceDetailViewController.swift */; };
 		4FD4E1CD237F98E7008816B3 /* RaceTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1CC237F98E7008816B3 /* RaceTabBarController.swift */; };
-		4FD4E1D1237F9DC8008816B3 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1D0237F9DC8008816B3 /* SearchViewController.swift */; };
+		4FD4E1D1237F9DC8008816B3 /* DummyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1D0237F9DC8008816B3 /* DummyViewController.swift */; };
 		4FD4E1D9237FB1EA008816B3 /* RaceTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1D8237FB1EA008816B3 /* RaceTableViewCell.swift */; };
 		4FD4E1DB237FBE36008816B3 /* JoinButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1DA237FBE36008816B3 /* JoinButton.swift */; };
 		4FD4E1DD237FBE8B008816B3 /* MemberBadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1DC237FBE8B008816B3 /* MemberBadgeView.swift */; };
@@ -355,6 +356,7 @@
 		4F2724352515D88A000C7408 /* Chapter+UIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Chapter+UIExtensions.swift"; sourceTree = "<group>"; };
 		4F27243A2517DB1C000C7408 /* CopyLinkActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyLinkActivity.swift; sourceTree = "<group>"; };
 		4F27243F2517DC5B000C7408 /* UIActivityViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIActivityViewController+Extensions.swift"; sourceTree = "<group>"; };
+		4F2726E02EE8C59E00001C86 /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		4F2B7E862E86309300643697 /* SeriesApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesApi.swift; sourceTree = "<group>"; };
 		4F2B7E882E8635D200643697 /* SeriesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesViewModel.swift; sourceTree = "<group>"; };
 		4F3D640C23FB253900DE6DF2 /* UICollectionView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Extensions.swift"; sourceTree = "<group>"; };
@@ -542,7 +544,7 @@
 		4FD4E1C8237F987C008816B3 /* RacePilotsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RacePilotsViewController.swift; sourceTree = "<group>"; };
 		4FD4E1CA237F98A0008816B3 /* RaceDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceDetailViewController.swift; sourceTree = "<group>"; };
 		4FD4E1CC237F98E7008816B3 /* RaceTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceTabBarController.swift; sourceTree = "<group>"; };
-		4FD4E1D0237F9DC8008816B3 /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
+		4FD4E1D0237F9DC8008816B3 /* DummyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyViewController.swift; sourceTree = "<group>"; };
 		4FD4E1D8237FB1EA008816B3 /* RaceTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceTableViewCell.swift; sourceTree = "<group>"; };
 		4FD4E1DA237FBE36008816B3 /* JoinButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinButton.swift; sourceTree = "<group>"; };
 		4FD4E1DC237FBE8B008816B3 /* MemberBadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberBadgeView.swift; sourceTree = "<group>"; };
@@ -1055,7 +1057,8 @@
 		4FD4E1D2237F9DEF008816B3 /* Search */ = {
 			isa = PBXGroup;
 			children = (
-				4FD4E1D0237F9DC8008816B3 /* SearchViewController.swift */,
+				4F2726E02EE8C59E00001C86 /* SearchViewController.swift */,
+				4FD4E1D0237F9DC8008816B3 /* DummyViewController.swift */,
 			);
 			path = Search;
 			sourceTree = "<group>";
@@ -1502,7 +1505,7 @@
 				4FC5025A2428710D0088320B /* RaceTabbable.swift in Sources */,
 				4F00E072242932D7001DCFC4 /* RateMe.swift in Sources */,
 				4F71B32B2E4910100029D3CB /* Collection+Extensions.swift in Sources */,
-				4FD4E1D1237F9DC8008816B3 /* SearchViewController.swift in Sources */,
+				4FD4E1D1237F9DC8008816B3 /* DummyViewController.swift in Sources */,
 				4F5488962D2146C80056EA59 /* RaceScheduleViewController.swift in Sources */,
 				4F8668F423860900005E310A /* UniversalConstants.swift in Sources */,
 				4FF16CC02E70EC9300B4FC51 /* ViewJoinableRegistry.swift in Sources */,
@@ -1621,6 +1624,7 @@
 				4FAC24A823DC3E06009AD585 /* UILabel+LinesCount.swift in Sources */,
 				4FE1DADD2DEB6F6D009143C4 /* HomeTabBarController.swift in Sources */,
 				4F5488982D2236950056EA59 /* String+HTML.swift in Sources */,
+				4F2726E12EE8C59E00001C86 /* SearchViewController.swift in Sources */,
 				4F5001E523823C940025A593 /* FlagEmojiGenerator.swift in Sources */,
 				4F5C1E4B238EEC5200D756EB /* MapViewController.swift in Sources */,
 				4F90F0CE2E8DD04100D9F5AF /* SeriesDetailViewController.swift in Sources */,

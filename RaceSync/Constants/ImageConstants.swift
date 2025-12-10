@@ -51,7 +51,6 @@ enum ButtonImg {
     static let calendar = UIImage(named: "icn_navbar_calendar")
     static let settings = UIImage(named: "icn_navbar_settings")
     static let notifications = UIImage(named: "icn_navbar_notifications")
-    static let search = UIImage(named: "icn_navbar_search")
     static let filter = UIImage(named: "icn_navbar_filter")
     static let map = UIImage(named: "icn_navbar_map")
     static let safari = UIImage(named: "icn_navbar_safari")
@@ -94,6 +93,7 @@ enum SystemImg {
 
     static let pin_small = UIImage(systemName:"mappin.and.ellipse") // iOS 13.0+
     static let globe = UIImage(systemName:"globe") // iOS 13.0+
+    static let search = UIImage(systemName: "magnifyingglass") // iOS 13.0+
 
     static var flagCheckeredCrossed: UIImage? {
         if #available(iOS 18.0, *) {

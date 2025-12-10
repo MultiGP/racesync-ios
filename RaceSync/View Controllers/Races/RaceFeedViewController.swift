@@ -94,8 +94,8 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
     fileprivate lazy var searchButton: CustomButton = {
         let button = CustomButton(type: .system)
         button.addTarget(self, action: #selector(didPressSearchButton), for: .touchUpInside)
-        button.setImage(ButtonImg.search, for: .normal)
-        button.isHidden = true
+        button.setImage(SystemImg.search, for: .normal)
+        button.isHidden = !isRaceSearchEnabled
         return button
     }()
 
@@ -139,6 +139,8 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
     fileprivate let emptyStateChapterRaces = EmptyStateViewModel(.noJoinedRaces)
     fileprivate let emptyStateNearbyRaces = EmptyStateViewModel(.noNearbydRaces)
     fileprivate let emptyStateSeriesRaces = EmptyStateViewModel(.noSeriesRaces)
+
+    fileprivate let isRaceSearchEnabled: Bool = true
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -252,7 +254,9 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
     }
 
     @objc fileprivate func didPressSearchButton(_ sender: Any) {
-        Clog.log("didPressSearchButton")
+        let vc = SearchViewController()
+        let nc = NavigationController(rootViewController: vc)
+        present(nc, animated: true)
     }
 
     @objc fileprivate func didPressFilterButton(_ sender: Any) {
