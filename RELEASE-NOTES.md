@@ -3,19 +3,28 @@
 
 ---
 
-## 1.9
+## 1.8.2
 
-### Introducing MultiGP Series:
-You can now browse official MultiGP Series, join the open races and check out the live leaderboards. 
+### New Features:
+   * Added a simple universal search tool, allowing users to find pilots, chapters and races by name or id.
+   * Clicking on a race web url now displays the race detail in-app natively, instead of showing the browser.
+   * Added the ability to reload the pilot results will pull to refresh,
+   * Laying the foundations to support Series in the app. Only available to beta testers for now.
 
-### Fixes and enhancements:
-
-   * 
+### For Chapter Organizers:
+   * Temporarily disabled Finalizing a Race for now, since it was working intermittently.
+   * Fixed not being able to duplicate or delete a race anymore. This was a regression introduced in v1.8
+   
+### Fixes and Enhancements:
+   * Resolved an issue where the payments list for organizers displayed $0 amounts under rare conditions.
+   * Improved several UI details in RaceSync Pay support
+   * Fixed tab bar not always showing as selected
+   
+---
 
 ## 1.8.1
 
-### Fixes and enhancements:
-
+### Fixes and Enhancements:
    * Resolved an issue where the payments list for organizers displayed $0 amounts under rare conditions.
    * Fixed not being able to duplicate or delete a race anymore. This was a regression introduced in v1.8.
    * Fixed text truncation issues in join buttons, when the race fee is over $99.
@@ -33,7 +42,7 @@ You can now pay for races in-app with PayPal or credit card in USD (only for rac
     * View paid and unpaid pilot registrations in the race detail screen
     * Overhauled race creation and editing forms, now including payment options
 
-### Fixes and enhancements:
+### Fixes and Enhancements:
     * See your personal result in a pinned format, similar to the GQ Standings view
     * Joining a race no longer requires selecting an aircraft beforehand
     * The Standings tab is now selected by default. The app will also remember your last selected tab and open it on launch
@@ -46,8 +55,7 @@ You can now pay for races in-app with PayPal or credit card in USD (only for rac
 
 ## 1.7.2
 
-### Fixes and enhancements:
-
+### Fixes and Enhancements:
    * Fixed a sorting inconsistency in the Global Qualifier standings so they now match the website.
    * Improved the display of multi-day events.
    * Resolved minor UI and layout issues in the race detail view.
@@ -57,7 +65,6 @@ You can now pay for races in-app with PayPal or credit card in USD (only for rac
 ## 1.7.1
 
 ### Fixes and enhancements:
-
    * Fixed several UI issues related to GQ standings
    * Removed 2025 IO schedule quick access
 
@@ -73,7 +80,7 @@ Pay for races directly in-app using PayPal or credit card in USD (available for 
     * New Registrations Tab: View paid and unpaid pilot registrations in the race detail screen.
     * Adding a new tab to the race detail view, to see paid and unpaid registered pilots.
 
-### Fixes and enhancements:
+### Fixes and Enhancements:
     * Pinned View for Race Results: See your personal result in a pinned format, similar to the GQ Standings view.
     * Removed Aircraft support. Joining a race no longer requires selecting an aircraft beforehand!
     * The Standings tab is now selected by default. The app will also remember your last selected tab and open it on launch.
@@ -85,18 +92,18 @@ Pay for races directly in-app using PayPal or credit card in USD (available for 
 
 ## 1.6
 
-New Features:
+### New Features:
    * Race Results: View race result standings directly on the race detail screen (when available).
    * Personalized Race Filters: Customize the race feed on the main screen to your preferences by filtering specific race classes, or yearly GQ races.
    * Updated Race Classes: Reflecting the latest MultiGP changes (Pro Spec, E-Sport, Micro, Whoop, etc.)
    * Races Quick Access: Display a race's ZippyQ web schedule as well as the LiveFPV or FPVScore pages for detailed live results.
    * Enhanced Visuals: Updated app icon and launch screen for a refreshed look.
 
-For Chapter Organizers:
+### For Chapter Organizers:
    * Simplified Race Creation: Streamlined the experience with a single description field and improved default values.
    * Finalize Races: You can now finalize a race directly from the race detail screen.
 
-Hot Fixes:
+### Fixes and Enhancements:
    * Show only upcoming races when filtering by class/spec for better relevance.
    * Removed duplicate managed chapters and sorted them alphabetically.
    * Prevented duplication of GQ races.
