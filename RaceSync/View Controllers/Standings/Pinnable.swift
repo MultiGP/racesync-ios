@@ -142,6 +142,11 @@ extension Pinnable {
     }
 
     fileprivate func pinnedCellForRow(at indexPath: IndexPath) -> UITableViewCell {
+        guard tableView.window != nil else {
+            // Return a dummy cell when the tableview isn't visible on the foreground
+            return tableView.dequeueReusableCell(withIdentifier: pinnedCellIdentifier())!
+        }
+
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath, identifier: pinnedCellIdentifier())
         configure(cell, forRowAt: indexPath)
         return cell
