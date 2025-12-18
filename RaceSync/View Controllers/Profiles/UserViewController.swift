@@ -49,6 +49,7 @@ class UserViewController: ProfileViewController, ViewJoinable {
     fileprivate var chapterViewModels = [ChapterViewModel]()
     fileprivate var presenter: Presentr?
     fileprivate var userCoordinates: CLLocationCoordinate2D?
+    fileprivate var isPhotoEditale = false
 
     fileprivate let emptyStateRaces = EmptyStateViewModel(.noProfileRaces)
     fileprivate let emptyStateChapters = EmptyStateViewModel(.noProfileChapters)
@@ -113,8 +114,8 @@ class UserViewController: ProfileViewController, ViewJoinable {
     override func setupLayout() {
         super.setupLayout()
 
-        headerView.isEditable = user.isMe
-        headerView.avatarView.isUserInteractionEnabled = true
+        headerView.isEditable = user.isMe && isPhotoEditale
+        headerView.avatarView.isUserInteractionEnabled = isPhotoEditale
         headerView.delegate = self
     }
 
