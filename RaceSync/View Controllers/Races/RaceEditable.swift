@@ -38,7 +38,7 @@ extension RaceEditable {
         guard let viewModel = raceViewModel(for: indexPath.row), viewModel.race.canBeEdited else { return }
 
         raceController = RaceController(with: viewModel.race)
-        raceController?.showContextualMenu(.edit, completion: { [weak self] status, error in
+        raceController?.showContextualMenu(.edit, completion: { [weak self] status in
             guard status else { return }
             self?.loadContent(forced: true)
         })
