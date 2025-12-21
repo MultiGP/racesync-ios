@@ -11,7 +11,11 @@ import RaceSyncAPI
 import EmptyDataSet_Swift
 import CoreLocation
 
-class ChapterViewController: ProfileViewController, ViewJoinable {
+class ChapterViewController: ProfileViewController, ViewJoinable, RaceEditable {
+
+    // MARK: - Public Variables
+
+    var raceController: RaceController?
 
     // MARK: - Private Variables
 
@@ -24,20 +28,6 @@ class ChapterViewController: ProfileViewController, ViewJoinable {
         button.joinState = chapterViewModel.joinState
         return button
     }()
-
-    fileprivate func raceViewModel(for index: Int) -> RaceViewModel? {
-        if index >= 0, index < raceViewModels.count {
-            return raceViewModels[index]
-        }
-        return nil
-    }
-
-    fileprivate func userViewModel(for index: Int) -> UserViewModel? {
-        if index >= 0, index < userViewModels.count {
-            return userViewModels[index]
-        }
-        return nil
-    }
 
     fileprivate let chapter: Chapter
     fileprivate let raceApi = RaceApi()
@@ -86,15 +76,6 @@ class ChapterViewController: ProfileViewController, ViewJoinable {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        registerJoinable()
-        configureBarButtonItems()
-
-        tableView.register(cellType: RaceTableViewCell.self)
-        tableView.register(cellType: AvatarTableViewCell.self)
-        tableView.dataSource = self
-        tableView.emptyDataSetSource = self
-        tableView.emptyDataSetDelegate = self
-
         loadContent()
     }
 
@@ -118,6 +99,20 @@ class ChapterViewController: ProfileViewController, ViewJoinable {
 
     override func setupLayout() {
         super.setupLayout()
+
+        registerJoinable()
+        configureBarButtonItems()
+
+        tableView.register(cellType: RaceTableViewCell.self)
+        tableView.register(cellType: AvatarTableViewCell.self)
+        tableView.dataSource = self
+        tableView.emptyDataSetSource = self
+        tableView.emptyDataSetDelegate = self
+
+        let longPress = UILongPressGestureRecognizer(target: self,action: #selector(didLongPress(_:)))
+        longPress.minimumPressDuration = 0.3
+        longPress.delaysTouchesBegan = true
+        tableView.addGestureRecognizer(longPress)
 
         headerView.addSubview(joinButton)
         joinButton.snp.makeConstraints {
@@ -216,6 +211,10 @@ class ChapterViewController: ProfileViewController, ViewJoinable {
         }
     }
 
+    @objc func didLongPress(_ gesture: UIGestureRecognizer) {
+        handleLongPress(gesture)
+    }
+
     @objc func didPressShareButton() {
         guard let chapterURL = URL(string: chapter.url) else { return }
 
@@ -237,34 +236,20 @@ class ChapterViewController: ProfileViewController, ViewJoinable {
     // ViewJoinable
     func loadContent(forced: Bool = false) {
         if selectedSegment == .left {
-            loadRaces(forced: forced)
+            loadRaces(forced)
         } else {
-            loadUsers(forced: forced)
+            loadUsers(forced)
         }
     }
 
-    func loadRaces(forced: Bool = false) {
-        if raceViewModels.isEmpty || forced {
-            isLoadingList(true)
-
-            fetchRaces { [weak self] in
-                self?.isLoadingList(false)
-            }
-        } else {
-            tableView.reloadData()
-        }
+    fileprivate func loadRaces(_ forced: Bool = false) {
+        loadList(forced: forced, isEmpty: raceViewModels.isEmpty,
+                segment: .left, fetch: fetchRaces)
     }
 
-    func loadUsers(forced: Bool = false) {
-        if userViewModels.isEmpty || forced {
-            isLoadingList(true)
-
-            fetchUsers { [weak self] in
-                self?.isLoadingList(false)
-            }
-        } else {
-            tableView.reloadData()
-        }
+    fileprivate func loadUsers(_ forced: Bool = false) {
+        loadList(forced: forced, isEmpty: userViewModels.isEmpty,
+                segment: .right, fetch: fetchUsers)
     }
 
     func fetchRaces(_ completion: VoidCompletionBlock? = nil) {
@@ -298,6 +283,55 @@ class ChapterViewController: ProfileViewController, ViewJoinable {
 
             completion?()
         }
+    }
+
+    fileprivate func loadList(forced: Bool,
+                          isEmpty: Bool,
+                          segment: ProfileSegment,
+                          fetch: (@escaping () -> Void) -> Void ){
+
+        guard isEmpty || forced else {
+            tableView.reloadData()
+            return
+        }
+
+        let showShimmer = shouldShowShimmer(for: segment)
+
+        if showShimmer {
+            isLoadingList(true)
+        }
+
+        fetch { [weak self] in
+            guard let self else { return }
+
+            if showShimmer {
+                self.isLoadingList(false)   // triggers its own reload
+            } else {
+                self.tableView.reloadData()
+            }
+        }
+    }
+
+    func shouldShowShimmer(for segment: ProfileSegment) -> Bool {
+        if selectedSegment == .left {
+            return raceViewModels.count == 0
+        } else {
+            return userViewModels.count == 0
+        }
+    }
+
+    func raceViewModel(for index: Int) -> RaceViewModel? {
+        if index >= 0, index < raceViewModels.count {
+            return raceViewModels[index]
+        }
+        return nil
+    }
+
+    func userViewModel(for index: Int) -> UserViewModel? {
+        if index >= 0, index < userViewModels.count {
+            return userViewModels[index]
+        }
+        return nil
     }
 }
 

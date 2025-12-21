@@ -14,7 +14,11 @@ import EmptyDataSet_Swift
 import CoreLocation
 import QRCode
 
-class UserViewController: ProfileViewController, ViewJoinable {
+class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
+
+    // MARK: - Public Variables
+
+    var raceController: RaceController?
 
     // MARK: - Private Variables
 
@@ -25,20 +29,6 @@ class UserViewController: ProfileViewController, ViewJoinable {
         button.setBackgroundImage(nil, for: .normal)
         return button
     }()
-
-    fileprivate func raceViewModel(for index: Int) -> RaceViewModel? {
-        if index >= 0, index < raceViewModels.count {
-            return raceViewModels[index]
-        }
-        return nil
-    }
-
-    fileprivate func chapterViewModel(for index: Int) -> ChapterViewModel? {
-        if index >= 0, index < chapterViewModels.count {
-            return chapterViewModels[index]
-        }
-        return nil
-    }
 
     fileprivate var user: User
     fileprivate let raceApi = RaceApi()
@@ -85,15 +75,6 @@ class UserViewController: ProfileViewController, ViewJoinable {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        registerJoinable()
-        configureBarButtonItems()
-
-        tableView.register(cellType: UserRaceTableViewCell.self)
-        tableView.register(cellType: ChapterTableViewCell.self)
-        tableView.dataSource = self
-        tableView.emptyDataSetSource = self
-        tableView.emptyDataSetDelegate = self
-        
         loadContent()
     }
 
@@ -113,6 +94,20 @@ class UserViewController: ProfileViewController, ViewJoinable {
 
     override func setupLayout() {
         super.setupLayout()
+
+        registerJoinable()
+        configureBarButtonItems()
+
+        tableView.register(cellType: UserRaceTableViewCell.self)
+        tableView.register(cellType: ChapterTableViewCell.self)
+        tableView.dataSource = self
+        tableView.emptyDataSetSource = self
+        tableView.emptyDataSetDelegate = self
+
+        let longPress = UILongPressGestureRecognizer(target: self,action: #selector(didLongPress(_:)))
+        longPress.minimumPressDuration = 0.3
+        longPress.delaysTouchesBegan = true
+        tableView.addGestureRecognizer(longPress)
 
         headerView.isEditable = user.isMe && isPhotoEditale
         headerView.avatarView.isUserInteractionEnabled = isPhotoEditale
@@ -207,6 +202,10 @@ class UserViewController: ProfileViewController, ViewJoinable {
         }
     }
 
+    @objc func didLongPress(_ gesture: UIGestureRecognizer) {
+        handleLongPress(gesture)
+    }
+
     @objc func didPressShareButton() {
         guard let userURL = URL(string: user.url) else { return }
 
@@ -228,31 +227,17 @@ class UserViewController: ProfileViewController, ViewJoinable {
         }
     }
 
-    func loadRaces(_ forced: Bool = false) {
-        if raceViewModels.isEmpty || forced {
-            isLoadingList(true)
-
-            fetchRaces { [weak self] in
-                self?.isLoadingList(false)
-            }
-        } else {
-            tableView.reloadData()
-        }
+    fileprivate func loadRaces(_ forced: Bool = false) {
+        loadList(forced: forced, isEmpty: raceViewModels.isEmpty,
+                segment: .left, fetch: fetchRaces)
     }
 
-    func loadChapters(_ forced: Bool = false) {
-        if chapterViewModels.isEmpty || forced {
-            isLoadingList(true)
-
-            fetchChapters { [weak self] in
-                self?.isLoadingList(false)
-            }
-        } else {
-            tableView.reloadData()
-        }
+    fileprivate func loadChapters(_ forced: Bool = false) {
+        loadList(forced: forced, isEmpty: raceViewModels.isEmpty,
+                segment: .right, fetch: fetchChapters)
     }
 
-    func fetchRaces(_ completion: VoidCompletionBlock? = nil) {
+    fileprivate func fetchRaces(_ completion: VoidCompletionBlock? = nil) {
         raceApi.getRaces(with: [.joined], userId: user.id) { (races, error) in
             if let races = races {
                 let sortedRaces = races.sorted(by: { $0.startDate?.compare($1.startDate ?? Date()) == .orderedDescending })
@@ -265,7 +250,7 @@ class UserViewController: ProfileViewController, ViewJoinable {
         }
     }
 
-    func fetchChapters(_ completion: VoidCompletionBlock? = nil) {
+    fileprivate func fetchChapters(_ completion: VoidCompletionBlock? = nil) {
         chapterApi.getChapters(forUser: user.id) { [weak self] (chapters, error) in
             guard let strongSelf = self else { return }
 
@@ -289,6 +274,55 @@ class UserViewController: ProfileViewController, ViewJoinable {
 
             completion?()
         }
+    }
+
+    fileprivate func loadList(forced: Bool,
+                          isEmpty: Bool,
+                          segment: ProfileSegment,
+                          fetch: (@escaping () -> Void) -> Void ){
+
+        guard isEmpty || forced else {
+            tableView.reloadData()
+            return
+        }
+
+        let showShimmer = shouldShowShimmer(for: segment)
+
+        if showShimmer {
+            isLoadingList(true)
+        }
+
+        fetch { [weak self] in
+            guard let self else { return }
+
+            if showShimmer {
+                self.isLoadingList(false)   // triggers its own reload
+            } else {
+                self.tableView.reloadData()
+            }
+        }
+    }
+
+    func shouldShowShimmer(for segment: ProfileSegment) -> Bool {
+        if selectedSegment == .left {
+            return raceViewModels.count == 0
+        } else {
+            return chapterViewModels.count == 0
+        }
+    }
+
+    func raceViewModel(for index: Int) -> RaceViewModel? {
+        if index >= 0, index < raceViewModels.count {
+            return raceViewModels[index]
+        }
+        return nil
+    }
+
+    func chapterViewModel(for index: Int) -> ChapterViewModel? {
+        if index >= 0, index < chapterViewModels.count {
+            return chapterViewModels[index]
+        }
+        return nil
     }
 }
 

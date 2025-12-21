@@ -12,9 +12,11 @@
    * Laying the foundations to support Series in the app. Only available to beta testers for now.
 
 ### For Chapter Organizers:
+   * Made the contextual editing menu also available by long pressing a managed race row.
+   * Fixed a crash caused when trying to open or close the enrolment of a race.
+   * Fixed not being able to duplicate or delete a race anymore. This was a regression introduced in v1.8   
    * Temporarily disabled Finalizing a Race for now, since it was working intermittently.
-   * Fixed not being able to duplicate or delete a race anymore. This was a regression introduced in v1.8
-   
+
 ### Fixes and Enhancements:
    * Resolved an issue where the payments list for organizers displayed $0 amounts under rare conditions.
    * Improved several UI details in RaceSync Pay support

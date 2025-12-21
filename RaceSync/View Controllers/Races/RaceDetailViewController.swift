@@ -584,7 +584,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     }
 
     @objc func didPressDateButton(_ sender: UITapGestureRecognizer) {
-        raceController.didPressCalendarButton()
+        raceController.saveInCalendar()
     }
 
     @objc fileprivate func didPressLocationButton(_ sender: UIButton) {

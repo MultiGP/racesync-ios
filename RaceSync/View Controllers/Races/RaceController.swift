@@ -20,6 +20,8 @@ class RaceController {
     var parentViewController: RaceTabBarController? = nil
     var isLoading: Bool = false
 
+    var menuCompletion: BoolCompletionBlock? = nil
+
     // MARK: - Private
 
     fileprivate var visibleViewController: UIViewController? {
@@ -67,16 +69,21 @@ class RaceController {
 
     public func reloadRace() {
 
-        raceApi.view(race: raceId) { [weak self] race, error in
-            guard let self = self else { return }
+        if let completion = menuCompletion {
+            completion(true)
+            menuCompletion = nil // invalidate completion right after
+        } else {
+            raceApi.view(race: raceId) { [weak self] race, error in
+                guard let self = self else { return }
 
-            if let race = race {
-                // TODO: Temporary hack since race/view API doesn't include the raceOwnerName attribute
-                // See issue https://github.com/MultiGP/multigp-com/issues/88
-                race.ownerUserName = self.race?.ownerUserName ?? ""
-                self.race = race
+                if let race = race {
+                    // TODO: Temporary hack since race/view API doesn't include the raceOwnerName attribute
+                    // See issue https://github.com/MultiGP/multigp-com/issues/88
+                    race.ownerUserName = self.race?.ownerUserName ?? ""
+                    self.race = race
 
-                reloadContentViews()
+                    reloadContentViews()
+                }
             }
         }
     }
@@ -122,7 +129,7 @@ class RaceController {
 
     // MARK: - Actions
 
-    @objc func didPressEditButton() {
+    func showEditMenu() {
         guard let race = race else { return }
 
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
@@ -153,17 +160,7 @@ class RaceController {
         visibleViewController?.present(alert, animated: true)
     }
 
-    @objc func didPressCalendarButton() {
-        guard let race = race, let event = race.createCalendarEvent(with: race.id) else { return }
-
-        ActionSheetUtil.presentActionSheet(
-            withTitle: "Save the race details to your calendar?",
-            buttonTitle: "Save to Calendar", completion: { (action) in
-            CalendarUtil.add(event)
-        })
-    }
-
-    @objc public func didPressShareButton() {
+    func showShareMenu() {
         guard let race = race else { return }
 
         let url = MGPWeb.getURL(for: .raceView, value: race.id)
@@ -188,7 +185,7 @@ class RaceController {
         visibleViewController?.present(vc, animated: true)
     }
 
-    @objc fileprivate func didPressZippyQButton() {
+    func showZippyQWeb() {
         guard let race = race else { return }
 
         let url = MGPWeb.getURL(for: .zippyqView, value: race.id)
@@ -196,6 +193,16 @@ class RaceController {
         if UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url)
         }
+    }
+
+    func saveInCalendar() {
+        guard let race = race, let event = race.createCalendarEvent(with: race.id) else { return }
+
+        ActionSheetUtil.presentActionSheet(
+            withTitle: "Save the race details to your calendar?",
+            buttonTitle: "Save to Calendar", completion: { (action) in
+            CalendarUtil.add(event)
+        })
     }
 
     // MARK: - Navigation Action Builders
@@ -244,17 +251,23 @@ class RaceController {
     }
 
     @objc private func raceActionTapped(_ sender: UIButton) {
-        guard let option = RaceAction(rawValue: sender.tag) else { return }
+        guard let action = RaceAction(rawValue: sender.tag) else { return }
+        showContextualMenu(action)
+    }
 
-        switch option {
+    func showContextualMenu(_ action: RaceAction, completion: BoolCompletionBlock? = nil) {
+
+        menuCompletion = completion
+
+        switch action {
         case .edit:
-            didPressEditButton()
+            showEditMenu()
         case .calendar:
-            didPressCalendarButton()
+            saveInCalendar()
         case .share:
-            didPressShareButton()
+            showShareMenu()
         case .zippyQ:
-            didPressZippyQButton()
+            showZippyQWeb()
         }
     }
 
@@ -394,7 +407,12 @@ class RaceController {
         guard let race = race else { return }
         raceApi.deleteRace(with: race.id) { status, error in
             if status == true {
-                self.visibleNavigationController?.popViewController(animated: true)
+                if let completion = self.menuCompletion {
+                    completion(true)
+                    self.menuCompletion = nil // invalidate completion right after
+                } else {
+                    self.visibleNavigationController?.popViewController(animated: true)
+                }
             } else if let error = error {
                 AlertUtil.presentAlertMessage("Couldn't delete this race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
             }
