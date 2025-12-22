@@ -227,13 +227,13 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         }
     }
 
-    var isSearching: Bool {
+    fileprivate var isSearching: Bool {
         guard let text = searchBar.text else { return false }
         let query = text.trimmingCharacters(in: .whitespacesAndNewlines)
         return query.count >= minQuery || query.containsEmoji
     }
 
-    func filterResults(with text: String) -> [StandingViewModel] {
+    fileprivate func filterResults(with text: String) -> [StandingViewModel] {
         let query = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard query.count >= minQuery || query.containsEmoji else { return [] }
 
@@ -314,14 +314,14 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         self.presenter = presenter
     }
 
-    @objc func userDidTakeScreenshot() {
+    @objc fileprivate func userDidTakeScreenshot() {
         // only trigger when this view is visible
         guard let view = viewIfLoaded, view.window != nil else { return }
         guard let cachedIndexPath = cachedPinnedIndexPath else { return }
         shouldPresentMyStandingBadge(cachedIndexPath)
     }
 
-    func resetTableView() {
+    fileprivate func resetTableView() {
         tableView.refreshControl = isSearching ? nil : refreshControl
         tableView.setContentOffset(.zero, animated: false)
         tableView.reloadData()
@@ -332,7 +332,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
 
     // MARK: - Actions
 
-    func showUserProfile(forUserAt indexPath: IndexPath, from cell: AvatarTableViewCell) {
+    fileprivate func showUserProfile(forUserAt indexPath: IndexPath, from cell: AvatarTableViewCell) {
         guard let viewModel = standingViewModel(at: indexPath) else { return }
         guard !viewModel.standing.userId.isEmpty else { return }
 

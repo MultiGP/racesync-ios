@@ -75,13 +75,14 @@ class SearchViewController: UIViewController, Shimmable {
 
     fileprivate let raceApi = RaceApi()
     fileprivate var searchResult = [RaceViewModel]()
-    fileprivate let minSearchLength: Int = 3
+    fileprivate let minQuery: Int = 3
 
     fileprivate let emptyStateSearch = EmptyStateViewModel(.noSearchResults)
 
     fileprivate var isSearching: Bool {
         guard let text = searchBar.text else { return false }
-        return !text.isEmpty
+        let query = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        return query.count >= minQuery || query.containsEmoji
     }
 
     fileprivate enum Constants {
@@ -153,8 +154,6 @@ class SearchViewController: UIViewController, Shimmable {
         title = "Search Race"
 
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
-
-
     }
 
     fileprivate func hideNavigationShadow(_ hide: Bool = true) {
@@ -173,18 +172,44 @@ class SearchViewController: UIViewController, Shimmable {
 //        navigationController?.navigationBar.scrollEdgeAppearance = appearance
     }
 
-    // MARK: - Actions
+    // MARK: - Data
+
+    fileprivate func startSearch(with text: String) {
+        let query = text.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if query.count >= minQuery {
+            guard !query.containsEmoji else { return }
+
+            isLoadingList(true)
+            searchResult = [RaceViewModel]()
+            resetTableView()
+
+            searchRaces(with: query) { [weak self] viewModels, cached, error in
+                if let viewModels = viewModels {
+                    self?.searchResult = viewModels
+                } else {
+                    self?.searchResult = [RaceViewModel]()
+                }
+
+                self?.resetTableView()
+                self?.isLoadingList(false)
+            }
+        } else {
+            searchResult = [RaceViewModel]()
+            resetTableView()
+        }
+    }
+
+    fileprivate func resetTableView() {
+        tableView.setContentOffset(.zero, animated: false)
+        tableView.reloadData()
+    }
 
     fileprivate func searchRaces(with query: String, _ completion: @escaping RaceFeedControllerCompletionBlock<[RaceViewModel]>) {
         // TODO: Write a separate completion handler
 
         // Cancel any pending request
         raceApi.cancelAll()
-
-        guard !query.isEmpty, query.count >= minSearchLength else {
-            completion(nil, false, nil)
-            return
-        }
 
         let raceId = Int(query) != nil ? query : ""
         let raceTitle = Int(query) == nil ? query : ""
@@ -228,13 +253,14 @@ extension SearchViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         guard searchResult.count > 0 else { return nil }
-        return "Found \(searchResult.count) race\(searchResult.count > 1 ? "s": "")"
+        return "\(searchResult.count) race\(searchResult.count > 1 ? "s": "") found"
     }
 }
 
 extension SearchViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        guard isSearching else { return 0 }
         return searchResult.count
     }
 
@@ -272,7 +298,7 @@ extension SearchViewController: UISearchBarDelegate {
     }
 
     func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
-        return false
+        return true
     }
 
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
@@ -280,26 +306,13 @@ extension SearchViewController: UISearchBarDelegate {
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        let query = searchText.lowercased()
-
-        isLoadingList(true)
-
-        searchRaces(with: query) { [weak self] viewModels, cached, error in
-            if let viewModels = viewModels {
-                self?.searchResult = viewModels
-            } else {
-                self?.searchResult = [RaceViewModel]()
-            }
-
-            self?.tableView.reloadData()
-            self?.isLoadingList(false)
-        }
+        startSearch(with: searchText)
     }
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = nil
         searchBar.resignFirstResponder()
-        tableView.reloadData()
+        resetTableView()
     }
 }
 
