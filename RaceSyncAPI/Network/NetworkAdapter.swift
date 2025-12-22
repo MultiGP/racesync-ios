@@ -110,6 +110,7 @@ class NetworkAdapter {
             sessionDataTask.forEach {
                 if let request = $0.currentRequest, let url = request.url {
                     if url.absoluteString.contains(endpoint) {
+                        $0.cancel()
                     }
                 }
             }

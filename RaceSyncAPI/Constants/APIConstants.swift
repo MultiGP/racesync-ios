@@ -26,7 +26,6 @@ enum EndPoint {
     static let userUploadProfileImage = "user/uploadProfileImage"
     static let userUploadProfileBackground = "user/uploadProfileBackground"
 
-    static let race = "race/"
     static let raceList = "race/list"
     static let raceListForChapter = "race/listForChapter"
     static let raceFindLocal = "race/findLocal"

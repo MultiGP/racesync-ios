@@ -244,7 +244,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
 
     @objc fileprivate func didChangeSegment() {
         // Cancelling previous API requests to avoid overlaps
-        raceApi.cancelAll()
+        raceApi.cancelSearchRequests()
 
         // This should be triggered just once, when first requesting access to the user's location
         // and display the shimmer while retrieving the location and loading the nearby races.

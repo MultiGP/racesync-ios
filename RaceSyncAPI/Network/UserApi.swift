@@ -47,6 +47,11 @@ public protocol UserApiInterface {
     /**
     */
     func uploadProfileImage(_ image: UIImage, imageType: ImageType, progressBlock: ProgressBlock?, _ completion: @escaping ObjectCompletionBlock<String>)
+
+    /**
+     Cancels any active search API call
+    */
+    func cancelSearchRequests()
 }
 
 public class UserApi: UserApiInterface {
@@ -113,5 +118,9 @@ public class UserApi: UserApiInterface {
         let url = MGPWeb.getURL(for: .apiBase).absoluteString + "\(endpoint)?\(ParamKey.id)=\(myUser.id)"
 
         repositoryAdapter.uploadImage(data, name: imageType.key, url: url, progressBlock: progressBlock, completion)
+    }
+
+    public func cancelSearchRequests() {
+        repositoryAdapter.networkAdapter.httpCancelRequests(with: EndPoint.userSearch)
     }
 }

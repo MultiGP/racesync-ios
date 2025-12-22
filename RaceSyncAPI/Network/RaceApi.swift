@@ -140,9 +140,9 @@ public protocol RaceApiInterface {
                     completion: @escaping ObjectCompletionBlock<[RacePayment]>)
 
     /**
-     Cancels all the HTTP requests of race API endpoint
+     Cancels any active search API call
     */
-    func cancelAll()
+    func cancelSearchRequests()
 }
 
 public class RaceApi: RaceApiInterface {
@@ -307,8 +307,8 @@ public class RaceApi: RaceApiInterface {
         repositoryAdapter.getObjects(endpoint, type: RacePayment.self, keyPath: "data.paymentStatus", completion)
     }
 
-    public func cancelAll() {
-        repositoryAdapter.networkAdapter.httpCancelRequests(with: EndPoint.race)
+    public func cancelSearchRequests() {
+        repositoryAdapter.networkAdapter.httpCancelRequests(with: EndPoint.raceList)
     }
 }
 

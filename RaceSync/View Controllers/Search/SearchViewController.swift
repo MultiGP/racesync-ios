@@ -74,8 +74,13 @@ class SearchViewController: UIViewController, Shimmable {
     }()
 
     fileprivate let raceApi = RaceApi()
+    fileprivate let userApi = UserApi()
+    fileprivate let chapterApi = ChapterApi()
+
     fileprivate var searchResult = [RaceViewModel]()
     fileprivate let minQuery: Int = 3
+    fileprivate var searchDebounceTimer: Timer?
+    fileprivate let searchDebounceInterval: TimeInterval = 0.5
 
     fileprivate let emptyStateSearch = EmptyStateViewModel(.noSearchResults)
 
@@ -120,6 +125,10 @@ class SearchViewController: UIViewController, Shimmable {
         }
 
         searchBar.resignFirstResponder()
+    }
+
+    deinit {
+        invalidateSearchDebounce()
     }
 
     // MARK: - Layout
@@ -198,6 +207,8 @@ class SearchViewController: UIViewController, Shimmable {
             searchResult = [RaceViewModel]()
             resetTableView()
         }
+
+        invalidateSearchDebounce()
     }
 
     fileprivate func resetTableView() {
@@ -205,16 +216,21 @@ class SearchViewController: UIViewController, Shimmable {
         tableView.reloadData()
     }
 
+    fileprivate func invalidateSearchDebounce() {
+        searchDebounceTimer?.invalidate()
+        searchDebounceTimer = nil
+    }
+
     fileprivate func searchRaces(with query: String, _ completion: @escaping RaceFeedControllerCompletionBlock<[RaceViewModel]>) {
         // TODO: Write a separate completion handler
 
-        // Cancel any pending request
-        raceApi.cancelAll()
+        // Cancel any pending search requests
+        cancelSearchRequests()
 
         let raceId = Int(query) != nil ? query : ""
-        let raceTitle = Int(query) == nil ? query : ""
+        let raceName = Int(query) == nil ? query : ""
 
-        raceApi.getRaces(with: [], raceId: raceId, name: raceTitle) { races, error in
+        raceApi.getRaces(with: [], raceId: raceId, name: raceName) { races, error in
             if let races = races {
                 let sortedViewModels = RaceViewModel.sortedViewModels(with: races, sorting: .ascending)
                 completion(sortedViewModels, false, nil)
@@ -222,6 +238,12 @@ class SearchViewController: UIViewController, Shimmable {
                 completion(nil, false, error)
             }
         }
+    }
+
+    fileprivate func cancelSearchRequests() {
+        raceApi.cancelSearchRequests()
+        userApi.cancelSearchRequests()
+        chapterApi.cancelSearchRequests()
     }
 
     fileprivate func raceViewModel(for index: Int) -> RaceViewModel? {
@@ -306,7 +328,17 @@ extension SearchViewController: UISearchBarDelegate {
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        startSearch(with: searchText)
+        guard !searchText.trimmingCharacters(in: .whitespaces).isEmpty else {
+            return
+        }
+
+        // Cancel the previous pending search
+        invalidateSearchDebounce()
+
+        // Start a new debounce timer
+        searchDebounceTimer = Timer.scheduledTimer(withTimeInterval: searchDebounceInterval, repeats: false) { [weak self] _ in
+            self?.startSearch(with: searchText)
+        }
     }
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
