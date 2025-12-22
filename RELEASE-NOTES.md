@@ -6,7 +6,7 @@
 ## 1.8.2
 
 ### New Features:
-   * Added a simple universal search tool, allowing users to find pilots, chapters and races by name or id.
+   * Added a simple universal search tool, allowing users to find races by name or id. Will add user and chapter support soon.
    * Clicking on a race web url now displays the race detail in-app natively, instead of showing the browser.
    * Added the ability to reload the pilot results will pull to refresh.
    * Laying the foundations to support Series in the app. Only available to beta testers for now.
@@ -22,6 +22,7 @@
    * Improved several UI details in RaceSync Pay support.
    * Tweaked the race results display to better match the website and resolved several related UI issues.
    * Fixed tab bar not always showing as selected
+   * Hiding chapter and race join buttons on chapter profiles for unapproved or demoted chapters, and displaying the disabled-chapter label when applicable.
    
 ---
 
