@@ -11,25 +11,29 @@ import Foundation
 public class TimeUtil {
 
     public static func lapTimeFormat(seconds timeString: String) -> String {
-        guard let time = Double(timeString) else { return "" }
 
-        // Round up the total seconds
-        let totalSeconds = ceil(time * 1000) / 1000
+        guard let raw = Double(timeString) else { return "" }
 
-        let minutes = Int(totalSeconds) / 60
-        let seconds = Int(totalSeconds) % 60
-        let milliseconds = Int((totalSeconds - floor(totalSeconds)) * 1000)
+        // Convert to integer milliseconds by truncation
+        let totalMs = Int(raw * 1000)
 
-        if totalSeconds < 60 {
+        let hours = totalMs / 3_600_000
+        let minutes = (totalMs / 60_000) % 60
+        let seconds = (totalMs / 1000) % 60
+        let milliseconds = totalMs % 1000
+
+        if hours > 0 {
+            // Format into "H:MM:SS.mmm"
+            return String(format: "%d:%02d:%02d.%03d", hours, minutes, seconds, milliseconds)
+        } else if minutes > 0 {
+            // Format into "MM:SS.mmm"
+            return String(format: "%02d:%02d.%03d", minutes, seconds, milliseconds)
+        } else if seconds >= 10 {
             // Format into "SS.mmm"
             return String(format: "%02d.%03d", seconds, milliseconds)
         } else {
-            // Format into "M:SS.mmm"
-            return String(format: "%2d:%02d.%03d", minutes, seconds, milliseconds)
+            // Format into "S.mmm"
+            return String(format: "%d.%03d", seconds, milliseconds)
         }
     }
 }
-
-
-
-
