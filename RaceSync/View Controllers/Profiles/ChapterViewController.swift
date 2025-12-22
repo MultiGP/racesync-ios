@@ -26,6 +26,7 @@ class ChapterViewController: ProfileViewController, ViewJoinable, RaceEditable {
         button.type = .chapter
         button.objectId = chapter.id
         button.joinState = chapterViewModel.joinState
+        button.isHidden = !chapter.isApproved
         return button
     }()
 
@@ -365,13 +366,22 @@ extension ChapterViewController: UITableViewDataSource {
 
         cell.dateLabel.text = viewModel.startDateLabel //"Saturday Sept 14 @ 9:00 AM"
         cell.titleLabel.text = viewModel.titleLabel
-        cell.joinButton.type = .race
-        cell.joinButton.objectId = viewModel.race.id
-        cell.joinButton.joinState = viewModel.joinState
-        cell.joinButton.addTarget(self, action: #selector(didPressJoinButton), for: .touchUpInside)
-        cell.memberBadgeView.count = viewModel.participantCount
         cell.avatarImageView.imageView.setImage(with: viewModel.imageUrl, placeholderImage: PlaceholderImg.medium, size: Constants.avatarImageSize)
         cell.subtitleLabel.text = viewModel.locationLabel
+        cell.joinButton.isHidden = false
+        cell.memberBadgeView.isHidden = false
+
+        if chapter.isApproved {
+            cell.joinButton.type = .race
+            cell.joinButton.objectId = viewModel.race.id
+            cell.joinButton.joinState = viewModel.joinState
+            cell.joinButton.addTarget(self, action: #selector(didPressJoinButton), for: .touchUpInside)
+            cell.memberBadgeView.count = viewModel.participantCount
+        } else {
+            cell.joinButton.isHidden = true
+            cell.memberBadgeView.isHidden = true
+        }
+
         return cell
     }
 

@@ -120,6 +120,7 @@ public enum ParamKey {
     // Model attributes
     static let joined = "joined"
     static let isJoined = "isJoined"
+    static let isApproved = "isApproved"
     static let upcoming = "upcoming"
     static let past = "past"
     static let status = "status"

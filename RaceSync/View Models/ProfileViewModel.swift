@@ -73,8 +73,15 @@ class ProfileViewModel: Descriptable {
 
         if let stringTier = chapter.tier, let tier = Int(stringTier) {
             let chapterTier = ChapterTier(rawValue: tier)
-            self.topBadgeLabel = chapterTier?.title
-            self.topBadgeImage = ButtonImg.badge_small
+
+            if chapter.isApproved {
+                self.topBadgeLabel = chapterTier?.title
+                self.topBadgeImage = ButtonImg.badge_small
+            } else {
+                self.topBadgeLabel = "Disabled"
+                self.topBadgeImage = SystemImg.badge_cross_small
+            }
+
         } else {
             self.topBadgeLabel = nil
             self.topBadgeImage = nil
