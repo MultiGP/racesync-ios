@@ -25,6 +25,7 @@ class ResultEntryViewModel: Descriptable {
 extension ResultEntryViewModel {
 
     static let noResultPlaceholder: String = "Did not complete laps"
+    static let noTimesPlaceholder: String = "Race times unavailable"
 
     static func combinedResults(from entries: [ResultEntry]?, for scoringFormat: ScoringFormat) -> [ResultEntry]? {
         guard let entries = entries else { return nil }

@@ -239,7 +239,7 @@ extension RacePilotsViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if race.canShowResults {
-            return (showingExternalResults() && section == externalResultSection) ? nil : "Results (\(race.scoringFormat.title))"
+            return (showingExternalResults() && section == externalResultSection) ? nil : "\(race.scoringFormat.title)"
         } else {
             return nil
         }
@@ -323,7 +323,7 @@ extension RacePilotsViewController: UITableViewDataSource {
         let viewModel = userViewModels[indexPath.row]
 
         cell.avatarImageView.imageView.setImage(with: viewModel.pictureUrl, placeholderImage: PlaceholderImg.medium)
-        cell.titleLabel.text = viewModel.displayName
+        cell.titleLabel.text = viewModel.username
         cell.subtitleLabel.text = ResultEntryViewModel.noResultPlaceholder
         cell.rankView.rank = nil
         cell.textPill.text = nil
@@ -335,16 +335,27 @@ extension RacePilotsViewController: UITableViewDataSource {
         cell.selectedBackgroundView?.backgroundColor = Color.gray50
 
         if race.canShowResults {
+            var score:Int32? = 0
+            cell.rankView.rank = score
+
             if let resultEntry = viewModel.resultEntry {
                 let resultEntryVM = ResultEntryViewModel(with: resultEntry, from: race)
+                if (!race.isGQ) { score = viewModel.score }
 
                 if resultEntryVM.resultLabel != nil {
                     cell.subtitleLabel.text = resultEntryVM.resultLabel
                     cell.rankView.rank = Int32(indexPath.row+1)
                 }
+            } else if let raceEntry = viewModel.raceEntry {
+                if (!race.isGQ) { score = raceEntry.score }
+
+                if (score ?? 0 > 0) {
+                    cell.rankView.rank = Int32(indexPath.row+1)
+                    cell.subtitleLabel.text = ResultEntryViewModel.noTimesPlaceholder
+                }
             }
 
-            if let score = viewModel.score, score > 0 {
+            if let score = score, score > 0 {
                 let unit = (score == 1) ? "pt" : "pts"
                 cell.textPill.text = "\(score) \(unit)"
                 cell.textPill.style = .text

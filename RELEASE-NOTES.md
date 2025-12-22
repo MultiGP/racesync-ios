@@ -8,7 +8,7 @@
 ### New Features:
    * Added a simple universal search tool, allowing users to find pilots, chapters and races by name or id.
    * Clicking on a race web url now displays the race detail in-app natively, instead of showing the browser.
-   * Added the ability to reload the pilot results will pull to refresh,
+   * Added the ability to reload the pilot results will pull to refresh.
    * Laying the foundations to support Series in the app. Only available to beta testers for now.
 
 ### For Chapter Organizers:
@@ -19,7 +19,8 @@
 
 ### Fixes and Enhancements:
    * Resolved an issue where the payments list for organizers displayed $0 amounts under rare conditions.
-   * Improved several UI details in RaceSync Pay support
+   * Improved several UI details in RaceSync Pay support.
+   * Tweaked the race results display to better match the website and resolved several related UI issues.
    * Fixed tab bar not always showing as selected
    
 ---

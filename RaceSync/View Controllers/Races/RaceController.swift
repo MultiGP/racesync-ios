@@ -96,6 +96,7 @@ class RaceController {
         var viewModels = [UserViewModel]()
 
         guard let race = race else { return viewModels }
+        guard let entries = race.entries else { return viewModels }
 
         func populateScore(in userViewModels: [UserViewModel]) {
             guard race.isGQ == false else { return } // Don't display points for GQ race results
@@ -107,21 +108,27 @@ class RaceController {
             }
         }
 
-        if race.canShowResults, let results = ResultEntryViewModel.combinedResults(from: race.results, for: race.trueScoringFormat) {
-            viewModels += UserViewModel.viewModelsFromResults(results)
-            populateScore(in: viewModels)
-        }
+        if race.canShowResults {
+            if let results = ResultEntryViewModel.combinedResults(from: race.results, for: race.trueScoringFormat) {
+                viewModels += UserViewModel.viewModelsFromResults(results)
+                populateScore(in: viewModels)
 
-        if let entries = race.entries, entries.count > 0 {
-            // We need to include the pilots that didn't complete laps still
-            if viewModels.count > 0, viewModels.count < entries.count {
+                // Sort only when at least one score > 0, to match the web
+                // GQ races aren't scored
+                if !race.isGQ { viewModels.sort { ($0.score ?? 0) > ($1.score ?? 0) } }
+            }
+
+            if viewModels.count < entries.count {
                 viewModels += UserViewModel.viewModels(viewModels, withoutResults: entries)
                 populateScore(in: viewModels)
 
-            // No race results, so let's just populate with race entries instead
-            } else if viewModels.count == 0 {
-                viewModels += UserViewModel.viewModelsFromEntries(entries)
+                // Sort only when at least one score > 0, to match the web
+                // GQ races aren't scored
+                if !race.isGQ { viewModels.sort { ($0.score ?? 0) > ($1.score ?? 0) } }
             }
+        } else {
+            // No race results, so let's just populate the race entries
+            viewModels += UserViewModel.viewModelsFromEntries(entries)
         }
 
         return viewModels

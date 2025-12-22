@@ -12,6 +12,7 @@ import RaceSyncAPI
 extension Race {
 
     var canShowResults: Bool {
+        if isFinalized { return true } // Assume results should be displayed since the race is finalized already
         guard let results = results, results.count > 0 else { return false }
         guard let startDate = startDate else { return false }
         return startDate.isPassed

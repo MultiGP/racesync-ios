@@ -52,6 +52,7 @@
 		4F2B7E872E86309300643697 /* SeriesApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2B7E862E86309300643697 /* SeriesApi.swift */; };
 		4F2B7E892E8635D200643697 /* SeriesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2B7E882E8635D200643697 /* SeriesViewModel.swift */; };
 		4F3750A92EF4C9510068FE16 /* RaceEditable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3750A82EF4C9510068FE16 /* RaceEditable.swift */; };
+		4F3750AB2EF8B0BD0068FE16 /* TimeUtilTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3750AA2EF8B0BD0068FE16 /* TimeUtilTests.swift */; };
 		4F3D640D23FB253900DE6DF2 /* UICollectionView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3D640C23FB253900DE6DF2 /* UICollectionView+Extensions.swift */; };
 		4F3D640F23FC65F700DE6DF2 /* TextPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3D640E23FC65F700DE6DF2 /* TextPickerViewController.swift */; };
 		4F3D641123FE664A00DE6DF2 /* TextFieldViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3D641023FE664A00DE6DF2 /* TextFieldViewController.swift */; };
@@ -361,6 +362,7 @@
 		4F2B7E862E86309300643697 /* SeriesApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesApi.swift; sourceTree = "<group>"; };
 		4F2B7E882E8635D200643697 /* SeriesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesViewModel.swift; sourceTree = "<group>"; };
 		4F3750A82EF4C9510068FE16 /* RaceEditable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceEditable.swift; sourceTree = "<group>"; };
+		4F3750AA2EF8B0BD0068FE16 /* TimeUtilTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeUtilTests.swift; sourceTree = "<group>"; };
 		4F3D640C23FB253900DE6DF2 /* UICollectionView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Extensions.swift"; sourceTree = "<group>"; };
 		4F3D640E23FC65F700DE6DF2 /* TextPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPickerViewController.swift; sourceTree = "<group>"; };
 		4F3D641023FE664A00DE6DF2 /* TextFieldViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldViewController.swift; sourceTree = "<group>"; };
@@ -746,6 +748,7 @@
 				4FEBB27923A2DAFF007514B4 /* DescriptableTests.swift */,
 				4F9A888C2974AAD400B52092 /* ParametersTests.swift */,
 				4F0F2F462E87532F006788A7 /* DeepLinkTests.swift */,
+				4F3750AA2EF8B0BD0068FE16 /* TimeUtilTests.swift */,
 				4F0F2F422E872FBA006788A7 /* MGPWebTests.swift */,
 				4F13427E2360DA4C00A9DBDE /* Info.plist */,
 			);
@@ -1740,6 +1743,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F3750AB2EF8B0BD0068FE16 /* TimeUtilTests.swift in Sources */,
 				4F13427D2360DA4C00A9DBDE /* RaceSyncAPITests.swift in Sources */,
 				4F0F2F472E87532F006788A7 /* DeepLinkTests.swift in Sources */,
 				4F0F2F432E872FBA006788A7 /* MGPWebTests.swift in Sources */,
