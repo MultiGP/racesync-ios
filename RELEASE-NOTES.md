@@ -6,23 +6,23 @@
 ## 1.8.2
 
 ### New Features:
-   * Added a simple universal search tool, allowing users to find races by name or id. Will add user and chapter support soon.
-   * Clicking on a race web url now displays the race detail in-app natively, instead of showing the browser.
-   * Added the ability to reload the pilot results will pull to refresh.
-   * Laying the foundations to support Series in the app. Only available to beta testers for now.
+   * Added a universal search tool for querying races, users, and chapters by name or ID.
+   * Race web links now open the race detail natively in the app instead of launching the browser.
+   * Added pull-to-refresh support for reloading pilot results.
+   * Introduced groundwork for Series support (currently available to beta testers only).
 
 ### For Chapter Organizers:
-   * Made the contextual editing menu also available by long pressing a managed race row.
-   * Fixed a crash caused when trying to open or close the enrolment of a race.
-   * Fixed not being able to duplicate or delete a race anymore. This was a regression introduced in v1.8   
-   * Temporarily disabled Finalizing a Race for now, since it was working intermittently on the API side.
+   * Enabled the contextual editing menu via long-press on managed race rows.
+   * Fixed a crash when opening or closing race enrolment.
+   * Restored the ability to duplicate or delete races (regression introduced in v1.8).
+   * Temporarily disabled Finalizing a Race due to intermittent API issues.
 
 ### Fixes and Enhancements:
-   * Resolved an issue where the payments list for organizers displayed $0 amounts under rare conditions.
-   * Improved several UI details in RaceSync Pay support.
-   * Tweaked the race results display to better match the website and resolved several related UI issues.
-   * Fixed tab bar not always showing as selected
-   * Hiding chapter and race join buttons on chapter profiles for unapproved or demoted chapters, and displaying the disabled-chapter label when applicable.
+   * Fixed an issue where the payments list displayed $0 amounts in rare cases.
+   * Improved several UI elements related to RaceSync Pay.
+   * Refined the race results display to better match the website and corrected related UI issues.
+   * Fixed tab bar selection inconsistencies.
+   * Updated chapter profiles to hide join buttons for unapproved or demoted chapters and to display the disabled-chapter label when applicable.
    
 ---
 

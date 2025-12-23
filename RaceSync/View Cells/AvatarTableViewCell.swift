@@ -71,9 +71,10 @@ class AvatarTableViewCell: UITableViewCell {
         return view
     }()
 
+    fileprivate var imageViewLeadingConstraint: Constraint?
+    fileprivate var imageViewWidthConstraint: Constraint?
     fileprivate var rankLabelWidthConstraint: Constraint?
-    fileprivate var leftSpacingConstraint: Constraint?
-    fileprivate var avatarImageViewWidthConstraint: Constraint?
+    fileprivate var rankLabelLeadingConstraint: Constraint?
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -111,11 +112,13 @@ class AvatarTableViewCell: UITableViewCell {
 
         contentView.addSubview(rankView)
         rankView.snp.makeConstraints {
-            $0.leading.equalToSuperview().offset(Constants.padding)
             $0.centerY.equalToSuperview()
 
             rankLabelWidthConstraint = $0.width.greaterThanOrEqualTo(Constants.imageHeight / 2).constraint
             rankLabelWidthConstraint?.activate()
+
+            rankLabelLeadingConstraint = $0.leading.equalToSuperview().offset(Constants.padding).constraint
+            rankLabelLeadingConstraint?.activate()
         }
 
         contentView.addSubview(avatarImageView)
@@ -123,11 +126,11 @@ class AvatarTableViewCell: UITableViewCell {
             $0.height.equalTo(Constants.imageHeight)
             $0.centerY.equalToSuperview()
 
-            leftSpacingConstraint = $0.leading.equalTo(rankView.snp.trailing).offset(Constants.padding/2).constraint
-            leftSpacingConstraint?.activate()
+            imageViewLeadingConstraint = $0.leading.equalTo(rankView.snp.trailing).offset(Constants.padding/2).constraint
+            imageViewLeadingConstraint?.activate()
 
-            avatarImageViewWidthConstraint = $0.width.equalTo(Constants.imageHeight).constraint
-            avatarImageViewWidthConstraint?.activate()
+            imageViewWidthConstraint = $0.width.equalTo(Constants.imageHeight).constraint
+            imageViewWidthConstraint?.activate()
         }
 
         contentView.addSubview(textStackView)
@@ -140,15 +143,17 @@ class AvatarTableViewCell: UITableViewCell {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        avatarImageViewWidthConstraint?.update(offset: avatarImageView.isHidden ? 0 : Constants.imageHeight)
+        imageViewWidthConstraint?.update(offset: avatarImageView.isHidden ? 0 : Constants.imageHeight)
 
         if rankView.isHidden {
+            imageViewLeadingConstraint?.update(offset: 0)
             rankLabelWidthConstraint?.update(offset: 0)
-            leftSpacingConstraint?.update(offset: 0)
-
-        } else {
+            rankLabelLeadingConstraint?.update(offset: 0)
             rankLabelWidthConstraint?.deactivate()
-            leftSpacingConstraint?.update(offset: Constants.padding/2)
+        } else {
+            imageViewLeadingConstraint?.update(offset: Constants.padding/2)
+            rankLabelWidthConstraint?.activate()
+            rankLabelLeadingConstraint?.update(offset: Constants.padding)
         }
     }
 }

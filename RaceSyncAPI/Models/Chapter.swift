@@ -67,7 +67,7 @@ public class Chapter: Mappable, Joinable, Descriptable {
         urlName <- map[ParamKey.urlName]
         description <- (map[ParamKey.description], MapperUtil.stringTransform)
         isJoined <- map[ParamKey.isJoined]
-        isApproved <- map[ParamKey.isApproved]
+        isApproved <- (map[ParamKey.isApproved], BooleanTransform()) // returns as String from API
 
         // special parsing due to API iconsistencies
         if let mainImageFileName = map.JSON[ParamKey.mainImageFileName] as? String, let backgroundFileName = map.JSON[ParamKey.backgroundFileName] as? String {

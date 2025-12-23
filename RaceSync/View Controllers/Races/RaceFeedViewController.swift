@@ -260,7 +260,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
     }
 
     @objc fileprivate func didPressSearchButton(_ sender: Any) {
-        let vc = SearchViewController()
+        let vc = UniversalSearchViewController()
         let nc = NavigationController(rootViewController: vc)
         present(nc, animated: true)
     }

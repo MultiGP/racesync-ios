@@ -226,7 +226,6 @@ class SeriesViewController: UIViewController, Shimmable {
         cell.iconImageView.contentMode = .scaleAspectFill
         cell.iconImageView.layer.cornerRadius = 6
         cell.iconImageView.layer.masksToBounds = true
-
     }
 }
 

@@ -10,6 +10,10 @@ import Foundation
 
 public extension Array {
 
+    subscript(safe index: Int) -> Element? {
+        indices.contains(index) ? self[index] : nil
+    }
+
     mutating func rearrange(from: Int, to: Int) {
         insert(remove(at: from), at: to)
     }

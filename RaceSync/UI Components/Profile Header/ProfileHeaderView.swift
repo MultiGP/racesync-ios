@@ -288,6 +288,7 @@ class ProfileHeaderView: UIView {
         } else {
             locationButton.setTitle(nil, for: .normal)
             locationButton.isHidden = true
+            locationIconView.isHidden = true
         }
 
         if viewModel.topBadgeLabel != nil {
