@@ -6,7 +6,7 @@
 //  Copyright © 2020 MultiGP Inc. All rights reserved.
 //
 
-import UIKit
+import Foundation
 import RaceSyncAPI
 import CoreLocation
 

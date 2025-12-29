@@ -20,6 +20,7 @@
 ### Fixes and Enhancements:
    * Fixed an issue where the payments list displayed $0 amounts in rare cases.
    * Improved several UI elements related to RaceSync Pay.
+   * Displaying the current round and heat for a race in progress.
    * Refined the race results display to better match the website and corrected related UI issues.
    * Fixed tab bar selection inconsistencies.
    * Updated chapter profiles to hide join buttons for unapproved or demoted chapters and to display the disabled-chapter label when applicable.

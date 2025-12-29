@@ -51,7 +51,7 @@ class SafariActivity: UIActivity {
 class MultiGPActivity: SafariActivity {
 
     override var activityTitle: String? {
-        return "View on MultiGP"
+        return "View on multigp.com"
     }
 
     override var activityImage: UIImage? {

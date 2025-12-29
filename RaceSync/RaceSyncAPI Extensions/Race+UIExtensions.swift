@@ -11,6 +11,14 @@ import RaceSyncAPI
 
 extension Race {
 
+    var inProgress: Bool {
+        guard !isFinalized else { return false }
+        guard let startDate = startDate else { return false }
+        guard let endDate = endDate, startDate.isPassed, !endDate.isPassed(hours: 1) else { return false }
+        guard !startDate.isPassed(days: 1) else { return false }
+        return startDate.isPassed
+    }
+
     var canShowResults: Bool {
         if isFinalized { return true } // Assume results should be displayed since the race is finalized already
         guard let results = results, results.count > 0 else { return false }
@@ -26,7 +34,7 @@ extension Race {
         if let endDate = endDate, endDate.isPassed {
             return false
         }
-        else if let startDate = startDate, startDate.isPassed(by: 1) {
+        else if let startDate = startDate, startDate.isPassed(days: 1) {
             return false
         }
         else {

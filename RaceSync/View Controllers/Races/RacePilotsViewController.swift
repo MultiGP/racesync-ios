@@ -123,16 +123,19 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
     }
 
     fileprivate func configureNavigationItems() {
+        navigationItem.rightBarButtonItem = raceController.navigationItems()
 
-        if race.canShowResults {
-            title = "Race Results"
-            tabBarItem = UITabBarItem(title: "Results", image: SystemImg.medal, selectedImage: SystemImg.medalFill)
-        } else {
+        if race.startDate.map({ !$0.isPassed }) ?? false {
             title = "Racing Pilots"
             tabBarItem = UITabBarItem(title: "Pilots", image: SystemImg.person, selectedImage: SystemImg.personFill)
+        } else {
+            if race.inProgress {
+                title = "Race in Progres"
+            } else if race.canShowResults {
+                title = "Race Results"
+            }
+            tabBarItem = UITabBarItem(title: "Results", image: SystemImg.medal, selectedImage: SystemImg.medalFill)
         }
-
-        navigationItem.rightBarButtonItem = raceController.navigationItems()
     }
 
     // MARK: - Actions
@@ -238,8 +241,15 @@ extension RacePilotsViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if race.canShowResults {
-            return (showingExternalResults() && section == externalResultSection) ? nil : "\(race.scoringFormat.title)"
+
+        if (showingExternalResults() && section == externalResultSection) {
+            return nil
+        }
+
+        if race.inProgress {
+            return "\(race.scoringFormat.title)\n\(raceController.currentRaceTitle())"
+        } else if race.canShowResults {
+            return "\(race.scoringFormat.title)"
         } else {
             return nil
         }
@@ -369,9 +379,12 @@ extension RacePilotsViewController: UITableViewDataSource {
                 cell.backgroundColor = Color.gray200
                 cell.selectedBackgroundView?.backgroundColor = Color.gray300
             }
-        } else if race.raceClass != .esport {
-            cell.textPill.text = viewModel.channelLabel // only real races have frequencies
         }
+
+        // only real races have frequencies
+        if !race.isFinalized && race.raceClass != .esport {
+           cell.textPill.text = viewModel.channelLabel
+       }
     }
 }
 

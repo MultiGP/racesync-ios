@@ -94,9 +94,7 @@ class RaceController {
 
     public func raceUserViewModels() -> [UserViewModel] {
         var viewModels = [UserViewModel]()
-
-        guard let race = race else { return viewModels }
-        guard let entries = race.entries else { return viewModels }
+        guard let race = race, let entries = race.entries else { return viewModels }
 
         func populateScore(in userViewModels: [UserViewModel]) {
             guard race.isGQ == false else { return } // Don't display points for GQ race results
@@ -132,6 +130,18 @@ class RaceController {
         }
 
         return viewModels
+    }
+
+    public func currentRaceTitle() -> String {
+        guard let race, let schedule = race.schedule, let lastRound = schedule.rounds.last
+        else { return "" }
+
+        let title = lastRound.name ?? ""
+
+        guard let lastHeat = lastRound.heats.last?.name
+        else { return title }
+
+        return "\(title) - \(lastHeat)"
     }
 
     // MARK: - Actions
