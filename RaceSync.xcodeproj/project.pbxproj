@@ -33,6 +33,8 @@
 		4F0F2F452E875264006788A7 /* DeepLinkURLHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC05C162E65004400EB97A4 /* DeepLinkURLHandler.swift */; };
 		4F0F2F472E87532F006788A7 /* DeepLinkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0F2F462E87532F006788A7 /* DeepLinkTests.swift */; };
 		4F0F2F492E888100006788A7 /* SliderTableViewHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0F2F482E888100006788A7 /* SliderTableViewHeaderView.swift */; };
+		4F0F8F802EFB42FC004EB3D3 /* StandingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0F8F7F2EFB42FC004EB3D3 /* StandingsController.swift */; };
+		4F0F8F822F027A0F004EB3D3 /* StandingsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0F8F812F027A0F004EB3D3 /* StandingsListViewController.swift */; };
 		4F1342482360B67D00A9DBDE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1342472360B67D00A9DBDE /* AppDelegate.swift */; };
 		4F13424D2360B67D00A9DBDE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4F13424B2360B67D00A9DBDE /* Main.storyboard */; };
 		4F1342522360B67D00A9DBDE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4F1342502360B67D00A9DBDE /* LaunchScreen.storyboard */; };
@@ -338,6 +340,8 @@
 		4F0F2F422E872FBA006788A7 /* MGPWebTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MGPWebTests.swift; sourceTree = "<group>"; };
 		4F0F2F462E87532F006788A7 /* DeepLinkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkTests.swift; sourceTree = "<group>"; };
 		4F0F2F482E888100006788A7 /* SliderTableViewHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderTableViewHeaderView.swift; sourceTree = "<group>"; };
+		4F0F8F7F2EFB42FC004EB3D3 /* StandingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandingsController.swift; sourceTree = "<group>"; };
+		4F0F8F812F027A0F004EB3D3 /* StandingsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandingsListViewController.swift; sourceTree = "<group>"; };
 		4F1342442360B67D00A9DBDE /* RaceSync.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RaceSync.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F1342472360B67D00A9DBDE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4F13424C2360B67D00A9DBDE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -1176,7 +1180,9 @@
 		4FE1DAD92DEB6AE4009143C4 /* Standings */ = {
 			isa = PBXGroup;
 			children = (
+				4F0F8F812F027A0F004EB3D3 /* StandingsListViewController.swift */,
 				4F8175A02411C35A00685F83 /* StandingsViewController.swift */,
+				4F0F8F7F2EFB42FC004EB3D3 /* StandingsController.swift */,
 				4FE1DADE2DEB9EEF009143C4 /* StandingViewModel.swift */,
 				4F3E2D052DEE52AE00A6646C /* StandingBadgeView.swift */,
 				4F3E2D032DEE4E8500A6646C /* StandingBadgeView.xib */,
@@ -1581,6 +1587,7 @@
 				4FD4E1D9237FB1EA008816B3 /* RaceTableViewCell.swift in Sources */,
 				4F5C1E4F2390B01700D756EB /* ImageNetworking.swift in Sources */,
 				4FD4E1CB237F98A0008816B3 /* RaceDetailViewController.swift in Sources */,
+				4F0F8F802EFB42FC004EB3D3 /* StandingsController.swift in Sources */,
 				4FD4E1C1237DDFB4008816B3 /* RaceFeedViewController.swift in Sources */,
 				4FE272362580A36D00EC121B /* SimpleTableViewCell.swift in Sources */,
 				4FCD99B62976242A0094C562 /* RaceFeedMenuViewController.swift in Sources */,
@@ -1621,6 +1628,7 @@
 				4FB0EB6A23BB3B1F009ABAF0 /* FormTableViewCell.swift in Sources */,
 				4FD4E1CD237F98E7008816B3 /* RaceTabBarController.swift in Sources */,
 				4FCAF9FE23AC8B8400ACE7D3 /* Shimmable.swift in Sources */,
+				4F0F8F822F027A0F004EB3D3 /* StandingsListViewController.swift in Sources */,
 				4F4129DB2DC0AE32006A2763 /* NotificationsController.swift in Sources */,
 				4F9A88912975F30C00B52092 /* Season+UIExtensions.swift in Sources */,
 				4FCD99B829788F720094C562 /* AppWebConstants.swift in Sources */,

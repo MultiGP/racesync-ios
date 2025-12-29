@@ -18,13 +18,3 @@ public class StringConstants {
     public static let developedBy = "Developed by Ignacio 'Zenith' Romero"
     public static let supportEmail = "mobile@multigp.com"
 }
-
-extension StandingSeason {
-
-    var sectionTitle: String {
-        switch self {
-        case .y2025:    return "\(self.rawValue) MultiGP Global Qualifier - Sponsored by FINZ\nFastest 3 Consecutive Laps"
-        default:        return "\(self.rawValue) MultiGP Global Qualifier\nFastest 3 Consecutive Laps"
-        }
-    }
-}

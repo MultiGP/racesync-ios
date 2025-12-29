@@ -88,12 +88,10 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         return view
     }()
 
-    fileprivate let standingApi = StandingApi()
-    fileprivate let userApi = UserApi()
-
+    fileprivate let standingsController = StandingsController()
+    fileprivate var filteredViewModels = [StandingViewModel]()
     fileprivate let season: StandingSeason = .y2025
-    fileprivate var standingViewModels = [StandingViewModel]()
-    fileprivate var searchResult = [StandingViewModel]()
+    fileprivate let userApi = UserApi()
 
     // Pinnable variables
     var pinnedView: UIView?
@@ -131,7 +129,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if standingViewModels.count == 0 {
+        if standingsController.isEmpty(for: season) {
             isLoadingList(true)
         } else {
             tableView.reloadData()
@@ -141,7 +139,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if standingViewModels.count == 0 {
+        if standingsController.isEmpty(for: season) {
             loadContent()
         }
     }
@@ -193,9 +191,8 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
             isLoadingList(true)
         }
 
-        standingApi.getStandings(for: season) { (objects, error) in
+        standingsController.fetchStandings(for: season) { objects, error in
             if let objects = objects {
-                self.standingViewModels = StandingViewModel.viewModels(with: objects)
                 self.enableSearchBar(objects.count > 0)
             } else if error != nil {
                 self.emptyStateError = EmptyStateViewModel(.errorStandings)
@@ -212,9 +209,14 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     }
 
     fileprivate func standingViewModel(at indexPath: IndexPath) -> StandingViewModel? {
-        let viewModels = isSearching ? searchResult : standingViewModels
-        return viewModels[indexPath.row]
+        if isSearching {
+            return filteredViewModels[indexPath.row]
+        } else {
+            return standingsController.viewModel(at: indexPath.row, for: season)
+        }
     }
+
+
 
     // MARK: - Search
 
@@ -233,36 +235,16 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         return query.count >= minQuery || query.containsEmoji
     }
 
-    fileprivate func filterResults(with text: String) -> [StandingViewModel] {
-        let query = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard query.count >= minQuery || query.containsEmoji else { return [] }
-
-        let normalizedQuery = query.lowercased().folding(options: .diacriticInsensitive, locale: .current)
-
-        return standingViewModels.filter { viewModel in
-            let label = viewModel.titleLabel
-
-            if query.containsEmoji {
-                return label.contains(query)
-            } else {
-                let words = label.lowercased()
-                    .folding(options: .diacriticInsensitive, locale: .current)
-                    .components(separatedBy: CharacterSet.alphanumerics.inverted)
-                    .filter { !$0.isEmpty }
-                return words.contains { $0.hasPrefix(normalizedQuery) }
-            }
-        }
+    fileprivate func currentDataSource() -> [StandingViewModel] {
+        return isSearching ? filteredViewModels : standingsController.viewModels(for: season)
     }
 
     // MARK: - Cell Pinning
 
     func canPinView() -> Bool {
         guard let userId = myUserId else { return false }
-
-        let source = isSearching ? searchResult : standingViewModels
-        guard source.firstIndex(where: { $0.standing.userId == userId }) != nil else {
-            return false
-        }
+        guard currentDataSource().firstIndex(where: { $0.standing.userId == userId }) != nil
+        else { return false }
         return true
     }
 
@@ -271,9 +253,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
 
         if let cachedPinnedIndexPath { return cachedPinnedIndexPath }
 
-        let source = isSearching ? searchResult : standingViewModels
-
-        guard let index = source.firstIndex(where: { $0.standing.userId == userId }) else {
+        guard let index = currentDataSource().firstIndex(where: { $0.standing.userId == userId }) else {
             return nil
         }
 
@@ -370,14 +350,14 @@ extension StandingsViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        guard !standingViewModels.isEmpty else {
+        guard !standingsController.isEmpty(for: season) else {
             return nil
         }
 
         guard !isSearching else {
-            return searchResult.isEmpty ? nil : "Showing \(searchResult.count) Pilots"
+            return filteredViewModels.isEmpty ? nil : "Found \(filteredViewModels.count) Pilots"
         }
-        return season.sectionTitle
+        return "\(season.rawValue) MultiGP Global Qualifier\nFastest 3 Consecutive Laps"
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -388,8 +368,7 @@ extension StandingsViewController: UITableViewDelegate {
 extension StandingsViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard !isSearching else { return searchResult.count }
-        return standingViewModels.count
+        return currentDataSource().count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -466,10 +445,10 @@ extension StandingsViewController: UISearchBarDelegate {
         searchBar.setShowsCancelButton(false, animated: true)
     }
 
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+    func searchBar(_ searchBar: UISearchBar, textDidChange text: String) {
 
         // Matches leading parts of any word, with robust tokenization and several insensitive cases
-        searchResult = filterResults(with: searchText)
+        filteredViewModels = standingsController.filter(with: text, length: minQuery, for: season)
         resetTableView()
     }
 
