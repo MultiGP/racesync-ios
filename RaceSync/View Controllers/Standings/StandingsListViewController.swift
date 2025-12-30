@@ -8,16 +8,23 @@
 
 import UIKit
 import SnapKit
+import RaceSyncAPI
 
 class StandingsListViewController: UIViewController {
 
     // MARK: - Private Variables
 
     fileprivate lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: .zero, style: .plain)
+        let tableView = UITableView(frame: .zero, style: .grouped)
+        tableView.register(cellType: UITableViewCell.self)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.tableFooterView = UIView()
+
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = Color.gray20
+        tableView.backgroundView = backgroundView
+
         return tableView
     }()
 
@@ -46,6 +53,19 @@ class StandingsListViewController: UIViewController {
 
     fileprivate func setupLayout() {
 
+        configureNavigationItems()
+
+        view.addSubview(tableView)
+        tableView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+        }
+    }
+
+    fileprivate func configureNavigationItems() {
+        title = "Standings"
+        tabBarItem = UITabBarItem(title: title, image: SystemImg.trophy, selectedImage: SystemImg.trophyFill)
     }
 }
 
@@ -53,20 +73,58 @@ extension StandingsListViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+
+        let section = Section.allCases[indexPath.row]
+        let vc = StandingsViewController(with: section.season)
+        vc.title = section.shortTitle
+
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 
 extension StandingsListViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        return Section.allCases.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell()
+        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as UITableViewCell
+
+        let section = Section.allCases[indexPath.row]
+        cell.textLabel?.text = section.title
+        cell.accessoryType = .disclosureIndicator
+
+        return cell
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return Constants.cellHeight
+    }
+}
+
+fileprivate enum Section: EnumTitle {
+    case gq2025
+    case gq2024
+    case gq2023
+
+    var title: String {
+        return "\(year) MultiGP Global Qualifier"
+    }
+
+    var shortTitle: String {
+        return "MultiGP GQ \(year)"
+    }
+
+    var season: StandingSeason {
+        switch self {
+        case .gq2025: return .y2025
+        case .gq2024: return .y2024
+        case .gq2023: return .y2023
+        }
+    }
+
+    var year: String {
+        season.rawValue
     }
 }

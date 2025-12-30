@@ -36,8 +36,12 @@ public class StandingApi: StandingApiInterface {
         guard let baseUrl = Self.getStandingsUrl(for: season) else { return }
 
         // This is too fragile but no choice for now
-        let headers = ["position", "firstName", "userName", "lastName", "userId", "chapterName",
-                       "email", "country", "season1", "season1Score", "season2", "season2Score"]
+        var headers = ["position", "firstName", "userName", "lastName", "userId", "chapterName",
+                       "email", "country", "season1", "season1Score"]
+
+        if season != .y2023 {
+            headers += ["season2", "season2Score"]
+        }
 
         fetchCSVAndConvertToJSON(from: baseUrl, knownHeaders: headers) { result in
             DispatchQueue.main.async {
@@ -116,11 +120,20 @@ extension StandingApi {
     static func getStandingsUrl(for season: StandingSeason) -> URL? {
         let baseUrl = MGPWeb.getURL(for: .viewZipperSeasonResults)
 
-        let params: [(String, String)] = [
-            ("season1", "\(season.rawValue)Summer"),
-            ("season2", "\(season.rawValue)Spring"),
-            ("exportcsv", "true")
-        ]
+        var params = [(String, String)]()
+
+        if season != .y2023 {
+            params += [
+                ("season1", "\(season.rawValue)Summer"),
+                ("season2", "\(season.rawValue)Spring")
+            ]
+        } else {
+            params += [
+                ("season1", "\(season.rawValue)")
+            ]
+        }
+
+        params += [("exportcsv", "true")]
 
         var components = URLComponents(string: baseUrl.absoluteString)
         components?.queryItems = params.map { URLQueryItem(name: $0.0, value: $0.1) }

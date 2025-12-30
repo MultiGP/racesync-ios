@@ -194,22 +194,6 @@ class UniversalSearchViewController: UIViewController, Shimmable {
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
     }
 
-    fileprivate func hideNavigationShadow(_ hide: Bool = true) {
-        guard let nc = navigationController else { return }
-
-        // By masking to bounds, the shadow of a navigation bar is no longer visible
-        // This trick only works when the backgroud of view behind the navigation bar is the same color
-        // It cannot be used for transitioning to more complicated views.
-        nc.navigationBar.layer.masksToBounds = hide
-
-//        let appearance = UINavigationBarAppearance()
-//        appearance.configureWithOpaqueBackground()
-//        appearance.shadowColor = .clear
-//
-//        navigationController?.navigationBar.standardAppearance = appearance
-//        navigationController?.navigationBar.scrollEdgeAppearance = appearance
-    }
-
     // MARK: - Data
 
     fileprivate func startSearch(with text: String) {

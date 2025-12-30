@@ -23,10 +23,10 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         tableView.delegate = self
         tableView.emptyDataSetSource = self
         tableView.register(cellType: AvatarTableViewCell.self)
-        tableView.tableFooterView = UIView()
         tableView.keyboardDismissMode = .onDrag
         tableView.verticalScrollIndicatorInsets = UIEdgeInsets(top: -1, left: 0, bottom: 0, right: 0)
         tableView.refreshControl = self.refreshControl
+        tableView.tableFooterView = UIView()
 
         let backgroundView = UIView()
         backgroundView.backgroundColor = Color.gray20
@@ -90,7 +90,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
 
     fileprivate let standingsController = StandingsController()
     fileprivate var filteredViewModels = [StandingViewModel]()
-    fileprivate let season: StandingSeason = .y2025
+    fileprivate let season: StandingSeason
     fileprivate let userApi = UserApi()
 
     // Pinnable variables
@@ -142,6 +142,17 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         if standingsController.isEmpty(for: season) {
             loadContent()
         }
+    }
+
+    // MARK: - Initialization
+
+    init(with season: StandingSeason) {
+        self.season = season
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     deinit {

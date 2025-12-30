@@ -11,8 +11,6 @@ import ObjectMapper
 
 public class Standing: Mappable, Descriptable {
 
-    public var season: StandingSeason = .y2025
-
     public var position: String = ""
     public var firstName: String = ""
     public var userName: String = ""
