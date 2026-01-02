@@ -129,10 +129,10 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
             title = "Racing Pilots"
             tabBarItem = UITabBarItem(title: "Pilots", image: SystemImg.person, selectedImage: SystemImg.personFill)
         } else {
-            if race.inProgress {
-                title = "Race in Progres"
-            } else if race.canShowResults {
+            if race.canShowResults {
                 title = "Race Results"
+            } else {
+                title = "Race in Progress"
             }
             tabBarItem = UITabBarItem(title: "Results", image: SystemImg.medal, selectedImage: SystemImg.medalFill)
         }
