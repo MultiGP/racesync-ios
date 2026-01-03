@@ -189,7 +189,7 @@ class RaceController {
             activities += [PaypalActivity()]
         }
 
-        activities += [MultiGPActivity(), CopyLinkActivity()]
+        activities += [MGPActivity(), CopyLinkActivity()]
 
         // Calendar integration
         if let event = race.createCalendarEvent(with: raceId) {

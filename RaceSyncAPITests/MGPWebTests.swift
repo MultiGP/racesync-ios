@@ -57,6 +57,13 @@ final class MGPWebTests: XCTestCase {
         XCTAssertEqual(result, expected)
     }
 
+    func testChapterLeaderboardQURL() throws {
+        let expected = URL(string: "https://www.multigp.com/chapters/leaderboard/view/?chapter=16")!
+        let result = MGPWeb.getURL(for: .chapterLeaderboard, value: "16")
+
+        XCTAssertEqual(result, expected)
+    }
+
     func testZipperSeasonResults() throws {
         let expected = URL(string: "https://www.multigp.com/MultiGP/views/viewZipperSeasonResults.php?season1=2025Summer&season2=2025Spring&exportcsv=true")!
         let result = StandingApi.getStandingsUrl(for: .y2025)!

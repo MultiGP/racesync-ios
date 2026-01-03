@@ -14,6 +14,8 @@ public enum MGPWebPath: String {
     case chapterView = "/chapters/view/?chapter"
     case userView = "/pilots/view/?pilot"
     case zippyqView = "/MultiGP/views/zippyq.php?raceId"
+    case chapterLeaderboard = "https://www.multigp.com/chapters/leaderboard/view/?chapter"
+
     case viewZipperSeasonResults = "/MultiGP/views/viewZipperSeasonResults.php" //?season1=2025Summer&season2=2025Spring&exportcsv=true
     case processPayment = "/MultiGP/views/processPayment.php" //?raceId=zzzzzz&pilotId=yyyy&user-agent=ios
 }

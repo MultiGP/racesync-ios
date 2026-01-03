@@ -209,7 +209,7 @@ class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
     @objc func didPressShareButton() {
         guard let userURL = URL(string: user.url) else { return }
 
-        let activities: [UIActivity] = [CopyLinkActivity(), MultiGPActivity()]
+        let activities: [UIActivity] = [MGPActivity(), CopyLinkActivity()]
 
         let vc = UIActivityViewController(activityItems:  [userURL], applicationActivities: activities)
         vc.excludeAllActivityTypes(except: [.airDrop])

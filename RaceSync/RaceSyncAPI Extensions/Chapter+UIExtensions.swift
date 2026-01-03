@@ -18,8 +18,8 @@ extension Chapter {
 
     func socialActivities() -> [SocialActivity] {
 
-        var activities = [SocialActivity]()
         let items = [websiteUrl, facebookUrl, twitterUrl, youtubeUrl, instagramUrl, meetupUrl]
+        var activities = [SocialActivity]()
 
         for item in items {
             if let url = item, let _URL = URL(string: url) {

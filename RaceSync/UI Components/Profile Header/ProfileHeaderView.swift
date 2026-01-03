@@ -148,13 +148,13 @@ class ProfileHeaderView: UIView {
         stackView1.axis = .horizontal
         stackView1.alignment = .center
         stackView1.distribution = .fill
-        stackView1.spacing = Constants.padding * 1/2
+        stackView1.spacing = Constants.padding / 2
 
         let stackView2 = UIStackView(arrangedSubviews: [mainTextLabel, stackView1])
         stackView2.axis = .vertical
         stackView2.alignment = .leading
         stackView2.distribution = .fill
-        stackView2.spacing = Constants.padding*1.5
+        stackView2.spacing = Constants.padding
         return stackView2
     }()
 

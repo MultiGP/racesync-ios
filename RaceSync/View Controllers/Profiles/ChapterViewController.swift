@@ -219,7 +219,10 @@ class ChapterViewController: ProfileViewController, ViewJoinable, RaceEditable {
     @objc func didPressShareButton() {
         guard let chapterURL = URL(string: chapter.url) else { return }
 
-        var activities: [UIActivity] = [CopyLinkActivity(), MultiGPActivity()]
+        let leaderboardActivity = MGPLeaderboardActivity()
+        leaderboardActivity.chapterId = chapter.id
+
+        var activities: [UIActivity] = [MGPActivity(), leaderboardActivity, CopyLinkActivity()]
         activities += chapter.socialActivities()
 
         let vc = UIActivityViewController(activityItems: [chapterURL], applicationActivities: activities)
