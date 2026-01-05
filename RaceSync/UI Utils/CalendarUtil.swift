@@ -32,10 +32,10 @@ class CalendarUtil {
             ekevent.location = event.location
             ekevent.notes = event.description
             ekevent.startDate = event.startDate
-            ekevent.endDate = (event.endDate != nil) ? event.endDate : event.startDate.advanced(by: 3600) // add 1 hour diff
-            ekevent.url = event.url
+            ekevent.endDate = (event.endDate != nil) ? event.endDate : event.startDate.advanced(by: 3600 * 5) // add 5 hours diff
             ekevent.calendar = eventStore.defaultCalendarForNewEvents
             ekevent.isAllDay = false
+            ekevent.url = event.url
 
             do {
                 try eventStore.save(ekevent, span: .thisEvent) // saves the event to the calendar

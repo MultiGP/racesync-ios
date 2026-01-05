@@ -11,19 +11,29 @@ import RaceSyncAPI
 
 extension Race {
 
+    var hasStarted: Bool {
+        guard let startDate = startDate else { return false }
+        return startDate.isPassed
+    }
+
+    var hasEnded: Bool {
+        guard let startDate = startDate else { return false }
+
+        if let endDate = endDate, startDate.isPassed {
+            return endDate.isPassed(hours: 2)
+        }
+        return startDate.isPassed(hours: 8)
+    }
+
     var inProgress: Bool {
         guard !isFinalized else { return false }
-        guard let startDate = startDate else { return false }
-        guard let endDate = endDate, startDate.isPassed, !endDate.isPassed(hours: 1) else { return false }
-        guard !startDate.isPassed(days: 1) else { return false }
-        return startDate.isPassed
+        return hasStarted && !hasEnded
     }
 
     var canShowResults: Bool {
         if isFinalized { return true } // Assume results should be displayed since the race is finalized already
         guard let results = results, results.count > 0 else { return false }
-        guard let startDate = startDate else { return false }
-        return startDate.isPassed
+        return hasStarted
     }
 
     var canShowSchedule: Bool {
@@ -31,15 +41,8 @@ extension Race {
     }
 
     func canCreateCalendarEvent() -> Bool {
-        if let endDate = endDate, endDate.isPassed {
-            return false
-        }
-        else if let startDate = startDate, startDate.isPassed(days: 1) {
-            return false
-        }
-        else {
-            return true
-        }
+        guard !hasEnded else { return false }
+        return true
     }
 
     func createCalendarEvent(with raceId: ObjectId) -> CalendarEvent? {

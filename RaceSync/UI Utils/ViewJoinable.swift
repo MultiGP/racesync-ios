@@ -61,7 +61,7 @@ extension ViewJoinable {
         switch state {
 
         case .notJoined, .notPaid(_):
-            if let endDate = race.endDate, endDate.isPassed {
+            if race.hasEnded {
                 AlertUtil.presentAlertMessage("Cannot join a passed race.",
                                               title: "Uh Oh",
                                               delay: 0.5,

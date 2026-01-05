@@ -382,7 +382,7 @@ extension RacePilotsViewController: UITableViewDataSource {
         }
 
         // only real races have frequencies
-        if !race.isFinalized && race.raceClass != .esport {
+        if !race.hasEnded && race.raceClass != .esport {
            cell.textPill.text = viewModel.channelLabel
        }
     }
@@ -414,7 +414,7 @@ extension RacePilotsViewController: EmptyDataSetSource {
 
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
         guard let startDate = race.startDate else { return nil }
-        if race.status == .open && !startDate.isPassed {
+        if race.status == .open && !race.hasStarted {
             return emptyStateNoPilots.buttonTitle(state)
         } else {
             return nil
