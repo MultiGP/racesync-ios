@@ -13,6 +13,8 @@ import UIKit
 
 /**
  Generic display of pre-loaded races.
+
+ TODO: Needs an empty data set, for when races count = 0
  */
 class RaceListViewController: UIViewController, ViewJoinable {
 
@@ -207,6 +209,7 @@ extension RaceListViewController: UITableViewDataSource {
 
         cell.dateLabel.text = viewModel.startDateLabel //"Saturday Sept 14 @ 9:00 AM"
         cell.titleLabel.text = viewModel.titleLabel
+        cell.subtitleLabel.text = viewModel.locationLabel
         cell.joinButton.type = .race
         cell.joinButton.objectId = viewModel.race.id
         cell.joinButton.joinState = viewModel.joinState
