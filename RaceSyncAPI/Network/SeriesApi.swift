@@ -28,7 +28,7 @@ public class SeriesApi: SeriesApiInterface {
     public func getSeries(_ currentPage: Int = 0, pageSize: Int = StandardPageSize, _ completion: @escaping ObjectCompletionBlock<[Series]>) {
 
         let endpoint = EndPoint.seriesList
-        var parameters: Params = [:]
+        let parameters: Params = [:]
 
         repositoryAdapter.getObjects(endpoint, parameters: parameters, currentPage: currentPage, pageSize: pageSize, type: Series.self, completion)
     }

@@ -14,12 +14,8 @@ public class LocationManager: CLLocationManager {
 
     public static let shared = LocationManager()
 
-    public override var authorizationStatus: CLAuthorizationStatus {
-        get { return CLLocationManager.authorizationStatus() }
-    }
-
     public var didRequestAuthorization: Bool {
-        get { return authorizationStatus != .notDetermined }
+        get { return self.authorizationStatus != .notDetermined }
     }
 
     // MARK: - Private Variables
@@ -36,7 +32,7 @@ public class LocationManager: CLLocationManager {
     // MARK: - Public Functions
 
     public func requestsAuthorization(_ completion: CompletionBlock?) {
-        let authorization = CLLocationManager.authorizationStatus()
+        let authorization = self.authorizationStatus
         if authorization == .notDetermined {
             requestWhenInUseAuthorization()
             self.authorizationBlock = completion
@@ -55,9 +51,7 @@ extension LocationManager: CLLocationManagerDelegate {
     }
 
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let location = locations.first {
-            // Clog.log("User Location updated \(location.coordinate)")
-
+        if let _ = locations.first {
             authorizationBlock?(nil)
             authorizationBlock = nil
         }
