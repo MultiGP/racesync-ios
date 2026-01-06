@@ -227,6 +227,7 @@
 		4FCAF9FE23AC8B8400ACE7D3 /* Shimmable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCAF9FD23AC8B8400ACE7D3 /* Shimmable.swift */; };
 		4FCD99B62976242A0094C562 /* RaceFeedMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCD99B52976242A0094C562 /* RaceFeedMenuViewController.swift */; };
 		4FCD99B829788F720094C562 /* AppWebConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCD99B729788F720094C562 /* AppWebConstants.swift */; };
+		4FCEAB442F0CD81F00CAE0BD /* UIApplication+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCEAB432F0CD81F00CAE0BD /* UIApplication+Extensions.swift */; };
 		4FD4E1BC237DCAA3008816B3 /* UserApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1BB237DCAA3008816B3 /* UserApi.swift */; };
 		4FD4E1BE237DCB24008816B3 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1BD237DCB24008816B3 /* User.swift */; };
 		4FD4E1C1237DDFB4008816B3 /* RaceFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1C0237DDFB4008816B3 /* RaceFeedViewController.swift */; };
@@ -543,6 +544,7 @@
 		4FCAF9FD23AC8B8400ACE7D3 /* Shimmable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shimmable.swift; sourceTree = "<group>"; };
 		4FCD99B52976242A0094C562 /* RaceFeedMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceFeedMenuViewController.swift; sourceTree = "<group>"; };
 		4FCD99B729788F720094C562 /* AppWebConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppWebConstants.swift; sourceTree = "<group>"; };
+		4FCEAB432F0CD81F00CAE0BD /* UIApplication+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extensions.swift"; sourceTree = "<group>"; };
 		4FD4E1BB237DCAA3008816B3 /* UserApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserApi.swift; sourceTree = "<group>"; };
 		4FD4E1BD237DCB24008816B3 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		4FD4E1C0237DDFB4008816B3 /* RaceFeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceFeedViewController.swift; sourceTree = "<group>"; };
@@ -661,6 +663,7 @@
 				4F5488972D2236950056EA59 /* String+HTML.swift */,
 				4F73DAE92DEE7300007B15F2 /* String+UIExtensions.swift */,
 				4FF16CBB2E6F838E00B4FC51 /* NotificationCenter+Extensions.swift */,
+				4FCEAB432F0CD81F00CAE0BD /* UIApplication+Extensions.swift */,
 			);
 			path = "UI Extensions";
 			sourceTree = "<group>";
@@ -1562,6 +1565,7 @@
 				4F2B7E892E8635D200643697 /* SeriesViewModel.swift in Sources */,
 				4FA1FC8B23D6D7C0006D4704 /* ApplicationControl.swift in Sources */,
 				4F714DE123CD4906000C4036 /* CalendarActivity.swift in Sources */,
+				4FCEAB442F0CD81F00CAE0BD /* UIApplication+Extensions.swift in Sources */,
 				4F714DE323CD5EAA000C4036 /* SafariActivity.swift in Sources */,
 				4F004EA0295AA641009C46AA /* RaceFormViewController.swift in Sources */,
 				4F6CAD8D2983040100E80B5F /* ChapterPickerViewController.swift in Sources */,

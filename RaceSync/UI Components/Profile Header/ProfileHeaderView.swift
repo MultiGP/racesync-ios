@@ -328,7 +328,7 @@ class ProfileHeaderView: UIView {
 
     func presentUploadSheet(_ imageType: ImageType) {
         guard let topMostVC = UIViewController.topMostViewController() else { return }
-        guard let viewModel = viewModel else { return }
+        guard let _ = viewModel else { return }
 
         let alert = UIAlertController(title: "Upload \(imageType.title) image", message: nil, preferredStyle: .actionSheet)
         alert.view.tintColor = Color.blue
