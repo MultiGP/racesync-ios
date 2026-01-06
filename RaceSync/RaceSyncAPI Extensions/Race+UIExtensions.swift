@@ -37,7 +37,8 @@ extension Race {
     }
 
     var canShowSchedule: Bool {
-        return isZippyQEnabled && !isFinalized
+        guard hasStarted && !hasEnded else { return false }
+        return isZippyQEnabled
     }
 
     func canCreateCalendarEvent() -> Bool {
