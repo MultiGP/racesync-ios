@@ -96,7 +96,8 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate lazy var memberBadgeView: MemberBadgeView = {
         let view = MemberBadgeView(type: .system)
-        view.isUserInteractionEnabled = false
+        view.addTarget(self, action: #selector(didPressMembersBadge), for: .touchUpInside)
+        view.isUserInteractionEnabled = true
         return view
     }()
 
@@ -601,6 +602,11 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
                 self?.reloadRace()
             }
         }
+    }
+
+    @objc fileprivate func didPressMembersBadge(_ sender: UIButton) {
+        guard let tabBarController = tabBarController as? RaceTabBarController else { return }
+        tabBarController.selectTab(.pilots)
     }
 
     func canInteract(with cell: FormTableViewCell) -> Bool {
