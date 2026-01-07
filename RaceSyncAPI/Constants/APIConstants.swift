@@ -23,8 +23,9 @@ enum EndPoint {
     static let userSearch = "user/search"
     static let userUpdateProfile = "user/updateProfile"
     static let userSetPushNotification = "user/setPushNotification"
+    static let userUploadProfileImage = "user/uploadProfileImage"
+    static let userUploadProfileBackground = "user/uploadProfileBackground"
 
-    static let race = "race/"
     static let raceList = "race/list"
     static let raceListForChapter = "race/listForChapter"
     static let raceFindLocal = "race/findLocal"
@@ -40,6 +41,9 @@ enum EndPoint {
     static let raceDelete = "race/delete"
     static let raceFinalize = "race/finalize"
     static let racePayments = "race/getRacePayments"
+
+    static let seriesList = "series/list"
+    static let seriesView = "series/view"
 
     static let chapterList = "chapter/list"
     static let chapterFindLocal = "chapter/findLocal"
@@ -115,6 +119,7 @@ public enum ParamKey {
     // Model attributes
     static let joined = "joined"
     static let isJoined = "isJoined"
+    static let isApproved = "isApproved"
     static let upcoming = "upcoming"
     static let past = "past"
     static let status = "status"
@@ -123,10 +128,14 @@ public enum ParamKey {
     static let isQualifier = "isQualifier"
     static let retired = "retired"
     static let type = "type"
+    static let typeString = "typeString"
     static let count = "count"
     static let size = "size"
-    static let managedChapters = "managedChapters"
+    static let race = "race"
     static let races = "races"
+    static let chapter = "chapter"
+    static let chapters = "chapters"
+    static let managedChapters = "managedChapters"
     static let entries = "entries"
     static let schedule = "schedule"
     static let raceType = "raceType"
@@ -141,6 +150,7 @@ public enum ParamKey {
     static let scoringDisabled = "scoringDisabled"
     static let scoringFormat = "scoringFormat"
     static let score = "score"
+    static let eloScore = "eloScore"
     static let totalLaps = "totalLaps"
     static let totalTime = "totalTime"
     static let fastest3Laps = "fastest3Laps"
@@ -185,6 +195,10 @@ public enum ParamKey {
     static let amountDue = "amountdue"
     static let datePaid = "datepaid"
     static let paymentsEnabled = "paymentsEnabled"
+    static let approved = "approved"
+    static let pilotCount = "pilotCount"
+    static let chapterApprovedCount = "chapterApprovedCount"
+    static let raceApprovedCount = "raceApprovedCount"
 
     // Geo-location
     static let address = "address"

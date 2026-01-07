@@ -20,6 +20,7 @@ public class Chapter: Mappable, Joinable, Descriptable {
     public var isJoined: Bool = false
     public var mainImageUrl: String? //mainImageFileName
     public var backgroundUrl: String? //backgroundFileName
+    public var isApproved: Bool = false
 
     public var phone: String = ""
     public var websiteUrl: String = ""
@@ -66,6 +67,7 @@ public class Chapter: Mappable, Joinable, Descriptable {
         urlName <- map[ParamKey.urlName]
         description <- (map[ParamKey.description], MapperUtil.stringTransform)
         isJoined <- map[ParamKey.isJoined]
+        isApproved <- (map[ParamKey.isApproved], BooleanTransform()) // returns as String from API
 
         // special parsing due to API iconsistencies
         if let mainImageFileName = map.JSON[ParamKey.mainImageFileName] as? String, let backgroundFileName = map.JSON[ParamKey.backgroundFileName] as? String {

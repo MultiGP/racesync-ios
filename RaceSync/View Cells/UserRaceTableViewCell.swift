@@ -13,6 +13,10 @@ class UserRaceTableViewCell: UITableViewCell {
 
     // MARK: - Public Variables
 
+    static var height: CGFloat {
+        return UniversalConstants.cellHeight
+    }
+
     lazy var avatarImageView: AvatarImageView = {
         return AvatarImageView(withHeight: Constants.imageHeight)
     }()
@@ -79,7 +83,7 @@ class UserRaceTableViewCell: UITableViewCell {
     fileprivate func setupLayout() {
 
         let selectedBackgroundView = UIView()
-        selectedBackgroundView.backgroundColor = Color.gray50
+        selectedBackgroundView.backgroundColor = Color.gray20
         self.selectedBackgroundView = selectedBackgroundView
 
         accessoryType = .disclosureIndicator

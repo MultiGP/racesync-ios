@@ -31,6 +31,7 @@ public protocol RaceApiInterface {
     Gets a filtered set of races related to a specific User.
 
     - parameter filters: The list of compounding filters to compose the race query
+    - parameter raceId: The Race id (Optional)
     - parameter userId: The User id (Optional)
     - parameter name: The race name. (Optional)
     - parameter startDate: The race start date. This value can be a full date, or month, or year. (Optional)
@@ -44,6 +45,7 @@ public protocol RaceApiInterface {
     - parameter completion: The closure to be called upon completion. Returns a transcient list of Race objects.
     */
     func getRaces(with filters: [RaceListFilters],
+                  raceId: ObjectId,
                   userId: ObjectId,
                   name: String?,
                   startDate: String?,
@@ -138,9 +140,9 @@ public protocol RaceApiInterface {
                     completion: @escaping ObjectCompletionBlock<[RacePayment]>)
 
     /**
-     Cancels all the HTTP requests of race API endpoint
+     Cancels any active search API call
     */
-    func cancelAll()
+    func cancelSearchRequests()
 }
 
 public class RaceApi: RaceApiInterface {
@@ -162,6 +164,7 @@ public class RaceApi: RaceApiInterface {
     }
 
     public func getRaces(with filters: [RaceListFilters] = [RaceListFilters](),
+                         raceId: ObjectId = "",
                          userId: ObjectId = "",
                          name: String? = nil,
                          startDate: String? = nil,
@@ -174,6 +177,10 @@ public class RaceApi: RaceApiInterface {
 
         let endpoint = EndPoint.raceList
         var params = parametersForRaces(with: filters, userId: userId, latitude: latitude, longitude: longitude, pageSize: pageSize)
+
+        if raceId.count > 0 {
+            params[ParamKey.id] = raceId
+        }
 
         if let name = name, name.count > 0 {
             params[ParamKey.name] = name
@@ -300,14 +307,14 @@ public class RaceApi: RaceApiInterface {
         repositoryAdapter.getObjects(endpoint, type: RacePayment.self, keyPath: "data.paymentStatus", completion)
     }
 
-    public func cancelAll() {
-        repositoryAdapter.networkAdapter.httpCancelRequests(with: EndPoint.race)
+    public func cancelSearchRequests() {
+        repositoryAdapter.networkAdapter.httpCancelRequests(with: EndPoint.raceList)
     }
 }
 
-fileprivate extension RaceApi {
+extension RaceApi {
 
-    func parametersForRaces(with filters: [RaceListFilters],
+    fileprivate func parametersForRaces(with filters: [RaceListFilters],
                             userId: ObjectId = "",
                             latitude: String? = nil, longitude: String? = nil,
                             pageSize: Int = StandardPageSize) -> Params {
@@ -343,5 +350,20 @@ fileprivate extension RaceApi {
         }
 
         return parameters
+    }
+
+    static func getPaymentUrl(for race: ObjectId, user: ObjectId) -> URL? {
+        let baseUrl = MGPWeb.getURL(for: .processPayment)
+
+        let params: [(String, String)] = [
+            ("raceId", "\(race)"),
+            ("pilotId", "\(user)"),
+            ("user-agent", "ios")
+        ]
+
+        var components = URLComponents(string: baseUrl.absoluteString)
+        components?.queryItems = params.map { URLQueryItem(name: $0.0, value: $0.1) }
+
+        return components?.url
     }
 }

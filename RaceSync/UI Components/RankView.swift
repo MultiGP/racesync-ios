@@ -38,6 +38,7 @@ class RankView: UIView {
         guard let rank = rank, rank >= 0 else { return nil }
 
         switch rank {
+        case 0:     return " " // space to align with the other ranks
         case 1:     return "🥇"
         case 2:     return "🥈"
         case 3:     return "🥉"

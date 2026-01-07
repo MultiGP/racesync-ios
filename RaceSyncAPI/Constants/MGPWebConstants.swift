@@ -1,5 +1,5 @@
 //
-//  MGPWebConstant.swift
+//  MGPWebPath.swift
 //  RaceSync
 //
 //  Created by Ignacio Romero Zurbuchen on 2019-11-11.
@@ -8,41 +8,55 @@
 
 import Foundation
 
-public enum MGPWebConstant: String {
-    case apiBase = "https://www.multigp.com/mgp/multigpwebservice/"
-    case s3Url = "https://multigp-storage-new.s3.us-east-2.amazonaws.com"
+public enum MGPWebPath: String {
+    case apiBase = "/mgp/multigpwebservice/"
+    case raceView = "/races/view/?race"
+    case chapterView = "/chapters/view/?chapter"
+    case userView = "/pilots/view/?pilot"
+    case zippyqView = "/MultiGP/views/zippyq.php?raceId"
+    case chapterLeaderboard = "https://www.multigp.com/chapters/leaderboard/view/?chapter"
 
-    case raceView = "https://www.multigp.com/races/view/?race"
-    case chapterView = "https://www.multigp.com/chapters/view/?chapter"
-    case userView = "https://www.multigp.com/pilots/view/?pilot"
-    case zippyqView = "https://www.multigp.com/MultiGP/views/zippyq.php?raceId"
-    case viewZipperSeasonResults = "https://www.multigp.com/MultiGP/views/viewZipperSeasonResults.php" //?season1=2025Summer&season2=2025Spring&exportcsv=true
-    case processPayment = "https://www.multigp.com/MultiGP/views/processPayment.php" //?raceId=zzzzzz&pilotId=yyyy&user-agent=ios
+    case viewZipperSeasonResults = "/MultiGP/views/viewZipperSeasonResults.php" //?season1=2025Summer&season2=2025Spring&exportcsv=true
+    case processPayment = "/MultiGP/views/processPayment.php" //?raceId=zzzzzz&pilotId=yyyy&user-agent=ios
 }
 
 public class MGPWeb {
 
-    public static func getURL(for constant: MGPWebConstant) -> URL {
-        let url = getUrl(for: constant)
-        return URL(string: url)!
+    public static func baseURL() -> URL {
+        let host = APIServices.shared.settings.isDev ? "dev.multigp.com" : "www.multigp.com"
+        return URL(string: "https://\(host)/")!
     }
 
-    public static func getUrl(for constant: MGPWebConstant, value: String? = nil) -> String {
+    public static func getURL(for path: MGPWebPath? = nil, value: String? = nil) -> URL {
+        // Always recompute base URL dynamically
+        let base = baseURL()
 
-        var baseUrl = constant.rawValue
-        if APIServices.shared.settings.isDev {
-            baseUrl = constant.rawValue.replacingOccurrences(of: "www", with: "dev")
+        // If no path, return base directly
+        guard let path = path else { return base }
+
+        // Remove only the first leading slash (not all slashes)
+        let raw = path.rawValue
+        let trimmedPath = raw.hasPrefix("/") ? String(raw.dropFirst()) : raw
+
+        guard let url = URL(string: trimmedPath, relativeTo: base)?.absoluteURL else {
+            return base
         }
 
-        if let value = value {
-            return "\(baseUrl)=\(value.replacingOccurrences(of: " ", with: "-", options: .literal, range: nil))"
-        } else {
-            return baseUrl
+        if let value = value, !value.isEmpty {
+            let safeValue = value
+                .replacingOccurrences(of: " ", with: "-")
+                .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? value
+
+            let combined = "\(url.absoluteString)=\(safeValue)"
+            return URL(string: combined) ?? url
         }
+
+        return url
     }
 
-    public static func getURL(for constant: MGPWebConstant, value: String? = nil) -> URL? {
-        let url = Self.getUrl(for: constant, value: value)
-        return URL(string: url)
+    /// Convenience string version
+    public static func getUrl(for path: MGPWebPath, value: String? = nil) -> String {
+        return getURL(for: path, value: value).absoluteString
     }
 }
+

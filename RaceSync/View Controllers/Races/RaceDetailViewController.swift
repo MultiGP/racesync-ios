@@ -71,7 +71,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     fileprivate lazy var rotatingIconView: RotatingIconView = {
         let view = RotatingIconView()
         view.tintColor = Color.yellow
-        view.imageView.image = UIImage(named: "icn_trophy_qualifier")?.withRenderingMode(.alwaysTemplate)
+        view.imageView.image = ButtonImg.trophy?.withRenderingMode(.alwaysTemplate)
         view.imageView.tintColor = Color.yellow
         return view
     }()
@@ -96,47 +96,54 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate lazy var memberBadgeView: MemberBadgeView = {
         let view = MemberBadgeView(type: .system)
-        view.isUserInteractionEnabled = false
+        view.addTarget(self, action: #selector(didPressMembersBadge), for: .touchUpInside)
+        view.isUserInteractionEnabled = true
+        return view
+    }()
+
+    func contextualButton() -> PasteboardButton {
+        let button = PasteboardButton(type: .system)
+        button.shouldHighlight = true
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        button.titleLabel?.numberOfLines = 2
+        button.tintColor = Color.black
+        return button
+    }
+
+    fileprivate lazy var date1Button: PasteboardButton = {
+        let button = contextualButton()
+        button.addTarget(self, action: #selector(didPressDateButton), for: .touchUpInside)
+        return button
+    }()
+
+    fileprivate lazy var date2Button: PasteboardButton = {
+        let button = contextualButton()
+        button.addTarget(self, action: #selector(didPressDateButton), for: .touchUpInside)
+        button.isHidden = true
+        return button
+    }()
+
+    fileprivate lazy var dateIconView: UIImageView = {
+        let view = UIImageView()
+        view.contentMode = .scaleAspectFit
+        view.backgroundColor = Color.clear
         return view
     }()
 
     fileprivate lazy var locationButton: PasteboardButton = {
-        let button = PasteboardButton(type: .system)
-        button.tintColor = Color.red
-        button.shouldHighlight = true
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
-        button.titleLabel?.numberOfLines = 2
-        button.setImage(UIImage(named: "icn_pin_small"), for: .normal)
-        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -Constants.padding, bottom: 0, right: 0)
-        button.imageView?.tintColor = button.tintColor
+        let button = contextualButton()
         button.addTarget(self, action: #selector(didPressLocationButton), for: .touchUpInside)
+        button.tintColor = Color.link
         return button
     }()
 
-    fileprivate lazy var startDateButton: PasteboardButton = {
-        let button = PasteboardButton(type: .system)
-        button.tintColor = Color.black
-        button.shouldHighlight = true
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
-        button.titleLabel?.numberOfLines = 2
-        button.setImage(UIImage(named: "icn_calendar_start_small"), for: .normal) // 15 x 15
-        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -Constants.padding, bottom: 0, right: 0)
-        button.imageView?.tintColor = button.tintColor
-        button.addTarget(self, action: #selector(didPressDateButton), for: .touchUpInside)
-        return button
-    }()
-
-    fileprivate lazy var endDateButton: PasteboardButton = {
-        let button = PasteboardButton(type: .system)
-        button.tintColor = Color.black
-        button.shouldHighlight = true
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
-        button.titleLabel?.numberOfLines = 2
-        button.setImage(UIImage(named: "icn_calendar_end_small"), for: .normal) // 15 x 15
-        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -Constants.padding, bottom: 0, right: 0)
-        button.imageView?.tintColor = button.tintColor
-        button.addTarget(self, action: #selector(didPressDateButton), for: .touchUpInside)
-        return button
+    fileprivate lazy var locationIconView: UIImageView = {
+        let view = UIImageView()
+        view.image = SystemImg.pin_small?.withRenderingMode(.alwaysTemplate)
+        view.contentMode = .scaleAspectFit
+        view.backgroundColor = Color.clear
+        view.tintColor = Color.link
+        return view
     }()
 
     fileprivate lazy var htmlView: RichEditorView = {
@@ -194,13 +201,37 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     }()
 
     fileprivate lazy var leftStackView: UIStackView = {
-        var subviews = [startDateButton, endDateButton, locationButton]
-        let stackView = UIStackView(arrangedSubviews: subviews)
-        stackView.axis = .vertical
-        stackView.alignment = .leading
-        stackView.distribution = .equalSpacing
-        stackView.spacing = Constants.padding*3/4
-        return stackView
+        // vertical stack for the date buttons
+        let stackView1 = UIStackView(arrangedSubviews: [date1Button, date2Button])
+        stackView1.axis = .vertical
+        stackView1.alignment = .leading
+        stackView1.distribution = .fill
+
+        // horizontal stack for the icon + the date stack
+        let stackView2 = UIStackView(arrangedSubviews: [dateIconView, stackView1])
+        stackView2.axis = .horizontal
+        stackView2.alignment = .center
+        stackView2.distribution = .fill
+        stackView2.spacing = Constants.padding * 3/4
+
+        if canDisplayAddress {
+            let stackView3 = UIStackView(arrangedSubviews: [locationIconView, locationButton])
+            stackView3.axis = .horizontal
+            stackView3.alignment = .center
+            stackView3.distribution = .fill
+            stackView3.spacing = Constants.padding * 3/4
+
+            // vertical stack containing the icon+dates row and the location button
+            let stackView4 = UIStackView(arrangedSubviews: [stackView2, stackView3])
+            stackView4.axis = .vertical
+            stackView4.alignment = .leading
+            stackView4.distribution = .equalSpacing
+            stackView4.spacing = Constants.padding / 2
+
+            return stackView4
+        } else {
+            return stackView2
+        }
     }()
 
     fileprivate var raceCoordinates: CLLocationCoordinate2D? {
@@ -221,7 +252,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     }
 
     fileprivate var canDisplayEndDate: Bool {
-        guard let text = raceViewModel.endDateDesc else { return false }
+        guard let text = raceViewModel.endDateLabel else { return false }
         return text.count > 0
     }
 
@@ -323,8 +354,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         contentView.addSubview(headerView)
         headerView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
-            $0.width.equalTo(view.bounds.width)
-            $0.height.lessThanOrEqualTo(200) // very max
 
             if canDisplayMap {
                 $0.top.equalTo(mapView.snp.bottom).offset(Constants.padding)
@@ -370,7 +399,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         headerView.addSubview(leftStackView)
         leftStackView.snp.makeConstraints {
             $0.top.equalTo(rightStackView.snp.top)
-            $0.leading.equalToSuperview().offset(Constants.padding*1.5)
+            $0.leading.equalToSuperview().offset(Constants.padding)
             $0.trailing.equalTo(rightStackView.snp.leading).offset(-Constants.padding/2)
         }
 
@@ -430,77 +459,17 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     fileprivate func populateContent() {
         titleLabel.text = raceViewModel.titleLabel.uppercased()
         subtitleLabel.attributedText = raceViewModel.subtitleLabel
-        joinButton.joinState = raceViewModel.joinState
         memberBadgeView.count = raceViewModel.participantCount
-        startDateButton.setTitle(raceViewModel.startDateDesc , for: .normal)
 
-        // showing an indicator if the user has joined, only if the race fee is still pending
-        if race.isJoined && race.status == .open && race.isPayable {
-            miniJoinButton.joinState = .joined
-            miniJoinButton.isUserInteractionEnabled = true // set to false when compact mode
-            miniJoinButton.isHidden = false
-        } else {
-            miniJoinButton.joinState = .closed
-            miniJoinButton.isHidden = true
-        }
-
-        if canDisplayEndDate {
-            endDateButton.setTitle(raceViewModel.endDateDesc, for: .normal)
-        }
-        if canDisplayAddress {
-            locationButton.setTitle(raceViewModel.fullLocationLabel, for: .normal)
-
-            // Bring the icon to the first line, if there are more than 1 line of text
-            if let label = locationButton.titleLabel, label.numberOfVisibleLines > 2 {
-                locationButton.imageEdgeInsets = UIEdgeInsets(top: -Constants.padding, left: -Constants.padding, bottom: 0, right: 0)
-            }
-        }
-        if canDisplayFee {
-            feeLabel.text = raceViewModel.feeLabel
-        }
-
-        endDateButton.isHidden = !canDisplayEndDate
-        locationButton.isHidden = !canDisplayAddress
-        feeLabel.isHidden = !canDisplayFee
+        configureJoinButton()
+        configureDateLabels()
+        configureLocationLabels()
+        configureMap()
 
         // Load the HTML on the next runloop
         DispatchQueue.main.async { [weak self] in
             guard let s = self else { return }
-
-            var html = ""
-            let spacing = Constants.padding * 3/4
-
-            if s.canDisplayDescription {
-                let description = s.race.description.replaceHTMLColorTag(with: Color.gray300).stripHTMLFontTag().stripHTMLEdges()
-                html += "<div id=\"description\">\(description)</div>"
-            }
-            if s.canDisplayContent {
-                let content = s.race.content.replaceHTMLColorTag(with: Color.black).stripHTMLFontTag().stripHTMLEdges()
-                html += "<div id=\"content\" style=\"color:\(Color.black.toHexString()); padding-top: \(spacing)px; padding-bottom: \(spacing)px;\">\(content)</div>"
-            }
-            if s.canDisplayItinerary {
-                let itinerary = s.race.description.replaceHTMLColorTag(with: Color.gray100).stripHTMLFontTag().stripHTMLEdges()
-                html += "<hr style=\"border-top: 0.25px solid;\">"
-                html += "<div id=\"itinerary\" style=\"padding-top: \(spacing)px;\">\(itinerary)</div>"
-            }
-
-            s.htmlView.html = html
-        }
-
-        if canDisplayMap, let coordinates = raceCoordinates {
-            let distance = CLLocationDistance(1000)
-            let region = MKCoordinateRegion(center: coordinates, latitudinalMeters: distance, longitudinalMeters: distance)
-
-            let mapRect = MKCoordinateRegion.mapRectForCoordinateRegion(region)
-            let paddedMapRect = mapRect.offsetBy(dx: 0, dy: -1500) // TODO: Convert Screen points to Map points instead of harcoded value
-
-            let location = MKPointAnnotation()
-            location.coordinate = coordinates
-
-            DispatchQueue.main.async {
-                self.mapView.addAnnotation(location)
-                self.mapView.setVisibleMapRect(paddedMapRect, animated: false)
-            }
+            s.configureHTML()
         }
 
         // lays out the content and helps calculating the content size
@@ -512,19 +481,116 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         scrollView.contentSize = CGSize(width: contentRect.size.width, height: contentRect.size.height)
     }
 
+    fileprivate func configureJoinButton() {
+        joinButton.joinState = raceViewModel.joinState
+
+        // showing an indicator if the user has joined, only if the race fee is still pending
+        if race.isJoined && race.status == .open && race.isPayable {
+            miniJoinButton.joinState = .joined
+            miniJoinButton.isUserInteractionEnabled = true // set to false when compact mode
+            miniJoinButton.isHidden = false
+        } else {
+            miniJoinButton.joinState = .closed
+            miniJoinButton.isHidden = true
+        }
+    }
+
+    fileprivate func configureDateLabels() {
+        var date1Label: String?
+        var date2Label: String?
+        var dateImage: UIImage?
+
+        if canDisplayEndDate {
+            if raceViewModel.sameDay {
+                date1Label = raceViewModel.dateLabel?.components(separatedBy: "@").first?.trimmingCharacters(in: .whitespaces)
+                date2Label = raceViewModel.timeLabel
+                dateImage = ButtonImg.date_path2
+            } else {
+                date1Label = raceViewModel.startDateLabel
+                date2Label = raceViewModel.endDateLabel
+                dateImage = ButtonImg.date_path1
+            }
+        } else {
+            date1Label = raceViewModel.startDateLabel
+            dateImage = ButtonImg.cal_small
+        }
+
+        date1Button.setTitle(date1Label, for: .normal)
+        date2Button.setTitle(date2Label, for: .normal)
+        date2Button.isHidden = !canDisplayEndDate
+        dateIconView.image = dateImage
+    }
+
+    fileprivate func configureLocationLabels() {
+        guard canDisplayAddress else { return }
+
+        locationButton.setTitle(raceViewModel.fullLocationLabel, for: .normal)
+
+        // Bring the icon to the first line, if there are more than 1 line of text
+        if let label = locationButton.titleLabel, label.numberOfVisibleLines > 2 {
+            locationButton.imageEdgeInsets = UIEdgeInsets(top: -Constants.padding, left: -Constants.padding, bottom: 0, right: 0)
+        }
+
+        if canDisplayFee {
+            feeLabel.text = raceViewModel.feeLabel
+        }
+
+        locationButton.isHidden = !canDisplayAddress
+        feeLabel.isHidden = !canDisplayFee
+    }
+
+    fileprivate func configureHTML() {
+        var html = ""
+        let spacing = Constants.padding * 3/4
+
+        if canDisplayDescription {
+            let description = race.description.replaceHTMLColorTag(with: Color.gray300).stripHTMLFontTag().stripHTMLEdges()
+            html += "<div id=\"description\">\(description)</div>"
+        }
+        if canDisplayContent {
+            let content = race.content.replaceHTMLColorTag(with: Color.black).stripHTMLFontTag().stripHTMLEdges()
+            html += "<div id=\"content\" style=\"color:\(Color.black.toHexString()); padding-top: \(spacing)px; padding-bottom: \(spacing)px;\">\(content)</div>"
+        }
+        if canDisplayItinerary {
+            let itinerary = race.description.replaceHTMLColorTag(with: Color.gray100).stripHTMLFontTag().stripHTMLEdges()
+            html += "<hr style=\"border-top: 0.25px solid;\">"
+            html += "<div id=\"itinerary\" style=\"padding-top: \(spacing)px;\">\(itinerary)</div>"
+        }
+
+        htmlView.html = html
+    }
+
+    fileprivate func configureMap() {
+        guard canDisplayMap, let coordinates = raceCoordinates else { return }
+
+        let distance = CLLocationDistance(1000)
+        let region = MKCoordinateRegion(center: coordinates, latitudinalMeters: distance, longitudinalMeters: distance)
+
+        let mapRect = MKCoordinateRegion.mapRectForCoordinateRegion(region)
+        let paddedMapRect = mapRect.offsetBy(dx: 0, dy: -1500) // TODO: Convert Screen points to Map points instead of harcoded value
+
+        let location = MKPointAnnotation()
+        location.coordinate = coordinates
+
+        DispatchQueue.main.async {
+            self.mapView.addAnnotation(location)
+            self.mapView.setVisibleMapRect(paddedMapRect, animated: false)
+        }
+    }
+
     // MARK: - Actions
 
     @objc fileprivate func didTapMapView(_ sender: UITapGestureRecognizer) {
         showMapView()
     }
 
+    @objc func didPressDateButton(_ sender: UITapGestureRecognizer) {
+        raceController.saveInCalendar()
+    }
+
     @objc fileprivate func didPressLocationButton(_ sender: UIButton) {
         guard canDisplayMap else { return }
         showMapView()
-    }
-
-    @objc func didPressDateButton(_ sender: UITapGestureRecognizer) {
-        raceController.didPressCalendarButton()
     }
 
     @objc fileprivate func didPressJoinButton(_ sender: JoinButton) {
@@ -536,6 +602,11 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
                 self?.reloadRace()
             }
         }
+    }
+
+    @objc fileprivate func didPressMembersBadge(_ sender: UIButton) {
+        guard let tabBarController = tabBarController as? RaceTabBarController else { return }
+        tabBarController.selectTab(.pilots)
     }
 
     func canInteract(with cell: FormTableViewCell) -> Bool {
@@ -648,12 +719,12 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     func openZippyQSchedule(_ cell: FormTableViewCell) {
         let zippyqUrl = MGPWeb.getUrl(for: .zippyqView, value: race.id)
-        WebViewController.openUrl(zippyqUrl)
+        WebViewController.open(zippyqUrl)
     }
 
     func openLiveFPV(_ cell: FormTableViewCell) {
         guard let url = race.liveTimeEventUrl else { return }
-        WebViewController.openUrl(url)
+        WebViewController.open(url)
     }
 
     // MARK: - Data Update
@@ -777,14 +848,15 @@ extension RaceDetailViewController: RichEditorDelegate {
 
     func richEditor(_ editor: RichEditorView, shouldInteractWith url: URL) -> Bool {
 
-        if Validator.isEmail().apply(url.absoluteString) {
+        if let link = DeepLink.create(from: url), ApplicationControl.shared.canHandleDeepLink(link) {
+            ApplicationControl.shared.handle(link)
+        } else if Validator.isEmail().apply(url.absoluteString) {
             // leave the system handle emails
             UIApplication.shared.open(url)
         } else {
             // open url using in-app browser, else the url is open on the WKWebView
-            WebViewController.openURL(url)
+            WebViewController.open(url)
         }
-
         return false
     }
 }
@@ -797,12 +869,11 @@ extension RaceDetailViewController: MKMapViewDelegate {
         guard annotation is MKPointAnnotation else { return nil }
 
         let identifier = "Annotation"
-
         var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
 
         if annotationView == nil {
             annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-            annotationView?.image = UIImage(named: "icn_map_annotation")
+            annotationView?.image = ButtonImg.map_annotation
             annotationView!.canShowCallout = true
         } else {
             annotationView!.annotation = annotation

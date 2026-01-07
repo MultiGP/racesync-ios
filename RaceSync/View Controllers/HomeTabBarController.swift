@@ -26,17 +26,17 @@ class HomeTabBarController: UITabBarController {
         return RaceFeedViewController(filters, selectedFilter: filters.first!)
     }()
 
-    fileprivate lazy var standingsVC: StandingsViewController = {
-        return StandingsViewController()
-    }()
-
     fileprivate lazy var seriesVC: SeriesViewController = {
         return SeriesViewController()
     }()
 
+    fileprivate lazy var standingsVC: StandingsViewController = {
+        return StandingsViewController(with: .y2025)
+    }()
+
     fileprivate lazy var titleView: UIView = {
         let view = UIView()
-        let imageView = UIImageView(image: UIImage(named: "racesync_logo_header"))
+        let imageView = UIImageView(image: LogoImg.header)
         view.addSubview(imageView)
         imageView.snp.makeConstraints {
             $0.centerX.centerY.equalToSuperview()
@@ -170,15 +170,6 @@ class HomeTabBarController: UITabBarController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightStackView)
     }
 
-    fileprivate func hideNavigationShadow(_ hide: Bool = true) {
-        guard let nc = navigationController else { return }
-
-        // By masking to bounds, the shadow of a navigation bar is no longer visible
-        // This trick only works when the backgroud of view behind the navigation bar is the same color
-        // It cannot be used for transitioning to more complicated views.
-        nc.navigationBar.layer.masksToBounds = hide
-    }
-
     // MARK: - Actions
 
     @objc fileprivate func didPressUserProfileButton() {
@@ -224,7 +215,7 @@ class HomeTabBarController: UITabBarController {
     // MARK: - Data Update
 
     fileprivate func loadContent() {
-        let vcs: [UIViewController] = [raceFeedVC, standingsVC, seriesVC]
+        let vcs: [UIViewController] = [raceFeedVC, seriesVC, standingsVC]
         let idx = AppPrefs.lastSelectedTab
 
         configureTabBarController(with: vcs, selectedIndex: idx)

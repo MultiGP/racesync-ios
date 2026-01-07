@@ -22,11 +22,11 @@ class TextPill: UIView {
             case .badge:
                 titleLabel.font = UIFont.systemFont(ofSize: 14, weight: .bold)
                 titleLabel.textColor = Color.white
-                backgroundColor = Color.gray200.withAlphaComponent(0.5)
+                backgroundColor = Color.gray200.withAlphaComponent(0.75)
             case .text:
                 titleLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
                 titleLabel.textColor = Color.gray400
-                backgroundColor = Color.gray100
+                backgroundColor = Color.gray100.withAlphaComponent(0.75)
             }
         }
     }

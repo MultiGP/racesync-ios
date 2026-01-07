@@ -97,7 +97,7 @@ class RaceTableViewCell: UITableViewCell {
     fileprivate func setupLayout() {
 
         let selectedBackgroundView = UIView()
-        selectedBackgroundView.backgroundColor = Color.gray50
+        selectedBackgroundView.backgroundColor = Color.gray20
         self.selectedBackgroundView = selectedBackgroundView
 
         contentView.addSubview(avatarImageView)
@@ -109,7 +109,6 @@ class RaceTableViewCell: UITableViewCell {
 
         contentView.addSubview(buttonStackView)
         buttonStackView.snp.makeConstraints {
-            $0.width.greaterThanOrEqualTo(Constants.minButtonSize)
             $0.trailing.equalToSuperview().offset(-Constants.padding)
             $0.centerY.equalToSuperview()
         }

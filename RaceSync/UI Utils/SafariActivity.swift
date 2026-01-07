@@ -16,7 +16,7 @@ class SafariActivity: UIActivity {
     }
 
     override var activityImage: UIImage? {
-        return UIImage(named: "icn_activity_safari")
+        return LogoImg.activity_safari
     }
 
     override func canPerform(withActivityItems activityItems: [Any]) -> Bool {
@@ -48,13 +48,30 @@ class SafariActivity: UIActivity {
     fileprivate var _url : URL? = nil
 }
 
-class MultiGPActivity: SafariActivity {
+class MGPActivity: SafariActivity {
 
     override var activityTitle: String? {
-        return "View on MultiGP"
+        return "View on multigp.com"
     }
 
     override var activityImage: UIImage? {
-        return UIImage(named: "icn_activity_mgp")
+        return LogoImg.activity_mgp
+    }
+}
+
+class MGPLeaderboardActivity: MGPActivity {
+
+    var chapterId: ObjectId?
+
+    override var activityTitle: String? {
+        return "View chapter leaderboard"
+    }
+
+    override var _url : URL? {
+        get {
+            guard let id = chapterId else { return nil }
+            return MGPWeb.getURL(for: .chapterLeaderboard, value: id)
+        }
+        set { }
     }
 }

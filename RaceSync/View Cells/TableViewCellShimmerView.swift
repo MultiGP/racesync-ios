@@ -21,6 +21,8 @@ class TableViewCellShimmerView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Layout
+
     fileprivate func setupLayout() {
         guard let image = PlaceholderImg.shimmerList else { return }
 

@@ -1,5 +1,5 @@
 //
-//  SearchViewController.swift
+//  DummyViewController.swift
 //  RaceSync
 //
 //  Created by Ignacio Romero Zurbuchen on 2019-11-15.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SearchViewController: UIViewController {
+class DummyViewController: UIViewController {
 
     // MARK: - Private Variables
 
@@ -48,14 +48,14 @@ class SearchViewController: UIViewController {
     }
 }
 
-extension SearchViewController: UITableViewDelegate {
+extension DummyViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }
 
-extension SearchViewController: UITableViewDataSource {
+extension DummyViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 10

@@ -13,11 +13,22 @@ class SimpleTableViewCell: UITableViewCell {
 
     // MARK: - Public Variables
 
+    var imageRatio: CGFloat = 1 {
+        didSet {
+            iconImageView.snp.updateConstraints { make in
+                make.width.equalTo(Constants.imageHeight * imageRatio)
+            }
+
+            imageViewWidthConstraint?.update(offset: Constants.imageHeight * imageRatio)
+        }
+    }
+    fileprivate var imageViewWidthConstraint: Constraint?
+
     lazy var iconImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.backgroundColor = Color.clear
-        imageView.clipsToBounds = true
-        return imageView
+        let view = UIImageView()
+        view.backgroundColor = Color.clear
+        view.clipsToBounds = true
+        return view
     }()
 
     lazy var titleLabel: UILabel = {
@@ -39,7 +50,7 @@ class SimpleTableViewCell: UITableViewCell {
     fileprivate lazy var labelStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
         stackView.axis = .vertical
-        stackView.distribution = .fillEqually
+        stackView.distribution = .fillProportionally
         stackView.alignment = .leading
         stackView.spacing = 2
         return stackView
@@ -66,14 +77,18 @@ class SimpleTableViewCell: UITableViewCell {
     open func setupLayout() {
 
         let selectedBackgroundView = UIView()
-        selectedBackgroundView.backgroundColor = Color.gray50
+        selectedBackgroundView.backgroundColor = Color.gray20
         self.selectedBackgroundView = selectedBackgroundView
 
         contentView.addSubview(iconImageView)
         iconImageView.snp.makeConstraints {
-            $0.height.width.equalTo(Constants.imageHeight)
+            $0.height.equalTo(Constants.imageHeight)
+            $0.width.equalTo(Constants.imageHeight * imageRatio)
             $0.leading.equalToSuperview().offset(Constants.padding)
             $0.centerY.equalToSuperview()
+
+//            imageViewWidthConstraint = $0.width.equalTo(Constants.imageHeight * imageRatio).constraint
+//            imageViewWidthConstraint?.activate()
         }
 
         contentView.addSubview(labelStackView)

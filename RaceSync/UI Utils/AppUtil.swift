@@ -10,7 +10,7 @@ import UIKit
 
 struct AppUtil {
 
-    static func lockOrientation(_ orientation: UIInterfaceOrientationMask) {
+    static func lock(_ orientation: UIInterfaceOrientationMask) {
         if let delegate = UIApplication.shared.delegate as? AppDelegate {
             delegate.orientationLock = orientation
         }
@@ -20,7 +20,7 @@ struct AppUtil {
     static func lockOrientation(_ orientation: UIInterfaceOrientationMask, andRotateTo rotateOrientation: UIInterfaceOrientation) {
 
         UIView.performWithoutAnimation {
-            self.lockOrientation(orientation)
+            self.lock(orientation)
             UIDevice.current.setValue(rotateOrientation.rawValue, forKey: "orientation")
             UINavigationController.attemptRotationToDeviceOrientation()
         }

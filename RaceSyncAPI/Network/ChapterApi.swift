@@ -42,6 +42,11 @@ public protocol ChapterApiInterface {
     /**
     */
     func resign(chapter chapterId: ObjectId, completion: @escaping StatusCompletionBlock)
+
+    /**
+     Cancels any active search API call
+    */
+    func cancelSearchRequests()
 }
 
 public class ChapterApi: ChapterApiInterface {
@@ -108,6 +113,10 @@ public class ChapterApi: ChapterApiInterface {
         let endpoint = "\(EndPoint.chapterResign)?\(ParamKey.id)=\(chapterId)"
 
         repositoryAdapter.performAction(endpoint, completion: completion)
+    }
+
+    public func cancelSearchRequests() {
+        repositoryAdapter.networkAdapter.httpCancelRequests(with: EndPoint.chapterSearch)
     }
 }
 

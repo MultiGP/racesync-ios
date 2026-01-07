@@ -219,7 +219,7 @@ extension ChapterPickerViewController: UITableViewDataSource {
 
         if let selectedId = selectedChapterId {
             if viewModel.chapter.id == selectedId {
-                let imageView = UIImageView(image: UIImage(named: "icn_cell_checkmark"))
+                let imageView = UIImageView(image: ButtonImg.checkmark)
                 imageView.tintColor = Color.blue
                 cell.accessoryView = imageView
             } else {

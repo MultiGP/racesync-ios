@@ -61,7 +61,7 @@ extension ViewJoinable {
         switch state {
 
         case .notJoined, .notPaid(_):
-            if let endDate = race.endDate, endDate.isPassed {
+            if race.hasEnded {
                 AlertUtil.presentAlertMessage("Cannot join a passed race.",
                                               title: "Uh Oh",
                                               delay: 0.5,
@@ -88,11 +88,12 @@ extension ViewJoinable {
 
         switch state {
         case .notJoined:
-            AppControl.shared.resign(chapter: chapter, chapterApi: chapterApi) { (newState) in
+            AppControl.shared.join(chapter: chapter, chapterApi: chapterApi) { (newState) in
                 self.handleStateChange(state, newState: newState, in: button, with: chapter, completion)
             }
+
         case .joined:
-            AppControl.shared.join(chapter: chapter, chapterApi: chapterApi) { (newState) in
+            AppControl.shared.resign(chapter: chapter, chapterApi: chapterApi) { (newState) in
                 self.handleStateChange(state, newState: newState, in: button, with: chapter, completion)
             }
         default:

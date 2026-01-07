@@ -19,5 +19,4 @@ extension ImmutableMappable {
             return nil
         }
     }
-
 }

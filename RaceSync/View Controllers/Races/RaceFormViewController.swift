@@ -250,7 +250,7 @@ class RaceFormViewController: UIViewController {
             }
 
             if data.sendNotification {
-                AlertUtil.presentAlertMessage("You are about to notify all the chapter members of \(data.chapterName). Are you sure?", title: "Heads Up", buttonTitle: "Send it!") { action in
+                AlertUtil.presentAlertMessage("You are about to notify all the chapter members of \(data.chapterName). Are you sure?", title: "Heads Up", okTitle: "Send it!") { action in
                     handleSubmission()
                 }
             } else {

@@ -12,8 +12,7 @@ import EmptyDataSet_Swift
 import RaceSyncAPI
 
 enum RaceTabs: Int {
-    case details, results, schedule
-
+    case details, pilots, schedule, payments
     static let `default`: Self = .details
 }
 
@@ -160,7 +159,7 @@ class RaceTabBarController: UITabBarController {
 
     // MARK: - Actions
 
-    fileprivate func selectTab(_ tab: RaceTabs) {
+    func selectTab(_ tab: RaceTabs) {
         selectedIndex = tab.rawValue
     }
 

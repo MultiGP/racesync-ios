@@ -39,10 +39,15 @@ public extension Race {
     }
 
     var canBeFinalized: Bool {
+#if DEBUG
         guard isMyChapter else { return false }
         guard ownerId == APIServices.shared.myUser?.id else { return false }
         guard let startDate = startDate, startDate.isPassed else { return false }
         return !isFinalized
+#else
+        // The API finalize(id) still returns 500 error. Reported https://github.com/MultiGP/multigp-com/issues/93
+        return false
+#endif
     }
 
     var isGQ: Bool {
@@ -81,17 +86,6 @@ public extension Race {
 
     func getMyPaymentUrl() -> URL? {
         guard let myUser = APIServices.shared.myUser else { return nil }
-
-        let baseUrl = MGPWeb.getUrl(for: .processPayment)
-        let params: [(String, String)] = [
-            ("raceId", "\(self.id)"),
-            ("pilotId", "\(myUser.id)"),
-            ("user-agent", "ios")
-        ]
-
-        var components = URLComponents(string: baseUrl)
-        components?.queryItems = params.map { URLQueryItem(name: $0.0, value: $0.1) }
-
-        return components?.url
+        return RaceApi.getPaymentUrl(for: self.id, user: myUser.id)
     }
 }

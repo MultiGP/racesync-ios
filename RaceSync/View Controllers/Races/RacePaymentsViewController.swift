@@ -67,12 +67,12 @@ class RacePaymentsViewController: UIViewController, RaceTabbable {
     }()
 
     fileprivate lazy var headerView: ColumnTableViewHeaderView = {
-        let header = ColumnTableViewHeaderView()
-        header.addColumn(with: Column.pilot.title, orientation: .left) // TODO: Let the subview do the chevron layout logic. Use an enum to track each column type
-        header.addColumn(with: Column.paid.title, orientation: .right)
-        header.addColumn(with: Column.received.title, orientation: .right)
-        header.addTarget(self, action: #selector(didPressColumnTitle))
-        return header
+        let view = ColumnTableViewHeaderView()
+        view.addColumn(with: Column.pilot.title, orientation: .left) // TODO: Let the subview do the chevron layout logic. Use an enum to track each column type
+        view.addColumn(with: Column.paid.title, orientation: .right)
+        view.addColumn(with: Column.received.title, orientation: .right)
+        view.addTarget(self, action: #selector(didPressColumnTitle))
+        return view
     }()
 
     fileprivate var isLoading: Bool = false {
@@ -183,7 +183,7 @@ class RacePaymentsViewController: UIViewController, RaceTabbable {
         }
 
         raceApi.getRacePayments(with: race.id) { payments, error in
-            guard let payments = payments else {
+            guard let payments = payments, payments.count > 0 else {
                 return self.finishLoading()
             }
 

@@ -33,10 +33,16 @@ class StandingViewModel: Descriptable {
             return (seasonKey == standing.season1) ? standing.season1Score : standing.season2Score
         }
 
-        self.score1Label = "Spring: \(Self.timeLabel(for: score(for: "\(standing.season.rawValue)Spring")))"
-        self.score2Label = "Summer: \(Self.timeLabel(for: score(for: "\(standing.season.rawValue)Summer")))"
+        if standing.season1 == "2023" {
+            self.score1Label = Self.timeLabel(for: standing.season1Score)
+            self.score2Label = ""
+            self.subtitleLabel = score1Label
+        } else {
+            self.score1Label = "Spring: \(Self.timeLabel(for: standing.season1Score))"
+            self.score2Label = "Summer: \(Self.timeLabel(for: standing.season2Score))"
+            self.subtitleLabel = [score1Label, score2Label].joined(separator: "  |  ")
+        }
 
-        self.subtitleLabel = [score1Label, score2Label].joined(separator: "  |  ")
         self.rank = Int32(standing.position) ?? 0
     }
 
@@ -53,7 +59,7 @@ class StandingViewModel: Descriptable {
 
         if value < 60 {
             let truncated = floor(value * 1_000) / 1_000
-            return String(format: "%.3f", truncated)
+            return String(format: "%.3fs", truncated)
         } else {
             let minutes = Int(value) / 60
             let seconds = value.truncatingRemainder(dividingBy: 60)

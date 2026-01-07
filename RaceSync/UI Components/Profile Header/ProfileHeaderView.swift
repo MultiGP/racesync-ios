@@ -12,7 +12,7 @@ import RaceSyncAPI
 import TOCropViewController
 
 protocol ProfileHeaderViewDelegate {
-    func shouldUploadImage(_ image: UIImage, imageType: ImageType, for objectId: ObjectId)
+    func shouldUploadImage(_ image: UIImage, imageType: ImageType, for id: ObjectId)
 }
 
 class ProfileHeaderView: UIView {
@@ -40,17 +40,25 @@ class ProfileHeaderView: UIView {
 
     lazy var locationButton: PasteboardButton = {
         let button = PasteboardButton(type: .system)
-        button.tintColor = Color.red
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-        button.setImage(UIImage(named: "icn_pin_small"), for: .normal)
-        button.titleEdgeInsets = UIEdgeInsets(top: -1, left: 0, bottom: 0, right: -Constants.padding)
         button.shouldHighlight = true
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        button.titleLabel?.numberOfLines = 1
+        button.tintColor = Color.link
         return button
+    }()
+
+    fileprivate lazy var locationIconView: UIImageView = {
+        let view = UIImageView()
+        view.image = SystemImg.pin_small?.withRenderingMode(.alwaysTemplate)
+        view.contentMode = .scaleAspectFit
+        view.backgroundColor = Color.clear
+        view.tintColor = Color.link
+        return view
     }()
 
     lazy var cameraButton: CustomButton = {
         let button = CustomButton(type: .system)
-        button.setImage(UIImage(named: "icn_button_camera"), for: .normal)
+        button.setImage(ButtonImg.camera, for: .normal)
         button.tintColor = Color.white
         button.hitTestEdgeInsets = UIEdgeInsets(proportionally: -20)
         button.addTarget(self, action: #selector(didTapCameraButton), for: .touchUpInside)
@@ -80,8 +88,8 @@ class ProfileHeaderView: UIView {
 
     static var backgroundViewHeight: CGFloat {
         // TODO: Use dynamic values instead of hardcoding them.
-        if Constants.backgroundImageHeight - 44 < Constants.avatarImageHeight {
-            return Constants.avatarImageHeight + 44
+        if Constants.backgroundImageHeight - 44 < Constants.avatarImageSize {
+            return Constants.avatarImageSize + 44
         }
         return Constants.backgroundImageHeight
     }
@@ -98,7 +106,7 @@ class ProfileHeaderView: UIView {
 
     fileprivate lazy var mainTextLabel: PasteboardLabel = {
         let label = PasteboardLabel()
-        label.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        label.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         label.textColor = Color.black
         label.numberOfLines = 2
         return label
@@ -120,7 +128,7 @@ class ProfileHeaderView: UIView {
     fileprivate lazy var leftBadgeButton: UIButton = {
         let button = UIButton(type: .system)
         button.tintColor = Color.gray400
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         button.titleEdgeInsets = UIEdgeInsets(right: -Constants.padding/2)
         button.isUserInteractionEnabled = false
         return button
@@ -129,20 +137,25 @@ class ProfileHeaderView: UIView {
     fileprivate lazy var rightBadgeButton: UIButton = {
         let button = UIButton(type: .system)
         button.tintColor = Color.gray400
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -Constants.padding/2, bottom: 0, right: 0)
         button.isUserInteractionEnabled = false
         return button
     }()
 
     fileprivate lazy var headerLabelStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [mainTextLabel, locationButton])
-        stackView.axis = .vertical
-        stackView.distribution = .fill
+        let stackView1 = UIStackView(arrangedSubviews: [locationIconView, locationButton])
+        stackView1.axis = .horizontal
+        stackView1.alignment = .center
+        stackView1.distribution = .fill
+        stackView1.spacing = Constants.padding / 2
 
-        stackView.alignment = .leading
-        stackView.spacing = Constants.padding*1.5
-        return stackView
+        let stackView2 = UIStackView(arrangedSubviews: [mainTextLabel, stackView1])
+        stackView2.axis = .vertical
+        stackView2.alignment = .leading
+        stackView2.distribution = .fill
+        stackView2.spacing = Constants.padding
+        return stackView2
     }()
 
     fileprivate var hasLaidOut: Bool = false
@@ -152,7 +165,7 @@ class ProfileHeaderView: UIView {
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
         static let backgroundImageHeight: CGFloat = CGFloat(Int(UIScreen.main.bounds.size.height/3.5))
-        static let avatarImageHeight: CGFloat = 170
+        static let avatarImageSize: CGFloat = 170
     }
 
     // MARK: - Initialization
@@ -186,9 +199,9 @@ class ProfileHeaderView: UIView {
 
         addSubview(avatarView)
         avatarView.snp.makeConstraints {
-            $0.top.equalTo(backgroundView.snp.bottom).offset(-Constants.avatarImageHeight*6/7) // 85%
+            $0.top.equalTo(backgroundView.snp.bottom).offset(-Constants.avatarImageSize*6/7) // 85%
             $0.centerX.equalToSuperview()
-            $0.height.equalTo(Constants.avatarImageHeight)
+            $0.height.equalTo(Constants.avatarImageSize)
         }
 
         addSubview(cameraButton)
@@ -235,11 +248,13 @@ class ProfileHeaderView: UIView {
             guard image == nil else { return }
             let placeholder = PlaceholderImg.profileBkgd
             backgroundView.imageView.image = placeholder
+            backgroundView.isHidden = false
         }
 
         func handleAvatarImage(_ image: UIImage?) {
             guard image == nil else { return }
             avatarView.imageView.image = viewModel.type.placeholder
+            avatarView.isHidden = false
         }
 
         let headerImageSize = CGSize(width: UIScreen.main.bounds.width*3, height: Self.backgroundViewHeight)
@@ -254,7 +269,7 @@ class ProfileHeaderView: UIView {
             handleBackgroundImage(nil)
         }
 
-        let avatarImageSize = CGSize(width: Constants.avatarImageHeight, height: Constants.avatarImageHeight)
+        let avatarImageSize = CGSize(width: Constants.avatarImageSize, height: Constants.avatarImageSize)
         let avatarPlaceholder = UIImage.image(withColor: Color.gray100, imageSize: avatarImageSize)
 
         if let avatarImageUrl = ImageUtil.getImageUrl(for: viewModel.pictureUrl) {
@@ -262,15 +277,18 @@ class ProfileHeaderView: UIView {
                 handleAvatarImage(image)
             }
         } else {
-            handleAvatarImage(nil)
+            avatarView.isHidden = true
         }
 
         mainTextLabel.text = viewModel.displayName
 
         if !viewModel.locationName.isEmpty {
             locationButton.setTitle(viewModel.locationName, for: .normal)
+            locationButton.isHidden = false
         } else {
-            locationButton.setTitle("Earth", for: .normal)
+            locationButton.setTitle(nil, for: .normal)
+            locationButton.isHidden = true
+            locationIconView.isHidden = true
         }
 
         if viewModel.topBadgeLabel != nil {
@@ -310,9 +328,9 @@ class ProfileHeaderView: UIView {
 
     func presentUploadSheet(_ imageType: ImageType) {
         guard let topMostVC = UIViewController.topMostViewController() else { return }
-        guard let viewModel = viewModel else { return }
+        guard let _ = viewModel else { return }
 
-        let alert = UIAlertController(title: "Upload \(imageType.title) image for your \(viewModel.type.rawValue)", message: nil, preferredStyle: .actionSheet)
+        let alert = UIAlertController(title: "Upload \(imageType.title) image", message: nil, preferredStyle: .actionSheet)
         alert.view.tintColor = Color.blue
 
         alert.addAction(UIAlertAction(title: "Camera", style: .default) { [weak self] (action) in

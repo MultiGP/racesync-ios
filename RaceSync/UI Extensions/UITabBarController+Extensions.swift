@@ -20,23 +20,25 @@ extension UITabBarController {
         // Trick to pre-load each view controller
         self.preloadTabs()
 
-        var index = selectedIndex
-        let defaultIndex = 0
+        var idx = selectedIndex
 
-        // makes sure disabled tabs aren't selected
-        // and defaults to the first tab
-        if index != defaultIndex {
-            let vc = vcs[index]
+        if idx < vcs.count {
+            let vc = vcs[idx]
 
+            // makes sure disabled tabs aren't selected
             if let item = vc.tabBarItem, !item.isEnabled {
-                index = defaultIndex
+                idx = HomeTabs.default.rawValue
             }
         }
-        else if vcs.count > 1 {
-            self.selectedIndex = index+1
+
+        // force refresh to work around UITabBarController bug
+        if idx < vcs.count-1 {
+            self.selectedIndex = idx+1
+        } else if idx > 0 {
+            self.selectedIndex = idx-1
         }
 
-        self.selectedIndex = index
+        self.selectedIndex = idx
     }
 
     func preloadTabs() {

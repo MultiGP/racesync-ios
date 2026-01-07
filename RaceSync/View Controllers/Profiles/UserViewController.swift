@@ -14,40 +14,32 @@ import EmptyDataSet_Swift
 import CoreLocation
 import QRCode
 
-class UserViewController: ProfileViewController, ViewJoinable {
+class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
+
+    // MARK: - Public Variables
+
+    var raceController: RaceController?
 
     // MARK: - Private Variables
 
     fileprivate lazy var qrButton: UIButton = {
         let button = UIButton(type: .system)
         button.addTarget(self, action: #selector(didPressQRButton), for: .touchUpInside)
-        button.setImage(UIImage(named: "icn_qrcode"), for: .normal)
+        button.setImage(ButtonImg.qrcode, for: .normal)
         button.setBackgroundImage(nil, for: .normal)
         return button
     }()
 
-    fileprivate func raceViewModel(for index: Int) -> RaceViewModel? {
-        if index >= 0, index < raceViewModels.count {
-            return raceViewModels[index]
-        }
-        return nil
-    }
-
-    fileprivate func chapterViewModel(for index: Int) -> ChapterViewModel? {
-        if index >= 0, index < chapterViewModels.count {
-            return chapterViewModels[index]
-        }
-        return nil
-    }
-
-    fileprivate let user: User
+    fileprivate var user: User
     fileprivate let raceApi = RaceApi()
     fileprivate let chapterApi = ChapterApi()
+    fileprivate let userApi = UserApi()
 
     fileprivate var raceViewModels = [RaceViewModel]()
     fileprivate var chapterViewModels = [ChapterViewModel]()
     fileprivate var presenter: Presentr?
     fileprivate var userCoordinates: CLLocationCoordinate2D?
+    fileprivate var isPhotoEditale = false
 
     fileprivate let emptyStateRaces = EmptyStateViewModel(.noProfileRaces)
     fileprivate let emptyStateChapters = EmptyStateViewModel(.noProfileChapters)
@@ -56,7 +48,6 @@ class UserViewController: ProfileViewController, ViewJoinable {
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
-        static let cellHeight: CGFloat = UniversalConstants.cellHeight
         static let buttonHeight: CGFloat = 32
         static let buttonSpacing: CGFloat = 12
         static let avatarImageSize = CGSize(width: 50, height: 50)
@@ -84,15 +75,6 @@ class UserViewController: ProfileViewController, ViewJoinable {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        registerJoinable()
-        configureBarButtonItems()
-
-        tableView.register(cellType: UserRaceTableViewCell.self)
-        tableView.register(cellType: ChapterTableViewCell.self)
-        tableView.dataSource = self
-        tableView.emptyDataSetSource = self
-        tableView.emptyDataSetDelegate = self
-        
         loadContent()
     }
 
@@ -112,6 +94,24 @@ class UserViewController: ProfileViewController, ViewJoinable {
 
     override func setupLayout() {
         super.setupLayout()
+
+        registerJoinable()
+        configureBarButtonItems()
+
+        tableView.register(cellType: UserRaceTableViewCell.self)
+        tableView.register(cellType: ChapterTableViewCell.self)
+        tableView.dataSource = self
+        tableView.emptyDataSetSource = self
+        tableView.emptyDataSetDelegate = self
+
+        let longPress = UILongPressGestureRecognizer(target: self,action: #selector(didLongPress(_:)))
+        longPress.minimumPressDuration = 0.3
+        longPress.delaysTouchesBegan = true
+        tableView.addGestureRecognizer(longPress)
+
+        headerView.isEditable = user.isMe && isPhotoEditale
+        headerView.avatarView.isUserInteractionEnabled = isPhotoEditale
+        headerView.delegate = self
     }
 
     fileprivate func configureBarButtonItems() {
@@ -202,10 +202,14 @@ class UserViewController: ProfileViewController, ViewJoinable {
         }
     }
 
+    @objc func didLongPress(_ gesture: UIGestureRecognizer) {
+        handleLongPress(gesture)
+    }
+
     @objc func didPressShareButton() {
         guard let userURL = URL(string: user.url) else { return }
 
-        let activities: [UIActivity] = [CopyLinkActivity(), MultiGPActivity()]
+        let activities: [UIActivity] = [MGPActivity(), CopyLinkActivity()]
 
         let vc = UIActivityViewController(activityItems:  [userURL], applicationActivities: activities)
         vc.excludeAllActivityTypes(except: [.airDrop])
@@ -223,31 +227,17 @@ class UserViewController: ProfileViewController, ViewJoinable {
         }
     }
 
-    func loadRaces(_ forced: Bool = false) {
-        if raceViewModels.isEmpty || forced {
-            isLoadingList(true)
-
-            fetchRaces { [weak self] in
-                self?.isLoadingList(false)
-            }
-        } else {
-            tableView.reloadData()
-        }
+    fileprivate func loadRaces(_ forced: Bool = false) {
+        loadList(forced: forced, isEmpty: raceViewModels.isEmpty,
+                segment: .left, fetch: fetchRaces)
     }
 
-    func loadChapters(_ forced: Bool = false) {
-        if chapterViewModels.isEmpty || forced {
-            isLoadingList(true)
-
-            fetchChapters { [weak self] in
-                self?.isLoadingList(false)
-            }
-        } else {
-            tableView.reloadData()
-        }
+    fileprivate func loadChapters(_ forced: Bool = false) {
+        loadList(forced: forced, isEmpty: raceViewModels.isEmpty,
+                segment: .right, fetch: fetchChapters)
     }
 
-    func fetchRaces(_ completion: VoidCompletionBlock? = nil) {
+    fileprivate func fetchRaces(_ completion: VoidCompletionBlock? = nil) {
         raceApi.getRaces(with: [.joined], userId: user.id) { (races, error) in
             if let races = races {
                 let sortedRaces = races.sorted(by: { $0.startDate?.compare($1.startDate ?? Date()) == .orderedDescending })
@@ -260,7 +250,7 @@ class UserViewController: ProfileViewController, ViewJoinable {
         }
     }
 
-    func fetchChapters(_ completion: VoidCompletionBlock? = nil) {
+    fileprivate func fetchChapters(_ completion: VoidCompletionBlock? = nil) {
         chapterApi.getChapters(forUser: user.id) { [weak self] (chapters, error) in
             guard let strongSelf = self else { return }
 
@@ -285,6 +275,55 @@ class UserViewController: ProfileViewController, ViewJoinable {
             completion?()
         }
     }
+
+    fileprivate func loadList(forced: Bool,
+                          isEmpty: Bool,
+                          segment: ProfileSegment,
+                          fetch: (@escaping () -> Void) -> Void ){
+
+        guard isEmpty || forced else {
+            tableView.reloadData()
+            return
+        }
+
+        let showShimmer = shouldShowShimmer(for: segment)
+
+        if showShimmer {
+            isLoadingList(true)
+        }
+
+        fetch { [weak self] in
+            guard let self else { return }
+
+            if showShimmer {
+                self.isLoadingList(false)   // triggers its own reload
+            } else {
+                self.tableView.reloadData()
+            }
+        }
+    }
+
+    func shouldShowShimmer(for segment: ProfileSegment) -> Bool {
+        if selectedSegment == .left {
+            return raceViewModels.count == 0
+        } else {
+            return chapterViewModels.count == 0
+        }
+    }
+
+    func raceViewModel(for index: Int) -> RaceViewModel? {
+        if index >= 0, index < raceViewModels.count {
+            return raceViewModels[index]
+        }
+        return nil
+    }
+
+    func chapterViewModel(for index: Int) -> ChapterViewModel? {
+        if index >= 0, index < chapterViewModels.count {
+            return chapterViewModels[index]
+        }
+        return nil
+    }
 }
 
 // MARK: - UITableView DataSource
@@ -308,7 +347,7 @@ extension UserViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return Constants.cellHeight
+        return UserRaceTableViewCell.height
     }
 
     func userRaceTableViewCell(for indexPath: IndexPath) -> UserRaceTableViewCell {
@@ -334,6 +373,32 @@ extension UserViewController: UITableViewDataSource {
         cell.subtitleLabel.text = viewModel.locationLabel
         cell.avatarImageView.imageView.setImage(with: viewModel.imageUrl, placeholderImage: PlaceholderImg.medium, size: Constants.avatarImageSize)
         return cell
+    }
+}
+
+extension UserViewController: ProfileHeaderViewDelegate {
+
+    func shouldUploadImage(_ image: UIImage, imageType: ImageType, for id: ObjectId) {
+
+        userApi.uploadProfileImage(image, imageType: imageType) { [weak self] (url, error) in
+            if let url = url {
+                self?.updateUserProfileUrl(url, for: imageType)
+            } else {
+                AlertUtil.presentAlertMessage(error?.localizedDescription)
+            }
+        }
+    }
+
+    func updateUserProfileUrl(_ url: String, for imageType: ImageType) {
+
+        if imageType == .main {
+            user.profilePictureUrl = url
+        } else {
+            user.profileBackgroundUrl = url
+        }
+        
+        let viewModel = ProfileViewModel(with: user)
+        headerView.viewModel = viewModel
     }
 }
 

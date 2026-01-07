@@ -6,7 +6,7 @@
 //  Copyright © 2020 MultiGP Inc. All rights reserved.
 //
 
-import UIKit
+import Foundation
 import RaceSyncAPI
 import CoreLocation
 
@@ -78,12 +78,12 @@ fileprivate extension RaceFeedController {
             guard forceFetch else { return }
         }
 
-        let filters: [RaceListFilters] = [.joined]
-        let sorting: RaceViewSorting = settings.showPastEvents ? .ascending : .descending
+        let filters: [RaceListFilters] = [.joined, .upcoming]
+        let sorting: RaceViewSorting = .descending
 
         raceApi.getMyRaces(filters: filters) { [weak self] (races, error) in
-            if let filteredRaces = self?.locallyFilteredRaces(races) {
-                let sortedViewModels = RaceViewModel.sortedViewModels(with: filteredRaces, sorting: sorting)
+            if let races = races {
+                let sortedViewModels = RaceViewModel.sortedViewModels(with: races, sorting: sorting)
                 self?.raceCollection[.joined] = sortedViewModels
                 completion(sortedViewModels, false, nil)
             } else {
@@ -99,16 +99,16 @@ fileprivate extension RaceFeedController {
             guard forceFetch else { return }
         }
 
-        let filters: [RaceListFilters] = [.nearby]
-        let sorting: RaceViewSorting = settings.showPastEvents ? .ascending : .descending
+        let filters: [RaceListFilters] = [.nearby, .upcoming]
+        let sorting: RaceViewSorting = .descending
 
         let coordinate = LocationManager.shared.location?.coordinate
         let lat = coordinate?.latitude.string
         let long = coordinate?.longitude.string
 
         raceApi.getMyRaces(filters: filters, latitude: lat, longitude: long) { [weak self] (races, error) in
-            if let filteredRaces = self?.locallyFilteredRaces(races) {
-                let sortedViewModels = RaceViewModel.sortedViewModels(with: filteredRaces, sorting: sorting)
+            if let races = races {
+                let sortedViewModels = RaceViewModel.sortedViewModels(with: races, sorting: sorting)
                 self?.raceCollection[.nearby] = sortedViewModels
                 completion(sortedViewModels, false, nil)
             } else {
@@ -125,12 +125,12 @@ fileprivate extension RaceFeedController {
             guard forceFetch else { return }
         }
 
-        let filters = [RaceListFilters]()
-        let sorting: RaceViewSorting = settings.showPastEvents ? .ascending : .descending
+        let filters: [RaceListFilters] = [.upcoming]
+        let sorting: RaceViewSorting = .descending
 
         raceApi.getRaces(with: filters, chapterIds: user.chapterIds) { [weak self] races, error in
-            if let filteredRaces = self?.locallyFilteredRaces(races) {
-                let sortedViewModels = RaceViewModel.sortedViewModels(with: filteredRaces, sorting: sorting)
+            if let races = races {
+                let sortedViewModels = RaceViewModel.sortedViewModels(with: races, sorting: sorting)
                 self?.raceCollection[.chapters] = sortedViewModels
                 completion(sortedViewModels, false, nil)
             } else {
@@ -147,11 +147,11 @@ fileprivate extension RaceFeedController {
         }
 
         let filters: [RaceListFilters] = [.upcoming]
-        let sorting: RaceViewSorting = settings.showPastEvents ? .ascending : .descending
+        let sorting: RaceViewSorting = .descending
 
         raceApi.getRaces(with: filters, raceClass: `class`) { [weak self] (races, error) in
-            if let filteredRaces = self?.locallyFilteredRaces(races) {
-                let sortedViewModels = RaceViewModel.sortedViewModels(with: filteredRaces, sorting: sorting)
+            if let races = races {
+                let sortedViewModels = RaceViewModel.sortedViewModels(with: races, sorting: sorting)
                 self?.raceCollection[.classes(`class`)] = sortedViewModels
                 completion(sortedViewModels, false, nil)
             } else {
@@ -167,32 +167,20 @@ fileprivate extension RaceFeedController {
             guard forceFetch else { return }
         }
 
-        let filters: [RaceListFilters] = [.series]
-        let sorting: RaceViewSorting = (settings.showPastEvents || !series.isActive()) ? .ascending : .descending
+        var filters: [RaceListFilters] = [.series]
+        if series.isActive() { filters += [.upcoming] }
 
-        raceApi.getRaces(with: filters, startDate: "\(series.year)", pageSize: 150) { [weak self]  (races, error) in
+        let sorting: RaceViewSorting = !series.isActive() ? .ascending : .descending
 
-            if let filteredRaces = series.isActive() ? self?.locallyFilteredRaces(races) : races {
-                let sortedViewModels = RaceViewModel.sortedViewModels(with: filteredRaces, sorting: sorting)
+        raceApi.getRaces(with: filters, startDate: "\(series.year)", pageSize: 300) { [weak self]  (races, error) in
+
+            if let races = races {
+                let sortedViewModels = RaceViewModel.sortedViewModels(with: races, sorting: sorting)
                 self?.raceCollection[.series(series)] = sortedViewModels
                 completion(sortedViewModels, false, nil)
             } else {
                 completion(nil, false, error)
             }
         }
-    }
-
-    func locallyFilteredRaces(_ races: [Race]?) -> [Race]? {
-        guard !settings.showPastEvents else { return races }
-
-        return races?.filter({ (race) -> Bool in
-            guard let startDate = race.startDate else { return false }
-
-            if let endDate = race.endDate {
-                return endDate.isInToday || endDate.timeIntervalSinceNow.sign == .plus
-            } else {
-                return startDate.isInToday || startDate.timeIntervalSinceNow.sign == .plus
-            }
-        })
     }
 }

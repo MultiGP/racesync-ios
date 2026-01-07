@@ -14,15 +14,15 @@ public typealias AlertTextfieldCompletionBlock = ([String: String]) -> Void
 // Thread-safe Alert convenience methods
 class AlertUtil {
 
-    static func presentAlertMessage(_ message: String?, title: String? = nil, buttonTitle: String? = nil, delay: TimeInterval = 0, completion: AlertCompletionBlock? = nil) {
+    static func presentAlertMessage(_ message: String?, title: String? = nil, okTitle: String? = nil, cancelTitle: String? = nil, delay: TimeInterval = 0, completion: AlertCompletionBlock? = nil) {
 
         DispatchQueue.main.async {
             let alert = UIAlertController(title: title ?? "Something Went Wrong", message: message ?? "Please try again.", preferredStyle: .alert)
             alert.view.tintColor = Color.blue
 
-            alert.addAction(UIAlertAction(title: buttonTitle ?? "Ok", style: .default, handler: completion))
-            if buttonTitle != nil {
-                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            alert.addAction(UIAlertAction(title: okTitle ?? "Ok", style: .default, handler: completion))
+            if okTitle != nil {
+                alert.addAction(UIAlertAction(title: cancelTitle ?? "Cancel", style: .cancel, handler: nil))
             }
 
             DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: {

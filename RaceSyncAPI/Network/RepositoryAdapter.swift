@@ -117,4 +117,43 @@ class RepositoryAdapter {
             }
         }
     }
+
+    func uploadImage(_ data: Data, name: String, url: String, progressBlock: ProgressBlock?, _ completion: @escaping ObjectCompletionBlock<String>) {
+        Clog.log("Starting request \(url)")
+
+        // Multipart
+        networkAdapter.httpMultipartUpload(data, name: name, url: url) { (result) in
+            switch result {
+            case .success(let upload, _, _):
+
+                upload.uploadProgress(closure: { (progress) in
+                    print("Upload Progress: \(progress.fractionCompleted)")
+                })
+
+                upload.responseString { response in
+                    var log: String = "+ Ended request with code \(String(describing: response.response?.statusCode)) "
+
+                    switch response.result {
+                    case .success(let value):
+                        let json = JSON.init(parseJSON: value)
+                        if let errors = ErrorUtil.errors(fromJSONString: value) {
+                            completion(nil, errors.first)
+                        } else {
+                            completion(json[ParamKey.url].rawValue as? String, nil)
+                        }
+                    case .failure:
+                        let error = ErrorUtil.parseError(response)
+                        log += " Network Error: \(error.debugDescription)"
+                        completion(nil, error)
+                    }
+
+                    Clog.log("\(log)")
+                }
+
+            case .failure(let encodingError):
+                Clog.log("encodingError \(encodingError)")
+                print(encodingError)
+            }
+        }
+    }
 }

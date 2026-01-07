@@ -34,7 +34,7 @@ class MemberBadgeView: CustomButton {
         setTitleColor(Color.black, for: .normal)
         tintColor = Color.black
 
-        setImage(UIImage(named: "icn_member"), for: .normal)
+        setImage(ButtonImg.member, for: .normal)
         imageEdgeInsets = UIEdgeInsets(left: -7)
         contentEdgeInsets = UIEdgeInsets(top: 5, left: 15, bottom: 5, right: 12)
 

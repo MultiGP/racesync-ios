@@ -16,11 +16,13 @@ class RaceViewModel: Descriptable {
 
     let titleLabel: String
     let subtitleLabel: NSAttributedString
+
     let dateLabel: String?
+    let timeLabel: String?
     let startDateLabel: String?
-    let startDateDesc: String?
     let endDateLabel: String?
-    let endDateDesc: String?
+    let sameDay: Bool
+
     let locationLabel: String
     let fullLocationLabel: String
     let distanceLabel: String
@@ -38,11 +40,13 @@ class RaceViewModel: Descriptable {
         self.race = race
         self.titleLabel = race.name
         self.subtitleLabel = Self.subtitleLabelAttributedString(for: race)
-        self.dateLabel = Self.combinedDateLabelString(for: race.startDate, and: race.endDate) // "Sat Sept 14 @ 9:00 AM" or "Sept 14 - Sept 16"
-        self.startDateLabel = Self.dateLabelString(for: race.startDate) // "Sat Sept 14 @ 9:00 AM"
-        self.startDateDesc = Self.fullDateLabelString(for: race.startDate) // "Saturday, September 14th @ 9:00 AM"
-        self.endDateLabel = Self.dateLabelString(for: race.endDate) // "Sat Sept 14 @ 5:00 PM"
-        self.endDateDesc = Self.fullDateLabelString(for: race.startDate, and: race.endDate) // "Saturday, September 14th @ 5:00 PM" or "@ 5:00 PM"
+
+        self.dateLabel = Self.combinedDateLabelString(for: race.startDate, and: race.endDate) // "Sat, Sept 14 @ 9:00 AM" or "Sat, Sept 14 - Sun, Sept 15"
+        self.timeLabel = Self.combinedTimeLabelString(for: race.startDate, and: race.endDate) // "@ 9:00 AM" or "@ 9:00 AM - 4:00 PM"
+        self.startDateLabel = Self.dateLabelString(for: race.startDate) // "Sat, Sept 14 @ 9:00 AM"
+        self.endDateLabel = Self.dateLabelString(for: race.endDate) // "Sat, Sept 14 @ 5:00 PM"
+        self.sameDay = Self.datesAreSameDay(for: race.startDate, and: race.endDate)
+
         self.locationLabel = Self.locationLabelString(for: race).stripHTML()
         self.fullLocationLabel = Self.fullLocationLabelString(for: race).stripHTML()
         self.distanceLabel = Self.distanceLabelString(for: race) // "309.4 mi" or "122 kms"
@@ -153,6 +157,29 @@ extension RaceViewModel {
         }
 
         return "\(startLabel) - \(endLabel)"
+    }
+
+    static func combinedTimeLabelString(for startDate: Date?, and endDate: Date?) -> String? {
+        guard let startDate = startDate else { return nil }
+
+        let startLabel = DateUtil.displayTimeFormatter2.string(from: startDate)
+
+        guard let endDate, endDate.isInSameDay(date: startDate) else {
+            return startLabel
+        }
+
+        let endLabel = DateUtil.displayTimeFormatter2.string(from: endDate)
+
+        return "\(startLabel) - \(endLabel)"
+    }
+
+    static func datesAreSameDay(for startDate: Date?, and endDate: Date?) -> Bool {
+        guard let startDate = startDate else { return false }
+
+        guard let endDate, endDate.isInSameDay(date: startDate) else {
+            return false
+        }
+        return true
     }
 
     static func locationLabelString(for race: Race) -> String {

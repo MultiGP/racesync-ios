@@ -75,8 +75,14 @@ public extension Date {
         return self < Date()
     }
 
-    func isPassed(by days: Int) -> Bool {
-        guard let comparisonDate = Calendar.current.date(byAdding: .day, value: days, to: Date()) else {
+    func isPassed(days: Int? = nil, hours: Int? = nil) -> Bool {
+        // Pick the first non-nil argument (days has priority over hours)
+        guard let (component, value) = days.map({ (Calendar.Component.day, $0) }) ?? hours.map({ (Calendar.Component.hour, $0) })
+        else {
+            return false
+        }
+
+        guard let comparisonDate = Calendar.current.date(byAdding: component, value: value, to: Date()) else {
             return false
         }
         return self < comparisonDate

@@ -11,26 +11,39 @@ import RaceSyncAPI
 
 extension Race {
 
-    var canShowResults: Bool {
-        guard let results = results, results.count > 0 else { return false }
+    var hasStarted: Bool {
         guard let startDate = startDate else { return false }
         return startDate.isPassed
     }
 
+    var hasEnded: Bool {
+        guard let startDate = startDate else { return false }
+
+        if let endDate = endDate, startDate.isPassed {
+            return endDate.isPassed(hours: 2)
+        }
+        return startDate.isPassed(hours: 8)
+    }
+
+    var inProgress: Bool {
+        guard !isFinalized else { return false }
+        return hasStarted && !hasEnded
+    }
+
+    var canShowResults: Bool {
+        if isFinalized { return true } // Assume results should be displayed since the race is finalized already
+        guard let results = results, results.count > 0 else { return false }
+        return hasStarted
+    }
+
     var canShowSchedule: Bool {
-        return isZippyQEnabled && !isFinalized
+        guard hasStarted && !hasEnded else { return false }
+        return isZippyQEnabled
     }
 
     func canCreateCalendarEvent() -> Bool {
-        if let endDate = endDate, endDate.isPassed {
-            return false
-        }
-        else if let startDate = startDate, startDate.isPassed(by: 1) {
-            return false
-        }
-        else {
-            return true
-        }
+        guard !hasEnded else { return false }
+        return true
     }
 
     func createCalendarEvent(with raceId: ObjectId) -> CalendarEvent? {

@@ -49,7 +49,7 @@ class ColumnTableViewHeaderView: UITableViewHeaderFooterView {
         static let height: CGFloat = padding * 2
     }
 
-    // MARK: - Initializers
+    // MARK: - Initialization
 
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)

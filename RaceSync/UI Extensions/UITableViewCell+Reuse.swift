@@ -27,8 +27,7 @@ extension UITableView {
             register(cellType.self, forCellReuseIdentifier: reuseIdentifier)
         }
 
-    func dequeueReusableCell<T: UITableViewCell>(forIndexPath indexPath: IndexPath,
-                                                 identifier: String? = nil) -> T {
+    func dequeueReusableCell<T: UITableViewCell>(forIndexPath indexPath: IndexPath, identifier: String? = nil) -> T {
         let reuseIdentifier = identifier ?? T.reuseIdentifier
         guard let cell = dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as? T else {
             fatalError("Could not dequeue cell with identifier: \(reuseIdentifier)")

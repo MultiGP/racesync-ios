@@ -43,6 +43,15 @@ public protocol UserApiInterface {
     /**
      */
     func registerPushNotification(forAction action: PushAction, deviceToken: String?, _ completion: @escaping StatusCompletionBlock)
+
+    /**
+    */
+    func uploadProfileImage(_ image: UIImage, imageType: ImageType, progressBlock: ProgressBlock?, _ completion: @escaping ObjectCompletionBlock<String>)
+
+    /**
+     Cancels any active search API call
+    */
+    func cancelSearchRequests()
 }
 
 public class UserApi: UserApiInterface {
@@ -99,5 +108,19 @@ public class UserApi: UserApiInterface {
         if let token = deviceToken { parameters += [ParamKey.devicetoken: token] }
 
         repositoryAdapter.performAction(endpoint, parameters: parameters, completion: completion)
+    }
+
+    public func uploadProfileImage(_ image: UIImage, imageType: ImageType, progressBlock: ProgressBlock? = nil, _ completion: @escaping ObjectCompletionBlock<String>) {
+        guard let myUser = APIServices.shared.myUser else { return }
+        guard let data = image.jpegData(compressionQuality: 0.7) else { return }
+
+        let endpoint = (imageType == .main) ? EndPoint.userUploadProfileImage : EndPoint.userUploadProfileBackground
+        let url = MGPWeb.getURL(for: .apiBase).absoluteString + "\(endpoint)?\(ParamKey.id)=\(myUser.id)"
+
+        repositoryAdapter.uploadImage(data, name: imageType.key, url: url, progressBlock: progressBlock, completion)
+    }
+
+    public func cancelSearchRequests() {
+        repositoryAdapter.networkAdapter.httpCancelRequests(with: EndPoint.userSearch)
     }
 }

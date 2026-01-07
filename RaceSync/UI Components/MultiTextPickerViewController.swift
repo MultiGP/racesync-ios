@@ -179,7 +179,7 @@ extension MultiTextPickerViewController: UITableViewDataSource {
             cell.detailTextLabel?.text = matchingItems.joined(separator: ", ")
 
         } else if selectedItems.contains(item) {
-            let imageView = UIImageView(image: UIImage(named: "icn_cell_checkmark"))
+            let imageView = UIImageView(image: ButtonImg.checkmark)
             imageView.tintColor = Color.blue
             cell.accessoryView = imageView
         }

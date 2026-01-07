@@ -99,12 +99,11 @@ class SettingsViewController: UIViewController {
         sections = {
             let resources: [Row] = [.tracksGuide, .buildGuide, .seasonRules, .visitSite]
             var auth: [Row] = [.logout]
-            var about: [Row] = [.joinBeta]
-
             if let user = APIServices.shared.myUser, user.isDevTeam, isDevModeEnabled {
                 auth += [.switchEnv]
             }
 
+            var about: [Row] = [.feedback, .joinBeta]
             if UIApplication.shared.supportsAlternateIcons { about += [.appicon] }
 
             return [.notifications: [Row.notifications], .resources: resources, .about: about, .auth: auth]
@@ -171,8 +170,27 @@ class SettingsViewController: UIViewController {
         }, cancel: nil)
     }
 
-    fileprivate func showFeatureFlags() {
-        Clog.log("showFeatureFlags")
+    fileprivate func sendFeedback() {
+        let subject = "RaceSync iOS Feedback"
+        let email = StringConstants.supportEmail
+        let device = UIDevice.current
+
+        let diagnostics = """
+        Device: \(device.model )
+        OS: \(device.systemName ) \(device.systemVersion)
+        App Version: \(Bundle.main.releaseDescriptionPretty)
+        ***************************
+        \n
+        \n
+        """
+        
+        guard let encodedSubject = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { return }
+        guard let encodedBody = diagnostics.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { return }
+        guard let url = URL(string: "mailto:\(email)?subject=\(encodedSubject)&body=\(encodedBody)") else { return }
+
+        if UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url)
+        }
     }
 }
 
@@ -188,25 +206,25 @@ extension SettingsViewController: UITableViewDelegate {
             togglePushNotifications()
             cell.isLoading = isTogglingPush
         case .tracksGuide:
-            WebViewController.openUrl(AppWebConstants.tracks)
+            WebViewController.open(AppWebConstants.tracks)
         case .buildGuide:
-            WebViewController.openUrl(AppWebConstants.obstaclesDoc)
+            WebViewController.open(AppWebConstants.obstaclesDoc)
         case .seasonRules:
-            WebViewController.openUrl(AppWebConstants.seasonRulesDoc)
+            WebViewController.open(AppWebConstants.seasonRulesDoc)
         case .appicon:
             let vc = AppIconViewController()
             vc.title = row.title
             navigationController?.pushViewController(vc, animated: true)
         case .joinBeta:
-            WebViewController.openUrl(AppWebConstants.betaSignup)
+            WebViewController.open(AppWebConstants.betaSignup)
         case .visitSite:
-            WebViewController.openUrl(AppWebConstants.homepage)
+            WebViewController.open(AppWebConstants.homepage)
         case .logout:
             logout()
         case .switchEnv:
             switchEnvironment()
-        case .featureFlags:
-            showFeatureFlags()
+        case .feedback:
+            sendFeedback()
         }
     }
 
@@ -217,6 +235,19 @@ extension SettingsViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 30
+    }
+
+    func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+        guard let section = Section(rawValue: section) else { return nil }
+
+        switch section {
+        case .auth:     return "\(StringConstants.copyright)\n\(StringConstants.developedBy)"
+        default:        return ""
+        }
+    }
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return Constants.cellHeight
     }
 }
 
@@ -257,19 +288,6 @@ extension SettingsViewController: UITableViewDataSource {
         }
         return cell
     }
-
-    func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        guard let section = Section(rawValue: section) else { return nil }
-
-        switch section {
-        case .auth:     return "\(StringConstants.copyright)\n\(StringConstants.developedBy)"
-        default:        return ""
-        }
-    }
-
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return Constants.cellHeight
-    }
 }
 
 fileprivate enum Section: Int, EnumTitle {
@@ -290,24 +308,24 @@ fileprivate enum Row: Int, EnumTitle {
     case tracksGuide
     case buildGuide
     case seasonRules
-    case appicon
-    case joinBeta
     case visitSite
+    case feedback
+    case joinBeta
+    case appicon
     case logout
-    case featureFlags
     case switchEnv
 
     var title: String {
         switch self {
         case .notifications:        return "Push Notifications"
         case .tracksGuide:          return "MultiGP Tracks"
-        case .seasonRules:          return "Season Rule Books"
         case .buildGuide:           return "Obstacles Build Guide"
+        case .seasonRules:          return "Season Rule Books"
         case .visitSite:            return "Visit MultiGP.com"
-        case .appicon:              return "Change App Icon"
+        case .feedback:             return "Share Feedback"
         case .joinBeta:             return "Join the Beta"
+        case .appicon:              return "Change App Icon"
         case .logout:               return "Logout"
-        case .featureFlags:         return "Feature Flags"
         case .switchEnv:            return "Switch to"
         }
     }
@@ -320,10 +338,10 @@ fileprivate enum Row: Int, EnumTitle {
         case .buildGuide:           return "icn_settings_buildguide"
         case .seasonRules:          return "icn_settings_handbook"
         case .visitSite:            return "icn_settings_mgp"
-        case .appicon:              return "icn_settings_appicn"
+        case .feedback:             return "icn_settings_feedback"
         case .joinBeta:             return "icn_settings_beta"
+        case .appicon:              return "icn_settings_appicn"
         case .logout:               return "icn_settings_logout"
-        case .featureFlags:         return "icn_settings_logout"
         case .switchEnv:            return "icn_settings_logout"
         }
     }

@@ -100,14 +100,14 @@ public class BadgeHub: NSObject {
 
         redCircle = BadgeView()
         redCircle?.isUserInteractionEnabled = false
-        redCircle.backgroundColor = UIColor.red
+        redCircle.backgroundColor = Color.red
 
         countLabel = UILabel(frame: redCircle.frame)
         countLabel?.isUserInteractionEnabled = false
         count = startCount
         countLabel?.textAlignment = .center
-        countLabel?.textColor = UIColor.white
-        countLabel?.backgroundColor = UIColor.clear
+        countLabel?.textColor = Color.white
+        countLabel?.backgroundColor = Color.clear
 
         setCircleAtFrame(CGRect(x: (frame?.size.width ?? 0.0) - ((Constants.notificHubDefaultDiameter) * 2 / 3),
                                 y: (-Constants.notificHubDefaultDiameter) / 3,

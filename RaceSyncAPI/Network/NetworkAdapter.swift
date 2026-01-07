@@ -90,7 +90,10 @@ class NetworkAdapter {
 
         var httpHeaders: [String : String] = headers ?? [:]
         httpHeaders[ParamKey.apiKey] = APIServices.shared.credential.apiKey
-        httpHeaders[ParamKey.sessionId] = APISessionManager.getSessionId()
+
+        if let sessionId = APISessionManager.getSessionId() {
+            httpHeaders[ParamKey.sessionId] = sessionId
+        }
 
         let fileName = "Image-\(UUID().uuidString).jpg"
 
@@ -107,6 +110,7 @@ class NetworkAdapter {
             sessionDataTask.forEach {
                 if let request = $0.currentRequest, let url = request.url {
                     if url.absoluteString.contains(endpoint) {
+                        $0.cancel()
                     }
                 }
             }

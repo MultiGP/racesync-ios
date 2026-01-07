@@ -131,9 +131,9 @@ public class Race: Mappable, Joinable, Descriptable {
 
         urlName <- map[ParamKey.urlName]
         liveTimeEventUrl <- map[ParamKey.liveTimeEventUrl]
-        description <- map[ParamKey.description]
-        content <- map[ParamKey.content]
-        itinerary <- map[ParamKey.itineraryContent]
+        description <- (map[ParamKey.description], HTMLLinkTransform(baseURL: MGPWeb.baseURL()))
+        content <- (map[ParamKey.content], HTMLLinkTransform(baseURL: MGPWeb.baseURL()))
+        itinerary <- (map[ParamKey.itineraryContent], HTMLLinkTransform(baseURL: MGPWeb.baseURL()))
         raceEntryCount <- map[ParamKey.raceEntryCount]
         participantCount <- map[ParamKey.participantCount]
 

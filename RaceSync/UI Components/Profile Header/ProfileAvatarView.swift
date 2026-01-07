@@ -14,11 +14,11 @@ class ProfileAvatarView: DimmableView {
     // MARK: - Public Variables
 
     lazy var imageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.backgroundColor = Color.white
-        imageView.layer.cornerRadius = height/2
-        imageView.layer.masksToBounds = true
-        return imageView
+        let view = UIImageView()
+        view.backgroundColor = Color.white
+        view.layer.cornerRadius = height/2
+        view.layer.masksToBounds = true
+        return view
     }()
 
     let height: CGFloat = 170

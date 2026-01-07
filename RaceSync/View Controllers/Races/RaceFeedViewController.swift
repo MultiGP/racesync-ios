@@ -17,7 +17,7 @@ import CoreLocation
  Main view of the application, displaying lists of races filtered by different toggles. This view is very specific to that use case.
  For a more generic display of races, use RaceListViewController.
  */
-class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
+class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEditable {
 
     // MARK: - Public Variables
 
@@ -38,10 +38,16 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
             tableView.addGestureRecognizer(gesture)
         }
 
+        let longPress = UILongPressGestureRecognizer(target: self,action: #selector(didLongPress(_:)))
+        longPress.minimumPressDuration = 0.3
+        longPress.delaysTouchesBegan = true
+        tableView.addGestureRecognizer(longPress)
+
         return tableView
     }()
 
     var shimmeringView: ShimmeringView = defaultShimmeringView()
+    var raceController: RaceController?
 
     // MARK: - Private Variables
 
@@ -94,8 +100,8 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
     fileprivate lazy var searchButton: CustomButton = {
         let button = CustomButton(type: .system)
         button.addTarget(self, action: #selector(didPressSearchButton), for: .touchUpInside)
-        button.setImage(ButtonImg.search, for: .normal)
-        button.isHidden = true
+        button.setImage(SystemImg.search, for: .normal)
+        button.isHidden = !isRaceSearchEnabled
         return button
     }()
 
@@ -139,6 +145,8 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
     fileprivate let emptyStateChapterRaces = EmptyStateViewModel(.noJoinedRaces)
     fileprivate let emptyStateNearbyRaces = EmptyStateViewModel(.noNearbydRaces)
     fileprivate let emptyStateSeriesRaces = EmptyStateViewModel(.noSeriesRaces)
+
+    fileprivate let isRaceSearchEnabled: Bool = true
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -235,8 +243,8 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
     // MARK: - Actions
 
     @objc fileprivate func didChangeSegment() {
-        // Cancelling previous race API requests to avoid overlaps
-        raceApi.cancelAll()
+        // Cancelling previous API requests to avoid overlaps
+        raceApi.cancelSearchRequests()
 
         // This should be triggered just once, when first requesting access to the user's location
         // and display the shimmer while retrieving the location and loading the nearby races.
@@ -252,7 +260,9 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
     }
 
     @objc fileprivate func didPressSearchButton(_ sender: Any) {
-        Clog.log("didPressSearchButton")
+        let vc = UniversalSearchViewController()
+        let nc = NavigationController(rootViewController: vc)
+        present(nc, animated: true)
     }
 
     @objc fileprivate func didPressFilterButton(_ sender: Any) {
@@ -278,25 +288,29 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
         loadContent(forced: true)
     }
 
-    fileprivate func openRaceDetail(_ viewModel: RaceViewModel) {
-        let vc = RaceTabBarController(with: viewModel.race)
-        vc.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(vc, animated: true)
-    }
-
-    @objc fileprivate func didSwipeHorizontally(_ sender: Any) {
-        guard let swipeGesture = sender as? UISwipeGestureRecognizer else { return }
+    @objc fileprivate func didSwipeHorizontally(_ gesture: UIGestureRecognizer) {
+        guard let gesture = gesture as? UISwipeGestureRecognizer else { return }
 
         var newIndex = segmentedControl.selectedSegmentIndex
 
-        if swipeGesture.direction == .left {
+        if gesture.direction == .left {
             newIndex += 1
-        } else if swipeGesture.direction == .right {
+        } else if gesture.direction == .right {
             newIndex -= 1
         }
 
         guard newIndex >= 0 && newIndex <= segmentedControl.numberOfSegments else { return }
         segmentedControl.setSelectedSegment(newIndex)
+    }
+
+    @objc func didLongPress(_ gesture: UIGestureRecognizer) {
+        handleLongPress(gesture)
+    }
+
+    fileprivate func openRaceDetail(_ viewModel: RaceViewModel) {
+        let vc = RaceTabBarController(with: viewModel.race)
+        vc.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(vc, animated: true)
     }
 
     fileprivate func selectSegment(_ filter: RaceFilter) {
@@ -332,6 +346,14 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable {
             }
         }
     }
+
+    func raceViewModel(for index: Int) -> RaceViewModel? {
+        guard let list = raceFeed else { return nil }
+        if index >= 0, index < list.count {
+            return list[index]
+        }
+        return nil
+    }
 }
 
 extension RaceFeedViewController: UITableViewDelegate {
@@ -339,7 +361,7 @@ extension RaceFeedViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        if let viewModel = raceFeed?[indexPath.row] {
+        if let viewModel = raceViewModel(for: indexPath.row) {
             openRaceDetail(viewModel)
         }
     }
@@ -357,7 +379,7 @@ extension RaceFeedViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as RaceTableViewCell
-        guard let viewModel = raceFeed?[indexPath.row] else { return cell }
+        guard let viewModel = raceViewModel(for: indexPath.row) else { return cell }
 
         cell.titleLabel.text = viewModel.titleLabel
         cell.dateLabel.text = viewModel.dateLabel //"Saturday Sept 14 @ 9:00 AM"
@@ -389,7 +411,7 @@ extension RaceFeedViewController: APISettingsDelegate {
             updateSegmentedControl()
             raceFeedController.invalidateDataSource()
             loadContent(forced: true)
-        case .showPastEvents, .searchRadius:
+        case .searchRadius:
             raceFeedController.invalidateDataSource()
             loadContent(forced: true)
         case .measurement:

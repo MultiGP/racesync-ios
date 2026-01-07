@@ -10,7 +10,6 @@ import UIKit
 
 extension UIViewController {
 
-    // TODO: 'keyWindow' was deprecated in iOS 13.0: Should not be used for applications that support multiple scenes 
     static func topMostViewController() -> UIViewController? {
         guard let window = UIApplication.shared.keyWindow, let rootViewController = window.rootViewController else {
             return nil

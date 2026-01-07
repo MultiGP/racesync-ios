@@ -9,6 +9,7 @@
 import Foundation
 
 public typealias VoidCompletionBlock = () -> Void
+public typealias BoolCompletionBlock = (_ completed: Bool) -> Void
 public typealias CompletionBlock = (_ error: NSError?) -> Void
 public typealias StatusCompletionBlock = (_ status: Bool, _ error: NSError?) -> Void
 public typealias ObjectCompletionBlock<T> = (_ object: T?, _ error: NSError?) -> Void

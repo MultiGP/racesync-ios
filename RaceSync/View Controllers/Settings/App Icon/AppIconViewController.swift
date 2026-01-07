@@ -117,7 +117,7 @@ extension AppIconViewController: UITableViewDataSource {
         cell.accessoryType = .none
 
         if icon.isSelected() {
-            let imageView = UIImageView(image: UIImage(named: "icn_cell_checkmark"))
+            let imageView = UIImageView(image: ButtonImg.checkmark)
             imageView.tintColor = Color.blue
             cell.accessoryView = imageView
         } else {

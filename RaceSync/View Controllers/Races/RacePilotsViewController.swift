@@ -32,11 +32,20 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
         tableView.delegate = self
         tableView.emptyDataSetDelegate = self
         tableView.emptyDataSetSource = self
-        tableView.tableFooterView = UIView()
-        tableView.backgroundColor = Color.gray50
         tableView.register(cellType: FormTableViewCell.self)
         tableView.register(cellType: AvatarTableViewCell.self)
+        tableView.refreshControl = self.refreshControl
+        tableView.tableFooterView = UIView()
+        tableView.backgroundColor = Color.gray50
         return tableView
+    }()
+
+    fileprivate lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.backgroundColor = Color.gray50
+        refreshControl.tintColor = Color.blue
+        refreshControl.addTarget(self, action: #selector(didPullRefreshControl), for: .valueChanged)
+        return refreshControl
     }()
 
     fileprivate var userApi = UserApi()
@@ -61,6 +70,7 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
+        static let cellHeight: CGFloat = UniversalConstants.cellHeight
         static let buttonSpacing: CGFloat = 12
     }
 
@@ -113,16 +123,19 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
     }
 
     fileprivate func configureNavigationItems() {
+        navigationItem.rightBarButtonItem = raceController.navigationItems()
 
-        if race.canShowResults {
-            title = "Race Results"
-            tabBarItem = UITabBarItem(title: "Results", image: SystemImg.medal, selectedImage: SystemImg.medalFill)
-        } else {
+        if race.startDate.map({ !$0.isPassed }) ?? false {
             title = "Racing Pilots"
             tabBarItem = UITabBarItem(title: "Pilots", image: SystemImg.person, selectedImage: SystemImg.personFill)
+        } else {
+            if race.canShowResults {
+                title = "Race Results"
+            } else {
+                title = "Race in Progress"
+            }
+            tabBarItem = UITabBarItem(title: "Results", image: SystemImg.medal, selectedImage: SystemImg.medalFill)
         }
-
-        navigationItem.rightBarButtonItem = raceController.navigationItems()
     }
 
     // MARK: - Actions
@@ -151,6 +164,10 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
         didTapCell = loading
     }
 
+    @objc fileprivate func didPullRefreshControl() {
+        reloadRace()
+    }
+
     func canInteract(with cell: AvatarTableViewCell) -> Bool {
         guard !cell.isLoading else { return false }
         guard !didTapCell else { return false }
@@ -175,15 +192,20 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
     }
 
     func resetTableView() {
-        tableView.setContentOffset(.zero, animated: false)
         tableView.reloadData()
         invalidatePinnedView()
+
+        tableView.setContentOffset(CGPoint(x: 0, y: -tableView.adjustedContentInset.top), animated: false)
+
+        if refreshControl.isRefreshing {
+            refreshControl.endRefreshing()
+        }
     }
 
     // MARK: - Pinnable
 
     func canPinView() -> Bool {
-        return true
+        return myUserId != nil
     }
 
     func pinnedViewIndexPath() -> IndexPath? {
@@ -193,61 +215,14 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
             return cached
         }
 
-        let source = userViewModels
         let section = showingExternalResults() ? 1 : 0
-        guard let index = source.firstIndex(where: { $0.userId == userId }) else {
+        guard let index = userViewModels.firstIndex(where: { $0.userId == userId }) else {
             return nil
         }
 
         let indexPath = IndexPath(row: index, section: section)
         cachedPinnedIndexPath = indexPath
         return indexPath
-    }
-
-    func configure<T>(_ view: T, forRowAt indexPath: IndexPath) where T : UITableViewCell {
-        guard let cell = view as? AvatarTableViewCell else { return }
-
-        let viewModel = userViewModels[indexPath.row]
-
-        cell.avatarImageView.imageView.setImage(with: viewModel.pictureUrl, placeholderImage: PlaceholderImg.medium)
-        cell.titleLabel.text = viewModel.displayName
-        cell.subtitleLabel.text = ResultEntryViewModel.noResultPlaceholder
-        cell.rankView.rank = nil
-        cell.textPill.text = nil
-        cell.textPill.style = .badge
-        cell.titleLabel.textColor = Color.black
-        cell.subtitleLabel.textColor = Color.gray300
-        cell.rankView.titleLabel.textColor = Color.gray300
-        cell.backgroundColor = Color.white
-        cell.selectedBackgroundView?.backgroundColor = Color.gray20
-
-        if race.canShowResults {
-            if let resultEntry = viewModel.resultEntry {
-                let resultEntryVM = ResultEntryViewModel(with: resultEntry, from: race)
-
-                if resultEntryVM.resultLabel != nil {
-                    cell.subtitleLabel.text = resultEntryVM.resultLabel
-                    cell.rankView.rank = Int32(indexPath.row+1)
-                }
-            }
-
-            if let score = viewModel.score, score > 0 {
-                let unit = (score == 1) ? "pt" : "pts"
-                cell.textPill.text = "\(score) \(unit)"
-                cell.textPill.style = .text
-                cell.rankView.rank = Int32(indexPath.row+1)
-            }
-
-            if let userId = myUserId, viewModel.userId == userId {
-                cell.titleLabel.textColor = Color.white
-                cell.subtitleLabel.textColor = Color.gray20
-                cell.rankView.titleLabel.textColor = Color.gray20
-                cell.backgroundColor = Color.gray200
-                cell.selectedBackgroundView?.backgroundColor = Color.gray300
-            }
-        } else if race.raceClass != .esport {
-            cell.textPill.text = viewModel.channelLabel // only real races have frequencies
-        }
     }
 }
 
@@ -257,7 +232,7 @@ extension RacePilotsViewController: UITableViewDelegate {
 
         if showingExternalResults(), indexPath.section == externalResultSection {
             guard let url = race.liveTimeEventUrl else { return }
-            WebViewController.openUrl(url)
+            WebViewController.open(url)
         } else {
             showUserProfile(forUserAt: indexPath)
         }
@@ -266,8 +241,15 @@ extension RacePilotsViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if race.canShowResults {
-            return section == externalResultSection ? nil : race.scoringFormat.title
+
+        if (showingExternalResults() && section == externalResultSection) {
+            return nil
+        }
+
+        if race.inProgress {
+            return "\(race.scoringFormat.title)\n\(raceController.currentRaceTitle())"
+        } else if race.canShowResults {
+            return "\(race.scoringFormat.title)"
         } else {
             return nil
         }
@@ -317,7 +299,7 @@ extension RacePilotsViewController: UITableViewDataSource {
         if showingExternalResults(), indexPath.section == externalResultSection {
             return UniversalConstants.cellFormHeight
         } else {
-            return UniversalConstants.cellHeight
+            return Constants.cellHeight
         }
     }
 
@@ -343,6 +325,66 @@ extension RacePilotsViewController: UITableViewDataSource {
         }
 
         return cell
+    }
+
+    func configure<T>(_ view: T, forRowAt indexPath: IndexPath) where T : UITableViewCell {
+        guard let cell = view as? AvatarTableViewCell else { return }
+
+        let viewModel = userViewModels[indexPath.row]
+
+        cell.avatarImageView.imageView.setImage(with: viewModel.pictureUrl, placeholderImage: PlaceholderImg.medium)
+        cell.titleLabel.text = viewModel.username
+        cell.subtitleLabel.text = ResultEntryViewModel.noResultPlaceholder
+        cell.rankView.rank = nil
+        cell.textPill.text = nil
+        cell.textPill.style = .badge
+        cell.titleLabel.textColor = Color.black
+        cell.subtitleLabel.textColor = Color.gray300
+        cell.rankView.titleLabel.textColor = Color.gray300
+        cell.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : Color.gray20
+        cell.selectedBackgroundView?.backgroundColor = Color.gray50
+
+        if race.canShowResults {
+            var score:Int32? = 0
+            cell.rankView.rank = score
+
+            if let resultEntry = viewModel.resultEntry {
+                let resultEntryVM = ResultEntryViewModel(with: resultEntry, from: race)
+                if (!race.isGQ) { score = viewModel.score }
+
+                if resultEntryVM.resultLabel != nil {
+                    cell.subtitleLabel.text = resultEntryVM.resultLabel
+                    cell.rankView.rank = Int32(indexPath.row+1)
+                }
+            } else if let raceEntry = viewModel.raceEntry {
+                if (!race.isGQ) { score = raceEntry.score }
+
+                if (score ?? 0 > 0) {
+                    cell.rankView.rank = Int32(indexPath.row+1)
+                    cell.subtitleLabel.text = ResultEntryViewModel.noTimesPlaceholder
+                }
+            }
+
+            if let score = score, score > 0 {
+                let unit = (score == 1) ? "pt" : "pts"
+                cell.textPill.text = "\(score) \(unit)"
+                cell.textPill.style = .text
+                cell.rankView.rank = Int32(indexPath.row+1)
+            }
+
+            if let userId = myUserId, viewModel.userId == userId {
+                cell.titleLabel.textColor = Color.white
+                cell.subtitleLabel.textColor = Color.gray20
+                cell.rankView.titleLabel.textColor = Color.gray20
+                cell.backgroundColor = Color.gray200
+                cell.selectedBackgroundView?.backgroundColor = Color.gray300
+            }
+        }
+
+        // only real races have frequencies
+        if !race.hasEnded && race.raceClass != .esport {
+           cell.textPill.text = viewModel.channelLabel
+       }
     }
 }
 
@@ -371,8 +413,7 @@ extension RacePilotsViewController: EmptyDataSetSource {
     }
 
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
-        guard let startDate = race.startDate else { return nil }
-        if race.status == .open && !startDate.isPassed {
+        if race.status == .open && !race.hasStarted {
             return emptyStateNoPilots.buttonTitle(state)
         } else {
             return nil

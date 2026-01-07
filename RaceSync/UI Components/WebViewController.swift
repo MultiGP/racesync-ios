@@ -12,14 +12,14 @@ import RaceSyncAPI
 
 class WebViewController: SFSafariViewController {
 
-    // MARK: - Public Static Convenience Methods
+    // MARK: - Public
 
-    static func openUrl(_ url: String, style: UIModalPresentationStyle = .automatic) {
+    static func open(_ url: String, style: UIModalPresentationStyle = .automatic, completion: (() -> Void)? = nil) {
         guard let URL = URL(string: url) else { return }
-        openURL(URL, style: style)
-    } 
+        open(URL, style: style, completion: completion)
+    }
 
-    static func openURL(_ URL: URL, style: UIModalPresentationStyle = .automatic, completion: (() -> Void)? = nil) {
+    static func open(_ URL: URL, style: UIModalPresentationStyle = .automatic, completion: (() -> Void)? = nil) {
         let webvc = WebViewController(url: URL)
         webvc.modalPresentationStyle = style
         UIViewController.topMostViewController()?.present(webvc, animated: true, completion: completion)
@@ -41,7 +41,7 @@ class WebViewController: SFSafariViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        AppUtil.lockOrientation(.allButUpsideDown)
+        AppUtil.lock(.allButUpsideDown)
     }
 
     override func viewDidAppear(_ animated: Bool) {

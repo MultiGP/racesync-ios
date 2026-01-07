@@ -20,16 +20,17 @@ class RaceController {
     var parentViewController: RaceTabBarController? = nil
     var isLoading: Bool = false
 
+    var menuCompletion: BoolCompletionBlock? = nil
+
     // MARK: - Private
 
-    fileprivate let ignoreFinalizingError: Bool = true // The API finalize(id) still returns 500 error. Reported https://github.com/MultiGP/multigp-com/issues/93
-
     fileprivate var visibleViewController: UIViewController? {
-        get { return UIViewController.topMostViewController() }
+        UIViewController.topMostViewController()
     }
 
-    fileprivate var visibleNavigationController: UINavigationController? {
-        get { return UIViewController.topMostViewController()?.navigationController }
+    fileprivate var visibleNavigationController: NavigationController? {
+        (visibleViewController as? NavigationController)
+        ?? (visibleViewController?.navigationController as? NavigationController)
     }
 
     // MARK: - Initialization
@@ -68,16 +69,21 @@ class RaceController {
 
     public func reloadRace() {
 
-        raceApi.view(race: raceId) { [weak self] race, error in
-            guard let self = self else { return }
+        if let completion = menuCompletion {
+            completion(true)
+            menuCompletion = nil // invalidate completion right after
+        } else {
+            raceApi.view(race: raceId) { [weak self] race, error in
+                guard let self = self else { return }
 
-            if let race = race {
-                // TODO: Temporary hack since race/view API doesn't include the raceOwnerName attribute
-                // See issue https://github.com/MultiGP/multigp-com/issues/88
-                race.ownerUserName = self.race?.ownerUserName ?? ""
-                self.race = race
+                if let race = race {
+                    // TODO: Temporary hack since race/view API doesn't include the raceOwnerName attribute
+                    // See issue https://github.com/MultiGP/multigp-com/issues/88
+                    race.ownerUserName = self.race?.ownerUserName ?? ""
+                    self.race = race
 
-                reloadContentViews()
+                    reloadContentViews()
+                }
             }
         }
     }
@@ -88,8 +94,7 @@ class RaceController {
 
     public func raceUserViewModels() -> [UserViewModel] {
         var viewModels = [UserViewModel]()
-
-        guard let race = race else { return viewModels }
+        guard let race = race, let entries = race.entries else { return viewModels }
 
         func populateScore(in userViewModels: [UserViewModel]) {
             guard race.isGQ == false else { return } // Don't display points for GQ race results
@@ -101,29 +106,47 @@ class RaceController {
             }
         }
 
-        if race.canShowResults, let results = ResultEntryViewModel.combinedResults(from: race.results, for: race.trueScoringFormat) {
-            viewModels += UserViewModel.viewModelsFromResults(results)
-            populateScore(in: viewModels)
-        }
+        if race.canShowResults {
+            if let results = ResultEntryViewModel.combinedResults(from: race.results, for: race.trueScoringFormat) {
+                viewModels += UserViewModel.viewModelsFromResults(results)
+                populateScore(in: viewModels)
 
-        if let entries = race.entries, entries.count > 0 {
-            // We need to include the pilots that didn't complete laps still
-            if viewModels.count > 0, viewModels.count < entries.count {
+                // Sort only when at least one score > 0, to match the web
+                // GQ races aren't scored
+                if !race.isGQ { viewModels.sort { ($0.score ?? 0) > ($1.score ?? 0) } }
+            }
+
+            if viewModels.count < entries.count {
                 viewModels += UserViewModel.viewModels(viewModels, withoutResults: entries)
                 populateScore(in: viewModels)
 
-            // No race results, so let's just populate with race entries instead
-            } else if viewModels.count == 0 {
-                viewModels += UserViewModel.viewModelsFromEntries(entries)
+                // Sort only when at least one score > 0, to match the web
+                // GQ races aren't scored
+                if !race.isGQ { viewModels.sort { ($0.score ?? 0) > ($1.score ?? 0) } }
             }
+        } else {
+            // No race results, so let's just populate the race entries
+            viewModels += UserViewModel.viewModelsFromEntries(entries)
         }
 
         return viewModels
     }
 
+    public func currentRaceTitle() -> String {
+        guard let race, let schedule = race.schedule, let lastRound = schedule.rounds.last
+        else { return "" }
+
+        let title = lastRound.name ?? ""
+
+        guard let lastHeat = lastRound.heats.last?.name
+        else { return title }
+
+        return "\(title) - \(lastHeat)"
+    }
+
     // MARK: - Actions
 
-    @objc func didPressEditButton() {
+    func showEditMenu() {
         guard let race = race else { return }
 
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
@@ -154,26 +177,19 @@ class RaceController {
         visibleViewController?.present(alert, animated: true)
     }
 
-    @objc func didPressCalendarButton() {
-        guard let race = race, let event = race.createCalendarEvent(with: race.id) else { return }
-
-        ActionSheetUtil.presentActionSheet(withTitle: "Save the race details to your calendar?", buttonTitle: "Save to Calendar", completion: { (action) in
-            CalendarUtil.add(event)
-        })
-    }
-
-    @objc public func didPressShareButton() {
+    func showShareMenu() {
         guard let race = race else { return }
-        guard  let raceURL = MGPWeb.getURL(for: .raceView, value: race.id) else { return }
 
-        var items: [Any] = [raceURL]
+        let url = MGPWeb.getURL(for: .raceView, value: race.id)
+
+        var items: [Any] = [url]
         var activities = [UIActivity]()
 
         if race.canManagePayments {
             activities += [PaypalActivity()]
         }
 
-        activities += [MultiGPActivity(), CopyLinkActivity()]
+        activities += [MGPActivity(), CopyLinkActivity()]
 
         // Calendar integration
         if let event = race.createCalendarEvent(with: raceId) {
@@ -186,18 +202,29 @@ class RaceController {
         visibleViewController?.present(vc, animated: true)
     }
 
-    @objc fileprivate func didPressZippyQButton() {
+    func showZippyQWeb() {
         guard let race = race else { return }
-        guard  let url = MGPWeb.getURL(for: .zippyqView, value: race.id) else { return }
+
+        let url = MGPWeb.getURL(for: .zippyqView, value: race.id)
 
         if UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url)
         }
     }
 
+    func saveInCalendar() {
+        guard let race = race, let event = race.createCalendarEvent(with: race.id) else { return }
+
+        ActionSheetUtil.presentActionSheet(
+            withTitle: "Save the race details to your calendar?",
+            buttonTitle: "Save to Calendar", completion: { (action) in
+            CalendarUtil.add(event)
+        })
+    }
+
     // MARK: - Navigation Action Builders
 
-    enum RaceAction: CaseIterable {
+    enum RaceAction: Int, CaseIterable {
         case edit, calendar, share, zippyQ
 
         func makeButton(target: Any?, action: Selector) -> UIButton {
@@ -233,7 +260,7 @@ class RaceController {
             if (option == .zippyQ && !race.isZippyQEnabled) { continue }
 
             let button = option.makeButton(target: self, action: #selector(raceActionTapped(_:)))
-            button.tag = options.firstIndex(of: option) ?? 0
+            button.tag = option.rawValue
             stackView.addArrangedSubview(button)
         }
 
@@ -241,13 +268,23 @@ class RaceController {
     }
 
     @objc private func raceActionTapped(_ sender: UIButton) {
-        guard let option = RaceAction.allCases[safe: sender.tag] else { return }
+        guard let action = RaceAction(rawValue: sender.tag) else { return }
+        showContextualMenu(action)
+    }
 
-        switch option {
-        case .edit: didPressEditButton()
-        case .calendar: didPressCalendarButton()
-        case .share: didPressShareButton()
-        case .zippyQ: didPressZippyQButton()
+    func showContextualMenu(_ action: RaceAction, completion: BoolCompletionBlock? = nil) {
+
+        menuCompletion = completion
+
+        switch action {
+        case .edit:
+            showEditMenu()
+        case .calendar:
+            saveInCalendar()
+        case .share:
+            showShareMenu()
+        case .zippyQ:
+            showZippyQWeb()
         }
     }
 
@@ -271,9 +308,10 @@ class RaceController {
         let message = isClosed ? "Are you sure you want to open race enrollment?" : "Are you sure you want to close race enrollment?"
 
         return UIAlertAction(title: title, style: .default) { [weak self] _ in
-            ActionSheetUtil.presentActionSheet(withTitle: message) { [weak self] _ in
+            ActionSheetUtil.presentActionSheet(
+                withTitle: message, completion: { [weak self] _ in
                 self?.toggleRaceEnrollment()
-            }
+            })
         }
     }
 
@@ -288,7 +326,7 @@ class RaceController {
             ActionSheetUtil.presentDestructiveActionSheet(
                 withTitle: "Are you sure you want to finalize \"\(race.name)\"?",
                 message: "Finalizing this race will close enrollment, email the results to the pilots, and initialize the next race if configured.",
-                destructiveTitle: "Yes, Finalize", cancel:  { [weak self] _ in
+                destructiveTitle: "Yes, Finalize", completion: { [weak self] _ in
                     self?.finalizeRace()
                 })
         }
@@ -298,7 +336,7 @@ class RaceController {
         UIAlertAction(title: "Delete", style: .destructive) { [weak self] _ in
             ActionSheetUtil.presentDestructiveActionSheet(
                 withTitle: "Are you sure you want to delete \"\(race.name)\"?",
-                destructiveTitle: "Yes, Delete", cancel:  { [weak self] _ in
+                destructiveTitle: "Yes, Delete", completion: { [weak self] _ in
                     self?.deleteRace()
                 })
         }
@@ -374,7 +412,7 @@ class RaceController {
     func finalizeRace() {
         guard let race = race else { return }
         raceApi.finalizeRace(with: race.id) { status, error in
-            if status == true || self.ignoreFinalizingError == true {
+            if status {
                 self.reloadRace()
             } else if let error = error {
                 AlertUtil.presentAlertMessage("Couldn't finalize this race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
@@ -386,7 +424,12 @@ class RaceController {
         guard let race = race else { return }
         raceApi.deleteRace(with: race.id) { status, error in
             if status == true {
-                self.visibleNavigationController?.popViewController(animated: true)
+                if let completion = self.menuCompletion {
+                    completion(true)
+                    self.menuCompletion = nil // invalidate completion right after
+                } else {
+                    self.visibleNavigationController?.popViewController(animated: true)
+                }
             } else if let error = error {
                 AlertUtil.presentAlertMessage("Couldn't delete this race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
             }
@@ -404,8 +447,13 @@ extension RaceController: RaceFormViewControllerDelegate {
             self.reloadRace()
             viewController.dismiss(animated: true, completion: nil)
         case .new:
-            visibleNavigationController?.popViewController(animated: true)
-            viewController.dismiss(animated: true, completion: nil)
+            let vc = RaceTabBarController(with: race)
+            vc.isDismissable = true
+            viewController.navigationController?.pushViewController(vc, animated: true)
+
+            if let nc = viewController.presentingViewController as? NavigationController {
+                nc.popViewController(animated: false) // let's pop, so when the current view is dismissed, we see the list of races
+            }
         }
     }
 

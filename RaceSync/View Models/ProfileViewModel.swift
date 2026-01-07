@@ -44,7 +44,7 @@ class ProfileViewModel: Descriptable {
         self.topBadgeLabel = nil
         self.topBadgeImage = nil
 
-        self.leftBadgeImage = UIImage(named: "icn_race_small")
+        self.leftBadgeImage = ButtonImg.race_small
         self.leftSegmentLabel = "Races"
         if user.raceCount == 1 {
             self.leftBadgeLabel = "\(user.raceCount) Race"
@@ -52,7 +52,7 @@ class ProfileViewModel: Descriptable {
             self.leftBadgeLabel = "\(user.raceCount) Races"
         }
 
-        self.rightBadgeImage = UIImage(named: "icn_chapter_small")
+        self.rightBadgeImage = ButtonImg.chapter_small
         self.rightSegmentLabel = "Chapters"
         if user.chapterCount == 1 {
             self.rightBadgeLabel = "\(user.chapterCount) Chapter"
@@ -73,14 +73,21 @@ class ProfileViewModel: Descriptable {
 
         if let stringTier = chapter.tier, let tier = Int(stringTier) {
             let chapterTier = ChapterTier(rawValue: tier)
-            self.topBadgeLabel = chapterTier?.title
-            self.topBadgeImage = UIImage(named: "icn_badge")
+
+            if chapter.isApproved {
+                self.topBadgeLabel = chapterTier?.title
+                self.topBadgeImage = ButtonImg.badge_small
+            } else {
+                self.topBadgeLabel = "Disabled"
+                self.topBadgeImage = SystemImg.badge_cross_small
+            }
+
         } else {
             self.topBadgeLabel = nil
             self.topBadgeImage = nil
         }
 
-        self.leftBadgeImage = UIImage(named: "icn_race_small")
+        self.leftBadgeImage = ButtonImg.race_small
         self.leftSegmentLabel = "Races"
         if chapter.raceCount == 1 {
             self.leftBadgeLabel = "\(chapter.raceCount) Race"
@@ -88,7 +95,7 @@ class ProfileViewModel: Descriptable {
             self.leftBadgeLabel = "\(chapter.raceCount) Races"
         }
 
-        self.rightBadgeImage = UIImage(named: "icn_member_small")
+        self.rightBadgeImage = ButtonImg.member_small
         self.rightSegmentLabel = "Members"
         if chapter.memberCount == 1 {
             self.rightBadgeLabel = "\(chapter.memberCount) Member"
@@ -96,16 +103,50 @@ class ProfileViewModel: Descriptable {
             self.rightBadgeLabel = "\(chapter.memberCount) Members"
         }
     }
+
+    init(with series: Series) {
+        self.type = .series
+        self.id = series.id
+
+        self.title = series.name
+        self.pictureUrl = nil
+        self.backgroundUrl = series.mainImageUrl
+
+        var description: String = series.typeString
+        if let date = series.startDate {
+            description += "\n"
+            description += "Started on: \(DateUtil.isoDateFormatter.string(from: date))"
+        }
+        if let date = series.endDate {
+            description += " to: \(DateUtil.isoDateFormatter.string(from: date))"
+        }
+
+        self.displayName = description
+
+        self.leftBadgeImage = ButtonImg.race_small
+        self.leftBadgeLabel = "\(series.raceApprovedCount) Race"
+
+        self.rightBadgeImage = ButtonImg.member_small
+        self.rightBadgeLabel = "\(series.pilotCount) Pilots"
+
+        self.locationName = ""
+        self.rightSegmentLabel = ""
+        self.leftSegmentLabel = ""
+        self.topBadgeLabel = nil
+        self.topBadgeImage = nil
+    }
 }
 
 public enum ProfileViewModelType: String {
     case user = "user"
     case chapter = "chapter"
+    case series = "series"
 
     var placeholder: UIImage? {
         switch self {
-        case .user:         return PlaceholderImg.profileAvatar
-        case .chapter:      return PlaceholderImg.profileAvatar
+        case .user:     return PlaceholderImg.profileAvatar
+        case .chapter:  return PlaceholderImg.profileAvatar
+        default:        return nil
         }
     }
 }

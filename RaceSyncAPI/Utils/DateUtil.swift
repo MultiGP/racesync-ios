@@ -97,4 +97,16 @@ public extension DateUtil {
         formatter.dateFormat = "@ h:mm a"
         return formatter
     }()
+
+    static let displayTimeFormatter2: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mm a"
+        return formatter
+    }()
+
+    static let isoDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd/MM/yyyy"
+        return formatter
+    }()
 }

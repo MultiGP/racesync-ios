@@ -20,6 +20,10 @@ enum ErrorCode: Int {
 class ErrorUtil {
 
     static func parseError<T>(_ response: DataResponse<T>) -> NSError {
+        if response.result.isFailure, let error = response.result.error {
+            return error as NSError
+        }
+
         guard let data = response.data, let value = JSON(data).dictionaryObject else {
             return generalError
         }

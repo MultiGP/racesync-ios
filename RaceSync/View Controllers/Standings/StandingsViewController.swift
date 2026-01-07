@@ -22,17 +22,21 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.emptyDataSetSource = self
-        tableView.tableFooterView = UIView()
         tableView.register(cellType: AvatarTableViewCell.self)
         tableView.keyboardDismissMode = .onDrag
         tableView.verticalScrollIndicatorInsets = UIEdgeInsets(top: -1, left: 0, bottom: 0, right: 0)
         tableView.refreshControl = self.refreshControl
+        tableView.tableFooterView = UIView()
 
         let backgroundView = UIView()
         backgroundView.backgroundColor = Color.gray20
         tableView.backgroundView = backgroundView
         return tableView
     }()
+
+    var shimmeringView: ShimmeringView = defaultShimmeringView()
+
+    // MARK: - Private Variables
 
     fileprivate lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
@@ -84,16 +88,10 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         return view
     }()
 
-    var shimmeringView: ShimmeringView = defaultShimmeringView()
-
-    // MARK: - Private Variables
-
-    fileprivate let standingApi = StandingApi()
+    fileprivate let standingsController = StandingsController()
+    fileprivate var filteredViewModels = [StandingViewModel]()
+    fileprivate let season: StandingSeason
     fileprivate let userApi = UserApi()
-
-    fileprivate let season: StandingSeason = .y2025
-    fileprivate var standingViewModels = [StandingViewModel]()
-    fileprivate var searchResult = [StandingViewModel]()
 
     // Pinnable variables
     var pinnedView: UIView?
@@ -131,7 +129,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if standingViewModels.count == 0 {
+        if standingsController.isEmpty(for: season) {
             isLoadingList(true)
         } else {
             tableView.reloadData()
@@ -141,9 +139,20 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if standingViewModels.count == 0 {
+        if standingsController.isEmpty(for: season) {
             loadContent()
         }
+    }
+
+    // MARK: - Initialization
+
+    init(with season: StandingSeason) {
+        self.season = season
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     deinit {
@@ -189,14 +198,12 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     // MARK: - Data Update
 
     fileprivate func loadContent() {
-
         if !refreshControl.isRefreshing {
             isLoadingList(true)
         }
 
-        standingApi.getStandings(for: season) { (objects, error) in
+        standingsController.fetchStandings(for: season) { objects, error in
             if let objects = objects {
-                self.standingViewModels = StandingViewModel.viewModels(with: objects)
                 self.enableSearchBar(objects.count > 0)
             } else if error != nil {
                 self.emptyStateError = EmptyStateViewModel(.errorStandings)
@@ -213,13 +220,14 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     }
 
     fileprivate func standingViewModel(at indexPath: IndexPath) -> StandingViewModel? {
-        let viewModels = isSearching ? searchResult : standingViewModels
-        return viewModels[indexPath.row]
+        if isSearching {
+            return filteredViewModels[indexPath.row]
+        } else {
+            return standingsController.viewModel(at: indexPath.row, for: season)
+        }
     }
 
-    @objc fileprivate func didPullRefreshControl() {
-        loadContent()
-    }
+
 
     // MARK: - Search
 
@@ -232,42 +240,22 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         }
     }
 
-    var isSearching: Bool {
+    fileprivate var isSearching: Bool {
         guard let text = searchBar.text else { return false }
         let query = text.trimmingCharacters(in: .whitespacesAndNewlines)
         return query.count >= minQuery || query.containsEmoji
     }
 
-    func filterResults(with text: String) -> [StandingViewModel] {
-        let query = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard query.count >= minQuery || query.containsEmoji else { return [] }
-
-        let normalizedQuery = query.lowercased().folding(options: .diacriticInsensitive, locale: .current)
-
-        return standingViewModels.filter { viewModel in
-            let label = viewModel.titleLabel
-
-            if query.containsEmoji {
-                return label.contains(query)
-            } else {
-                let words = label.lowercased()
-                    .folding(options: .diacriticInsensitive, locale: .current)
-                    .components(separatedBy: CharacterSet.alphanumerics.inverted)
-                    .filter { !$0.isEmpty }
-                return words.contains { $0.hasPrefix(normalizedQuery) }
-            }
-        }
+    fileprivate func currentDataSource() -> [StandingViewModel] {
+        return isSearching ? filteredViewModels : standingsController.viewModels(for: season)
     }
 
     // MARK: - Cell Pinning
 
     func canPinView() -> Bool {
         guard let userId = myUserId else { return false }
-
-        let source = isSearching ? searchResult : standingViewModels
-        guard source.firstIndex(where: { $0.standing.userId == userId }) != nil else {
-            return false
-        }
+        guard currentDataSource().firstIndex(where: { $0.standing.userId == userId }) != nil
+        else { return false }
         return true
     }
 
@@ -276,45 +264,13 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
 
         if let cachedPinnedIndexPath { return cachedPinnedIndexPath }
 
-        let source = isSearching ? searchResult : standingViewModels
-
-        guard let index = source.firstIndex(where: { $0.standing.userId == userId }) else {
+        guard let index = currentDataSource().firstIndex(where: { $0.standing.userId == userId }) else {
             return nil
         }
 
         let indexPath = IndexPath(row: index, section: 0)
         cachedPinnedIndexPath = indexPath
         return indexPath
-    }
-
-    func configure<T>(_ view: T, forRowAt indexPath: IndexPath) where T : UITableViewCell {
-        guard let cell = view as? AvatarTableViewCell,
-                  let viewModel = standingViewModel(at: indexPath) else { return }
-
-        cell.rankView.rank = viewModel.rank
-        cell.titleLabel.text = viewModel.titleLabel
-        cell.subtitleLabel.text = viewModel.subtitleLabel
-        cell.avatarImageView.isHidden = true
-        cell.accessoryView = nil
-
-        if let userId = myUserId, viewModel.standing.userId == userId {
-            cell.titleLabel.textColor = Color.white
-            cell.subtitleLabel.textColor = Color.gray20
-            cell.rankView.titleLabel.textColor = Color.gray20
-            cell.backgroundColor = Color.gray200
-            cell.selectedBackgroundView?.backgroundColor = Color.gray300
-
-            let image = ButtonImg.share?.withTintColor(.white)
-            let imageView = UIImageView(image: image)
-            imageView.tintColor = .white
-            cell.accessoryView = imageView
-        } else {
-            cell.titleLabel.textColor = Color.black
-            cell.subtitleLabel.textColor = Color.gray300
-            cell.rankView.titleLabel.textColor = Color.gray300
-            cell.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : Color.gray20
-            cell.selectedBackgroundView?.backgroundColor = Color.gray50
-        }
     }
 
     // MARK: - Personal Standing Badge
@@ -349,20 +305,43 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         self.presenter = presenter
     }
 
-    @objc func userDidTakeScreenshot() {
+    @objc fileprivate func userDidTakeScreenshot() {
         // only trigger when this view is visible
         guard let view = viewIfLoaded, view.window != nil else { return }
         guard let cachedIndexPath = cachedPinnedIndexPath else { return }
         shouldPresentMyStandingBadge(cachedIndexPath)
     }
 
-    func resetTableView() {
+    fileprivate func resetTableView() {
         tableView.refreshControl = isSearching ? nil : refreshControl
         tableView.setContentOffset(.zero, animated: false)
         tableView.reloadData()
 
         // resets it each time, so it can be recalculated
         invalidatePinnedView()
+    }
+
+    // MARK: - Actions
+
+    fileprivate func showUserProfile(forUserAt indexPath: IndexPath, from cell: AvatarTableViewCell) {
+        guard let viewModel = standingViewModel(at: indexPath) else { return }
+        guard !viewModel.standing.userId.isEmpty else { return }
+
+        cell.isLoading = true
+
+        userApi.getUser(with: viewModel.standing.userId) { [weak self] (user, error) in
+            if let user = user {
+                let vc = UserViewController(with: user)
+                self?.navigationController?.pushViewController(vc, animated: true)
+            } else if let _ = error {
+                // handle error
+            }
+            cell.isLoading = false
+        }
+    }
+
+    @objc fileprivate func didPullRefreshControl() {
+        loadContent()
     }
 }
 
@@ -378,31 +357,18 @@ extension StandingsViewController: UITableViewDelegate {
             return
         }
 
-        cell.isLoading = true
-
-        guard let viewModel = standingViewModel(at: indexPath) else { return }
-        guard !viewModel.standing.userId.isEmpty else { return }
-
-        userApi.getUser(with: viewModel.standing.userId) { [weak self] (user, error) in
-            if let user = user {
-                let vc = UserViewController(with: user)
-                self?.navigationController?.pushViewController(vc, animated: true)
-            } else if let _ = error {
-                // handle error
-            }
-            cell.isLoading = false
-        }
+        showUserProfile(forUserAt: indexPath, from: cell)
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        guard !standingViewModels.isEmpty else {
+        guard !standingsController.isEmpty(for: season) else {
             return nil
         }
 
         guard !isSearching else {
-            return searchResult.isEmpty ? nil : "Showing \(searchResult.count) Pilots"
+            return filteredViewModels.isEmpty ? nil : "Found \(filteredViewModels.count) Pilots"
         }
-        return season.sectionTitle
+        return "\(season.rawValue) MultiGP Global Qualifier\nFastest 3 Consecutive Laps"
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -413,8 +379,7 @@ extension StandingsViewController: UITableViewDelegate {
 extension StandingsViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard !isSearching else { return searchResult.count }
-        return standingViewModels.count
+        return currentDataSource().count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -425,6 +390,36 @@ extension StandingsViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return Constants.cellHeight
+    }
+
+    func configure<T>(_ view: T, forRowAt indexPath: IndexPath) where T : UITableViewCell {
+        guard let cell = view as? AvatarTableViewCell,
+              let viewModel = standingViewModel(at: indexPath) else { return }
+
+        cell.rankView.rank = viewModel.rank
+        cell.titleLabel.text = viewModel.titleLabel
+        cell.subtitleLabel.text = viewModel.subtitleLabel
+        cell.avatarImageView.isHidden = true
+        cell.accessoryView = nil
+
+        if let userId = myUserId, viewModel.standing.userId == userId {
+            cell.titleLabel.textColor = Color.white
+            cell.subtitleLabel.textColor = Color.gray20
+            cell.rankView.titleLabel.textColor = Color.gray20
+            cell.backgroundColor = Color.gray200
+            cell.selectedBackgroundView?.backgroundColor = Color.gray300
+
+            let image = ButtonImg.share?.withTintColor(.white)
+            let imageView = UIImageView(image: image)
+            imageView.tintColor = .white
+            cell.accessoryView = imageView
+        } else {
+            cell.titleLabel.textColor = Color.black
+            cell.subtitleLabel.textColor = Color.gray300
+            cell.rankView.titleLabel.textColor = Color.gray300
+            cell.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : Color.gray20
+            cell.selectedBackgroundView?.backgroundColor = Color.gray50
+        }
     }
 }
 
@@ -461,10 +456,10 @@ extension StandingsViewController: UISearchBarDelegate {
         searchBar.setShowsCancelButton(false, animated: true)
     }
 
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+    func searchBar(_ searchBar: UISearchBar, textDidChange text: String) {
 
         // Matches leading parts of any word, with robust tokenization and several insensitive cases
-        searchResult = filterResults(with: searchText)
+        filteredViewModels = standingsController.filter(with: text, length: minQuery, for: season)
         resetTableView()
     }
 
