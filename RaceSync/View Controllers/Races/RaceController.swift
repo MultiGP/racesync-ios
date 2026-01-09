@@ -154,6 +154,9 @@ class RaceController {
 
         if race.canBeEdited {
             alert.addAction(makeEditRaceAction())
+        }
+
+        if race.canManagePilots {
             alert.addAction(makeManagePilotsAction())
         }
 
