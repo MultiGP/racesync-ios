@@ -14,8 +14,8 @@ public class APIServices {
     // MARK: - Public Variables
 
     public static let shared = APIServices()
-    public var credential = APICredential()
-    public let settings = APISettings()
+    public let settings: APISettings
+    public var credential: APICredential
 
     public var myUser: User? {
         didSet {
@@ -50,6 +50,8 @@ public class APIServices {
 
     public init() {
         NetworkActivityIndicatorManager.shared.isEnabled = true
+        self.settings = APISettings()
+        self.credential = APICredential()
     }
 
     // MARK: - Invalidation

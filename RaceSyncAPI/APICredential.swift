@@ -18,12 +18,14 @@ public class APICredential {
         let path = bundle.path(forResource: "credentials", ofType: "plist")
         let dict = NSDictionary(contentsOfFile: path ?? "")
 
-        // The API key for the iOS client is stored on a non-versioned plist file
-        // For more information about this, please ping Ignacio
-        apiKey = dict?["API_KEY"] as? String ?? ""
+        // The RaceSync API key for the iOS client is stored on a non-versioned plist file
+        guard let key = dict?["API_KEY"] as? String else {
+            fatalError(MapError.apiKeyMissing.localizedDescription)
+        }
+        apiKey = key
 
-        // Used for auto-completing in the login screen
 #if DEBUG
+        // Used for auto-completing in the login screen
         email = dict?["EMAIL"] as? String ?? ""
         password = dict?["PASSWORD"] as? String ?? ""
 #else
