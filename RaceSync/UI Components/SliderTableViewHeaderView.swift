@@ -21,6 +21,13 @@ class SliderTableViewHeaderView: UIView {
 
     var isCarouselEnabled: Bool = true
 
+    var autoScrollInterval: TimeInterval = 3.0 {
+        didSet {
+            guard autoScrollInterval != oldValue, numberOfItems > 0 else { return }
+            startAutoScroll(interval: autoScrollInterval)
+        }
+    }
+
     weak var delegate: SliderTableViewHeaderViewDelegate?
 
     static var height: CGFloat {

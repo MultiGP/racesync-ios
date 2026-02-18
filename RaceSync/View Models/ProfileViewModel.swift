@@ -112,7 +112,7 @@ class ProfileViewModel: Descriptable {
         self.pictureUrl = nil
         self.backgroundUrl = series.mainImageUrl
 
-        var description: String = series.typeString
+        var description: String = series.scoreTypeString
         if let date = series.startDate {
             description += "\n"
             description += "Started on: \(DateUtil.isoDateFormatter.string(from: date))"

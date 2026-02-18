@@ -1,5 +1,5 @@
 //
-//  SeriesViewController.swift
+//  SeriesFeedViewController.swift
 //  RaceSync
 //
 //  Created by Ignacio Romero Zurbuchen on 2025-09-07.
@@ -11,7 +11,7 @@ import SnapKit
 import RaceSyncAPI
 import ShimmerSwift
 
-class SeriesViewController: UIViewController, Shimmable {
+class SeriesFeedViewController: UIViewController, Shimmable {
 
     // MARK: - Public Variables
 
@@ -27,8 +27,8 @@ class SeriesViewController: UIViewController, Shimmable {
 //        tableView.emptyDataSetDelegate = self
         tableView.register(cellType: SimpleTableViewCell.self)
         tableView.tableHeaderView = self.sliderHeaderView
-        tableView.refreshControl = self.refreshControl
         tableView.tableFooterView = UIView()
+//        tableView.refreshControl = self.refreshControl
         return tableView
     }()
 
@@ -63,9 +63,8 @@ class SeriesViewController: UIViewController, Shimmable {
     }()
 
     fileprivate lazy var segmentedControl: UISegmentedControl = {
-        let items = ["My Series", "Popular", "All Series"]
-        let control = UISegmentedControl(items: items)
-        control.selectedSegmentIndex = 0
+        let control = UISegmentedControl(items: SeriesFilter.titles)
+        control.selectedSegmentIndex = SeriesFilter.regionals.index
         control.addTarget(self, action: #selector(didChangeSegment), for: .valueChanged)
         return control
     }()
@@ -81,6 +80,8 @@ class SeriesViewController: UIViewController, Shimmable {
     fileprivate lazy var sliderHeaderView: SliderTableViewHeaderView = {
         let view = SliderTableViewHeaderView()
         view.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+        view.backgroundColor = Color.gray50
+        view.autoScrollInterval = 5.0
         view.delegate = self
         return view
     }()
@@ -89,8 +90,26 @@ class SeriesViewController: UIViewController, Shimmable {
         shimmeringView.isShimmering
     }
 
-    fileprivate let seriesApi = SeriesApi()
-    fileprivate var seriesViewModels = [SeriesViewModel]()
+    fileprivate var selectedFilter: SeriesFilter {
+        get {
+            let title: String = segmentedControl.titleForSelectedSegment()!
+            return SeriesFilter(title: title)!
+        }
+    }
+
+    fileprivate var feedCount: Int {
+        get { return seriesFeedController.viewModelsCount(for: selectedFilter) }
+    }
+
+    func feedViewModel(at index: Int) -> SeriesViewModel? {
+        guard let list = seriesFeedController.viewModels(for: selectedFilter) else { return nil }
+        if index >= 0, index < list.count {
+            return list[index]
+        }
+        return nil
+    }
+
+    fileprivate let seriesFeedController = SeriesFeedController()
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -109,17 +128,15 @@ class SeriesViewController: UIViewController, Shimmable {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if seriesViewModels.count == 0 {
+        if feedCount == 0 {
             isLoadingList(true)
-        } else {
-            tableView.reloadData()
         }
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if seriesViewModels.count == 0 {
+        if feedCount == 0 {
             loadContent()
         }
     }
@@ -155,7 +172,6 @@ class SeriesViewController: UIViewController, Shimmable {
     fileprivate func configureNavigationItems() {
         title = "Series"
         tabBarItem = UITabBarItem(title: title, image: SystemImg.stack, selectedImage: SystemImg.stackFill)
-        tabBarItem.isEnabled = APIServices.shared.settings.isDev
     }
 
     // MARK: - Data Update
@@ -166,42 +182,28 @@ class SeriesViewController: UIViewController, Shimmable {
             isLoadingList(true)
         }
 
-        seriesApi.getSeries { objects, error in
-            if let objects = objects {
-                self.seriesViewModels = SeriesViewModel.viewModels(with: objects)
-            } else if error != nil {
-                // self.emptyStateError = EmptyStateViewModel(.errorStandings)
-            }
-
+        seriesFeedController.viewModels(for: selectedFilter) { objects, error in
             if self.refreshControl.isRefreshing {
                 self.refreshControl.endRefreshing()
             } else {
                 self.isLoadingList(false)
             }
 
-            self.tableView.reloadData()
-
             self.tableView.tableHeaderView = self.sliderHeaderView
             self.sliderHeaderView.reloadData()
         }
     }
 
-    fileprivate func seriesViewModel(at index: Int) -> SeriesViewModel? {
-        return seriesViewModels[index]
-    }
-
     // MARK: - Actions
 
-    fileprivate func showSeries(for index: Int) {
-        guard let viewModel = seriesViewModel(at: index) else { return }
-
+    fileprivate func openSeriesDetail(_ viewModel: SeriesViewModel) {
         let vc = SeriesTabBarController(with: viewModel.series.id)
         vc.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(vc, animated: true)
     }
 
     @objc fileprivate func didChangeSegment() {
-//        seriesApi.cancelAll()
+        tableView.reloadData()
     }
 
     @objc fileprivate func didPullRefreshControl() {
@@ -211,36 +213,39 @@ class SeriesViewController: UIViewController, Shimmable {
     // MARK: - Cell Configuration
 
     func configure<T>(_ cell: T, forRowAt indexPath: IndexPath) where T : SimpleTableViewCell {
-        guard let viewModel = seriesViewModel(at: indexPath.row) else { return }
+        guard let viewModel = feedViewModel(at: indexPath.row) else { return }
 
         cell.titleLabel.text = viewModel.titleLabel
         cell.titleLabel.numberOfLines = 2
         cell.subtitleLabel.text = viewModel.typeLabel
         cell.accessoryType = .disclosureIndicator
 
-        let ratio = CGFloat(16.0/9.0)
-        let height = Constants.cellHeight - Constants.padding*2
-        let size = CGSize(width: height * ratio, height: height)
-        cell.imageRatio = ratio
-        cell.iconImageView.setImage(with: viewModel.imageUrl, placeholderImage: PlaceholderImg.small, size: size)
-        cell.iconImageView.contentMode = .scaleAspectFill
+        let imageRatio = 1.5
+        let imageHeight = UniversalConstants.cellAvatarHeight + 10
+        let imageSize = CGSize(width: imageHeight * imageRatio, height: imageHeight)
+        cell.imageRatio = imageRatio
+        cell.iconImageView.setImage(with: viewModel.imageUrl, placeholderImage: PlaceholderImg.seriesSmall, size: imageSize)
+        cell.iconImageView.contentMode = .center
         cell.iconImageView.layer.cornerRadius = 6
         cell.iconImageView.layer.masksToBounds = true
     }
 }
 
-extension SeriesViewController: UITableViewDelegate {
+extension SeriesFeedViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        showSeries(for: indexPath.row)
+
+        if let viewModel = feedViewModel(at: indexPath.row) {
+            openSeriesDetail(viewModel)
+        }
     }
 }
 
-extension SeriesViewController: UITableViewDataSource {
+extension SeriesFeedViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return seriesViewModels.count
+        return feedCount
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -254,18 +259,21 @@ extension SeriesViewController: UITableViewDataSource {
     }
 }
 
-extension SeriesViewController: SliderTableViewHeaderViewDelegate {
+extension SeriesFeedViewController: SliderTableViewHeaderViewDelegate {
 
     func sliderNumberOfItems(_ slider: SliderTableViewHeaderView) -> Int {
-        return isLoading ? 0 : seriesViewModels.count
+        return isLoading ? 0 : feedCount
     }
 
     func slider(_ slider: SliderTableViewHeaderView, imageFor view: UIImageView, at index: Int) {
-        guard let viewModel = seriesViewModel(at: index) else { return }
-        view.setImage(with: viewModel.imageUrl, placeholderImage: PlaceholderImg.medium)
+        guard let viewModel = feedViewModel(at: index) else { return }
+        view.setImage(with: viewModel.imageUrl, placeholderImage: PlaceholderImg.seriesMedium)
     }
 
     func slider(_ slider: SliderTableViewHeaderView, didSelectImageAt index: Int) {
-        showSeries(for: index)
+        if let viewModel = feedViewModel(at: index) {
+            openSeriesDetail(viewModel)
+        }
     }
 }
+

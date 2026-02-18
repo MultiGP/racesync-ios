@@ -14,7 +14,15 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
 
     // MARK: - Public Variables
 
-    let series: Series
+    var seriesController: SeriesController
+
+    var series: Series {
+        get { return seriesController.series! }
+    }
+
+    var seriesApi: SeriesApi {
+        get { return seriesController.seriesApi }
+    }
 
     lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
@@ -48,8 +56,8 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
 
     // MARK: - Initialization
 
-    init(with series: Series) {
-        self.series = series
+    init(with controller: SeriesController) {
+        self.seriesController = controller
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -90,6 +98,8 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
     fileprivate func configureNavigationItems() {
         title = "Leaderboard"
         tabBarItem = UITabBarItem(title: title, image: SystemImg.trophy, selectedImage: SystemImg.trophyFill)
+
+        navigationItem.rightBarButtonItem = seriesController.navigationItems()
     }
 
     // MARK: - Data Update
@@ -150,7 +160,7 @@ extension SeriesStandingsViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return series.typeString
+        return series.scoreTypeString
     }
 }
 
@@ -176,15 +186,24 @@ extension SeriesStandingsViewController: UITableViewDataSource {
     func configure<T>(_ view: T, forRowAt indexPath: IndexPath) where T : UITableViewCell {
         guard let cell = view as? AvatarTableViewCell, let result = result(at: indexPath) else { return }
 
+        // TODO: Convert to View Model
+        let flag = FlagEmojiGenerator.flag(country: result.country)
+
         cell.rankView.rank = Int32(indexPath.row + 1)
-        cell.titleLabel.text = result.displayName
+        cell.titleLabel.text = "\(result.displayName) \(flag)"
+        cell.subtitleLabel.text = nil
+        cell.textPill.text = nil
         cell.avatarImageView.imageView.setImage(with: result.imageUrl, placeholderImage: PlaceholderImg.medium)
         cell.accessoryView = nil
 
-        if series.type == .fastest3laps {
+        if series.scoreType == .fastest3laps {
             cell.subtitleLabel.text = TimeUtil.lapTimeFormat(seconds: result.score)
         } else {
-            cell.subtitleLabel.text = result.score
+            cell.subtitleLabel.text = "Elo: \(result.eloScore)"
+
+            let unit = (result.score == "1") ? "pt" : "pts"
+            cell.textPill.text = "\(result.score) \(unit)"
+            cell.textPill.style = .text
         }
 
         if let pilotId = result.pilotId, let userId = myUserId, pilotId == userId {
@@ -208,12 +227,5 @@ extension SeriesStandingsViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard let results = series.pilotResults, results.count > 0 else { return }
         layoutPinnedView()
-    }
-}
-
-extension SeriesStandingsViewController: ScrollToTop {
-
-    func scrollToTop() {
-        tableView.setContentOffset(.zero, animated: true)
     }
 }

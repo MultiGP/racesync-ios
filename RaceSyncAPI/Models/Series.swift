@@ -14,13 +14,14 @@ public class Series: Mappable, Descriptable {
     public var id: ObjectId = ""
     public var name: String = ""
     public var description: String = ""
-    public var startDate: Date?
-    public var endDate: Date?
-    public var type: SeriesType = .overall
-    public var typeString: String = ""
+    public var startDate: Date? = nil
+    public var endDate: Date? = nil
+    public var scoreType: SeriesScore = .overall
+    public var scoreTypeString: String = ""
     public var isApproved: Bool = false
     public var ownerId: ObjectId = ""
-    public var mainImageUrl: String?
+    public var mainImageUrl: String? = nil
+    public var isJoined: Bool = false
 
     public var pilotCount: Int32 = 0
     public var chapterCount: Int32 = 0
@@ -52,8 +53,8 @@ public class Series: Mappable, Descriptable {
         description <- map[ParamKey.description]
         startDate <- (map[ParamKey.startDate], MapperUtil.dateTransform)
         endDate <- (map[ParamKey.endDate], MapperUtil.dateTransform)
-        type <- (map[ParamKey.type], EnumTransform<SeriesType>())
-        typeString <- map[ParamKey.typeString]
+        scoreType <- (map[ParamKey.type], EnumTransform<SeriesScore>())
+        scoreTypeString <- map[ParamKey.typeString]
         isApproved <- map[ParamKey.approved]
         ownerId <- map[ParamKey.ownerId]
         mainImageUrl <- map[ParamKey.mainImageUrl]

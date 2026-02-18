@@ -86,9 +86,6 @@ class SimpleTableViewCell: UITableViewCell {
             $0.width.equalTo(Constants.imageHeight * imageRatio)
             $0.leading.equalToSuperview().offset(Constants.padding)
             $0.centerY.equalToSuperview()
-
-//            imageViewWidthConstraint = $0.width.equalTo(Constants.imageHeight * imageRatio).constraint
-//            imageViewWidthConstraint?.activate()
         }
 
         contentView.addSubview(labelStackView)

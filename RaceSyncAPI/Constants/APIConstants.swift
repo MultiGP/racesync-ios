@@ -156,6 +156,7 @@ public enum ParamKey {
     static let fastest3Laps = "fastest3Laps"
     static let fastest2Laps = "fastest2Laps"
     static let fastestLap = "fastestLap"
+    static let bestRaces = "bestRaces"
     static let cycleCount = "cycleCount"
     static let maxZippyqDepth = "maxZippyqDepth"
     static let zippyqIterator = "zippyqIterator"

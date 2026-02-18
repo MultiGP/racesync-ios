@@ -14,7 +14,15 @@ class SeriesDetailViewController: UIViewController {
 
     // MARK: - Public Variables
 
-    let series: Series
+    var seriesController: SeriesController
+
+    var series: Series {
+        get { return seriesController.series! }
+    }
+
+    var seriesApi: SeriesApi {
+        get { return seriesController.seriesApi }
+    }
 
     // MARK: - Private Variables
 
@@ -37,8 +45,8 @@ class SeriesDetailViewController: UIViewController {
 
     // MARK: - Initialization
 
-    init(with series: Series) {
-        self.series = series
+    init(with controller: SeriesController) {
+        self.seriesController = controller
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -60,6 +68,8 @@ class SeriesDetailViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
+        configureNavigationItems()
     }
 
     // MARK: - Layout
@@ -89,6 +99,8 @@ class SeriesDetailViewController: UIViewController {
     fileprivate func configureNavigationItems() {
         title = "Details"
         tabBarItem = UITabBarItem(title: title, image: SystemImg.calendarCclock, selectedImage: nil)
+
+        navigationItem.rightBarButtonItem = seriesController.navigationItems()
     }
 }
 

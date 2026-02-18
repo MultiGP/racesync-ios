@@ -40,6 +40,9 @@ enum PlaceholderImg {
     static let profileAvatar = UIImage(named: "placeholder_profile_avatar")
     static let profileBkgd = UIImage(named: "placeholder_profile_background")
     static let shimmerList = UIImage(named: "placeholder_shimmer_list")
+
+    static let seriesSmall = UIImage(named: "placeholder_series_small")
+    static let seriesMedium = UIImage(named: "placeholder_series_medium")
 }
 
 enum ButtonImg {

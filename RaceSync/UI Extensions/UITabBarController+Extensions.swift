@@ -27,7 +27,7 @@ extension UITabBarController {
 
             // makes sure disabled tabs aren't selected
             if let item = vc.tabBarItem, !item.isEnabled {
-                idx = HomeTabs.default.rawValue
+                idx = 0
             }
         }
 

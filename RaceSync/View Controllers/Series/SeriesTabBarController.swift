@@ -87,15 +87,21 @@ class SeriesTabBarController: UITabBarController {
             raceViewModels += RaceViewModel.viewModels(with: races)
         }
 
+        let controller = SeriesController(with: series)
+
+        let raceListVC = RaceListViewController(raceViewModels, seriesId: seriesId)
+        raceListVC.navigationItem.rightBarButtonItem = controller.navigationItems()
+
         var vcs = [UIViewController]()
-        vcs += [SeriesDetailViewController(with: series)]
-        vcs += [RaceListViewController(raceViewModels, seriesId: seriesId)]
-        vcs += [SeriesStandingsViewController(with: series)]
+        vcs += [SeriesDetailViewController(with: controller)]
+        vcs += [raceListVC]
+        vcs += [SeriesStandingsViewController(with: controller)]
 
         configureTabBarController(with: vcs, selectedIndex: initialSelectedIndex)
 
         title = vcs.first?.title
         tabBar.isHidden = false
+        navigationItem.rightBarButtonItem = controller.navigationItems()
     }
 
     // MARK: - Data Update
@@ -164,13 +170,6 @@ extension SeriesTabBarController: UITabBarControllerDelegate {
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
 
         (tabBar as? RoundedSelectionTabBar)?.updateSelectionFrame(animated: true)
-
-        if tabBarController.selectedViewController == viewController {
-            // Notify the currently visible VC to scroll to top
-            if let topVC = viewController as? ScrollToTop {
-                topVC.scrollToTop()
-            }
-        }
 
         if let index = viewControllers?.lastIndex(of: viewController) {
             didSelectedIndex(index)

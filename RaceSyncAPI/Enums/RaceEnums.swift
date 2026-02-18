@@ -122,11 +122,12 @@ public enum QualifyingType: String, EnumTitle {
     }
 }
 
-public enum SeriesType: String, EnumTitle {
+public enum SeriesScore: String, EnumTitle {
     case overall = "0"
     case collegiate = "1"
     case prospec = "2"
     case fastest3laps = "3"
+    case regionals = "4"
 
     public var title: String {
         switch self {
@@ -134,6 +135,7 @@ public enum SeriesType: String, EnumTitle {
         case .collegiate:   return "Collegiate Scoring"
         case .prospec:      return "MultiGP ProSpec Scoring"
         case .fastest3laps: return "Fastest 3 Consecutive laps"
+        case .regionals:    return "Regional Scoring"
         }
     }
 }

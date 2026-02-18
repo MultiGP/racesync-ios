@@ -23,4 +23,8 @@ extension EnumTitle {
         }
         return nil
     }
+
+    public static var titles: [String] {
+        Self.allCases.map { $0.title }
+    }
 }

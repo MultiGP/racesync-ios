@@ -127,12 +127,16 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
         }
     }
 
-    fileprivate var raceFeed: [RaceViewModel]? {
-        get { return raceFeedController.raceViewModels(for: selectedRaceFilter) }
+    func raceViewModel(for index: Int) -> RaceViewModel? {
+        guard let list = raceFeedController.viewModels(for: selectedRaceFilter) else { return nil }
+        if index >= 0, index < list.count {
+            return list[index]
+        }
+        return nil
     }
 
-    fileprivate var raceFeedCount: Int {
-        get { return raceFeedController.raceViewModelsCount(for: selectedRaceFilter) }
+    fileprivate var feedCount: Int {
+        get { return raceFeedController.viewModelsCount(for: selectedRaceFilter) }
     }
 
     fileprivate let raceFeedController: RaceFeedController
@@ -182,7 +186,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if raceFeedCount == 0 {
+        if feedCount == 0 {
             isLoadingList(true)
         }
     }
@@ -191,7 +195,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
         super.viewDidAppear(animated)
 
         // reload whenever we transition back
-        if raceFeedCount == 0 || animated {
+        if feedCount == 0 || animated {
             loadContent(forced: true)
         }
     }
@@ -273,7 +277,8 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
     }
 
     @objc fileprivate func didPressJoinButton(_ sender: JoinButton) {
-        guard let objectId = sender.objectId, let race = raceFeed?.race(withId: objectId) else { return }
+        let list = raceFeedController.viewModels(for: selectedRaceFilter)
+        guard let objectId = sender.objectId, let race = list?.race(withId: objectId) else { return }
         let joinState = sender.joinState
 
         toggleJoinButton(sender, forRace: race, raceApi: raceApi) { [weak self] (newState) in
@@ -329,7 +334,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
             isLoadingList(true)
         }
 
-        raceFeedController.raceViewModels(for: selectedList, forceFetch: forced) { [weak self] (viewModels, cached, error) in
+        raceFeedController.viewModels(for: selectedList, forceFetch: forced) { [weak self] (viewModels, cached, error) in
             guard let strongSelf = self else { return }
 
             strongSelf.isLoadingList(false)
@@ -345,14 +350,6 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
                 print("getMyRaces error : \(error.debugDescription)")
             }
         }
-    }
-
-    func raceViewModel(for index: Int) -> RaceViewModel? {
-        guard let list = raceFeed else { return nil }
-        if index >= 0, index < list.count {
-            return list[index]
-        }
-        return nil
     }
 }
 
@@ -374,7 +371,7 @@ extension RaceFeedViewController: UITableViewDelegate {
 extension RaceFeedViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return raceFeedCount
+        return feedCount
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

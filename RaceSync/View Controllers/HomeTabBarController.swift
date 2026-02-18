@@ -26,8 +26,8 @@ class HomeTabBarController: UITabBarController {
         return RaceFeedViewController(filters, selectedFilter: filters.first!)
     }()
 
-    fileprivate lazy var seriesVC: SeriesViewController = {
-        return SeriesViewController()
+    fileprivate lazy var seriesVC: SeriesFeedViewController = {
+        return SeriesFeedViewController()
     }()
 
     fileprivate lazy var standingsVC: StandingsViewController = {
