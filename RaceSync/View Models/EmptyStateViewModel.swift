@@ -29,6 +29,10 @@ enum EmptyState {
     case noChapters
     case noChapterMembers
 
+    case noSeries
+    case noJoinedSeries
+    case noSeriesResults
+
     case noProfileRaces
     case noProfileChapters
     case noMyProfileRaces
@@ -38,7 +42,7 @@ enum EmptyState {
     case noPushAuthorized
     case noPushEnabled
 
-    case commingSoon
+    case comingSoon
 
     case noSearchResults
     case errorRaces
@@ -74,7 +78,11 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
         case .noChapterMembers:
             text = "No Chapter Members"
         case .noRaces, .noMyProfileRaces, .noProfileRaces:
-            text = "No Races"
+            text = "No Races Found"
+        case .noSeries, .noJoinedSeries:
+            text = "No Series Found"
+        case .noSeriesResults:
+            text = "No Series Results"
         case .noRacePayments:
             text = "No Race Payments"
         case .noChapters, .noMyProfileChapters, .noProfileChapters:
@@ -85,7 +93,7 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "Push Notifications"
         case .noPushEnabled:
             text = "Push Notifications Disabled"
-        case .commingSoon:
+        case .comingSoon:
             text = "Coming Soon"
         case .noSearchResults:
             text = "No Results"
@@ -122,6 +130,10 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "There are no registered pilots yet."
         case .noRaceResults:
             text = "There are no race results available just yet."
+        case .noSeries, .noJoinedSeries:
+            text = "There are no series available yet under this category."
+        case .noSeriesResults:
+            text = "There are no series results available just yet."
         case .noRacePayments:
             text = "No payments found yet, or a network error occurred."
         case .noChapterMembers:
@@ -138,7 +150,7 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "Want race updates sent to you?\nTurn on Push Notifications to stay updated!"
         case .noPushEnabled:
             text = "Please enable Push Notifications to continue."
-        case .commingSoon:
+        case .comingSoon:
             text = "This section is under development."
         case .errorRaces:
             text = "Could not load the race details.\nPlease try again later or report a bug."

@@ -10,6 +10,7 @@ import UIKit
 import SnapKit
 import RaceSyncAPI
 import ShimmerSwift
+import EmptyDataSet_Swift
 
 class SeriesFeedViewController: UIViewController, Shimmable {
 
@@ -23,8 +24,7 @@ class SeriesFeedViewController: UIViewController, Shimmable {
         tableView.contentInsetAdjustmentBehavior = .always
         tableView.dataSource = self
         tableView.delegate = self
-//        tableView.emptyDataSetSource = self
-//        tableView.emptyDataSetDelegate = self
+        tableView.emptyDataSetSource = self
         tableView.register(cellType: SimpleTableViewCell.self)
         tableView.tableHeaderView = self.sliderHeaderView
         tableView.tableFooterView = UIView()
@@ -110,6 +110,10 @@ class SeriesFeedViewController: UIViewController, Shimmable {
     }
 
     fileprivate let seriesFeedController = SeriesFeedController()
+
+    fileprivate let emptyStateSeries = EmptyStateViewModel(.noSeries)
+    fileprivate let emptyStateJoinedSeries = EmptyStateViewModel(.noJoinedSeries)
+    fileprivate let emptyStateComingSoon = EmptyStateViewModel(.comingSoon)
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -277,3 +281,24 @@ extension SeriesFeedViewController: SliderTableViewHeaderViewDelegate {
     }
 }
 
+extension SeriesFeedViewController: EmptyDataSetSource {
+
+    func getEmptyStateViewModel() -> EmptyStateViewModel {
+        switch selectedFilter {
+        case .joined:   return emptyStateComingSoon
+        default:        return emptyStateSeries
+        }
+    }
+
+    func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        return getEmptyStateViewModel().title
+    }
+
+    func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        return getEmptyStateViewModel().description
+    }
+
+    func backgroundColor(forEmptyDataSet scrollView: UIScrollView) -> UIColor? {
+        return Color.white
+    }
+}

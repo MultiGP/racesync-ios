@@ -9,6 +9,7 @@
 import UIKit
 import SnapKit
 import RaceSyncAPI
+import EmptyDataSet_Swift
 
 class SeriesStandingsViewController: UIViewController, Pinnable {
 
@@ -28,7 +29,7 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.dataSource = self
         tableView.delegate = self
-//        tableView.emptyDataSetSource = self
+        tableView.emptyDataSetSource = self
         tableView.register(cellType: AvatarTableViewCell.self)
         tableView.tableFooterView = UIView()
 
@@ -48,6 +49,8 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
     var cachedPinnedIndexPath: IndexPath?
 
     fileprivate var userApi = UserApi()
+
+    fileprivate let emptyStateSeriesResults = EmptyStateViewModel(.noSeriesResults)
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -160,7 +163,10 @@ extension SeriesStandingsViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return series.scoreTypeString
+        if let results = series.pilotResults, results.count > 0 {
+            return series.scoreTypeString
+        }
+        return nil
     }
 }
 
@@ -227,5 +233,20 @@ extension SeriesStandingsViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard let results = series.pilotResults, results.count > 0 else { return }
         layoutPinnedView()
+    }
+}
+
+extension SeriesStandingsViewController: EmptyDataSetSource {
+
+    func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        return emptyStateSeriesResults.title
+    }
+
+    func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        return emptyStateSeriesResults.description
+    }
+
+    func backgroundColor(forEmptyDataSet scrollView: UIScrollView) -> UIColor? {
+        return Color.white
     }
 }

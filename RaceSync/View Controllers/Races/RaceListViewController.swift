@@ -9,12 +9,10 @@
 import Foundation
 import RaceSyncAPI
 import SnapKit
-import UIKit
+import EmptyDataSet_Swift
 
 /**
  Generic display of pre-loaded races.
-
- TODO: Needs an empty data set, for when races count = 0
  */
 class RaceListViewController: UIViewController, ViewJoinable {
 
@@ -25,6 +23,7 @@ class RaceListViewController: UIViewController, ViewJoinable {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(cellType: RaceTableViewCell.self)
+        tableView.emptyDataSetSource = self
         tableView.tableFooterView = UIView()
         return tableView
     }()
@@ -37,6 +36,8 @@ class RaceListViewController: UIViewController, ViewJoinable {
     fileprivate var seriesId: ObjectId?
     fileprivate var raceClass: RaceClass?
     fileprivate var raceName: String?
+
+    fileprivate let emptyStateNoRaces = EmptyStateViewModel(.noRaces)
 
     // MARK: - Initialization
 
@@ -217,5 +218,20 @@ extension RaceListViewController: UITableViewDataSource {
         cell.memberBadgeView.count = viewModel.participantCount
         cell.avatarImageView.imageView.setImage(with: viewModel.imageUrl, placeholderImage: PlaceholderImg.medium)
         return cell
+    }
+}
+
+extension RaceListViewController: EmptyDataSetSource {
+
+    func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        return emptyStateNoRaces.title
+    }
+
+    func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        return emptyStateNoRaces.description
+    }
+
+    func backgroundColor(forEmptyDataSet scrollView: UIScrollView) -> UIColor? {
+        return Color.white
     }
 }
