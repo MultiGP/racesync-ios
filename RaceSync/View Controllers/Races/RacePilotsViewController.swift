@@ -246,9 +246,7 @@ extension RacePilotsViewController: UITableViewDelegate {
             return nil
         }
 
-        if race.inProgress {
-            return "\(race.scoringFormat.title)\n\(raceController.currentRaceTitle())"
-        } else if race.canShowResults {
+        if race.canShowResults {
             return "\(race.scoringFormat.title)"
         } else {
             return nil
