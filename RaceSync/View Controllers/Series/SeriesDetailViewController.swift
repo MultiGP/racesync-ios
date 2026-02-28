@@ -36,11 +36,22 @@ class SeriesDetailViewController: UIViewController {
         return view
     }()
 
+    fileprivate lazy var htmlView: RichEditorView = {
+        let view = RichEditorView()
+        view.isEditable = false
+        view.isScrollEnabled = false
+        view.delegate = self
+        return view
+    }()
+
     fileprivate let headerView = ProfileHeaderView()
+
+    fileprivate var htmlViewHeightConstraint: Constraint?
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
         static let cellHeight: CGFloat = UniversalConstants.cellHeight
+        static let htmlpadding: CGFloat = 12
     }
 
     // MARK: - Initialization
@@ -75,25 +86,43 @@ class SeriesDetailViewController: UIViewController {
     // MARK: - Layout
 
     fileprivate func setupLayout() {
-
+        populateContent()
         configureNavigationItems()
 
-        view.addSubview(scrollView)
-        scrollView.snp.makeConstraints {
-            $0.top.leading.trailing.bottom.equalToSuperview()
-        }
+        let contentView = UIView()
+        view.backgroundColor = Color.white
 
         let profileViewModel = ProfileViewModel(with: series)
         headerView.viewModel = profileViewModel
         let headerViewSize = headerView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
 
-        scrollView.addSubview(headerView)
+        contentView.addSubview(headerView)
         headerView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
             $0.size.equalTo(headerViewSize)
         }
 
+        contentView.addSubview(htmlView)
+        htmlView.snp.makeConstraints {
+            $0.top.equalTo(headerView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+            $0.width.equalTo(view.bounds.width)
+
+            htmlViewHeightConstraint = $0.height.equalTo(0).constraint
+            htmlViewHeightConstraint?.activate()
+        }
+
         scrollView.contentSize = view.bounds.size
+
+        scrollView.addSubview(contentView)
+        contentView.snp.makeConstraints {
+            $0.top.leading.trailing.bottom.equalToSuperview()
+        }
+
+        view.addSubview(scrollView)
+        scrollView.snp.makeConstraints {
+            $0.top.leading.trailing.bottom.equalToSuperview()
+        }
     }
 
     fileprivate func configureNavigationItems() {
@@ -101,6 +130,30 @@ class SeriesDetailViewController: UIViewController {
         tabBarItem = UITabBarItem(title: title, image: SystemImg.calendarCclock, selectedImage: nil)
 
         navigationItem.rightBarButtonItem = seriesController.navigationItems()
+    }
+
+    fileprivate func populateContent() {
+
+        // Load the HTML on the next runloop
+        DispatchQueue.main.async { [weak self] in
+            guard let s = self else { return }
+            s.configureHTML()
+        }
+
+        let contentRect: CGRect = scrollView.subviews.reduce(into: .zero) { rect, view in
+            rect = rect.union(view.frame)
+        }
+
+        scrollView.contentSize = CGSize(width: contentRect.size.width, height: contentRect.size.height)
+    }
+
+    fileprivate func configureHTML() {
+        guard series.description.stripHTML().count > 0 else { return }
+
+        let spacing = Constants.padding * 3/4
+
+        let content = series.description.replaceHTMLColorTag(with: Color.black).stripHTMLFontTag().stripHTMLEdges()
+        htmlView.html = "<div id=\"content\" style=\"color:\(Color.black.toHexString()); padding-top: \(spacing)px; padding-bottom: \(spacing)px;\">\(content)</div>"
     }
 }
 
@@ -137,6 +190,31 @@ extension SeriesDetailViewController: ScrollToTop {
 
     func scrollToTop() {
         scrollView.setContentOffset(.zero, animated: true)
+    }
+}
+
+extension SeriesDetailViewController: RichEditorDelegate {
+
+    func richEditor(_ editor: RichEditorView, heightDidChange height: Int) {
+        var offset = CGFloat(height)
+        offset += Constants.htmlpadding*2
+
+        htmlViewHeightConstraint?.update(offset: offset)
+    }
+
+    func richEditor(_ editor: RichEditorView, shouldInteractWith url: URL) -> Bool {
+
+//        if let link = DeepLink.create(from: url), ApplicationControl.shared.canHandleDeepLink(link) {
+//            ApplicationControl.shared.handle(link)
+//        } else if Validator.isEmail().apply(url.absoluteString) {
+//            // leave the system handle emails
+//            UIApplication.shared.open(url)
+//        } else {
+//            // open url using in-app browser, else the url is open on the WKWebView
+//            WebViewController.open(url)
+//        }
+
+        return false
     }
 }
 

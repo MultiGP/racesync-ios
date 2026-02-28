@@ -261,18 +261,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         return raceCoordinates != nil
     }
 
-    fileprivate var canDisplayDescription: Bool {
-        return raceViewModel.race.description.stripHTML().count > 0
-    }
-
-    fileprivate var canDisplayContent: Bool {
-        return raceViewModel.race.content.stripHTML().count > 0
-    }
-
-    fileprivate var canDisplayItinerary: Bool {
-        return raceViewModel.race.itinerary.stripHTML().count > 0
-    }
-
     fileprivate var canDisplayFee: Bool {
         return raceViewModel.feeLabel.count > 0
     }
@@ -542,16 +530,17 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     fileprivate func configureHTML() {
         var html = ""
         let spacing = Constants.padding * 3/4
+        let race = raceViewModel.race
 
-        if canDisplayDescription {
+        if race.description.stripHTML().count > 0 {
             let description = race.description.replaceHTMLColorTag(with: Color.gray300).stripHTMLFontTag().stripHTMLEdges()
             html += "<div id=\"description\">\(description)</div>"
         }
-        if canDisplayContent {
+        if race.content.stripHTML().count > 0 {
             let content = race.content.replaceHTMLColorTag(with: Color.black).stripHTMLFontTag().stripHTMLEdges()
             html += "<div id=\"content\" style=\"color:\(Color.black.toHexString()); padding-top: \(spacing)px; padding-bottom: \(spacing)px;\">\(content)</div>"
         }
-        if canDisplayItinerary {
+        if race.itinerary.stripHTML().count > 0 {
             let itinerary = race.description.replaceHTMLColorTag(with: Color.gray100).stripHTMLFontTag().stripHTMLEdges()
             html += "<hr style=\"border-top: 0.25px solid;\">"
             html += "<div id=\"itinerary\" style=\"padding-top: \(spacing)px;\">\(itinerary)</div>"

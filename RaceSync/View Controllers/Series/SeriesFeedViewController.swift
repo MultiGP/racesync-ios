@@ -200,10 +200,10 @@ class SeriesFeedViewController: UIViewController, Shimmable {
 
     // MARK: - Actions
 
-    fileprivate func openSeriesDetail(_ viewModel: SeriesViewModel) {
+    fileprivate func openSeriesDetail(_ viewModel: SeriesViewModel, animated: Bool = true) {
         let vc = SeriesTabBarController(with: viewModel.series.id)
         vc.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(vc, animated: true)
+        navigationController?.pushViewController(vc, animated: animated)
     }
 
     @objc fileprivate func didChangeSegment() {
