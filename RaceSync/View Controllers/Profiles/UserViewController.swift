@@ -233,7 +233,7 @@ class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
     }
 
     fileprivate func loadChapters(_ forced: Bool = false) {
-        loadList(forced: forced, isEmpty: raceViewModels.isEmpty,
+        loadList(forced: forced, isEmpty: chapterViewModels.isEmpty,
                 segment: .right, fetch: fetchChapters)
     }
 
