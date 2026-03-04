@@ -3,6 +3,13 @@
 
 ---
 
+## 1.9.0
+
+### New Features:
+   * Implementing the ability to browse past GQ standings (2025-2019)
+   
+---
+
 ## 1.8.2
 
 ### New Features:

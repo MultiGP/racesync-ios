@@ -80,14 +80,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
             $0.bottom.equalToSuperview().offset(-spacing)
         }
 
-        let separatorLine = UIView()
-        separatorLine.backgroundColor = Color.gray100
-        view.addSubview(separatorLine)
-        separatorLine.snp.makeConstraints {
-            $0.height.equalTo(0.5)
-            $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(view.snp.bottom)
-        }
+        view.addSeparatorLine(.bottom)
         return view
     }()
 

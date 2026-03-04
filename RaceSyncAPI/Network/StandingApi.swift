@@ -13,6 +13,10 @@ public enum StandingSeason: String, CaseIterable {
     case y2025 = "2025"
     case y2024 = "2024"
     case y2023 = "2023"
+    case y2022 = "2022"
+    case y2021 = "2021"
+    case y2020 = "2020"
+    case y2019 = "2019"
 }
 
 //enum RaceTabs: Int {
@@ -39,20 +43,27 @@ public class StandingApi: StandingApiInterface {
         var headers = ["position", "firstName", "userName", "lastName", "userId", "chapterName",
                        "email", "country", "season1", "season1Score"]
 
-        if season != .y2023 {
+        if season == .y2024 || season == .y2025 {
             headers += ["season2", "season2Score"]
         }
 
         fetchCSVAndConvertToJSON(from: baseUrl, knownHeaders: headers) { result in
             DispatchQueue.main.async {
+                var log: String = "+ Ended request with "
+
                 switch result {
                     case .success(let jsonArray):
                         let models = Mapper<Standing>().mapArray(JSONArray: jsonArray)
+                        log += "(\(models.count) objects)"
                         completion(models, nil)
 
                     case .failure(let error):
-                        completion(nil, error as NSError)
+                        let err = error as NSError
+                        log += " Network Error: \(err.debugDescription)"
+                        completion(nil, err)
                     }
+
+                Clog.log("\(log)")
             }
         }
     }
@@ -108,7 +119,7 @@ extension StandingApi {
 
         for line in lines.dropFirst() {
             let values = line.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-            guard values.count == keys.count else { continue }
+//            guard values.count == keys.count else { continue }
 
             let dict = Dictionary(uniqueKeysWithValues: zip(keys, values))
             jsonArray.append(dict)
@@ -122,7 +133,7 @@ extension StandingApi {
 
         var params = [(String, String)]()
 
-        if season != .y2023 {
+        if season == .y2024 || season == .y2025 {
             params += [
                 ("season1", "\(season.rawValue)Summer"),
                 ("season2", "\(season.rawValue)Spring")

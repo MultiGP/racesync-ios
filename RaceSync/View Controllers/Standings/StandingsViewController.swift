@@ -35,6 +35,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     }()
 
     var shimmeringView: ShimmeringView = defaultShimmeringView()
+    var isRootTabBar: Bool = false
 
     // MARK: - Private Variables
 
@@ -77,16 +78,73 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
             $0.height.equalTo(Constants.searchBarHeight)
         }
 
-        let separatorLine = UIView()
-        separatorLine.backgroundColor = Color.gray100
-        view.addSubview(separatorLine)
-        separatorLine.snp.makeConstraints {
-            $0.height.equalTo(0.5)
-            $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(view.snp.bottom)
-        }
+        view.addSeparatorLine(.bottom)
         return view
     }()
+
+    fileprivate lazy var toolbar: UIView = {
+        let view = UIView()
+        view.backgroundColor = Color.navigationBarColor
+        view.addSeparatorLine()
+        return view
+    }()
+
+    fileprivate lazy var headerSectionView: UIView = {
+        let view = UIView()
+        view.backgroundColor = Color.clear
+        view.isUserInteractionEnabled = true
+
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 2
+
+        let label = UILabel()
+        label.attributedText = NSAttributedString(string: headerTitle, attributes: [.paragraphStyle: paragraphStyle])
+        label.font = .systemFont(ofSize: 13)
+        label.textColor = UIColor(hex: "3D3D42").withAlphaComponent(0.6) //Color.gray20
+        label.textAlignment = .left
+        label.numberOfLines = 2
+
+        let button = CustomButton(type: .system)
+        button.setTitle("Past Standings", for: .normal)
+        button.titleLabel?.textAlignment = .right
+        button.titleLabel?.font = .boldSystemFont(ofSize: 15)
+        button.titleLabel?.numberOfLines = 2
+        button.addTarget(self, action: #selector(showPastStandings), for: .touchUpInside)
+        button.semanticContentAttribute = .forceRightToLeft
+        button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
+        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 6, bottom: 0, right: -6)
+        button.tintColor = Color.blue
+        button.hitTestEdgeInsets = UIEdgeInsets(proportionally: -10)
+
+        let baseImage = SystemImg.chevronRight?.withRenderingMode(.alwaysTemplate)
+        let config = UIImage.SymbolConfiguration(scale: .small)
+        let resizedImage = baseImage?.applyingSymbolConfiguration(config)
+        button.setImage(resizedImage, for: .normal)
+
+        view.addSubview(label)
+        label.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview().offset(20)
+        }
+
+        view.addSubview(button)
+        button.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalToSuperview().offset(-20)
+        }
+
+        return view
+    }()
+
+    fileprivate var headerTitle: String {
+        get {
+            if isRootTabBar {
+                return "\(season.rawValue) MultiGP Global Qualifier\nFastest 3 Consecutive Laps".uppercased()
+            } else {
+                return "Fastest 3 Consecutive Laps"
+            }
+        }
+    }
 
     fileprivate let standingsController = StandingsController()
     fileprivate var filteredViewModels = [StandingViewModel]()
@@ -139,9 +197,17 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
+        hideNavigationShadow()
+
         if standingsController.isEmpty(for: season) {
             loadContent()
         }
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        hideNavigationShadow(false)
     }
 
     // MARK: - Initialization
@@ -175,24 +241,37 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
             $0.leading.trailing.equalToSuperview()
         }
 
+        if !isRootTabBar {
+            view.addSubview(toolbar)
+            toolbar.snp.makeConstraints {
+                $0.leading.trailing.equalToSuperview()
+                $0.bottom.equalTo(view.snp.bottom)
+                $0.height.equalTo(64)
+            }
+        }
+
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
             $0.top.equalTo(headerView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(view.snp.bottom)
+
+            if !isRootTabBar {
+                $0.bottom.equalTo(toolbar.snp.top)
+            } else {
+                $0.bottom.equalTo(view.snp.bottom)
+            }
         }
 
         view.addSubview(shimmeringView)
         shimmeringView.snp.makeConstraints {
             $0.top.equalTo(tableView.snp.top)
             $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(tableView.snp.bottom)
+            $0.bottom.equalTo(view.snp.bottom)
         }
     }
 
     fileprivate func configureNavigationItems() {
-        title = "Standings"
-        tabBarItem = UITabBarItem(title: title, image: SystemImg.trophy, selectedImage: SystemImg.trophyFill)
+
     }
 
     // MARK: - Data Update
@@ -306,6 +385,8 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     }
 
     @objc fileprivate func userDidTakeScreenshot() {
+        guard isRootTabBar else { return }
+
         // only trigger when this view is visible
         guard let view = viewIfLoaded, view.window != nil else { return }
         guard let cachedIndexPath = cachedPinnedIndexPath else { return }
@@ -343,6 +424,13 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     @objc fileprivate func didPullRefreshControl() {
         loadContent()
     }
+
+    @objc fileprivate func showPastStandings() {
+
+        let standingsListVC = StandingsListViewController(with: season)
+        standingsListVC.title = "Past GQ Standings"
+        navigationController?.pushViewController(standingsListVC, animated: true)
+    }
 }
 
 extension StandingsViewController: UITableViewDelegate {
@@ -352,7 +440,7 @@ extension StandingsViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
 
         // Present the standing badge instead, if it's me
-        if let cachedIndexPath = cachedPinnedIndexPath, indexPath == cachedIndexPath {
+        if isRootTabBar, let cachedIndexPath = cachedPinnedIndexPath, indexPath == cachedIndexPath {
             shouldPresentMyStandingBadge(indexPath)
             return
         }
@@ -368,11 +456,23 @@ extension StandingsViewController: UITableViewDelegate {
         guard !isSearching else {
             return filteredViewModels.isEmpty ? nil : "Found \(filteredViewModels.count) Pilots"
         }
-        return "\(season.rawValue) MultiGP Global Qualifier\nFastest 3 Consecutive Laps"
+        return headerTitle
+    }
+
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        guard isRootTabBar, !isSearching else {
+            return nil
+        }
+
+        return headerSectionView
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return isSearching ? 30 : 50 // 1 or 2 lines
+        if !isRootTabBar || isSearching {
+            return 40
+        } else {
+            return 60 // 2 lines
+        }
     }
 }
 
@@ -409,10 +509,12 @@ extension StandingsViewController: UITableViewDataSource {
             cell.backgroundColor = Color.gray200
             cell.selectedBackgroundView?.backgroundColor = Color.gray300
 
-            let image = ButtonImg.share?.withTintColor(.white)
-            let imageView = UIImageView(image: image)
-            imageView.tintColor = .white
-            cell.accessoryView = imageView
+            if isRootTabBar {
+                let image = ButtonImg.share?.withTintColor(.white)
+                let imageView = UIImageView(image: image)
+                imageView.tintColor = .white
+                cell.accessoryView = imageView
+            }
         } else {
             cell.titleLabel.textColor = Color.black
             cell.subtitleLabel.textColor = Color.gray300

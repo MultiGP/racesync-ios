@@ -33,14 +33,14 @@ class StandingViewModel: Descriptable {
             return (seasonKey == standing.season1) ? standing.season1Score : standing.season2Score
         }
 
-        if standing.season1 == "2023" {
-            self.score1Label = Self.timeLabel(for: standing.season1Score)
-            self.score2Label = ""
-            self.subtitleLabel = score1Label
-        } else {
+        if standing.season1.contains("2025")  || standing.season1.contains("2024") {
             self.score1Label = "Spring: \(Self.timeLabel(for: standing.season1Score))"
             self.score2Label = "Summer: \(Self.timeLabel(for: standing.season2Score))"
             self.subtitleLabel = [score1Label, score2Label].joined(separator: "  |  ")
+        } else {
+            self.score1Label = Self.timeLabel(for: standing.season1Score)
+            self.score2Label = ""
+            self.subtitleLabel = score1Label
         }
 
         self.rank = Int32(standing.position) ?? 0
@@ -55,7 +55,7 @@ class StandingViewModel: Descriptable {
     }
 
     static func timeLabel(for value: Double) -> String {
-        guard value > 0 && value <= 180 else { return "N/A" }
+        guard value > 0 && value <= 1000 else { return "N/A" }
 
         if value < 60 {
             let truncated = floor(value * 1_000) / 1_000
@@ -63,7 +63,7 @@ class StandingViewModel: Descriptable {
         } else {
             let minutes = Int(value) / 60
             let seconds = value.truncatingRemainder(dividingBy: 60)
-            return String(format: "%d:%06.3f", minutes, seconds)
+            return String(format: "%02d:%06.3f", minutes, seconds)
         }
     }
 }

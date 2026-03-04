@@ -171,11 +171,9 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         tableView.tableFooterView = UIView()
         tableView.isScrollEnabled = false
 
-        let separatorLine = UIView()
-        separatorLine.backgroundColor = Color.gray100
+        let separatorLine = UIView.separatorLine()
         tableView.tableHeaderView = separatorLine
         separatorLine.snp.makeConstraints {
-            $0.height.greaterThanOrEqualTo(0.5)
             $0.width.equalToSuperview()
         }
         return tableView

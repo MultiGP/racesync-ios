@@ -93,6 +93,8 @@ enum SystemImg {
     static let gearshapeFill = UIImage(systemName:"gearshape.fill") // iOS 14.0+
     static let stack = UIImage(systemName:"rectangle.stack") // iOS 13.0+
     static let stackFill = UIImage(systemName:"rectangle.stack.fill") // iOS 13.0+
+    static let chevronLeft = UIImage(systemName:"chevron.left") // iOS 13.0+
+    static let chevronRight = UIImage(systemName:"chevron.right") // iOS 13.0+
 
     static let pin_small = UIImage(systemName:"mappin.and.ellipse") // iOS 13.0+
     static let globe = UIImage(systemName:"globe") // iOS 13.0+

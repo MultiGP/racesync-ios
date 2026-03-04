@@ -56,13 +56,6 @@ class SegmentedTableViewHeaderView: UITableViewHeaderFooterView {
             $0.bottom.equalTo(self.snp.bottom).offset(-Constants.padding)
         }
 
-        let separatorLine = UIView()
-        separatorLine.backgroundColor = Color.gray100
-        addSubview(separatorLine)
-        separatorLine.snp.makeConstraints {
-            $0.height.equalTo(0.5)
-            $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(self.snp.bottom)
-        }
+        addSeparatorLine(.bottom)
     }
 }
