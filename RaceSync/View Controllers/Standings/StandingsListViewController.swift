@@ -56,6 +56,8 @@ class StandingsListViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
+        hideNavigationShadow(false)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -110,6 +112,7 @@ extension StandingsListViewController: UITableViewDataSource {
         let section = sections[indexPath.row]
         cell.titleLabel.text = section.shortTitle
         cell.subtitleLabel.text = "\(section.pilotCount) Pilots"
+        cell.iconImageView.image = UIImage(named: "logo_gq\(section.year)")
         cell.accessoryType = .disclosureIndicator
 
         return cell
@@ -121,30 +124,3 @@ extension StandingsListViewController: UITableViewDataSource {
 }
 
 fileprivate typealias Section = StandingSeason
-
-fileprivate extension Section {
-
-    var title: String {
-        return "\(year) MultiGP Global Qualifier"
-    }
-
-    var shortTitle: String {
-        return "MultiGP GQ \(year)"
-    }
-
-    var year: String {
-        self.rawValue
-    }
-
-    var pilotCount: String {
-        switch self {
-        case .y2025:    return "1113"
-        case .y2024:    return "932"
-        case .y2023:    return "824"
-        case .y2022:    return "712"
-        case .y2021:    return "685"
-        case .y2020:    return "604"
-        case .y2019:    return "1011"
-        }
-    }
-}

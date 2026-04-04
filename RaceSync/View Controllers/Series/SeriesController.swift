@@ -72,7 +72,7 @@ class SeriesController {
     }
 
     func navigationItems(for options: [SeriesAction] = [.share]) -> UIBarButtonItem? {
-        guard let series = series else { return nil }
+        guard let _ = series else { return nil }
         guard !options.isEmpty else { return nil }
 
         let stackView = UIStackView()

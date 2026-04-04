@@ -11,11 +11,11 @@ import ObjectMapper
 
 public class Standing: Mappable, Descriptable {
 
-    public var position: String = ""
+    public var rank: Int32 = 0
     public var firstName: String = ""
     public var userName: String = ""
     public var lastName: String = ""
-    public var userId: ObjectId = ""
+    public var pilotId: ObjectId = ""
     public var chapterName: String = ""
     public var country: String = ""
 
@@ -32,11 +32,11 @@ public class Standing: Mappable, Descriptable {
     }
 
     public func mapping(map: Map) {
-        position <- (map["position"], MapperUtil.stringTransform)
+        rank <- map["rank"]
         firstName <- (map[ParamKey.firstName], MapperUtil.stringTransform)
         lastName <- (map[ParamKey.lastName], MapperUtil.stringTransform)
         userName <- (map[ParamKey.userName], MapperUtil.stringTransform)
-        userId <- map["userId"]
+        pilotId <- map[ParamKey.pilotId]
         chapterName <- (map[ParamKey.chapterName], MapperUtil.stringTransform)
         country <- map[ParamKey.country]
 

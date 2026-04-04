@@ -160,6 +160,7 @@
 		4F90F0D22E8DD56D00D9F5AF /* SeriesStandingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F90F0D12E8DD56D00D9F5AF /* SeriesStandingsViewController.swift */; };
 		4F90F0D42E8DD60700D9F5AF /* SeriesTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F90F0D32E8DD60700D9F5AF /* SeriesTabBarController.swift */; };
 		4F91BC8A2398FBCE00539E95 /* ViewJoinable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F91BC892398FBCE00539E95 /* ViewJoinable.swift */; };
+		4F95A3282F7E1FA9004AE24F /* StandingSeasonEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F95A3272F7E1FA9004AE24F /* StandingSeasonEnum.swift */; };
 		4F9979BE26D57CFF00496451 /* AppIcon-KRU@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F9979BA26D57CFF00496451 /* AppIcon-KRU@2x.png */; };
 		4F9979BF26D57CFF00496451 /* AppIcon-KRU@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F9979BB26D57CFF00496451 /* AppIcon-KRU@3x.png */; };
 		4F9A886B297473AF00B52092 /* Parameters+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9A886A297473AF00B52092 /* Parameters+Extensions.swift */; };
@@ -478,6 +479,7 @@
 		4F90F0D12E8DD56D00D9F5AF /* SeriesStandingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesStandingsViewController.swift; sourceTree = "<group>"; };
 		4F90F0D32E8DD60700D9F5AF /* SeriesTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesTabBarController.swift; sourceTree = "<group>"; };
 		4F91BC892398FBCE00539E95 /* ViewJoinable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewJoinable.swift; sourceTree = "<group>"; };
+		4F95A3272F7E1FA9004AE24F /* StandingSeasonEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandingSeasonEnum.swift; sourceTree = "<group>"; };
 		4F9979BA26D57CFF00496451 /* AppIcon-KRU@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-KRU@2x.png"; sourceTree = "<group>"; };
 		4F9979BB26D57CFF00496451 /* AppIcon-KRU@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-KRU@3x.png"; sourceTree = "<group>"; };
 		4F9A886A297473AF00B52092 /* Parameters+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Parameters+Extensions.swift"; sourceTree = "<group>"; };
@@ -906,6 +908,7 @@
 				4FDD499723B0470E009DD2DB /* ChapterEnums.swift */,
 				4F7974B424A4A4D4003D623A /* ImageEnums.swift */,
 				4F5614A32DDC4C2800EAD42A /* MessageEnums.swift */,
+				4F95A3272F7E1FA9004AE24F /* StandingSeasonEnum.swift */,
 			);
 			path = Enums;
 			sourceTree = "<group>";
@@ -1746,6 +1749,7 @@
 				4F9A886B297473AF00B52092 /* Parameters+Extensions.swift in Sources */,
 				4FC51B1D2409B3A700D654D0 /* APIUnitSystem.swift in Sources */,
 				4FA2682A237A4CE9008970AC /* CompletionBlock.swift in Sources */,
+				4F95A3282F7E1FA9004AE24F /* StandingSeasonEnum.swift in Sources */,
 				4FD4E1BE237DCB24008816B3 /* User.swift in Sources */,
 				4FA1FC9123D7B571006D4704 /* APIEnvironment.swift in Sources */,
 				4FA2681A2378BE4A008970AC /* APIConstants.swift in Sources */,

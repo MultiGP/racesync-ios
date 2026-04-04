@@ -43,7 +43,7 @@ class StandingViewModel: Descriptable {
             self.subtitleLabel = score1Label
         }
 
-        self.rank = Int32(standing.position) ?? 0
+        self.rank = standing.rank
     }
 
     static func viewModels(with objects:[Standing]) -> [StandingViewModel] {

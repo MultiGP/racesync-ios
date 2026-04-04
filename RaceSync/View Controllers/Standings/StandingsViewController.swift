@@ -22,6 +22,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.emptyDataSetSource = self
+        tableView.emptyDataSetDelegate = self
         tableView.register(cellType: AvatarTableViewCell.self)
         tableView.keyboardDismissMode = .onDrag
         tableView.verticalScrollIndicatorInsets = UIEdgeInsets(top: -1, left: 0, bottom: 0, right: 0)
@@ -90,22 +91,35 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     }()
 
     fileprivate lazy var headerSectionView: UIView = {
+
+        let isEmpty = standingsController.isEmpty(for: season)
+
         let view = UIView()
         view.backgroundColor = Color.clear
         view.isUserInteractionEnabled = true
 
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = 2
+        if !isEmpty {
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineSpacing = 2
 
-        let label = UILabel()
-        label.attributedText = NSAttributedString(string: headerTitle, attributes: [.paragraphStyle: paragraphStyle])
-        label.font = .systemFont(ofSize: 13)
-        label.textColor = UIColor(hex: "3D3D42").withAlphaComponent(0.6) //Color.gray20
-        label.textAlignment = .left
-        label.numberOfLines = 2
+            let label = UILabel()
+            label.attributedText = NSAttributedString(string: headerTitle, attributes: [.paragraphStyle: paragraphStyle])
+            label.font = .systemFont(ofSize: 13)
+            label.textColor = UIColor(hex: "3D3D42").withAlphaComponent(0.6) //Color.gray20
+            label.textAlignment = .left
+            label.numberOfLines = 2
+
+            view.addSubview(label)
+            label.snp.makeConstraints {
+                $0.centerY.equalToSuperview()
+                $0.leading.equalToSuperview().offset(20)
+            }
+        }
+
+        let buttonTitle = isEmpty ? "View Past Standings" : "Past Standings"
 
         let button = CustomButton(type: .system)
-        button.setTitle("Past Standings", for: .normal)
+        button.setTitle(buttonTitle, for: .normal)
         button.titleLabel?.textAlignment = .right
         button.titleLabel?.font = .boldSystemFont(ofSize: 15)
         button.titleLabel?.numberOfLines = 2
@@ -121,12 +135,6 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         let resizedImage = baseImage?.applyingSymbolConfiguration(config)
         button.setImage(resizedImage, for: .normal)
 
-        view.addSubview(label)
-        label.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.leading.equalToSuperview().offset(20)
-        }
-
         view.addSubview(button)
         button.snp.makeConstraints {
             $0.centerY.equalToSuperview()
@@ -141,7 +149,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
             if isRootTabBar {
                 return "\(season.rawValue) MultiGP Global Qualifier\nFastest 3 Consecutive Laps".uppercased()
             } else {
-                return "Fastest 3 Consecutive Laps"
+                return "Fastest 3 Consecutive Laps  - \(season.pilotCount) pilots"
             }
         }
     }
@@ -150,12 +158,14 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     fileprivate var filteredViewModels = [StandingViewModel]()
     fileprivate let season: StandingSeason
     fileprivate let userApi = UserApi()
+    fileprivate let raceApi = RaceApi()
 
     // Pinnable variables
     var pinnedView: UIView?
     var cachedPinnedIndexPath: IndexPath?
 
     fileprivate let minQuery: Int = 2
+    fileprivate let emptyStateNoStandings = EmptyStateViewModel(.noStandingsResults)
     fileprivate let emptyStateSearch = EmptyStateViewModel(.noSearchResults)
     fileprivate var emptyStateError: EmptyStateViewModel? = nil
     fileprivate var presenter: Presentr?
@@ -187,7 +197,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if standingsController.isEmpty(for: season) {
+        if !standingsController.didFetchStandings(for: season) {
             isLoadingList(true)
         } else {
             tableView.reloadData()
@@ -199,15 +209,13 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
 
         hideNavigationShadow()
 
-        if standingsController.isEmpty(for: season) {
+        if !standingsController.didFetchStandings(for: season) {
             loadContent()
         }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-
-        hideNavigationShadow(false)
     }
 
     // MARK: - Initialization
@@ -257,6 +265,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
 
             if !isRootTabBar {
                 $0.bottom.equalTo(toolbar.snp.top)
+                tableView.refreshControl = nil // a user doesn't need to reload this data, since it won't update
             } else {
                 $0.bottom.equalTo(view.snp.bottom)
             }
@@ -277,6 +286,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     // MARK: - Data Update
 
     fileprivate func loadContent() {
+
         if !refreshControl.isRefreshing {
             isLoadingList(true)
         }
@@ -333,7 +343,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
 
     func canPinView() -> Bool {
         guard let userId = myUserId else { return false }
-        guard currentDataSource().firstIndex(where: { $0.standing.userId == userId }) != nil
+        guard currentDataSource().firstIndex(where: { $0.standing.pilotId == userId }) != nil
         else { return false }
         return true
     }
@@ -343,7 +353,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
 
         if let cachedPinnedIndexPath { return cachedPinnedIndexPath }
 
-        guard let index = currentDataSource().firstIndex(where: { $0.standing.userId == userId }) else {
+        guard let index = currentDataSource().firstIndex(where: { $0.standing.pilotId == userId }) else {
             return nil
         }
 
@@ -394,7 +404,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     }
 
     fileprivate func resetTableView() {
-        tableView.refreshControl = isSearching ? nil : refreshControl
+        tableView.refreshControl = (!isRootTabBar || isSearching) ? nil : refreshControl
         tableView.setContentOffset(.zero, animated: false)
         tableView.reloadData()
 
@@ -406,11 +416,11 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
 
     fileprivate func showUserProfile(forUserAt indexPath: IndexPath, from cell: AvatarTableViewCell) {
         guard let viewModel = standingViewModel(at: indexPath) else { return }
-        guard !viewModel.standing.userId.isEmpty else { return }
+        guard !viewModel.standing.pilotId.isEmpty else { return }
 
         cell.isLoading = true
 
-        userApi.getUser(with: viewModel.standing.userId) { [weak self] (user, error) in
+        userApi.getUser(with: viewModel.standing.pilotId) { [weak self] (user, error) in
             if let user = user {
                 let vc = UserViewController(with: user)
                 self?.navigationController?.pushViewController(vc, animated: true)
@@ -418,6 +428,26 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
                 // handle error
             }
             cell.isLoading = false
+        }
+    }
+
+    fileprivate func showSeasonSchedule() {
+
+        // show loading indicator
+
+        let filters: [RaceListFilters] = [.upcoming, .series]
+        let year = season.year
+
+        raceApi.getRaces(with: filters, startDate: "\(year)") { [weak self]  (races, error) in
+
+            if let races = races {
+                let title = "\(year) GQ Schedule"
+                let sortedViewModels = RaceViewModel.sortedViewModels(with: races, sorting: .descending)
+                let vc = RaceListViewController(sortedViewModels, title: title)
+                self?.navigationController?.pushViewController(vc, animated: true)
+            } else if let _ = error {
+                // handle error
+            }
         }
     }
 
@@ -454,13 +484,23 @@ extension StandingsViewController: UITableViewDelegate {
         }
 
         guard !isSearching else {
-            return filteredViewModels.isEmpty ? nil : "Found \(filteredViewModels.count) Pilots"
+            if filteredViewModels.isEmpty { return nil }
+            let count = filteredViewModels.count
+            return count == 1 ? "Found \(count) Pilot" : "Found \(count) Pilots"
         }
-        return headerTitle
+
+        if !standingsController.isEmpty(for: season) {
+            return headerTitle
+        } else {
+            return nil
+        }
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard isRootTabBar, !isSearching else {
+        guard !shimmeringView.isShimmering else {
+            return nil
+        }
+        guard isRootTabBar && !isSearching else {
             return nil
         }
 
@@ -479,6 +519,10 @@ extension StandingsViewController: UITableViewDelegate {
 extension StandingsViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        guard !standingsController.isEmpty(for: season) else {
+            return 0
+        }
+
         return currentDataSource().count
     }
 
@@ -502,7 +546,7 @@ extension StandingsViewController: UITableViewDataSource {
         cell.avatarImageView.isHidden = true
         cell.accessoryView = nil
 
-        if let userId = myUserId, viewModel.standing.userId == userId {
+        if let userId = myUserId, viewModel.standing.pilotId == userId {
             cell.titleLabel.textColor = Color.white
             cell.subtitleLabel.textColor = Color.gray20
             cell.rankView.titleLabel.textColor = Color.gray20
@@ -585,6 +629,8 @@ extension StandingsViewController: EmptyDataSetSource {
             return emptyStateError?.title
         } else if isSearching {
             return emptyStateSearch.title
+        } else if standingsController.isEmpty(for: season) {
+            return emptyStateNoStandings.title
         }
         return nil
     }
@@ -596,8 +642,50 @@ extension StandingsViewController: EmptyDataSetSource {
             return emptyStateError?.description
         } else if isSearching {
             return emptyStateSearch.description
+        } else if standingsController.isEmpty(for: season) {
+
+            let text = "There are no results for the \(season.year) Global Qualifier yet."
+            return emptyStateNoStandings.attributtedStringForDescription(text)
         }
         return nil
+    }
+
+    func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
+        guard !shimmeringView.isShimmering, !isSearching else { return nil }
+
+        if isRootTabBar && standingsController.isEmpty(for: season) {
+            return UIImage(named: "logo_gq_large")
+        }
+        return nil
+    }
+
+    func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
+        guard !shimmeringView.isShimmering, !isSearching else { return nil }
+
+        if isRootTabBar && standingsController.isEmpty(for: season) {
+
+            let text = "See Season Schedule"
+            return emptyStateNoStandings.attributtedStringForButton(text, state: .normal)
+        }
+        return nil
+    }
+
+    func backgroundColor(forEmptyDataSet scrollView: UIScrollView) -> UIColor?{
+        guard !shimmeringView.isShimmering, !isSearching else { return nil }
+
+        if isRootTabBar && standingsController.isEmpty(for: season) {
+            return Color.white
+        }
+        return nil
+    }
+
+    func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
+        guard let tbc = tabBarController else { return 0 }
+        return -tbc.tabBar.frame.height
+    }
+
+    func spaceHeight(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
+        return 20
     }
 }
 
@@ -607,8 +695,8 @@ extension StandingsViewController: EmptyDataSetDelegate {
         return false
     }
 
-    func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
-        guard let nc = navigationController, let tbc = tabBarController else { return 0 }
-        return -nc.navigationBar.frame.height - tbc.tabBar.frame.height
+    func emptyDataSet(_ scrollView: UIScrollView, didTapButton button: UIButton) {
+
+        showSeasonSchedule()
     }
 }

@@ -31,7 +31,7 @@ class HomeTabBarController: UITabBarController {
     }()
 
     fileprivate lazy var standingsVC: StandingsViewController = {
-        let vc = StandingsViewController(with: .y2025)
+        let vc = StandingsViewController(with: .y2026)
         vc.title = "Standings"
         vc.tabBarItem = UITabBarItem(title: vc.title, image: SystemImg.trophy, selectedImage: SystemImg.trophyFill)
         vc.isRootTabBar = true

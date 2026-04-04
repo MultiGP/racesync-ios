@@ -32,9 +32,11 @@ class RaceListViewController: UIViewController, ViewJoinable {
 
     fileprivate var raceList: [RaceViewModel]
     fileprivate let raceApi = RaceApi()
+
     fileprivate var seasonId: ObjectId?
     fileprivate var seriesId: ObjectId?
     fileprivate var raceClass: RaceClass?
+    fileprivate var seriesName: String?
     fileprivate var raceName: String?
 
     fileprivate let emptyStateNoRaces = EmptyStateViewModel(.noRaces)
@@ -79,6 +81,12 @@ class RaceListViewController: UIViewController, ViewJoinable {
         self.title = raceName
     }
 
+    init(_ raceViewModels: [RaceViewModel], title: String) {
+        self.raceList = raceViewModels
+        super.init(nibName: nil, bundle: nil)
+        self.title = title
+    }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -119,7 +127,11 @@ class RaceListViewController: UIViewController, ViewJoinable {
     }
 
     fileprivate func configureNavigationItems() {
-        title = "Races"
+
+        if title == nil {
+            title = "Races"
+        }
+        
         tabBarItem = UITabBarItem(title: title, image: SystemImg.flagCheckeredCrossed, selectedImage: nil)
     }
 

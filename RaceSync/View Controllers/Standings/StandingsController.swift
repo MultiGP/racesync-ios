@@ -19,7 +19,7 @@ class StandingsController {
     // MARK: - Public Functions
 
     public func isEmpty(for season: StandingSeason) -> Bool {
-        return (viewModels(for: season)).count == 0
+        return (viewModels(for: season)).count < 2
     }
 
     public func viewModel(at index: Int, for season: StandingSeason) -> StandingViewModel? {
@@ -47,6 +47,11 @@ class StandingsController {
                 completion([], error)
             }
         }
+    }
+
+    public func didFetchStandings(for season: StandingSeason) -> Bool {
+        let vms = standingCollection[season]
+        return vms != nil
     }
 
     public func filter(with text: String, length: Int, for season: StandingSeason) -> [StandingViewModel] {
