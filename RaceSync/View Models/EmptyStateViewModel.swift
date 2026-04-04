@@ -48,12 +48,9 @@ enum EmptyState {
     case comingSoon
 
     case noSearchResults
-    case errorRaces
     case errorChapters
     case errorUsers
-    case errorStandings
-
-    case noInternet
+    case error(_: NSError)
 }
 
 struct EmptyStateViewModel: EmptyStateViewModelInterface {
@@ -100,7 +97,7 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "Coming Soon"
         case .noSearchResults:
             text = "No Results"
-        case .errorRaces, .errorStandings:
+        case .error( _):
             text = "Error"
         default:
             return nil
@@ -149,10 +146,8 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "Please enable Push Notifications to continue."
         case .comingSoon:
             text = "This section is under development."
-        case .errorRaces:
-            text = "Could not load the race details.\nPlease try again later or report a bug."
-        case .errorStandings:
-            text = "Could not load the season standings.\nPlease try again later or report a bug."
+        case .error(let error):
+            text = "\(error.localizedDescription)\nPlease try again later or report a bug."
         default:
             return nil
         }

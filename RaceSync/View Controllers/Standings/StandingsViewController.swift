@@ -295,8 +295,8 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         standingsController.fetchStandings(for: season) { objects, error in
             if let objects = objects {
                 self.enableSearchBar(objects.count > 0)
-            } else if error != nil {
-                self.emptyStateError = EmptyStateViewModel(.errorStandings)
+            } else if let error = error {
+                self.emptyStateError = EmptyStateViewModel(.error(error))
             }
 
             if self.refreshControl.isRefreshing {
@@ -695,7 +695,6 @@ extension StandingsViewController: EmptyDataSetDelegate {
     }
 
     func emptyDataSet(_ scrollView: UIScrollView, didTapButton button: UIButton) {
-
         showSeasonSchedule()
     }
 }

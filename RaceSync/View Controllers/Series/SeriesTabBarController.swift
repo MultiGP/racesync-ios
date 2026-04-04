@@ -33,6 +33,7 @@ class SeriesTabBarController: UITabBarController {
     }()
 
     fileprivate var initialSelectedIndex: Int = SeriesTabs.default.rawValue
+    fileprivate var emptyStateError: EmptyStateViewModel?
 
     fileprivate let seriesApi = SeriesApi()
     fileprivate var seriesViewModels: SeriesViewModel?
@@ -42,6 +43,7 @@ class SeriesTabBarController: UITabBarController {
     init(with id: ObjectId) {
         self.seriesId = id
         super.init(nibName: nil, bundle: nil)
+        self.title = "Details"
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -141,23 +143,23 @@ class SeriesTabBarController: UITabBarController {
 
     // MARK: - Error Handling
 
-    fileprivate func handleError(_ error: Error) {
+    fileprivate func handleError(_ error: NSError) {
 
-//        emptyStateError = EmptyStateViewModel(.errorRaces)
-//
-//        // temporary scroll view used to display the error message
-//        let scrollView = UIScrollView()
-//        scrollView.contentInsetAdjustmentBehavior = .never
-//        scrollView.emptyDataSetDelegate = self
-//        scrollView.emptyDataSetSource = self
-//
-//        view.addSubview(scrollView)
-//        scrollView.snp.makeConstraints {
-//            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-//            $0.bottom.leading.trailing.equalToSuperview()
-//        }
-//
-//        scrollView.reloadEmptyDataSet()
+        emptyStateError = EmptyStateViewModel(.error(error))
+
+        // temporary scroll view used to display the error message
+        let scrollView = UIScrollView()
+        scrollView.contentInsetAdjustmentBehavior = .never
+        scrollView.emptyDataSetDelegate = self
+        scrollView.emptyDataSetSource = self
+
+        view.addSubview(scrollView)
+        scrollView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.bottom.leading.trailing.equalToSuperview()
+        }
+
+        scrollView.reloadEmptyDataSet()
     }
 }
 
@@ -177,3 +179,28 @@ extension SeriesTabBarController: UITabBarControllerDelegate {
     }
 }
 
+extension SeriesTabBarController: EmptyDataSetSource {
+
+    func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        return emptyStateError?.title
+    }
+
+    func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        return emptyStateError?.description
+    }
+
+    func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
+        return emptyStateError?.buttonTitle(state)
+    }
+}
+
+extension SeriesTabBarController: EmptyDataSetDelegate {
+
+    func emptyDataSetShouldAllowScroll(_ scrollView: UIScrollView) -> Bool {
+        return false
+    }
+
+    func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
+        return -(navigationController?.navigationBar.frame.height ?? 0)
+    }
+}

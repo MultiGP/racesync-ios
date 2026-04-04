@@ -225,9 +225,9 @@ class RaceTabBarController: UITabBarController {
 
     // MARK: - Error Handling
 
-    fileprivate func handleError(_ error: Error) {
+    fileprivate func handleError(_ error: NSError) {
 
-        emptyStateError = EmptyStateViewModel(.errorRaces)
+        emptyStateError = EmptyStateViewModel(.error(error))
 
         // temporary scroll view used to display the error message
         let scrollView = UIScrollView()
@@ -242,6 +242,22 @@ class RaceTabBarController: UITabBarController {
         }
 
         scrollView.reloadEmptyDataSet()
+    }
+}
+
+extension RaceTabBarController: UITabBarControllerDelegate {
+
+    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        return true
+    }
+
+    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+
+        (tabBar as? RoundedSelectionTabBar)?.updateSelectionFrame(animated: true)
+
+        if let index = viewControllers?.lastIndex(of: viewController) {
+            didSelectedIndex(index)
+        }
     }
 }
 
@@ -264,21 +280,5 @@ extension RaceTabBarController: EmptyDataSetDelegate {
 
     func emptyDataSetShouldAllowScroll(_ scrollView: UIScrollView) -> Bool {
         return false
-    }
-}
-
-extension RaceTabBarController: UITabBarControllerDelegate {
-
-    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
-        return true
-    }
-
-    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-
-        (tabBar as? RoundedSelectionTabBar)?.updateSelectionFrame(animated: true)
-
-        if let index = viewControllers?.lastIndex(of: viewController) {
-            didSelectedIndex(index)
-        }
     }
 }
