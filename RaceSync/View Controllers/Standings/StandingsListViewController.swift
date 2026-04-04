@@ -56,8 +56,6 @@ class StandingsListViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
-        hideNavigationShadow(false)
     }
 
     override func viewDidAppear(_ animated: Bool) {

@@ -216,6 +216,8 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+
+        hideNavigationShadow(false)
     }
 
     // MARK: - Initialization
@@ -322,6 +324,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
 
     fileprivate func enableSearchBar(_ enable: Bool) {
         if #available(iOS 16.4, *) {
+            searchBar.alpha = enable ? 1.0 : 0.5
             searchBar.isEnabled = enable
         } else {
             searchBar.alpha = enable ? 1.0 : 0.5
@@ -473,9 +476,10 @@ extension StandingsViewController: UITableViewDelegate {
         if isRootTabBar, let cachedIndexPath = cachedPinnedIndexPath, indexPath == cachedIndexPath {
             shouldPresentMyStandingBadge(indexPath)
             return
+        } else {
+            showUserProfile(forUserAt: indexPath, from: cell)
         }
 
-        showUserProfile(forUserAt: indexPath, from: cell)
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {

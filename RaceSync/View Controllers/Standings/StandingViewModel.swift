@@ -33,6 +33,7 @@ class StandingViewModel: Descriptable {
             return (seasonKey == standing.season1) ? standing.season1Score : standing.season2Score
         }
 
+        // Only 2024 and 2025 had 2 scores per season
         if standing.season1.contains("2025")  || standing.season1.contains("2024") {
             self.score1Label = "Spring: \(Self.timeLabel(for: standing.season1Score))"
             self.score2Label = "Summer: \(Self.timeLabel(for: standing.season2Score))"
