@@ -17,9 +17,9 @@ protocol EmptyStateViewModelInterface {
 
     func buttonTitle(_ state: UIControl.State) -> NSAttributedString?
 
-    func attributtedStringForTitle(_ string: String?) -> NSAttributedString?
-    func attributtedStringForDescription(_ string: String?) -> NSAttributedString?
-    func attributtedStringForButton(_ string: String?, state: UIControl.State) -> NSAttributedString?
+    static func attributtedStringForTitle(_ string: String?) -> NSAttributedString?
+    static func attributtedStringForDescription(_ string: String?) -> NSAttributedString?
+    static func attributtedStringForButton(_ string: String?, state: UIControl.State) -> NSAttributedString?
 }
 
 enum EmptyState {
@@ -40,7 +40,6 @@ enum EmptyState {
     case noProfileChapters
     case noMyProfileRaces
     case noMyProfileChapters
-    case noStandingsResults
 
     case noPushMessages
     case noPushAuthorized
@@ -99,7 +98,7 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "Push Notifications Disabled"
         case .comingSoon:
             text = "Coming Soon"
-        case .noSearchResults, .noStandingsResults:
+        case .noSearchResults:
             text = "No Results"
         case .errorRaces, .errorStandings:
             text = "Error"
@@ -107,7 +106,7 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             return nil
         }
 
-        return attributtedStringForTitle(text)
+        return Self.attributtedStringForTitle(text)
     }
 
     var description: NSAttributedString? {
@@ -154,13 +153,11 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "Could not load the race details.\nPlease try again later or report a bug."
         case .errorStandings:
             text = "Could not load the season standings.\nPlease try again later or report a bug."
-        case .noStandingsResults:
-            text = "There are no results for this season yet."
         default:
             return nil
         }
 
-        return attributtedStringForDescription(text)
+        return Self.attributtedStringForDescription(text)
     }
 
     var image: UIImage? {
@@ -184,14 +181,14 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             return nil
         }
 
-        return attributtedStringForButton(text, state: state)
+        return Self.attributtedStringForButton(text, state: state)
     }
 
     var backgroundColor: UIColor? {
         return Color.white
     }
 
-    func attributtedStringForTitle(_ string: String?) -> NSAttributedString? {
+    static func attributtedStringForTitle(_ string: String?) -> NSAttributedString? {
         guard let string = string else { return nil }
 
         var attributes: [NSAttributedString.Key: Any] = [:]
@@ -201,7 +198,7 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
         return NSAttributedString.init(string: string, attributes: attributes)
     }
 
-    func attributtedStringForDescription(_ string: String?) -> NSAttributedString? {
+    static func attributtedStringForDescription(_ string: String?) -> NSAttributedString? {
         guard let string = string else { return nil }
 
         var attributes: [NSAttributedString.Key: Any] = [:]
@@ -211,7 +208,7 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
         return NSAttributedString.init(string: string, attributes: attributes)
     }
 
-    func attributtedStringForButton(_ string: String?, state: UIControl.State) -> NSAttributedString? {
+    static func attributtedStringForButton(_ string: String?, state: UIControl.State) -> NSAttributedString? {
         guard let string = string else { return nil }
 
         var attributes: [NSAttributedString.Key: Any] = [:]

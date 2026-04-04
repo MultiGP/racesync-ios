@@ -165,7 +165,6 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     var cachedPinnedIndexPath: IndexPath?
 
     fileprivate let minQuery: Int = 2
-    fileprivate let emptyStateNoStandings = EmptyStateViewModel(.noStandingsResults)
     fileprivate let emptyStateSearch = EmptyStateViewModel(.noSearchResults)
     fileprivate var emptyStateError: EmptyStateViewModel? = nil
     fileprivate var presenter: Presentr?
@@ -633,8 +632,6 @@ extension StandingsViewController: EmptyDataSetSource {
             return emptyStateError?.title
         } else if isSearching {
             return emptyStateSearch.title
-        } else if standingsController.isEmpty(for: season) {
-            return emptyStateNoStandings.title
         }
         return nil
     }
@@ -647,9 +644,8 @@ extension StandingsViewController: EmptyDataSetSource {
         } else if isSearching {
             return emptyStateSearch.description
         } else if standingsController.isEmpty(for: season) {
-
             let text = "There are no results for the \(season.year) Global Qualifier yet."
-            return emptyStateNoStandings.attributtedStringForDescription(text)
+            return EmptyStateViewModel.attributtedStringForDescription(text)
         }
         return nil
     }
@@ -667,9 +663,8 @@ extension StandingsViewController: EmptyDataSetSource {
         guard !shimmeringView.isShimmering, !isSearching else { return nil }
 
         if isRootTabBar && standingsController.isEmpty(for: season) {
-
-            let text = "See Season Schedule"
-            return emptyStateNoStandings.attributtedStringForButton(text, state: .normal)
+            let text = "Open Season Schedule"
+            return EmptyStateViewModel.attributtedStringForButton(text, state: .normal)
         }
         return nil
     }
