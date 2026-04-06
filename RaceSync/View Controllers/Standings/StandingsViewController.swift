@@ -132,7 +132,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
 
         let baseImage = SystemImg.chevronRight?.withRenderingMode(.alwaysTemplate)
         let config = UIImage.SymbolConfiguration(scale: .small)
-        let resizedImage = baseImage?.applyingSymbolConfiguration(config)
+        let resizedImage = baseImage?.applyingSymbolConfiguration(config)?.withTintColor(button.tintColor)
         button.setImage(resizedImage, for: .normal)
 
         view.addSubview(button)
