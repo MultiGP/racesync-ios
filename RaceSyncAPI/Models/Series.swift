@@ -58,6 +58,7 @@ public class Series: Mappable, Descriptable {
         isApproved <- map[ParamKey.approved]
         ownerId <- map[ParamKey.ownerId]
         mainImageUrl <- map[ParamKey.mainImageUrl]
+        isJoined <- map[ParamKey.isJoined]
 
         pilotCount <- map[ParamKey.pilotCount]
         chapterCount <- map[ParamKey.chapterCount]

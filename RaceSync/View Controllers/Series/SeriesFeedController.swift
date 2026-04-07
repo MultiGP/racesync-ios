@@ -9,12 +9,12 @@
 import RaceSyncAPI
 
 enum SeriesFilter: EnumTitle {
-    case regionals, joined, all
+    case joined, regionals, all
 
     var title: String {
         switch self {
-        case .regionals:    return "Regionals"
         case .joined:       return "My Series"
+        case .regionals:    return "Regionals"
         case .all:          return "All Series"
         }
     }
@@ -63,12 +63,12 @@ class SeriesFeedController {
                     $0.scoreType == .regionals ? SeriesViewModel(with: $0) : nil
                 }
 
-                // TODO: mock-up for now. This will likely need to call a different API endpoint
                 self.collection[.joined] = objects.compactMap {
                     $0.isJoined == true ? SeriesViewModel(with: $0) : nil
                 }
 
-                self.collection[.all] = viewModels
+                // sorted by popularity (highest pilot participation)
+                self.collection[.all] = viewModels.sorted { $0.pilotCount > $1.pilotCount }
 
                 completion?(self.collection[filter], nil)
 

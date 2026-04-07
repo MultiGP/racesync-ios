@@ -90,12 +90,15 @@ class SeriesFeedViewController: UIViewController, Shimmable {
         }
     }
 
-    fileprivate var feedCount: Int {
-        get { return seriesFeedController.viewModelsCount(for: selectedFilter) }
+    fileprivate func feedCount(for filter: SeriesFilter? = nil) -> Int {
+        let filter = filter ?? selectedFilter
+        return seriesFeedController.viewModelsCount(for: filter)
     }
 
-    func feedViewModel(at index: Int) -> SeriesViewModel? {
-        guard let list = seriesFeedController.viewModels(for: selectedFilter) else { return nil }
+    func feedViewModel(at index: Int, filter: SeriesFilter? = nil) -> SeriesViewModel? {
+
+        let filter = filter ?? selectedFilter
+        guard let list = seriesFeedController.viewModels(for: filter) else { return nil }
         if index >= 0, index < list.count {
             return list[index]
         }
@@ -103,6 +106,7 @@ class SeriesFeedViewController: UIViewController, Shimmable {
     }
 
     fileprivate let seriesFeedController = SeriesFeedController()
+    fileprivate let sliderFilter: SeriesFilter = .regionals
 
     fileprivate let emptyStateSeries = EmptyStateViewModel(.noSeries)
     fileprivate let emptyStateJoinedSeries = EmptyStateViewModel(.noJoinedSeries)
@@ -125,7 +129,7 @@ class SeriesFeedViewController: UIViewController, Shimmable {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if feedCount == 0 {
+        if feedCount() == 0 {
             isLoadingList(true)
         }
     }
@@ -135,7 +139,7 @@ class SeriesFeedViewController: UIViewController, Shimmable {
 
         hideNavigationShadow()
 
-        if feedCount == 0 {
+        if feedCount() == 0 {
             loadContent()
         }
     }
@@ -192,8 +196,15 @@ class SeriesFeedViewController: UIViewController, Shimmable {
                 self.isLoadingList(false)
             }
 
-            self.tableView.tableHeaderView = self.sliderHeaderView
-            self.sliderHeaderView.reloadData()
+            let slider = self.sliderHeaderView
+
+            // Hiding the slider if nothing to show
+            if slider.delegate?.sliderNumberOfItems(slider) ?? 0 > 0 {
+                self.tableView.tableHeaderView = slider
+                slider.reloadData()
+            } else {
+                self.tableView.tableHeaderView = nil
+            }
         }
     }
 
@@ -220,7 +231,7 @@ class SeriesFeedViewController: UIViewController, Shimmable {
 
         cell.titleLabel.text = viewModel.titleLabel
         cell.titleLabel.numberOfLines = 2
-        cell.subtitleLabel.text = viewModel.typeLabel
+        cell.subtitleLabel.text = viewModel.subtitleLabel
         cell.accessoryType = .disclosureIndicator
 
         let imageRatio = 1.5
@@ -248,7 +259,7 @@ extension SeriesFeedViewController: UITableViewDelegate {
 extension SeriesFeedViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return feedCount
+        return feedCount()
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -265,36 +276,28 @@ extension SeriesFeedViewController: UITableViewDataSource {
 extension SeriesFeedViewController: SliderTableViewHeaderViewDelegate {
 
     func sliderNumberOfItems(_ slider: SliderTableViewHeaderView) -> Int {
-        return isLoading ? 0 : feedCount
+        return isLoading ? 0 : feedCount(for: sliderFilter)
     }
 
     func slider(_ slider: SliderTableViewHeaderView, imageFor view: UIImageView, at index: Int) {
-        guard let viewModel = feedViewModel(at: index) else { return }
+        guard let viewModel = feedViewModel(at: index, filter: sliderFilter) else { return }
         view.setImage(with: viewModel.imageUrl, placeholderImage: PlaceholderImg.seriesMedium)
     }
 
     func slider(_ slider: SliderTableViewHeaderView, didSelectImageAt index: Int) {
-        if let viewModel = feedViewModel(at: index) {
-            openSeriesDetail(viewModel)
-        }
+        guard let viewModel = feedViewModel(at: index, filter: sliderFilter) else { return }
+        openSeriesDetail(viewModel)
     }
 }
 
 extension SeriesFeedViewController: EmptyDataSetSource {
 
-    func getEmptyStateViewModel() -> EmptyStateViewModel {
-        switch selectedFilter {
-        case .joined:   return emptyStateComingSoon
-        default:        return emptyStateSeries
-        }
-    }
-
     func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
-        return getEmptyStateViewModel().title
+        return emptyStateSeries.title
     }
 
     func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
-        return getEmptyStateViewModel().description
+        return emptyStateSeries.description
     }
 
     func backgroundColor(forEmptyDataSet scrollView: UIScrollView) -> UIColor? {
