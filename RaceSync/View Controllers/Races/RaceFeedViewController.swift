@@ -254,6 +254,8 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
         } else {
             loadContent(forced: true)
         }
+
+        AppPrefs.lastSelectedRaceFilter = selectedRaceFilter
     }
 
     @objc fileprivate func didPressSearchButton(_ sender: Any) {

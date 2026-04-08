@@ -57,7 +57,7 @@ class SeriesFeedViewController: UIViewController, Shimmable {
 
     fileprivate lazy var segmentedControl: UISegmentedControl = {
         let control = UISegmentedControl(items: SeriesFilter.titles)
-        control.selectedSegmentIndex = SeriesFilter.regionals.index
+        control.selectedSegmentIndex = AppPrefs.lastSelectedSeriesFilter.index
         control.addTarget(self, action: #selector(didChangeSegment), for: .valueChanged)
         return control
     }()
@@ -218,6 +218,8 @@ class SeriesFeedViewController: UIViewController, Shimmable {
 
     @objc fileprivate func didChangeSegment() {
         tableView.reloadData()
+
+        AppPrefs.lastSelectedSeriesFilter = selectedFilter
     }
 
     @objc fileprivate func didPullRefreshControl() {

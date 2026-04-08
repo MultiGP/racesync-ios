@@ -22,6 +22,8 @@ enum SeriesFilter: EnumTitle {
     var index: Int {
         SeriesFilter.allCases.firstIndex(of: self)!
     }
+
+    static let `default`: Self = .regionals
 }
 
 public typealias SeriesFeedControllerCompletionBlock<T> = (_ object: T?, _ error: NSError?) -> Void
