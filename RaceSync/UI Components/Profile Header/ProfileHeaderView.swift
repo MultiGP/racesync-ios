@@ -28,6 +28,12 @@ class ProfileHeaderView: UIView {
         }
     }
 
+    var color: UIColor? {
+        didSet {
+            separatorView.backgroundColor = color
+        }
+    }
+
     var isEditable: Bool = false {
         didSet {
             cameraButton.isHidden = !isEditable
@@ -37,6 +43,15 @@ class ProfileHeaderView: UIView {
     }
 
     var delegate: ProfileHeaderViewDelegate?
+    var backgroundViewSize = CGSize(width: UIScreen.main.bounds.width, height: backgroundViewHeight)
+
+    func hideLeftBadgeButton(_ hide: Bool) {
+        leftBadgeButton.isHidden = hide
+    }
+
+    func hideRightBadgeButton(_ hide: Bool) {
+        rightBadgeButton.isHidden = hide
+    }
 
     lazy var locationButton: PasteboardButton = {
         let button = PasteboardButton(type: .system)
@@ -47,7 +62,7 @@ class ProfileHeaderView: UIView {
         return button
     }()
 
-    fileprivate lazy var locationIconView: UIImageView = {
+    lazy var locationIconView: UIImageView = {
         let view = UIImageView()
         view.image = SystemImg.pin_small?.withRenderingMode(.alwaysTemplate)
         view.contentMode = .scaleAspectFit
@@ -84,8 +99,6 @@ class ProfileHeaderView: UIView {
         return view
     }()
 
-    var backgroundViewSize = CGSize(width: UIScreen.main.bounds.width, height: backgroundViewHeight)
-
     static var backgroundViewHeight: CGFloat {
         // TODO: Use dynamic values instead of hardcoding them.
         if Constants.backgroundImageHeight - 44 < Constants.avatarImageSize {
@@ -94,20 +107,19 @@ class ProfileHeaderView: UIView {
         return Constants.backgroundImageHeight
     }
 
-    func hideLeftBadgeButton(_ hide: Bool) {
-        leftBadgeButton.isHidden = hide
-    }
-
-    func hideRightBadgeButton(_ hide: Bool) {
-        rightBadgeButton.isHidden = hide
-    }
-
     // MARK: - Private Variables
+
+    fileprivate lazy var separatorView: UIView = {
+        let view = UIView()
+        view.backgroundColor = Color.red
+        return view
+    }()
 
     fileprivate lazy var mainTextLabel: PasteboardLabel = {
         let label = PasteboardLabel()
-        label.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        label.font = UIFont.systemFont(ofSize: 18, weight: .regular)
         label.textColor = Color.black
+        label.textAlignment = .center
         label.numberOfLines = 2
         return label
     }()
@@ -152,7 +164,7 @@ class ProfileHeaderView: UIView {
 
         let stackView2 = UIStackView(arrangedSubviews: [mainTextLabel, stackView1])
         stackView2.axis = .vertical
-        stackView2.alignment = .leading
+        stackView2.alignment = .center
         stackView2.distribution = .fill
         stackView2.spacing = Constants.padding
         return stackView2
@@ -197,6 +209,13 @@ class ProfileHeaderView: UIView {
             $0.height.equalTo(Self.backgroundViewHeight)
         }
 
+        addSubview(separatorView)
+        separatorView.snp.makeConstraints {
+            $0.top.equalTo(backgroundView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(Constants.padding)
+        }
+
         addSubview(avatarView)
         avatarView.snp.makeConstraints {
             $0.top.equalTo(backgroundView.snp.bottom).offset(-Constants.avatarImageSize*6/7) // 85%
@@ -212,25 +231,25 @@ class ProfileHeaderView: UIView {
 
         addSubview(leftBadgeButton)
         leftBadgeButton.snp.makeConstraints {
-            $0.top.equalTo(backgroundView.snp.bottom).offset(Constants.padding/2)
+            $0.top.equalTo(separatorView.snp.bottom).offset(Constants.padding)
             $0.leading.equalToSuperview().offset(Constants.padding)
         }
 
         addSubview(rightBadgeButton)
         rightBadgeButton.snp.makeConstraints {
-            $0.top.equalTo(backgroundView.snp.bottom).offset(Constants.padding/2)
+            $0.top.equalTo(separatorView.snp.bottom).offset(Constants.padding)
             $0.trailing.equalToSuperview().offset(-Constants.padding)
         }
 
         addSubview(topBadgeButton)
         topBadgeButton.snp.makeConstraints {
             $0.top.equalTo(backgroundView.snp.bottom).offset(-Constants.padding*2)
-            $0.leading.equalToSuperview().offset(Constants.padding/2)
+            $0.leading.equalToSuperview().offset(Constants.padding)
         }
 
         addSubview(headerLabelStackView)
         headerLabelStackView.snp.makeConstraints {
-            $0.top.equalTo(avatarView.snp.bottom).offset(Constants.padding)
+            $0.top.equalTo(leftBadgeButton.snp.bottom).offset(Constants.padding*2)
             $0.leading.equalToSuperview().offset(Constants.padding)
             $0.trailing.equalToSuperview().offset(-Constants.padding)
             $0.bottom.equalToSuperview()
@@ -281,6 +300,7 @@ class ProfileHeaderView: UIView {
         }
 
         mainTextLabel.text = viewModel.displayName
+        color = viewModel.color
 
         if !viewModel.locationName.isEmpty {
             locationButton.setTitle(viewModel.locationName, for: .normal)

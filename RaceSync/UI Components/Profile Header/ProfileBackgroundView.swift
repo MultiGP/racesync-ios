@@ -8,6 +8,7 @@
 
 import UIKit
 import SnapKit
+import RaceSyncAPI
 
 class ProfileBackgroundView: DimmableView {
 

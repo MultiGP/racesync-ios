@@ -9,6 +9,7 @@
 import UIKit
 import SnapKit
 import RaceSyncAPI
+import SwiftValidators
 
 class SeriesDetailViewController: UIViewController {
 
@@ -44,7 +45,12 @@ class SeriesDetailViewController: UIViewController {
         return view
     }()
 
-    fileprivate let headerView = ProfileHeaderView()
+    fileprivate lazy var headerView: ProfileHeaderView = {
+        let view = ProfileHeaderView()
+        view.locationIconView.isHidden = true
+        view.backgroundColor = .red
+        return view
+    }()
 
     fileprivate var htmlViewHeightConstraint: Constraint?
 
@@ -105,18 +111,17 @@ class SeriesDetailViewController: UIViewController {
         contentView.addSubview(htmlView)
         htmlView.snp.makeConstraints {
             $0.top.equalTo(headerView.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
-            $0.width.equalTo(view.bounds.width)
-
+            $0.leading.equalToSuperview().offset(Constants.padding)
+            $0.trailing.equalToSuperview().offset(-Constants.padding)
             htmlViewHeightConstraint = $0.height.equalTo(0).constraint
             htmlViewHeightConstraint?.activate()
+            $0.bottom.equalToSuperview()
         }
-
-        scrollView.contentSize = view.bounds.size
 
         scrollView.addSubview(contentView)
         contentView.snp.makeConstraints {
             $0.top.leading.trailing.bottom.equalToSuperview()
+            $0.width.equalTo(scrollView.snp.width)
         }
 
         view.addSubview(scrollView)
@@ -139,50 +144,23 @@ class SeriesDetailViewController: UIViewController {
             guard let s = self else { return }
             s.configureHTML()
         }
-
-        let contentRect: CGRect = scrollView.subviews.reduce(into: .zero) { rect, view in
-            rect = rect.union(view.frame)
-        }
-
-        scrollView.contentSize = CGSize(width: contentRect.size.width, height: contentRect.size.height)
     }
 
     fileprivate func configureHTML() {
         guard series.description.stripHTML().count > 0 else { return }
 
-        let spacing = Constants.padding * 3/4
+        let vSpacing = Constants.padding * 3/4
 
         let content = series.description.replaceHTMLColorTag(with: Color.black).stripHTMLFontTag().stripHTMLEdges()
-        htmlView.html = "<div id=\"content\" style=\"color:\(Color.black.toHexString()); padding-top: \(spacing)px; padding-bottom: \(spacing)px;\">\(content)</div>"
+        htmlView.html = "<div id=\"content\" style=\"color:\(Color.black.toHexString()); padding-top: \(vSpacing)px; padding-bottom: \(vSpacing)px;\">\(content)</div>"
+        htmlView.isUserInteractionEnabled = true
     }
 }
-
-//extension SeriesDetailViewController: UITableViewDelegate {
-//
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        tableView.deselectRow(at: indexPath, animated: true)
-//    }
-//}
-//
-//extension SeriesDetailViewController: UITableViewDataSource {
-//
-//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        return 10
-//    }
-//
-//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        return UITableViewCell()
-//    }
-//
-//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return Constants.cellHeight
-//    }
-//}
 
 extension SeriesDetailViewController: UIScrollViewDelegate {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        stretchHeaderView(with: scrollView.contentOffset)
+        //stretchHeaderView(with: scrollView.contentOffset)
     }
 }
 
@@ -204,15 +182,15 @@ extension SeriesDetailViewController: RichEditorDelegate {
 
     func richEditor(_ editor: RichEditorView, shouldInteractWith url: URL) -> Bool {
 
-//        if let link = DeepLink.create(from: url), ApplicationControl.shared.canHandleDeepLink(link) {
-//            ApplicationControl.shared.handle(link)
-//        } else if Validator.isEmail().apply(url.absoluteString) {
-//            // leave the system handle emails
-//            UIApplication.shared.open(url)
-//        } else {
-//            // open url using in-app browser, else the url is open on the WKWebView
-//            WebViewController.open(url)
-//        }
+        if let link = DeepLink.create(from: url), ApplicationControl.shared.canHandleDeepLink(link) {
+            ApplicationControl.shared.handle(link)
+        } else if Validator.isEmail().apply(url.absoluteString) {
+            // leave the system handle emails
+            UIApplication.shared.open(url)
+        } else {
+            // open url using in-app browser, else the url is open on the WKWebView
+            WebViewController.open(url)
+        }
 
         return false
     }

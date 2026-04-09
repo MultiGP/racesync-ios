@@ -21,6 +21,7 @@ public class Series: Mappable, Descriptable {
     public var isApproved: Bool = false
     public var ownerId: ObjectId = ""
     public var mainImageUrl: String? = nil
+    public var color: String = ""
     public var isJoined: Bool = false
 
     public var pilotCount: Int32 = 0
@@ -58,6 +59,7 @@ public class Series: Mappable, Descriptable {
         isApproved <- map[ParamKey.approved]
         ownerId <- map[ParamKey.ownerId]
         mainImageUrl <- map[ParamKey.mainImageUrl]
+        color <- map["primary_color"]
         isJoined <- map[ParamKey.isJoined]
 
         pilotCount <- map[ParamKey.pilotCount]
