@@ -29,10 +29,10 @@ class SeriesDetailViewController: UIViewController {
 
     fileprivate lazy var scrollView: UIScrollView = {
         let view = UIScrollView()
-        view.showsVerticalScrollIndicator = false
         view.backgroundColor = Color.white
-        view.isScrollEnabled = true
         view.alwaysBounceVertical = true
+        view.showsHorizontalScrollIndicator = false
+        view.contentInsetAdjustmentBehavior = .never
         view.delegate = self
         return view
     }()
@@ -47,6 +47,7 @@ class SeriesDetailViewController: UIViewController {
 
     fileprivate lazy var headerView: ProfileHeaderView = {
         let view = ProfileHeaderView()
+        view.topLayoutInset = 0
         view.locationIconView.isHidden = true
         view.backgroundColor = .red
         return view
@@ -126,7 +127,10 @@ class SeriesDetailViewController: UIViewController {
 
         view.addSubview(scrollView)
         scrollView.snp.makeConstraints {
-            $0.top.leading.trailing.bottom.equalToSuperview()
+            $0.width.equalTo(UIScreen.main.bounds.width)
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
     }
 
@@ -160,7 +164,7 @@ class SeriesDetailViewController: UIViewController {
 extension SeriesDetailViewController: UIScrollViewDelegate {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        //stretchHeaderView(with: scrollView.contentOffset)
+        stretchHeaderView(with: scrollView.contentOffset)
     }
 }
 

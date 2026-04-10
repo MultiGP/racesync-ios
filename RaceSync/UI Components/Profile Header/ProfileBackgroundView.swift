@@ -35,6 +35,11 @@ class ProfileBackgroundView: DimmableView {
         return view
     }()
 
+    fileprivate lazy var blurView: UIVisualEffectView = {
+        let view = UIVisualEffectView(effect: nil)
+        view.alpha = 0
+        return view
+    }()
 
     // MARK: - Initialization
 
@@ -68,6 +73,11 @@ class ProfileBackgroundView: DimmableView {
         imageView.snp.makeConstraints {
             $0.top.bottom.leading.trailing.equalToSuperview()
         }
+
+        addSubview(blurView)
+        blurView.snp.makeConstraints {
+            $0.top.bottom.leading.trailing.equalToSuperview()
+        }
     }
 }
 
@@ -76,5 +86,12 @@ extension ProfileBackgroundView: StretchableView {
     func changeLayerFrame(_ frame: CGRect) {
         layer.frame = frame
         imageView.layer.frame = CGRect(origin: .zero, size: frame.size)
+        blurView.layer.frame = CGRect(origin: .zero, size: frame.size)
+    }
+
+    func changeLayerEffect(_ percentage: CGFloat) {
+//        let clamped = max(0, min(1, percentage))
+//        blurView.effect = UIBlurEffect(style: .regular)
+//        blurView.alpha = clamped
     }
 }

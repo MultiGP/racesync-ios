@@ -100,9 +100,9 @@ class ProfileHeaderView: UIView {
     }()
 
     static var backgroundViewHeight: CGFloat {
-        // TODO: Use dynamic values instead of hardcoding them.
-        if Constants.backgroundImageHeight - 44 < Constants.avatarImageSize {
-            return Constants.avatarImageSize + 44
+        let barHeight: CGFloat = 44
+        if Constants.backgroundImageHeight - barHeight < Constants.avatarImageSize {
+            return Constants.avatarImageSize + barHeight
         }
         return Constants.backgroundImageHeight
     }
@@ -203,7 +203,7 @@ class ProfileHeaderView: UIView {
 
         addSubview(backgroundView)
         backgroundView.snp.makeConstraints {
-            $0.top.equalTo(snp.top).offset(-topLayoutInset)
+            $0.top.equalToSuperview().offset(-topLayoutInset)
             $0.leading.trailing.equalToSuperview()
             $0.width.equalTo(UIScreen.main.bounds.width)
             $0.height.equalTo(Self.backgroundViewHeight)
@@ -276,9 +276,8 @@ class ProfileHeaderView: UIView {
             avatarView.isHidden = false
         }
 
-        let headerImageSize = CGSize(width: UIScreen.main.bounds.width*3, height: Self.backgroundViewHeight)
-        let headerPlaceholderSize = CGSize(width: UIScreen.main.bounds.width, height: Self.backgroundViewHeight)
-        let headerPlaceholder = UIImage.image(withColor: Color.gray100, imageSize: headerPlaceholderSize)
+        let headerImageSize = CGSize(width: UIScreen.main.bounds.width*2, height: Self.backgroundViewHeight)
+        let headerPlaceholder = UIImage.image(withColor: Color.gray100, imageSize: headerImageSize)
 
         if let headerImageUrl = ImageUtil.getImageUrl(for: viewModel.backgroundUrl) {
             backgroundView.imageView.setImage(with: headerImageUrl, placeholderImage: headerPlaceholder, size: headerImageSize) { (image) in
