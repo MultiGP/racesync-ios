@@ -127,7 +127,7 @@ class ProfileHeaderView: UIView {
     fileprivate lazy var topBadgeButton: UIButton = {
         let button = UIButton(type: .system)
         button.tintColor = Color.white
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .medium)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.titleEdgeInsets = UIEdgeInsets(right: -Constants.padding/2)
         button.isUserInteractionEnabled = false
         button.layer.shadowColor = Color.black.cgColor
@@ -140,7 +140,7 @@ class ProfileHeaderView: UIView {
     fileprivate lazy var leftBadgeButton: UIButton = {
         let button = UIButton(type: .system)
         button.tintColor = Color.gray400
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         button.titleEdgeInsets = UIEdgeInsets(right: -Constants.padding/2)
         button.isUserInteractionEnabled = false
         return button
@@ -149,7 +149,7 @@ class ProfileHeaderView: UIView {
     fileprivate lazy var rightBadgeButton: UIButton = {
         let button = UIButton(type: .system)
         button.tintColor = Color.gray400
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -Constants.padding/2, bottom: 0, right: 0)
         button.isUserInteractionEnabled = false
         return button
@@ -298,11 +298,11 @@ class ProfileHeaderView: UIView {
             avatarView.isHidden = true
         }
 
-        mainTextLabel.text = viewModel.displayName
+        mainTextLabel.text = viewModel.mainTextLabel
         color = viewModel.color
 
-        if !viewModel.locationName.isEmpty {
-            locationButton.setTitle(viewModel.locationName, for: .normal)
+        if !viewModel.secondaryTextLabel.isEmpty {
+            locationButton.setTitle(viewModel.secondaryTextLabel, for: .normal)
             locationButton.isHidden = false
         } else {
             locationButton.setTitle(nil, for: .normal)

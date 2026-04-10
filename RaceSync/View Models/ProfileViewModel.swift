@@ -15,8 +15,8 @@ class ProfileViewModel: Descriptable {
     let id: ObjectId
 
     let title: String
-    let displayName: String
-    let locationName: String
+    let mainTextLabel: String
+    let secondaryTextLabel: String
     let backgroundUrl: String?
     let pictureUrl: String?
 
@@ -38,8 +38,8 @@ class ProfileViewModel: Descriptable {
         self.id = user.id
 
         self.title = ViewModelHelper.titleLabel(for: user.userName, country: user.country)
-        self.displayName = user.displayName.uppercased()
-        self.locationName = ViewModelHelper.locationLabel(for: user.city, state: user.state)
+        self.mainTextLabel = user.displayName.uppercased()
+        self.secondaryTextLabel = ViewModelHelper.locationLabel(for: user.city, state: user.state)
         self.backgroundUrl = user.profileBackgroundUrl
         self.pictureUrl = user.profilePictureUrl
 
@@ -62,8 +62,8 @@ class ProfileViewModel: Descriptable {
         self.id = chapter.id
 
         self.title = chapter.name
-        self.displayName = chapter.description.isEmpty ? chapter.name : chapter.description
-        self.locationName = ViewModelHelper.locationLabel(for: chapter.city, state: chapter.state)
+        self.mainTextLabel = chapter.description.isEmpty ? chapter.name : chapter.description
+        self.secondaryTextLabel = ViewModelHelper.locationLabel(for: chapter.city, state: chapter.state)
         self.pictureUrl = chapter.mainImageUrl
         self.backgroundUrl = chapter.backgroundUrl
 
@@ -102,11 +102,18 @@ class ProfileViewModel: Descriptable {
         self.pictureUrl = nil
         self.backgroundUrl = series.mainImageUrl
 
-        self.displayName = series.name.uppercased()
-        self.locationName = series.scoreTypeString // a bit hacky but whatever
+        self.mainTextLabel = series.name.uppercased()
+        self.secondaryTextLabel = {
+            var label = "\(series.scoreTypeString)"
+            if let date = series.startDate {
+                label += "\n"
+                label += "Started on \(DateUtil.displayDateFormatter.string(from: date))"
+            }
+            return label
+        }()
 
         self.leftBadgeImage = ButtonImg.race_small
-        self.leftBadgeLabel = "\(series.raceApprovedCount) Approved \(series.raceApprovedCount == 1 ? "Race" : "Races")"
+        self.leftBadgeLabel = "\(series.raceApprovedCount) \(series.raceApprovedCount == 1 ? "Race" : "Races")"
 
         self.rightBadgeImage = ButtonImg.member_small
         self.rightBadgeLabel = "\(series.pilotCount) \(series.pilotCount == 1 ? "Pilot" : "Pilots")"

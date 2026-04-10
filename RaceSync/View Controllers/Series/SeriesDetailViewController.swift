@@ -103,6 +103,13 @@ class SeriesDetailViewController: UIViewController {
         headerView.viewModel = profileViewModel
         let headerViewSize = headerView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
 
+        let button = headerView.locationButton
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+        button.titleLabel?.numberOfLines = 2
+        button.titleLabel?.textAlignment = .center
+        button.tintColor = Color.gray200
+        button.isUserInteractionEnabled = false
+
         contentView.addSubview(headerView)
         headerView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()

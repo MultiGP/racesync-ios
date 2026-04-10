@@ -663,7 +663,7 @@ extension StandingsViewController: EmptyDataSetSource {
         guard !shimmeringView.isShimmering, !isSearching else { return nil }
 
         if isRootTabBar && standingsController.isEmpty(for: season) {
-            let text = "Open Season Schedule"
+            let text = "Open The Season Schedule"
             return EmptyStateViewModel.attributtedStringForButton(text, state: .normal)
         }
         return nil
