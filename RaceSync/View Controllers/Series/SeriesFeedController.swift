@@ -28,7 +28,6 @@ enum SeriesFilter: EnumTitle {
 
 public typealias SeriesFeedControllerCompletionBlock<T> = (_ object: T?, _ error: NSError?) -> Void
 
-
 class SeriesFeedController {
 
     // MARK: - Private Variables
@@ -59,24 +58,63 @@ class SeriesFeedController {
 
         api.getSeries { objects, error in
             if let objects = objects {
-                let viewModels = SeriesViewModel.viewModels(with: objects)
-
-                self.collection[.regionals] = objects.compactMap {
-                    $0.scoreType == .regionals ? SeriesViewModel(with: $0) : nil
-                }
-
-                self.collection[.joined] = objects.compactMap {
-                    $0.isJoined == true ? SeriesViewModel(with: $0) : nil
-                }
-
-                // sorted by popularity (highest pilot participation)
-                self.collection[.all] = viewModels.sorted { $0.pilotCount > $1.pilotCount }
-
+                self.collection[.joined] = self.getJoinedSeries(from: objects)
+                self.collection[.regionals] = self.getRegionalSeries(from: objects)
+                self.collection[.all] = self.getAllSeries(from: objects)
                 completion?(self.collection[filter], nil)
-
             } else if error != nil {
                 completion?(nil, error)
             }
+        }
+    }
+
+    fileprivate func getJoinedSeries(from objects: [Series]) -> [SeriesViewModel] {
+        return sortedSeries(objects.filter { $0.isJoined == true }, prioritizeRecent: true)
+            .map { SeriesViewModel(with: $0) }
+    }
+
+    fileprivate func getRegionalSeries(from objects: [Series]) -> [SeriesViewModel] {
+        return sortedSeries(objects.filter { $0.scoreType == .regionals }, prioritizeJoined: true)
+            .map { SeriesViewModel(with: $0) }
+    }
+
+    fileprivate func getAllSeries(from objects: [Series]) -> [SeriesViewModel] {
+        return sortedSeries(objects, prioritizeRecent: true)
+            .map { SeriesViewModel(with: $0) }
+    }
+
+    fileprivate func sortedSeries(_ objects: [Series], prioritizeJoined: Bool = false, prioritizeRecent: Bool = false) -> [Series] {
+        return objects.sorted {
+            let now = Date()
+
+            let aEnded = $0.endDate.map { $0 < now } ?? false
+            let bEnded = $1.endDate.map { $0 < now } ?? false
+            let aNoParticipation = $0.pilotCount == 0
+            let bNoParticipation = $1.pilotCount == 0
+
+            // joined series first (optional)
+            if prioritizeJoined {
+                if $0.isJoined != $1.isJoined { return $0.isJoined == true }
+            }
+
+            // ended series always last
+            if aEnded != bEnded { return !aEnded }
+
+            // no participation just before ended
+            if aNoParticipation != bNoParticipation { return !aNoParticipation }
+
+            // recency before popularity (optional)
+            if prioritizeRecent {
+                if let aStart = $0.startDate, let bStart = $1.startDate, aStart != bStart {
+                    return aStart > bStart
+                }
+                if ($0.startDate == nil) != ($1.startDate == nil) {
+                    return $0.startDate != nil
+                }
+            }
+
+            // popularity last
+            return $0.pilotCount > $1.pilotCount
         }
     }
 }
