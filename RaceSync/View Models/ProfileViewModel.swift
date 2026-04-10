@@ -105,9 +105,14 @@ class ProfileViewModel: Descriptable {
         self.mainTextLabel = series.name.uppercased()
         self.secondaryTextLabel = {
             var label = "\(series.scoreTypeString)"
-            if let date = series.startDate {
+            if let startDate = series.startDate {
                 label += "\n"
-                label += "Started on \(DateUtil.displayDateFormatter.string(from: date))"
+                label += "Start: \(DateUtil.displayDateFormatter.string(from: startDate))"
+
+                if let endDate = series.endDate {
+                    label += " | "
+                    label += "End: \(DateUtil.displayDateFormatter.string(from: endDate))"
+                }
             }
             return label
         }()

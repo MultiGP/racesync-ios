@@ -28,12 +28,6 @@ class ProfileHeaderView: UIView {
         }
     }
 
-    var color: UIColor? {
-        didSet {
-            separatorView.backgroundColor = color
-        }
-    }
-
     var isEditable: Bool = false {
         didSet {
             cameraButton.isHidden = !isEditable
@@ -111,7 +105,7 @@ class ProfileHeaderView: UIView {
 
     fileprivate lazy var separatorView: UIView = {
         let view = UIView()
-        view.backgroundColor = Color.red
+        view.backgroundColor = Color.clear
         return view
     }()
 
@@ -173,6 +167,7 @@ class ProfileHeaderView: UIView {
     fileprivate var hasLaidOut: Bool = false
 
     fileprivate var imagePicker: ImagePickerController?
+    fileprivate var separatorViewHeightConstraint: Constraint?
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -213,7 +208,9 @@ class ProfileHeaderView: UIView {
         separatorView.snp.makeConstraints {
             $0.top.equalTo(backgroundView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(Constants.padding)
+
+            separatorViewHeightConstraint = $0.height.equalTo(0).constraint
+            separatorViewHeightConstraint?.activate()
         }
 
         addSubview(avatarView)
@@ -299,7 +296,11 @@ class ProfileHeaderView: UIView {
         }
 
         mainTextLabel.text = viewModel.mainTextLabel
-        color = viewModel.color
+
+        if let color = viewModel.color {
+            separatorView.backgroundColor = color
+            separatorViewHeightConstraint?.update(offset: Constants.padding)
+        }
 
         if !viewModel.secondaryTextLabel.isEmpty {
             locationButton.setTitle(viewModel.secondaryTextLabel, for: .normal)

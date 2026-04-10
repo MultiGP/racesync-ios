@@ -39,9 +39,10 @@ class SeriesDetailViewController: UIViewController {
 
     fileprivate lazy var htmlView: RichEditorView = {
         let view = RichEditorView()
+        view.delegate = self
         view.isEditable = false
         view.isScrollEnabled = false
-        view.delegate = self
+        view.isUserInteractionEnabled = true
         return view
     }()
 
@@ -163,7 +164,7 @@ class SeriesDetailViewController: UIViewController {
         let vSpacing = Constants.padding * 3/4
 
         let content = series.description.replaceHTMLColorTag(with: Color.black).stripHTMLFontTag().stripHTMLEdges()
-        htmlView.html = "<div id=\"content\" style=\"color:\(Color.black.toHexString()); padding-top: \(vSpacing)px; padding-bottom: \(vSpacing)px;\">\(content)</div>"
+        htmlView.html = "<div id=\"content\" style=\"color:\(Color.black.toHexString()); text-align: justify; padding-top: \(vSpacing)px; padding-bottom: \(vSpacing)px;\">\(content)</div>"
         htmlView.isUserInteractionEnabled = true
     }
 }
