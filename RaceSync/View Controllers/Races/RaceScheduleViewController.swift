@@ -88,11 +88,8 @@ class RaceScheduleViewController: UIViewController, RaceTabbable {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if race.canShowSchedule {
-            setupLayout()
-            loadContent()
-        }
-
+        setupLayout()
+        loadContent()
         configureNavigationItems()
     }
 
@@ -122,7 +119,6 @@ class RaceScheduleViewController: UIViewController, RaceTabbable {
     fileprivate func configureNavigationItems() {
         title = "Schedule"
         tabBarItem = UITabBarItem(title: title, image: SystemImg.flagCheckered, selectedImage: nil)
-        tabBarItem.isEnabled = race.canShowSchedule
 
         navigationItem.rightBarButtonItem = raceController.navigationItems(for: [.zippyQ, .share])
     }

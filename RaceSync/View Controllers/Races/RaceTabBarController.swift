@@ -146,10 +146,10 @@ class RaceTabBarController: UITabBarController {
         var vcs = [UIViewController]()
         vcs += [RaceDetailViewController(with: controller)]
         vcs += [RacePilotsViewController(with: controller)]
-        vcs += [RaceScheduleViewController(with: controller)]
 
-        if let race = race, race.canManagePayments {
-            vcs += [RacePaymentsViewController(with: controller)]
+        if let race = race {
+            if race.canShowSchedule { vcs += [RaceScheduleViewController(with: controller)] }
+            if race.canManagePayments { vcs += [RacePaymentsViewController(with: controller)] }
         }
 
         configureTabBarController(with: vcs, selectedIndex: initialSelectedIndex)
