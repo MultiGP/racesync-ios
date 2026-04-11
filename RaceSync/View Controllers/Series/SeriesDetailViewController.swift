@@ -16,9 +16,9 @@ class SeriesDetailViewController: UIViewController {
     // MARK: - Public Variables
 
     var seriesController: SeriesController
-
+    
     var series: Series {
-        get { return seriesController.series! }
+        get { return seriesController.series }
     }
 
     var seriesApi: SeriesApi {

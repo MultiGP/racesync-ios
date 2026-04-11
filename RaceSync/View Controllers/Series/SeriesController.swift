@@ -14,7 +14,7 @@ class SeriesController {
     // MARK: - Public
 
     var seriesId: ObjectId
-    var series: Series?
+    var series: Series
 
     let seriesApi = SeriesApi()
 
@@ -34,7 +34,6 @@ class SeriesController {
     }
 
     // MARK: - Data Update
-
 
 
     // MARK: - Actions
@@ -72,7 +71,6 @@ class SeriesController {
     }
 
     func navigationItems(for options: [SeriesAction] = [.share]) -> UIBarButtonItem? {
-        guard let _ = series else { return nil }
         guard !options.isEmpty else { return nil }
 
         let stackView = UIStackView()

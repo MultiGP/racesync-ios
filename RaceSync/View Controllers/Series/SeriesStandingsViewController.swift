@@ -18,7 +18,7 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
     var seriesController: SeriesController
 
     var series: Series {
-        get { return seriesController.series! }
+        get { return seriesController.series }
     }
 
     var seriesApi: SeriesApi {

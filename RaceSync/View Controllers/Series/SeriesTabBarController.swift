@@ -23,6 +23,14 @@ class SeriesTabBarController: UITabBarController {
     var seriesId: ObjectId
     var series: Series?
 
+    override var title: String? {
+        didSet {
+            titleButton.setTitle(title, for: .normal)
+            titleButton.invalidateIntrinsicContentSize()
+            titleButton.sizeToFit()
+        }
+    }
+
     // MARK: - Private Variables
 
     fileprivate lazy var activityIndicatorView: ActivityLoadingView = {
@@ -30,6 +38,17 @@ class SeriesTabBarController: UITabBarController {
         view.title = "Loading Series..."
         view.hidesWhenStopped = true
         return view
+    }()
+
+    fileprivate lazy var titleButton: PasteboardButton = {
+        let button = PasteboardButton(type: .system)
+        button.addTarget(self, action: #selector(didPressTitleButton), for: .touchUpInside)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+        button.titleLabel?.textAlignment = .center
+        button.setTitleColor(Color.black, for: .normal)
+        button.setTitle(self.title, for: .normal)
+        button.titleLabel?.lineBreakMode = .byClipping
+        return button
     }()
 
     fileprivate var initialSelectedIndex: Int = SeriesTabs.default.rawValue
@@ -70,6 +89,9 @@ class SeriesTabBarController: UITabBarController {
     // MARK: - Layout
 
     fileprivate func setupLayout() {
+
+        // Using a custom button title in this case, to display the id of a Race on tap
+        navigationItem.titleView = titleButton
 
         view.backgroundColor = Color.white
         tabBar.isHidden = true // hiding temporarily, while the view loads
@@ -139,6 +161,20 @@ class SeriesTabBarController: UITabBarController {
 
         title = vc.title
         navigationItem.rightBarButtonItem = vc.navigationItem.rightBarButtonItem
+    }
+
+    // MARK: - Actions
+
+    @objc fileprivate func didPressTitleButton() {
+        guard let seriesId = series?.id else { return }
+
+        let btnTitle = titleButton.title(for: .normal)
+
+        if btnTitle == title {
+            titleButton.setTitle(seriesId, for: .normal)
+        } else if btnTitle == seriesId {
+            titleButton.setTitle(title, for: .normal)
+        }
     }
 
     // MARK: - Error Handling
