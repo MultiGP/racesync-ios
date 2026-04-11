@@ -119,6 +119,7 @@ public enum ParamKey {
     // Model attributes
     static let joined = "joined"
     static let isJoined = "isJoined"
+    static let approved = "approved"
     static let isApproved = "isApproved"
     static let upcoming = "upcoming"
     static let past = "past"
@@ -196,7 +197,6 @@ public enum ParamKey {
     static let amountDue = "amountdue"
     static let datePaid = "datepaid"
     static let paymentsEnabled = "paymentsEnabled"
-    static let approved = "approved"
     static let pilotCount = "pilotCount"
     static let chapterApprovedCount = "chapterApprovedCount"
     static let raceApprovedCount = "raceApprovedCount"

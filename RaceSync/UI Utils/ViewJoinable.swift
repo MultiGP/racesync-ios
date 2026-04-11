@@ -10,7 +10,7 @@ import UIKit
 import RaceSyncAPI
 import Presentr
 
-public typealias JoinStateCompletionBlock = (_ joinState: JoinState) -> Void
+public typealias JoinStateCompletionBlock = (_ state: JoinState) -> Void
 
 public protocol Joinable {
     var id: ObjectId { get }

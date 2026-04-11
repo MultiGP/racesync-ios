@@ -68,6 +68,7 @@
 		4F5001E923830E180025A593 /* Race.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5001E823830E180025A593 /* Race.swift */; };
 		4F521F822E6E18D800AE7C03 /* SeriesFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F521F812E6E18D800AE7C03 /* SeriesFeedViewController.swift */; };
 		4F521F842E6E5F0A00AE7C03 /* ActivityLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F521F832E6E5F0A00AE7C03 /* ActivityLoadingView.swift */; };
+		4F536ECF2F8AD826006FF620 /* ViewApprovable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F536ECE2F8AD826006FF620 /* ViewApprovable.swift */; };
 		4F5488962D2146C80056EA59 /* RaceScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5488952D2146C80056EA59 /* RaceScheduleViewController.swift */; };
 		4F5488982D2236950056EA59 /* String+HTML.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5488972D2236950056EA59 /* String+HTML.swift */; };
 		4F5614A42DDC4C2800EAD42A /* MessageEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5614A32DDC4C2800EAD42A /* MessageEnums.swift */; };
@@ -386,6 +387,7 @@
 		4F5001E823830E180025A593 /* Race.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Race.swift; sourceTree = "<group>"; };
 		4F521F812E6E18D800AE7C03 /* SeriesFeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesFeedViewController.swift; sourceTree = "<group>"; };
 		4F521F832E6E5F0A00AE7C03 /* ActivityLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityLoadingView.swift; sourceTree = "<group>"; };
+		4F536ECE2F8AD826006FF620 /* ViewApprovable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewApprovable.swift; sourceTree = "<group>"; };
 		4F5488952D2146C80056EA59 /* RaceScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceScheduleViewController.swift; sourceTree = "<group>"; };
 		4F5488972D2236950056EA59 /* String+HTML.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+HTML.swift"; sourceTree = "<group>"; };
 		4F5614A32DDC4C2800EAD42A /* MessageEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEnums.swift; sourceTree = "<group>"; };
@@ -869,6 +871,7 @@
 				4FD4E1DE237FEC0A008816B3 /* Appearance.swift */,
 				4F91BC892398FBCE00539E95 /* ViewJoinable.swift */,
 				4FF16CBF2E70EC9300B4FC51 /* ViewJoinableRegistry.swift */,
+				4F536ECE2F8AD826006FF620 /* ViewApprovable.swift */,
 				4F4129DA2DC0AE32006A2763 /* NotificationsController.swift */,
 				4F5001E423823C940025A593 /* FlagEmojiGenerator.swift */,
 				4F5C1E4E2390B01700D756EB /* ImageNetworking.swift */,
@@ -1673,6 +1676,7 @@
 				4FE4C0A22945E0EF00F47F0A /* RaceListViewController.swift in Sources */,
 				4F00E076242932F2001DCFC4 /* RateMeConstants.swift in Sources */,
 				4FC1797D24B0801900D2EA2D /* ImagePickerController.swift in Sources */,
+				4F536ECF2F8AD826006FF620 /* ViewApprovable.swift in Sources */,
 				4F8B4A122DDD155100B735DA /* PushMessage.swift in Sources */,
 				4F9DB7B023D618D100570483 /* UISegmentedControl+Extensions.swift in Sources */,
 				4F6AE78D2D2DCD4B008636B7 /* RankView.swift in Sources */,
