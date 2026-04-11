@@ -125,16 +125,12 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
     fileprivate func configureNavigationItems() {
         navigationItem.rightBarButtonItem = raceController.navigationItems()
 
-        if race.startDate.map({ !$0.isPassed }) ?? false {
+        if race.canShowResults {
+            title = "Race Results"
+            tabBarItem = UITabBarItem(title: "Results", image: SystemImg.medal, selectedImage: SystemImg.medalFill)
+        } else {
             title = "Racing Pilots"
             tabBarItem = UITabBarItem(title: "Pilots", image: SystemImg.person, selectedImage: SystemImg.personFill)
-        } else {
-            if race.canShowResults {
-                title = "Race Results"
-            } else {
-                title = "Race in Progress"
-            }
-            tabBarItem = UITabBarItem(title: "Results", image: SystemImg.medal, selectedImage: SystemImg.medalFill)
         }
     }
 

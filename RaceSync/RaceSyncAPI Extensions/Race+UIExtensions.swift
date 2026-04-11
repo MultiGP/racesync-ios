@@ -31,9 +31,8 @@ extension Race {
     }
 
     var canShowResults: Bool {
-        if isFinalized { return true } // Assume results should be displayed since the race is finalized already
         guard let results = results, results.count > 0 else { return false }
-        return hasStarted
+        return true
     }
 
     var canShowSchedule: Bool {
