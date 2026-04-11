@@ -13,17 +13,23 @@ public class APIServices {
 
     // MARK: - Public Variables
 
-    public static let shared = APIServices()
+    public static var shared: APIServices {
+        guard let instance = _shared else {
+            fatalError("APIServices.configure() must be called before accessing shared")
+        }
+        return instance
+    }
+
+    public static func configure(with credential: APICredential) {
+        guard _shared == nil else { return }
+        _shared = APIServices(with: credential)
+    }
+
     public let settings: APISettings
     public var credential: APICredential
 
     public var myUser: User? {
         didSet {
-            // Override useful for debugging a specific user's issue
-//            myUser?.id = "8062"
-//            myUser?.latitude = "37.3290122"
-//            myUser?.longitude = "-121.9160211"
-
             Clog.log("Did set my User with id: \(String(describing: myUser?.id))")
         }
     }
@@ -48,17 +54,21 @@ public class APIServices {
 
     // MARK: - Initialization
 
-    public init() {
+    private init(with credential: APICredential) {
         NetworkActivityIndicatorManager.shared.isEnabled = true
         self.settings = APISettings()
-        self.credential = APICredential()
+        self.credential = credential
     }
 
     // MARK: - Invalidation
 
     public func invalidate() {
-        myUser = nil
-        settings.invalidateSettings()
-        credential = APICredential()
+        self.myUser = nil
+        self.settings.invalidateSettings()
+        self.credential.invalidateLogin()
     }
+
+    // MARK: - Private
+
+    private static var _shared: APIServices?
 }
