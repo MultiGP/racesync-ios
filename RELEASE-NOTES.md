@@ -6,7 +6,14 @@
 ## 1.9.0
 
 ### New Features:
-   * Implementing the ability to browse past GQ standings (2025-2019)
+   * MultiGP Series now have their own dedicated tab. You can view the Series you are part of, explore new Regional Series qualifiers, and quickly access leaderboards to see current standings.
+   * Added 2026 GQ standings, along with the ability to browse past GQ standings from 2025 to 2019.
+   
+### Fixes and Enhancements:
+   * The app now opens on the last used tab and segment.
+   * Various user interface improvements for a smoother experience.
+   * Fixed race results sometimes not showing up for an ongoing race, due to timezone differences between the race and the app user.
+   * Fixed an issue where the chapters list would not load in the pilot profile.
    
 ---
 
