@@ -63,11 +63,11 @@ public class SeriesResult: Mappable, Descriptable {
         // Country (only present for pilots usually)
         country <- map[ParamKey.country]
 
-        // Score (numeric sometimes, string sometimes)
         if let value = map.JSON[ParamKey.score] {
             score = String(describing: value)
-        } else if let value = map.JSON[ParamKey.fastest3Laps] {
-            score = String(describing: value)
+        }
+        if let value = map.JSON[ParamKey.fastest3Laps] {
+            time = String(describing: value)
         }
 
         bestScores = map.JSON[ParamKey.bestRaces] as? [String]

@@ -10,7 +10,7 @@ import Foundation
 
 public class TimeUtil {
 
-    public static func lapTimeFormat(seconds timeString: String) -> String {
+    public static func lapTimeFormat(seconds timeString: String, showUnit: Bool = true) -> String {
 
         guard let raw = Double(timeString) else { return "" }
 
@@ -30,10 +30,10 @@ public class TimeUtil {
             return String(format: "%02d:%02d.%03d", minutes, seconds, milliseconds)
         } else if seconds >= 10 {
             // Format into "SS.mmm"
-            return String(format: "%02d.%03d", seconds, milliseconds)
+            return String(format: "%02d.%03d", seconds, milliseconds) + "\(showUnit ? "s" : "")"
         } else {
             // Format into "S.mmm"
-            return String(format: "%d.%03d", seconds, milliseconds)
+            return String(format: "%d.%03d", seconds, milliseconds) + "\(showUnit ? "s" : "")"
         }
     }
 }

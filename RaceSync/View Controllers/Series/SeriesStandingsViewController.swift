@@ -202,8 +202,15 @@ extension SeriesStandingsViewController: UITableViewDataSource {
         cell.avatarImageView.imageView.setImage(with: result.imageUrl, placeholderImage: PlaceholderImg.medium)
         cell.accessoryView = nil
 
-        if series.scoreType == .fastest3laps {
-            cell.subtitleLabel.text = TimeUtil.lapTimeFormat(seconds: result.score)
+        if series.scoreType == .fastest3laps, let time = result.time {
+            cell.subtitleLabel.text = "\(TimeUtil.lapTimeFormat(seconds: time))"
+        } else if series.scoreType == .collegiate {
+            cell.textPill.text = result.score
+            cell.textPill.style = .text
+
+            if let time = result.time {
+                cell.subtitleLabel.text = "\(TimeUtil.lapTimeFormat(seconds: time))"
+            }
         } else {
             cell.subtitleLabel.text = "Elo: \(result.eloScore)"
 
