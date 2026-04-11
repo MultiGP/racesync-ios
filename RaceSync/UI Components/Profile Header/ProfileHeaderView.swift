@@ -273,7 +273,8 @@ class ProfileHeaderView: UIView {
             avatarView.isHidden = false
         }
 
-        let headerImageSize = CGSize(width: UIScreen.main.bounds.width*2, height: Self.backgroundViewHeight)
+        // 3 times the width helps with making fit most background images on the header nicely
+        let headerImageSize = CGSize(width: UIScreen.main.bounds.width*3, height: Self.backgroundViewHeight)
         let headerPlaceholder = UIImage.image(withColor: Color.gray100, imageSize: headerImageSize)
 
         if let headerImageUrl = ImageUtil.getImageUrl(for: viewModel.backgroundUrl) {

@@ -16,24 +16,11 @@ class ProfileBackgroundView: DimmableView {
 
     lazy var imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = Color.white
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
 
     // MARK: - Private Variables
-
-    fileprivate lazy var backgroundView: UIView = {
-        let view = UIView()
-        view.backgroundColor = Color.black
-        return view
-    }()
-
-    fileprivate lazy var backdropView: UIView = {
-        let view = UIView()
-        view.backgroundColor = Color.white
-        return view
-    }()
 
     fileprivate lazy var blurView: UIVisualEffectView = {
         let view = UIVisualEffectView(effect: nil)
@@ -58,16 +45,6 @@ class ProfileBackgroundView: DimmableView {
 
         backgroundColor = Color.clear
         dimmableView = imageView
-
-        addSubview(backdropView)
-        backdropView.snp.makeConstraints {
-            $0.top.bottom.leading.trailing.equalToSuperview()
-        }
-
-        addSubview(backgroundView)
-        backgroundView.snp.makeConstraints {
-            $0.top.bottom.leading.trailing.equalToSuperview()
-        }
 
         addSubview(imageView)
         imageView.snp.makeConstraints {
