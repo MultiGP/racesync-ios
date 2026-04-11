@@ -8,9 +8,8 @@
 
 import Foundation
 import ObjectMapper
-import Alamofire
 
-public class Race: Mappable, Joinable, Descriptable {
+public class Race: Mappable, Descriptable {
 
     public var id: ObjectId = ""
     public var name: String = ""

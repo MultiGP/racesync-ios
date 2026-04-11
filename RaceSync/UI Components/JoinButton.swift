@@ -10,6 +10,10 @@ import UIKit
 import SnapKit
 import RaceSyncAPI
 
+public enum JoinableType {
+    case race, chapter
+}
+
 class JoinButton: CustomButton {
 
     // MARK: - Public Variables

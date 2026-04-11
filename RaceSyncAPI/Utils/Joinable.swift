@@ -8,11 +8,3 @@
 
 import Foundation
 
-public protocol Joinable {
-    var id: ObjectId { get }
-    var isJoined: Bool { get set }
-}
-
-public enum JoinableType {
-    case race, chapter
-}

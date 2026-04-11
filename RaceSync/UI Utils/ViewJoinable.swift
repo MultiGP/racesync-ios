@@ -12,6 +12,14 @@ import Presentr
 
 public typealias JoinStateCompletionBlock = (_ joinState: JoinState) -> Void
 
+public protocol Joinable {
+    var id: ObjectId { get }
+    var isJoined: Bool { get set }
+}
+
+extension Race: Joinable { }
+extension Chapter: Joinable { }
+
 protocol ViewJoinable where Self: UIViewController {
     func loadContent(forced: Bool)
     func toggleJoinButton(_ button: JoinButton, forRace race: Race, raceApi: RaceApi, _ completion: @escaping JoinStateCompletionBlock)
