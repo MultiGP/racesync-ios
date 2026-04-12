@@ -86,7 +86,7 @@ class RaceTableViewCell: UITableViewCell {
     fileprivate lazy var buttonStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [joinButton, approveButton, removeButton, memberBadgeView])
         stackView.axis = .vertical
-        stackView.distribution = .fillEqually
+        stackView.distribution = .fillProportionally
         stackView.alignment = .trailing
         stackView.spacing = 7
         return stackView
@@ -136,5 +136,14 @@ class RaceTableViewCell: UITableViewCell {
             $0.trailing.equalTo(buttonStackView.snp.leading).offset(-Constants.padding)
             $0.centerY.equalToSuperview()
         }
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        joinButton.setTitle(nil, for: .normal)
+        memberBadgeView.setTitle(nil, for: .normal)
+        approveButton.setTitle(nil, for: .normal)
+        removeButton.setTitle(nil, for: .normal)
     }
 }

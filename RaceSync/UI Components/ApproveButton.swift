@@ -33,9 +33,9 @@ class ApproveButton: CustomButton {
         }
     }
 
-    static let minHeight: CGFloat = 32
-    static let minWidth: CGFloat = 82
-    static let cornerRadius: CGFloat = 6
+    fileprivate static let minHeight: CGFloat = 32
+    fileprivate static let minWidth: CGFloat = 82
+    fileprivate static let cornerRadius: CGFloat = 6
 
     // MARK: - Private Variables
 
@@ -75,7 +75,7 @@ class ApproveButton: CustomButton {
         adjustsImageWhenHighlighted = false
         adjustsImageWhenDisabled = true
 
-        imageEdgeInsets = UIEdgeInsets(top: 0, left: -4, bottom: 0, right: 0)
+        imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         contentEdgeInsets = UIEdgeInsets(top: 5, left: 8, bottom: 5, right: 8)
 
         // Critical: prevent shrinking
@@ -123,14 +123,10 @@ class ApproveButton: CustomButton {
         isUserInteractionEnabled = !isLoading
         animateSpinner(isLoading)
 
-        // Since iOS7, setting titleLabel.hidden doesn't work anymore
-        if isLoading {
-            titleLabel?.removeFromSuperview()
-            imageView?.removeFromSuperview()
-        } else {
-            if let label = titleLabel { addSubview(label) }
-            if let imageView = imageView { addSubview(imageView) }
-        }
+        let state = approveState
+        let icon = state.icon?.image(withColor: state.titleColor)
+        setTitle(isLoading ? nil : state.title, for: .normal)
+        setImage(isLoading ? nil : icon, for: .normal)
     }
 
     fileprivate func animateSpinner(_ animate: Bool) {
@@ -145,7 +141,11 @@ class ApproveButton: CustomButton {
     // MARK: - Overrides
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: Self.minWidth, height: Self.minHeight)
+        if approveState == .remove {
+            return CGSize(width: Self.minWidth/2, height: Self.minHeight)
+        } else {
+            return CGSize(width: Self.minWidth, height: Self.minHeight)
+        }
     }
 }
 
@@ -181,7 +181,7 @@ extension ApproveState {
         case .notApproved:  return Color.green
         case .approved:     return Color.white
         case .remove:       return Color.lightRed
-        case .completed:    return Color.black.withAlphaComponent(0.5)
+        case .completed:    return Color.black.withAlphaComponent(0.75)
         }
     }
 

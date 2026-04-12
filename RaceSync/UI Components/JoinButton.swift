@@ -138,14 +138,10 @@ class JoinButton: CustomButton {
         isUserInteractionEnabled = !isLoading
         animateSpinner(isLoading)
 
-        // Since iOS7, setting titleLabel.hidden doesn't work anymore
-        if isLoading {
-            titleLabel?.removeFromSuperview()
-            imageView?.removeFromSuperview()
-        } else {
-            if let label = titleLabel { addSubview(label) }
-            if let imageView = imageView { addSubview(imageView) }
-        }
+        let state = joinState
+        let icon = state.icon?.image(withColor: state.titleColor)
+        setTitle(isLoading ? nil : state.title, for: .normal)
+        setImage(isLoading ? nil : icon, for: .normal)
     }
 
     fileprivate func animateSpinner(_ animate: Bool) {
