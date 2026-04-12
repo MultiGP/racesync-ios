@@ -44,6 +44,9 @@ enum EndPoint {
 
     static let seriesList = "series/list"
     static let seriesView = "series/view"
+    static let seriesApprove = "series/approve"
+    static let seriesUnapprove = "series/unapprove"
+    static let seriesRemove = "series/remove"
 
     static let chapterList = "chapter/list"
     static let chapterFindLocal = "chapter/findLocal"

@@ -8,6 +8,7 @@
 
 import UIKit
 import RaceSyncAPI
+import Presentr
 
 public typealias ApproveStateCompletionBlock = (_ state: ApproveState) -> Void
 
@@ -20,12 +21,14 @@ extension Series: Approvable { }
 extension Race: Approvable { }
 
 public enum ApproveState: Equatable {
-    case notApproved, approved
+    case notApproved, approved, remove, completed
 
     var title: String {
         switch self {
-        case .notApproved:    return "Approve"
-        case .approved:       return "Unapprove"
+        case .notApproved:  return "Approve"
+        case .approved:     return "Approved"
+        case .completed:    return "Complete"
+        default:            return ""
         }
     }
 
@@ -39,7 +42,9 @@ public enum ApproveState: Equatable {
     public static func == (lhs: ApproveState, rhs: ApproveState) -> Bool {
         switch (lhs, rhs) {
         case (.notApproved, .notApproved),
-             (.approved, .approved):
+             (.approved, .approved),
+             (.remove, .remove),
+             (.completed, .completed):
             return true
         default:
             return false

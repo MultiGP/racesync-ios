@@ -45,13 +45,31 @@ class RaceTableViewCell: UITableViewCell {
     lazy var joinButton: JoinButton = {
         let button = JoinButton(type: .system)
         button.hitTestEdgeInsets = UIEdgeInsets(proportionally: -10)
+        button.isHidden = false
         return button
     }()
 
     lazy var memberBadgeView: MemberBadgeView = {
         let view = MemberBadgeView(type: .system)
         view.isUserInteractionEnabled = false
+        view.isHidden = false
         return view
+    }()
+
+    lazy var approveButton: ApproveButton = {
+        let button = ApproveButton(type: .system)
+        button.hitTestEdgeInsets = UIEdgeInsets(proportionally: -10)
+        button.isHidden = true
+        return button
+    }()
+
+    lazy var removeButton: ApproveButton = {
+        let button = ApproveButton(type: .system)
+        button.hitTestEdgeInsets = UIEdgeInsets(proportionally: -10)
+        button.approveState = .remove
+        button.type = .race
+        button.isHidden = true
+        return button
     }()
 
     // MARK: - Private Variables
@@ -66,7 +84,7 @@ class RaceTableViewCell: UITableViewCell {
     }()
 
     fileprivate lazy var buttonStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [joinButton, memberBadgeView])
+        let stackView = UIStackView(arrangedSubviews: [joinButton, approveButton, removeButton, memberBadgeView])
         stackView.axis = .vertical
         stackView.distribution = .fillEqually
         stackView.alignment = .trailing
@@ -78,7 +96,6 @@ class RaceTableViewCell: UITableViewCell {
         static let padding: CGFloat = UniversalConstants.padding
         static let cellHeight: CGFloat = UniversalConstants.cellHeight
         static let imageHeight: CGFloat = UniversalConstants.cellAvatarHeight
-        static let minButtonSize: CGFloat = 72
     }
 
     // MARK: - Initialization

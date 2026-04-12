@@ -18,6 +18,9 @@ public protocol SeriesApiInterface {
 
     func view(series seriesId: ObjectId,
               completion: @escaping ObjectCompletionBlock<Series>)
+
+    func remove(series seriesId: ObjectId, raceId: ObjectId,
+              completion: @escaping StatusCompletionBlock)
 }
 
 public class SeriesApi: SeriesApiInterface {
@@ -29,14 +32,33 @@ public class SeriesApi: SeriesApiInterface {
 
         let endpoint = EndPoint.seriesList
         let parameters: Params = [:]
-
         repositoryAdapter.getObjects(endpoint, parameters: parameters, currentPage: currentPage, pageSize: pageSize, type: Series.self, completion)
     }
 
     public func view(series seriesId: ObjectId, completion: @escaping ObjectCompletionBlock<Series>) {
 
         let endpoint = "\(EndPoint.seriesView)?\(ParamKey.id)=\(seriesId)"
-
         repositoryAdapter.getObject(endpoint, type: Series.self, completion)
+    }
+
+    public func approve(series seriesId: ObjectId, raceId: ObjectId, completion: @escaping StatusCompletionBlock) {
+
+        let endpoint = "\(EndPoint.seriesApprove)?\(ParamKey.id)=\(seriesId)"
+        let parameters: Params = [ParamKey.raceId: raceId]
+        repositoryAdapter.performAction(endpoint, parameters: parameters, completion: completion)
+    }
+
+    public func unapprove(series seriesId: ObjectId, raceId: ObjectId, completion: @escaping StatusCompletionBlock) {
+
+        let endpoint = "\(EndPoint.seriesUnapprove)?\(ParamKey.id)=\(seriesId)"
+        let parameters: Params = [ParamKey.raceId: raceId]
+        repositoryAdapter.performAction(endpoint, parameters: parameters, completion: completion)
+    }
+
+    public func remove(series seriesId: ObjectId, raceId: ObjectId, completion: @escaping StatusCompletionBlock) {
+
+        let endpoint = "\(EndPoint.seriesRemove)?\(ParamKey.id)=\(seriesId)"
+        let parameters: Params = [ParamKey.raceId: raceId]
+        repositoryAdapter.performAction(endpoint, parameters: parameters, completion: completion)
     }
 }

@@ -108,12 +108,12 @@ class SeriesTabBarController: UITabBarController {
 
         var raceViewModels = [RaceViewModel]()
         if let races = series.races {
-            raceViewModels += RaceViewModel.viewModels(with: races)
+            raceViewModels += RaceViewModel.sortedViewModels(with: races, sorting: .ascending)
         }
 
         let controller = SeriesController(with: series)
 
-        let raceListVC = RaceListViewController(raceViewModels, seriesId: seriesId)
+        let raceListVC = RaceListViewController(raceViewModels, series: series)
         raceListVC.navigationItem.rightBarButtonItem = controller.navigationItems()
 
         var vcs = [UIViewController]()

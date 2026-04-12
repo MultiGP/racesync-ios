@@ -274,10 +274,10 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
     @objc fileprivate func didPressJoinButton(_ sender: JoinButton) {
         let list = raceFeedController.viewModels(for: selectedRaceFilter)
         guard let objectId = sender.objectId, let race = list?.race(withId: objectId) else { return }
-        let joinState = sender.joinState
+        let state = sender.joinState
 
         toggleJoinButton(sender, forRace: race, raceApi: raceApi) { [weak self] (newState) in
-            if joinState != newState {
+            if state != newState {
                 // reload races to reflect race changes, specially join counts
                 self?.loadContent(forced: true)
             }

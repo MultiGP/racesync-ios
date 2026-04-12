@@ -1,32 +1,27 @@
 //
-//  JoinButton.swift
+//  ApprovalButton.swift
 //  RaceSync
 //
-//  Created by Ignacio Romero Zurbuchen on 2019-11-15.
-//  Copyright © 2019 MultiGP Inc. All rights reserved.
+//  Created by Ignacio Romero Zurbuchen on 2026-04-11.
+//  Copyright © 2026 MultiGP Inc. All rights reserved.
 //
 
 import UIKit
 import SnapKit
 import RaceSyncAPI
 
-public enum JoinableType {
-    case race, chapter
+public enum ApprovableType {
+    case race, series
 }
 
-class JoinButton: CustomButton {
+class ApproveButton: CustomButton {
 
-    // MARK: - Public Variables
-
-    /// Optional race/chapter id for callback usage
+    /// Optional race/series id for callback usage
     var objectId: ObjectId?
 
-    var type: JoinableType?
+    var type: ApprovableType?
 
-    /// compact style to be used in small cells, with no interactivity
-    var isCompact: Bool = false
-
-    var joinState: JoinState = .notJoined {
+    var approveState: ApproveState = .notApproved {
         didSet {
             updateLayout()
         }
@@ -39,7 +34,7 @@ class JoinButton: CustomButton {
     }
 
     static let minHeight: CGFloat = 32
-    static let minWidth: CGFloat = 76
+    static let minWidth: CGFloat = 82
     static let cornerRadius: CGFloat = 6
 
     // MARK: - Private Variables
@@ -94,29 +89,19 @@ class JoinButton: CustomButton {
     fileprivate func updateLayout() {
 
         func layout() {
-            var state = joinState
+            let state = approveState
             isHidden = false
 
-            if isCompact {
-                if state == .notJoined {
-                    isHidden = true
-                    return
-                }
-                else if case .notPaid = state {
-                    state = .joined // display as joined
-                }
-            }
+            let icon = state.icon?.image(withColor: state.titleColor)
 
-            let icon = state.icon?.image(withColor: state.titleColor.withAlphaComponent(isCompact ? 1 : 0.4))
-
-            setTitle(isCompact ? nil : state.title, for: .normal)
+            setTitle(state.title, for: .normal)
             setTitleColor(state.titleColor, for: .normal)
             setImage(icon, for: .normal)
             backgroundColor = state.fillColor
             titleLabel?.font = state.font
             tintColor = state.titleColor
             imageView?.tintColor = state.titleColor
-            isUserInteractionEnabled = !isCompact
+            isUserInteractionEnabled = state.interactionEnabled
 
             if let borderColor = state.outlineColor {
                 layer.borderColor = borderColor.cgColor
@@ -150,7 +135,7 @@ class JoinButton: CustomButton {
 
     fileprivate func animateSpinner(_ animate: Bool) {
         if animate && !spinnerView.isAnimating {
-            spinnerView.color = joinState.titleColor
+            spinnerView.color = approveState.titleColor
             spinnerView.startAnimating()
         } else if !animate && spinnerView.isAnimating {
             spinnerView.stopAnimating()
@@ -162,96 +147,55 @@ class JoinButton: CustomButton {
     override var intrinsicContentSize: CGSize {
         return CGSize(width: Self.minWidth, height: Self.minHeight)
     }
-
-    override var isHighlighted: Bool {
-        get {
-            if !joinState.interactionEnabled {
-                return false
-            } else {
-                return super.isHighlighted
-            }
-        }
-        set {
-            super.isHighlighted = newValue
-        }
-    }
-
-    override var isSelected: Bool {
-        get {
-            if !joinState.interactionEnabled {
-                return false
-            } else {
-                return super.isSelected
-            }
-        }
-        set {
-            super.isSelected = newValue
-        }
-    }
-
-    override func sendAction(_ action: Selector, to target: Any?, for event: UIEvent?) {
-        guard joinState.interactionEnabled else { return }
-        super.sendAction(action, to: target, for: event)
-    }
-
-    override func sendActions(for controlEvents: UIControl.Event) {
-        guard joinState.interactionEnabled else { return }
-        super.sendActions(for: controlEvents)
-    }
 }
 
-extension JoinState {
+extension ApproveState {
 
     var icon: UIImage? {
         switch self {
-        case .joined:       return ButtonImg.join_check?.withRenderingMode(.alwaysOriginal)
-        case .closed:       return ButtonImg.join_cross?.withRenderingMode(.alwaysOriginal)
+        case .remove:       return SystemImg.trashFill?.withRenderingMode(.alwaysTemplate)
         default:            return nil
         }
     }
 
     var fillColor: UIColor {
         switch self {
-        case .notJoined:    return Color.white
-        case .joined:       return Color.green
-        case .closed:       return Color.gray100
-        case .notPaid(fee: _):
-                            return Color.white
+        case .notApproved:  return Color.white
+        case .approved:     return Color.green
+        case .remove:       return Color.white
+        case .completed:    return Color.gray100
+
         }
     }
 
     var outlineColor: UIColor? {
         switch self {
-        case .notJoined:    return Color.green
-        case .notPaid(fee: _):
-                            return Color.green
+        case .notApproved:  return Color.green
+        case .remove:       return Color.lightRed
         default:            return nil
         }
     }
 
     var titleColor: UIColor {
         switch self {
-        case .notJoined:    return Color.green
-        case .joined:       return Color.white
-        case .closed:       return Color.black
-        case .notPaid(fee: _):
-                            return Color.green
+        case .notApproved:  return Color.green
+        case .approved:     return Color.white
+        case .remove:       return Color.lightRed
+        case .completed:    return Color.black.withAlphaComponent(0.5)
         }
     }
 
     var font: UIFont {
         switch self {
-        case .notJoined, .notPaid(fee: _):
-                            return UIFont.systemFont(ofSize: 14, weight: .bold)
-        default:            return UIFont.systemFont(ofSize: 14, weight: .regular)
-
+        case .notApproved:  return .systemFont(ofSize: 14, weight: .bold)
+        default:            return .systemFont(ofSize: 14, weight: .regular)
         }
     }
 
     var interactionEnabled: Bool {
         switch self {
-        case .closed:   return false
-        default:        return true
+        case .completed:    return false
+        default:            return true
         }
     }
 }

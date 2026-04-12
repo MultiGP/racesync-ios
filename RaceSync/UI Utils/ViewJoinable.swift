@@ -67,25 +67,24 @@ extension ViewJoinable {
         let state = button.joinState
 
         switch state {
-
-        case .notJoined, .notPaid(_):
-            if race.hasEnded {
-                AlertUtil.presentAlertMessage("Cannot join a passed race.",
-                                              title: "Uh Oh",
-                                              delay: 0.5,
-                                              completion: { _ in button.isLoading = false })
-            } else {
-                AppControl.shared.tryJoining(race: race, raceApi: raceApi) { (newState) in
+            case .notJoined, .notPaid(_):
+            if race.isFinalized {
+                    AlertUtil.presentAlertMessage("Cannot join a completed race.",
+                                                  title: "Uh Oh",
+                                                  delay: 0.5,
+                                                  completion: { _ in button.isLoading = false })
+                } else {
+                    AppControl.shared.tryJoining(race: race, raceApi: raceApi) { (newState) in
+                        self.handleStateChange(state, newState: newState, in: button, with: race, completion)
+                    }
+                }
+            case .joined:
+                AppControl.shared.resign(race: race, raceApi: raceApi) { (newState) in
                     self.handleStateChange(state, newState: newState, in: button, with: race, completion)
                 }
-            }
-        case .joined:
-            AppControl.shared.resign(race: race, raceApi: raceApi) { (newState) in
-                self.handleStateChange(state, newState: newState, in: button, with: race, completion)
-            }
 
-        default:
-            break
+            default:
+                break
         }
     }
 

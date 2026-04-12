@@ -100,6 +100,7 @@ enum SystemImg {
     static let globe = UIImage(systemName:"globe") // iOS 13.0+
     static let search = UIImage(systemName: "magnifyingglass") // iOS 13.0+
     static let badge_cross_small = UIImage(systemName: "xmark.square.fill") // iOS 13.0+
+    static let trashFill = UIImage(systemName:"trash.fill") // iOS 13.0+
 
     static var flagCheckeredCrossed: UIImage? {
         if #available(iOS 18.0, *) {

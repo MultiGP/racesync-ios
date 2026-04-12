@@ -112,6 +112,10 @@ class RaceViewModel: Descriptable {
     var joinState: JoinState {
         return Self.joinState(for: race)
     }
+
+    var approveState: ApproveState {
+        return Self.approveState(for: race)
+    }
 }
 
 enum RaceViewSorting {
@@ -207,6 +211,12 @@ extension RaceViewModel {
         } else {
             return race.isJoined ? .joined : .notJoined
         }
+    }
+
+    static func approveState(for race: Race) -> ApproveState {
+//        if let seriesId = race.seriesId else { return nil }
+
+        return race.isApproved ? .approved : .notApproved
     }
 
     static func distance(for race: Race) -> Double {
