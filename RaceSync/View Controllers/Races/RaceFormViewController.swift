@@ -11,7 +11,7 @@ import RaceSyncAPI
 import SnapKit
 import UIKit
 
-protocol RaceFormViewControllerDelegate {
+protocol RaceFormViewControllerDelegate: AnyObject {
     func raceFormViewController(_ viewController: RaceFormViewController, didUpdateRace race: Race)
     func raceFormViewControllerDidDismiss(_ viewController: RaceFormViewController)
 }
@@ -21,7 +21,7 @@ class RaceFormViewController: UIViewController {
     // MARK: - Public Variables
 
     var editMode: RaceFormMode = .new
-    var delegate: RaceFormViewControllerDelegate?
+    weak var delegate: RaceFormViewControllerDelegate?
 
     // MARK: - Private Variables
 
@@ -141,6 +141,10 @@ class RaceFormViewController: UIViewController {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    deinit {
+        
     }
 
     // MARK: - Lifecycle Methods

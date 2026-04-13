@@ -78,6 +78,10 @@ class TextFieldViewController: FormBaseViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    deinit {
+        
+    }
+
     // MARK: - Lifecycle Methods
 
     override func viewDidLoad() {
@@ -182,7 +186,6 @@ extension TextFieldViewController: PresentrDelegate {
         DispatchQueue.main.async {
             self.delegate?.formViewControllerDidDismiss(self)
         }
-
         return true
     }
 }
