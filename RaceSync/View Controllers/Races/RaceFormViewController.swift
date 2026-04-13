@@ -589,13 +589,15 @@ extension RaceFormViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        if let footer = currentSection.footer {
-            return footer
-        } else if currentSectionRequiredRows().count > 0 {
-            return "* Required fields"
-        } else {
-            return nil
+        var parts = [String]()
+
+        if currentSectionRequiredRows().count > 0 { parts.append("* Required fields") }
+        if let footer = currentSection.footer { parts.append(footer) } // General section footer
+        if currentSection == .general {
+            if data.fee > 0 { parts.append("A RaceSync Pay fee ($0.50 + 3.5%) and a PayPal fee (varies) will be deducted from the Race Fee.") }
         }
+
+        return parts.isEmpty ? nil : parts.joined(separator: "\n")
     }
 }
 
