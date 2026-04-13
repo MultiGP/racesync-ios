@@ -19,6 +19,7 @@
    * Various user interface improvements for a smoother experience.
    * Fixed race results sometimes not showing up for an ongoing race, due to timezone differences between the race and the app user.
    * Fixed an issue where the chapters list would not load in the pilot profile.
+   * If available, races now display their own images; otherwise, the chapter image is shown.
    
 ---
 
