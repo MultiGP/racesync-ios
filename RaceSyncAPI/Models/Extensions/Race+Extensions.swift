@@ -37,6 +37,12 @@ public extension Race {
         return true
     }
 
+    var canJoinSeries: Bool {
+        guard canBeEdited else { return false }
+        guard !isFinalized else { return false }
+        return true
+    }
+
     var canBeDeleted: Bool {
         guard canBeEdited else { return false }
         guard ownerId == APIServices.shared.myUser?.id else { return false }

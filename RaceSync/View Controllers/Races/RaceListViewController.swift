@@ -6,10 +6,9 @@
 //  Copyright © 2022 MultiGP Inc. All rights reserved.
 //
 
-import Foundation
 import RaceSyncAPI
-import SnapKit
 import EmptyDataSet_Swift
+import SnapKit
 
 /**
  Generic display of pre-loaded races.
@@ -127,11 +126,7 @@ class RaceListViewController: UIViewController, ViewJoinable {
     }
 
     fileprivate func configureNavigationItems() {
-
-        if title == nil {
-            title = "Races"
-        }
-        
+        if title == nil { title = "Races" }
         tabBarItem = UITabBarItem(title: title, image: SystemImg.flagCheckeredCrossed, selectedImage: nil)
     }
 
@@ -252,7 +247,7 @@ class RaceListViewController: UIViewController, ViewJoinable {
 
         let handler: AlertCompletionBlock = { _ in
 
-            self.seriesApi.remove(series: series.id, raceId: race.id) { [weak self] status, error in
+            self.seriesApi.remove(race: race.id, from: series.id) { [weak self] status, error in
                 if status == true {
                     // reload races to reflect changes, specially approval state
                     self?.loadContent()

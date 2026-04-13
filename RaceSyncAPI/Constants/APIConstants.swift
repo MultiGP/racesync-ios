@@ -46,6 +46,8 @@ enum EndPoint {
     static let seriesView = "series/view"
     static let seriesApprove = "series/approve"
     static let seriesUnapprove = "series/unapprove"
+    static let seriesJoin = "series/join"
+    static let seriesLeave = "series/leave"
     static let seriesRemove = "series/remove"
 
     static let chapterList = "chapter/list"

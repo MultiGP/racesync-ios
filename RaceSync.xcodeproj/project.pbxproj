@@ -71,6 +71,8 @@
 		4F536ECF2F8AD826006FF620 /* ViewApprovable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F536ECE2F8AD826006FF620 /* ViewApprovable.swift */; };
 		4F536ED12F8AEB35006FF620 /* ApproveButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F536ED02F8AEB35006FF620 /* ApproveButton.swift */; };
 		4F536ED32F8AFCEE006FF620 /* Series+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F536ED22F8AFCEE006FF620 /* Series+Extensions.swift */; };
+		4F536ED52F8C52B9006FF620 /* SeriesPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F536ED42F8C52B9006FF620 /* SeriesPickerViewController.swift */; };
+		4F536ED72F8C5869006FF620 /* SimpleTableViewCell+Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F536ED62F8C585F006FF620 /* SimpleTableViewCell+Configuration.swift */; };
 		4F5488962D2146C80056EA59 /* RaceScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5488952D2146C80056EA59 /* RaceScheduleViewController.swift */; };
 		4F5488982D2236950056EA59 /* String+HTML.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5488972D2236950056EA59 /* String+HTML.swift */; };
 		4F5614A42DDC4C2800EAD42A /* MessageEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5614A32DDC4C2800EAD42A /* MessageEnums.swift */; };
@@ -392,6 +394,8 @@
 		4F536ECE2F8AD826006FF620 /* ViewApprovable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewApprovable.swift; sourceTree = "<group>"; };
 		4F536ED02F8AEB35006FF620 /* ApproveButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApproveButton.swift; sourceTree = "<group>"; };
 		4F536ED22F8AFCEE006FF620 /* Series+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Series+Extensions.swift"; sourceTree = "<group>"; };
+		4F536ED42F8C52B9006FF620 /* SeriesPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesPickerViewController.swift; sourceTree = "<group>"; };
+		4F536ED62F8C585F006FF620 /* SimpleTableViewCell+Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SimpleTableViewCell+Configuration.swift"; sourceTree = "<group>"; };
 		4F5488952D2146C80056EA59 /* RaceScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceScheduleViewController.swift; sourceTree = "<group>"; };
 		4F5488972D2236950056EA59 /* String+HTML.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+HTML.swift"; sourceTree = "<group>"; };
 		4F5614A32DDC4C2800EAD42A /* MessageEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEnums.swift; sourceTree = "<group>"; };
@@ -843,6 +847,7 @@
 				4F90F0D32E8DD60700D9F5AF /* SeriesTabBarController.swift */,
 				4F90F0CD2E8DD04100D9F5AF /* SeriesDetailViewController.swift */,
 				4F90F0D12E8DD56D00D9F5AF /* SeriesStandingsViewController.swift */,
+				4F536ED42F8C52B9006FF620 /* SeriesPickerViewController.swift */,
 				4FCEAB452F11761900CAE0BD /* SeriesController.swift */,
 			);
 			path = Series;
@@ -1144,6 +1149,7 @@
 			isa = PBXGroup;
 			children = (
 				4FE272352580A36D00EC121B /* SimpleTableViewCell.swift */,
+				4F536ED62F8C585F006FF620 /* SimpleTableViewCell+Configuration.swift */,
 				4FD53FAE23A0B20900158206 /* AvatarTableViewCell.swift */,
 				4FD4E1D8237FB1EA008816B3 /* RaceTableViewCell.swift */,
 				4FD53FB023A0D48F00158206 /* UserRaceTableViewCell.swift */,
@@ -1547,6 +1553,7 @@
 				4FD4E1D1237F9DC8008816B3 /* DummyViewController.swift in Sources */,
 				4F5488962D2146C80056EA59 /* RaceScheduleViewController.swift in Sources */,
 				4F8668F423860900005E310A /* UniversalConstants.swift in Sources */,
+				4F536ED72F8C5869006FF620 /* SimpleTableViewCell+Configuration.swift in Sources */,
 				4FF16CC02E70EC9300B4FC51 /* ViewJoinableRegistry.swift in Sources */,
 				4F791C9823A6105700F15FD7 /* TextPill.swift in Sources */,
 				4F8B4A162DDD250D00B735DA /* MessageViewCell.swift in Sources */,
@@ -1555,6 +1562,7 @@
 				4F65033A2E45CE5900FA8AED /* RacePaymentsViewController.swift in Sources */,
 				4FE1DADF2DEB9EEF009143C4 /* StandingViewModel.swift in Sources */,
 				4F0F2F492E888100006788A7 /* SliderTableViewHeaderView.swift in Sources */,
+				4F536ED52F8C52B9006FF620 /* SeriesPickerViewController.swift in Sources */,
 				4F536ED12F8AEB35006FF620 /* ApproveButton.swift in Sources */,
 				4F86690223876E71005E310A /* ChapterViewModel.swift in Sources */,
 				4F8F2C112384903F00DC4907 /* RaceViewModel.swift in Sources */,

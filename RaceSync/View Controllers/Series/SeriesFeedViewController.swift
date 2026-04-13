@@ -225,26 +225,6 @@ class SeriesFeedViewController: UIViewController, Shimmable {
     @objc fileprivate func didPullRefreshControl() {
         loadContent()
     }
-
-    // MARK: - Cell Configuration
-
-    func configure<T>(_ cell: T, forRowAt indexPath: IndexPath) where T : SimpleTableViewCell {
-        guard let viewModel = feedViewModel(at: indexPath.row) else { return }
-
-        cell.titleLabel.text = viewModel.titleLabel
-        cell.titleLabel.numberOfLines = 2
-        cell.subtitleLabel.text = viewModel.subtitleLabel
-        cell.accessoryType = .disclosureIndicator
-
-        let imageRatio = 1.5
-        let imageHeight = UniversalConstants.cellAvatarHeight + 10
-        let imageSize = CGSize(width: imageHeight * imageRatio, height: imageHeight)
-        cell.imageRatio = imageRatio
-        cell.iconImageView.setImage(with: viewModel.imageUrl, placeholderImage: PlaceholderImg.seriesSmall, size: imageSize)
-        cell.iconImageView.contentMode = .center
-        cell.iconImageView.layer.cornerRadius = 6
-        cell.iconImageView.layer.masksToBounds = true
-    }
 }
 
 extension SeriesFeedViewController: UITableViewDelegate {
@@ -266,7 +246,10 @@ extension SeriesFeedViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as SimpleTableViewCell
-        configure(cell, forRowAt: indexPath)
+
+        if let viewModel = feedViewModel(at: indexPath.row) {
+            SimpleTableViewCell.configure(cell, with: viewModel)
+        }
         return cell
     }
 
