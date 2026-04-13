@@ -89,26 +89,28 @@ class RaceTabBarController: UITabBarController {
         self.raceController = RaceController(with: race)
         self.initialSelectedIndex = selectedTab.rawValue
         super.init(nibName: nil, bundle: nil)
-
-        self.raceController.parentViewController = self
     }
 
     init(with raceId: ObjectId, selectedTab: RaceTabs = .details) {
         self.raceController = RaceController(id: raceId)
         self.initialSelectedIndex = selectedTab.rawValue
         super.init(nibName: nil, bundle: nil)
-
-        self.raceController.parentViewController = self
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+    deinit {
+        //
+    }
+
     // MARK: - Lifecycle Methods
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        raceController.parentViewController = self
 
         setupLayout()
         loadRace()

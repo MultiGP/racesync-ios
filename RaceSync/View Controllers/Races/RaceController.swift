@@ -17,10 +17,9 @@ class RaceController {
     var race: Race?
     let raceApi = RaceApi()
 
-    var parentViewController: RaceTabBarController? = nil
     var isLoading: Bool = false
-
     var menuCompletion: BoolCompletionBlock? = nil
+    weak var parentViewController: RaceTabBarController? = nil
 
     // MARK: - Private
 
@@ -45,6 +44,11 @@ class RaceController {
     init(id raceId: ObjectId) {
         self.raceId = raceId
         self.race = nil
+    }
+
+    deinit {
+        parentViewController = nil
+        race = nil
     }
 
     // MARK: - Data Update
