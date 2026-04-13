@@ -65,7 +65,6 @@ public class APIServices {
     public func invalidate() {
         self.myUser = nil
         self.settings.invalidateSettings()
-        self.credential.invalidateLogin()
     }
 
     // MARK: - Private

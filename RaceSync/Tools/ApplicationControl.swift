@@ -73,6 +73,7 @@ class ApplicationControl: NSObject {
 
         if forced {
             APISessionManager.invalidateSession()
+            APIServices.shared.credential.invalidateLogin()
         } else {
             APISessionManager.invalidateSessionId() // doesn't remove email & pwd
         }
