@@ -91,10 +91,13 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
         configureNavigationItems()
 
         registerPinnedView(viewType: AvatarTableViewCell.self)
-
+        
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
-            $0.top.bottom.leading.trailing.equalToSuperview()
+            $0.width.equalTo(UIScreen.main.bounds.width)
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
     }
 
