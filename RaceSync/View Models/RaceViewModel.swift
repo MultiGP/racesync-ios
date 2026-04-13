@@ -200,7 +200,11 @@ extension RaceViewModel {
     }
 
     static func imageUrl(for race: Race) -> String? {
-        return ImageUtil.getImageUrl(for: race.chapterImageFileName)
+        if let raceImageUrl = race.mainImageFileName {
+            return ImageUtil.getImageUrl(for: raceImageUrl)
+        } else {
+            return ImageUtil.getImageUrl(for: race.chapterImageFileName)
+        }
     }
 
     static func joinState(for race: Race) -> JoinState {
@@ -214,8 +218,6 @@ extension RaceViewModel {
     }
 
     static func approveState(for race: Race) -> ApproveState {
-//        if let seriesId = race.seriesId else { return nil }
-
         return race.isApproved ? .approved : .notApproved
     }
 
