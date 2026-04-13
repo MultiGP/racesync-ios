@@ -5,9 +5,13 @@
 
 ## 1.9.0
 
+### Introducing MultiGP Series:
+   * A new dedicated tab on the main screen lets you browse all MultiGP Series. Quickly find the ones you are part of, including the 2026 Regional Series qualifiers and more.
+   * View the leaderboard for each series.
+   * Chapter organizers can submit races to specific series.
+   * Series owners can approve, unapprove, or remove races within the series they manage.
+
 ### New Features:
-   * MultiGP Series now have their own dedicated tab. You can view the Series you are part of, explore new Regional Series qualifiers, and quickly access leaderboards to see current standings.
-   * Series owners can now also approve, unapprove or remove a Race from the Series they manage.
    * Added 2026 GQ standings, along with the ability to browse past GQ standings from 2025 to 2019.
    
 ### Fixes and Enhancements:
