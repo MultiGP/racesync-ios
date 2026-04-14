@@ -439,7 +439,7 @@ class RaceController {
                 nc.modalPresentationStyle = .fullScreen
                 self.visibleViewController?.present(nc, animated: true)
             } else {
-                // TODO: handle error w/ alert?
+                AlertUtil.presentAlertMessage("Couldn't fetch series. Please try again later.", title: "Error", delay: 0.5)
             }
         }
     }

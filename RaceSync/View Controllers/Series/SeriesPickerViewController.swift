@@ -120,7 +120,6 @@ class SeriesPickerViewController: UIViewController {
     }
 
     fileprivate func configureNavigationItems() {
-
         title = "Pick a Series"
         navigationItem.rightBarButtonItem = rightBarButtonItem
         navigationItem.leftBarButtonItem = leftBarButtonItem
@@ -134,13 +133,14 @@ class SeriesPickerViewController: UIViewController {
 
         seriesApi.join(series: series.id, with: raceId) { [weak self] status, error in
             if status {
-                // TODO: Confirm joining w/ alert + Dismiss modal view
+                let message = "Joined series \"\(series.name)\" and waiting for approval."
+                AlertUtil.presentAlertMessage(message, title: "Joined Series", cancelTitle: "OK", delay: 0.5)
+                self?.dismiss(animated: true)
             } else if let error = error {
                 AlertUtil.presentAlertMessage("\(error.localizedDescription)", title: "Error", delay: 0.5)
             } else {
-                // TODO: Generic error w/ alert
+                AlertUtil.presentAlertMessage("Couldn't join this series. Please try again later.", title: "Error", delay: 0.5)
             }
-
             self?.isLoading = false
         }
     }
