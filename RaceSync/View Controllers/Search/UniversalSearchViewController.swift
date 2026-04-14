@@ -100,7 +100,7 @@ class UniversalSearchViewController: UIViewController, Shimmable {
     fileprivate var searchResults = SearchResults()
     fileprivate let minQuery: Int = 3
     fileprivate var searchDebounceTimer: Timer?
-    fileprivate let searchDebounceInterval: TimeInterval = 0.5
+    fileprivate let searchDebounceInterval: TimeInterval = 1
 
     fileprivate let emptyStateSearch = EmptyStateViewModel(.noSearchResults)
 

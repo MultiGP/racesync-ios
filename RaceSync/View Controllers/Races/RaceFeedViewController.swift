@@ -56,20 +56,21 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
         view.backgroundColor = Color.navigationBarColor
         view.tintColor = Color.blue
 
-        let spacing = 10
+        let spacing: CGFloat = 10
+        let buttonWidth: CGFloat = 30
 
         view.addSubview(searchButton)
         searchButton.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.leading.equalToSuperview().offset(Constants.padding)
-            $0.width.equalTo(30)
+            $0.width.equalTo(buttonWidth)
         }
-
+        
         view.addSubview(filterButton)
         filterButton.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.trailing.equalToSuperview().offset(-Constants.padding)
-            $0.width.equalTo(30)
+            $0.width.equalTo(buttonWidth)
         }
 
         view.addSubview(segmentedControl)
@@ -94,7 +95,6 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
         let button = CustomButton(type: .system)
         button.addTarget(self, action: #selector(didPressSearchButton), for: .touchUpInside)
         button.setImage(SystemImg.search, for: .normal)
-        button.isHidden = !isRaceSearchEnabled
         return button
     }()
 
@@ -142,8 +142,6 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
     fileprivate let emptyStateChapterRaces = EmptyStateViewModel(.noJoinedRaces)
     fileprivate let emptyStateNearbyRaces = EmptyStateViewModel(.noNearbydRaces)
     fileprivate let emptyStateSeriesRaces = EmptyStateViewModel(.noSeriesRaces)
-
-    fileprivate let isRaceSearchEnabled: Bool = true
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding

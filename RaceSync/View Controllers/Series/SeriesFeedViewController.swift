@@ -41,13 +41,22 @@ class SeriesFeedViewController: UIViewController, Shimmable {
         view.backgroundColor = Color.navigationBarColor
         view.tintColor = Color.blue
 
-        let spacing = 10
+        let spacing: CGFloat = 10
+        let buttonWidth: CGFloat = 30
+
+        view.addSubview(searchButton)
+        searchButton.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview().offset(Constants.padding)
+            $0.width.equalTo(buttonWidth)
+        }
 
         view.addSubview(segmentedControl)
         segmentedControl.snp.makeConstraints {
+            let trailing = spacing+buttonWidth+Constants.padding // To keep it proportionally centered
             $0.top.equalToSuperview().offset(spacing)
-            $0.leading.equalToSuperview().offset(spacing*5)
-            $0.trailing.equalToSuperview().offset(-spacing*5)
+            $0.leading.equalTo(searchButton.snp.trailing).offset(spacing)
+            $0.trailing.equalToSuperview().offset(-trailing)
             $0.centerX.equalToSuperview()
         }
 
@@ -60,6 +69,13 @@ class SeriesFeedViewController: UIViewController, Shimmable {
         control.selectedSegmentIndex = AppPrefs.lastSelectedSeriesFilter.index
         control.addTarget(self, action: #selector(didChangeSegment), for: .valueChanged)
         return control
+    }()
+
+    fileprivate lazy var searchButton: CustomButton = {
+        let button = CustomButton(type: .system)
+        button.addTarget(self, action: #selector(didPressSearchButton), for: .touchUpInside)
+        button.setImage(SystemImg.search, for: .normal)
+        return button
     }()
 
     fileprivate lazy var refreshControl: UIRefreshControl = {
@@ -210,16 +226,22 @@ class SeriesFeedViewController: UIViewController, Shimmable {
 
     // MARK: - Actions
 
-    fileprivate func openSeriesDetail(_ viewModel: SeriesViewModel, animated: Bool = true) {
-        let vc = SeriesTabBarController(with: viewModel.series.id)
-        vc.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(vc, animated: animated)
-    }
-
     @objc fileprivate func didChangeSegment() {
         tableView.reloadData()
 
         AppPrefs.lastSelectedSeriesFilter = selectedFilter
+    }
+
+    @objc fileprivate func didPressSearchButton(_ sender: Any) {
+        let vc = UniversalSearchViewController()
+        let nc = NavigationController(rootViewController: vc)
+        present(nc, animated: true)
+    }
+
+    fileprivate func openSeriesDetail(_ viewModel: SeriesViewModel, animated: Bool = true) {
+        let vc = SeriesTabBarController(with: viewModel.series.id)
+        vc.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(vc, animated: animated)
     }
 
     @objc fileprivate func didPullRefreshControl() {
