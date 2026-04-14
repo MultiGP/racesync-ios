@@ -128,8 +128,8 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
         return nil
     }
 
-    fileprivate var feedCount: Int {
-        get { return raceFeedController.viewModelsCount(for: selectedRaceFilter) }
+    fileprivate func feedCount() -> Int {
+        return raceFeedController.viewModelsCount(for: selectedRaceFilter)
     }
 
     fileprivate let raceFeedController: RaceFeedController
@@ -177,7 +177,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if feedCount == 0 {
+        if feedCount() == 0 {
             isLoadingList(true)
         }
     }
@@ -186,7 +186,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
         super.viewDidAppear(animated)
 
         // reload whenever we transition back
-        if feedCount == 0 || animated {
+        if feedCount() == 0 || animated {
             loadContent(forced: true)
         }
     }
@@ -364,7 +364,7 @@ extension RaceFeedViewController: UITableViewDelegate {
 extension RaceFeedViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return feedCount
+        return feedCount()
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

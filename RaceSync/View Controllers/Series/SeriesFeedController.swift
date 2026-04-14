@@ -50,10 +50,10 @@ class SeriesFeedController {
     }
 
     func viewModels(for filter: SeriesFilter, forceFetch: Bool = false, completion: SeriesFeedControllerCompletionBlock<[SeriesViewModel]>?) {
-
-        guard collection.isEmpty else {
-            completion?(viewModels(for: filter), nil)
-            return
+        
+        if let viewModels = viewModels(for: filter) {
+            completion?(viewModels, nil)
+            guard forceFetch else { return }
         }
 
         api.getSeries { objects, error in

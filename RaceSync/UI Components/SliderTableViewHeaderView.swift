@@ -29,6 +29,7 @@ class SliderTableViewHeaderView: UIView {
     }
 
     weak var delegate: SliderTableViewHeaderViewDelegate?
+    var numberOfItems: Int = 0
 
     static var height: CGFloat {
         UIScreen.main.bounds.height / 4
@@ -37,7 +38,6 @@ class SliderTableViewHeaderView: UIView {
     // MARK: - Private
 
     fileprivate var totalElements: Int = 0
-    fileprivate var numberOfItems: Int = 0
     fileprivate var currentIndex: Int = 0
 
     fileprivate lazy var collectionView: UICollectionView = {

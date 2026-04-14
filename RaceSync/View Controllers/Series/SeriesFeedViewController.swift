@@ -155,8 +155,9 @@ class SeriesFeedViewController: UIViewController, Shimmable {
 
         hideNavigationShadow()
 
-        if feedCount() == 0 {
-            loadContent()
+        // reload whenever we transition back
+        if feedCount() == 0 || animated {
+            loadContent(forced: true)
         }
     }
 
@@ -199,28 +200,30 @@ class SeriesFeedViewController: UIViewController, Shimmable {
 
     // MARK: - Data Update
 
-    fileprivate func loadContent() {
+    fileprivate func loadContent(forced: Bool = false) {
 
         if !refreshControl.isRefreshing {
             isLoadingList(true)
         }
 
-        seriesFeedController.viewModels(for: selectedFilter) { objects, error in
+        seriesFeedController.viewModels(for: selectedFilter, forceFetch: forced) { objects, error in
             if self.refreshControl.isRefreshing {
                 self.refreshControl.endRefreshing()
             } else {
                 self.isLoadingList(false)
             }
 
+            let tableView = self.tableView
             let slider = self.sliderHeaderView
+            let count = slider.delegate?.sliderNumberOfItems(slider) ?? 0
 
-            // Hiding the slider if nothing to show
-            if slider.delegate?.sliderNumberOfItems(slider) ?? 0 > 0 {
-                self.tableView.tableHeaderView = slider
+            if slider.numberOfItems == 0 && count > 0 {
                 slider.reloadData()
-            } else {
-                self.tableView.tableHeaderView = nil
+            } else if count == 0 { // Hiding the slider if nothing to show
+                tableView.tableHeaderView = nil
             }
+
+            tableView.reloadData()
         }
     }
 
@@ -245,7 +248,7 @@ class SeriesFeedViewController: UIViewController, Shimmable {
     }
 
     @objc fileprivate func didPullRefreshControl() {
-        loadContent()
+        loadContent(forced: true)
     }
 }
 
