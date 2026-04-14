@@ -47,11 +47,11 @@ public class SeriesResult: Mappable, Descriptable {
         else if chapterId != nil { type = .chapter }
 
         // Display name: may come under several keys
-        displayName <- map[ParamKey.displayName]
+        displayName <- map[ParamKey.userName]
 
         if displayName.isEmpty {
             var userName: String?
-            userName <- map[ParamKey.userName]
+            userName <- map[ParamKey.displayName] // 3 con
 
             if let un = userName, !un.isEmpty {
                 displayName = un

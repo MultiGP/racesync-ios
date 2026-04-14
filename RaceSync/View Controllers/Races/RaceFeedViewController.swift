@@ -56,20 +56,21 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
         view.backgroundColor = Color.navigationBarColor
         view.tintColor = Color.blue
 
-        let spacing = 10
+        let spacing: CGFloat = 10
+        let buttonWidth: CGFloat = 30
 
         view.addSubview(searchButton)
         searchButton.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.leading.equalToSuperview().offset(Constants.padding)
-            $0.width.equalTo(30)
+            $0.width.equalTo(buttonWidth)
         }
-
+        
         view.addSubview(filterButton)
         filterButton.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.trailing.equalToSuperview().offset(-Constants.padding)
-            $0.width.equalTo(30)
+            $0.width.equalTo(buttonWidth)
         }
 
         view.addSubview(segmentedControl)
@@ -94,7 +95,6 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
         let button = CustomButton(type: .system)
         button.addTarget(self, action: #selector(didPressSearchButton), for: .touchUpInside)
         button.setImage(SystemImg.search, for: .normal)
-        button.isHidden = !isRaceSearchEnabled
         return button
     }()
 
@@ -128,8 +128,8 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
         return nil
     }
 
-    fileprivate var feedCount: Int {
-        get { return raceFeedController.viewModelsCount(for: selectedRaceFilter) }
+    fileprivate func feedCount() -> Int {
+        return raceFeedController.viewModelsCount(for: selectedRaceFilter)
     }
 
     fileprivate let raceFeedController: RaceFeedController
@@ -142,8 +142,6 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
     fileprivate let emptyStateChapterRaces = EmptyStateViewModel(.noJoinedRaces)
     fileprivate let emptyStateNearbyRaces = EmptyStateViewModel(.noNearbydRaces)
     fileprivate let emptyStateSeriesRaces = EmptyStateViewModel(.noSeriesRaces)
-
-    fileprivate let isRaceSearchEnabled: Bool = true
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -179,7 +177,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if feedCount == 0 {
+        if feedCount() == 0 {
             isLoadingList(true)
         }
     }
@@ -188,7 +186,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
         super.viewDidAppear(animated)
 
         // reload whenever we transition back
-        if feedCount == 0 || animated {
+        if feedCount() == 0 || animated {
             loadContent(forced: true)
         }
     }
@@ -330,20 +328,20 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
         }
 
         raceFeedController.viewModels(for: selectedList, forceFetch: forced) { [weak self] (viewModels, cached, error) in
-            guard let strongSelf = self else { return }
+            guard let s = self else { return }
 
-            strongSelf.isLoadingList(false)
+            s.isLoadingList(false)
 
-            if let _ = viewModels, selectedList == strongSelf.selectedRaceFilter {
-
-                if strongSelf.refreshControl.isRefreshing, !cached {
-                    strongSelf.refreshControl.endRefreshing()
-                }
-
-                strongSelf.tableView.reloadData()
-            } else {
-                print("getMyRaces error : \(error.debugDescription)")
+            if s.refreshControl.isRefreshing, !cached { // don't dismiss the refresh control from cache callbacks
+                s.refreshControl.endRefreshing()
             }
+
+            if let error = error {
+                print("RaceFeedController loadContent error : \(error.debugDescription)")
+                return
+            }
+
+            s.tableView.reloadData()
         }
     }
 }
@@ -366,7 +364,7 @@ extension RaceFeedViewController: UITableViewDelegate {
 extension RaceFeedViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return feedCount
+        return feedCount()
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

@@ -376,7 +376,6 @@ class RaceController {
         vc.delegate = self
 
         let nc = NavigationController(rootViewController: vc)
-        nc.modalPresentationStyle = .fullScreen
         visibleViewController?.present(nc, animated: true)
     }
 
@@ -387,7 +386,6 @@ class RaceController {
         vc.delegate = self
 
         let nc = NavigationController(rootViewController: vc)
-        nc.modalPresentationStyle = .fullScreen
         visibleViewController?.present(nc, animated: true)
     }
 
@@ -422,21 +420,21 @@ class RaceController {
         let vc = RaceFormViewController(with: chapters, raceData: data, section: .general)
         vc.editMode = .new
         vc.delegate = self
+        vc.title = "Duplicate Race"
 
         let nc = NavigationController(rootViewController: vc)
-        nc.modalPresentationStyle = .fullScreen
         visibleViewController?.present(nc, animated: true)
     }
 
     func showSeriesPicker() {
         guard let race = race else { return }
 
-        seriesFeedController.viewModels(for: .all) { viewModels, error in
+        seriesFeedController.viewModels(for: .all) { viewModels, cache, error in
             if let vms = viewModels, vms.count > 0 {
                 let vc = SeriesPickerViewController(vms, raceId: race.id)
 
                 let nc = NavigationController(rootViewController: vc)
-                nc.modalPresentationStyle = .fullScreen
+
                 self.visibleViewController?.present(nc, animated: true)
             } else {
                 AlertUtil.presentAlertMessage("Couldn't fetch series. Please try again later.", title: "Error", delay: 0.5)

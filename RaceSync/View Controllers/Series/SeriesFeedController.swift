@@ -26,7 +26,7 @@ enum SeriesFilter: EnumTitle {
     static let `default`: Self = .regionals
 }
 
-public typealias SeriesFeedControllerCompletionBlock<T> = (_ object: T?, _ error: NSError?) -> Void
+public typealias SeriesFeedControllerCompletionBlock<T> = (_ object: T?, _ cached: Bool, _ error: NSError?) -> Void
 
 class SeriesFeedController {
 
@@ -50,10 +50,10 @@ class SeriesFeedController {
     }
 
     func viewModels(for filter: SeriesFilter, forceFetch: Bool = false, completion: SeriesFeedControllerCompletionBlock<[SeriesViewModel]>?) {
-
-        guard collection.isEmpty else {
-            completion?(viewModels(for: filter), nil)
-            return
+        
+        if let viewModels = viewModels(for: filter) {
+            completion?(viewModels, true, nil)
+            guard forceFetch else { return }
         }
 
         api.getSeries { objects, error in
@@ -61,9 +61,9 @@ class SeriesFeedController {
                 self.collection[.joined] = self.getJoinedSeries(from: objects)
                 self.collection[.regionals] = self.getRegionalSeries(from: objects)
                 self.collection[.all] = self.getAllSeries(from: objects)
-                completion?(self.collection[filter], nil)
+                completion?(self.collection[filter], false, nil)
             } else if error != nil {
-                completion?(nil, error)
+                completion?(nil, false, error)
             }
         }
     }
@@ -91,8 +91,8 @@ class SeriesFeedController {
             let bEnded = $1.endDate.map { $0 < now } ?? false
             let aNoParticipation = $0.pilotCount == 0
             let bNoParticipation = $1.pilotCount == 0
-
-            // joined series first (optional)
+            
+            // joined series first
             if prioritizeJoined {
                 if $0.isJoined != $1.isJoined { return $0.isJoined == true }
             }
@@ -103,13 +103,17 @@ class SeriesFeedController {
             // no participation just before ended
             if aNoParticipation != bNoParticipation { return !aNoParticipation }
 
-            // recency before popularity (optional)
+            // recency before popularity
             if prioritizeRecent {
-                if let aStart = $0.startDate, let bStart = $1.startDate, aStart != bStart {
-                    return aStart > bStart
+                let calendar = Calendar.current
+                let aYear = ($0.endDate ?? $0.startDate).map { calendar.component(.year, from: $0) }
+                let bYear = ($1.endDate ?? $1.startDate).map { calendar.component(.year, from: $0) }
+
+                if let aYear, let bYear, aYear != bYear {
+                    return aYear > bYear
                 }
-                if ($0.startDate == nil) != ($1.startDate == nil) {
-                    return $0.startDate != nil
+                if (aYear == nil) != (bYear == nil) {
+                    return aYear != nil
                 }
             }
 

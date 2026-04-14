@@ -28,7 +28,7 @@ class SeriesFeedViewController: UIViewController, Shimmable {
         tableView.register(cellType: SimpleTableViewCell.self)
         tableView.tableHeaderView = self.sliderHeaderView
         tableView.tableFooterView = UIView()
-//        tableView.refreshControl = self.refreshControl
+        tableView.refreshControl = self.refreshControl
         return tableView
     }()
 
@@ -41,13 +41,22 @@ class SeriesFeedViewController: UIViewController, Shimmable {
         view.backgroundColor = Color.navigationBarColor
         view.tintColor = Color.blue
 
-        let spacing = 10
+        let spacing: CGFloat = 10
+        let buttonWidth: CGFloat = 30
+
+        view.addSubview(searchButton)
+        searchButton.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview().offset(Constants.padding)
+            $0.width.equalTo(buttonWidth)
+        }
 
         view.addSubview(segmentedControl)
         segmentedControl.snp.makeConstraints {
+            let trailing = spacing+buttonWidth+Constants.padding // To keep it proportionally centered
             $0.top.equalToSuperview().offset(spacing)
-            $0.leading.equalToSuperview().offset(spacing*5)
-            $0.trailing.equalToSuperview().offset(-spacing*5)
+            $0.leading.equalTo(searchButton.snp.trailing).offset(spacing)
+            $0.trailing.equalToSuperview().offset(-trailing)
             $0.centerX.equalToSuperview()
         }
 
@@ -60,6 +69,13 @@ class SeriesFeedViewController: UIViewController, Shimmable {
         control.selectedSegmentIndex = AppPrefs.lastSelectedSeriesFilter.index
         control.addTarget(self, action: #selector(didChangeSegment), for: .valueChanged)
         return control
+    }()
+
+    fileprivate lazy var searchButton: CustomButton = {
+        let button = CustomButton(type: .system)
+        button.addTarget(self, action: #selector(didPressSearchButton), for: .touchUpInside)
+        button.setImage(SystemImg.search, for: .normal)
+        return button
     }()
 
     fileprivate lazy var refreshControl: UIRefreshControl = {
@@ -139,8 +155,9 @@ class SeriesFeedViewController: UIViewController, Shimmable {
 
         hideNavigationShadow()
 
-        if feedCount() == 0 {
-            loadContent()
+        // reload whenever we transition back
+        if feedCount() == 0 || animated {
+            loadContent(forced: true)
         }
     }
 
@@ -181,40 +198,7 @@ class SeriesFeedViewController: UIViewController, Shimmable {
         tabBarItem = UITabBarItem(title: title, image: SystemImg.stack, selectedImage: SystemImg.stackFill)
     }
 
-    // MARK: - Data Update
-
-    fileprivate func loadContent() {
-
-        if !refreshControl.isRefreshing {
-            isLoadingList(true)
-        }
-
-        seriesFeedController.viewModels(for: selectedFilter) { objects, error in
-            if self.refreshControl.isRefreshing {
-                self.refreshControl.endRefreshing()
-            } else {
-                self.isLoadingList(false)
-            }
-
-            let slider = self.sliderHeaderView
-
-            // Hiding the slider if nothing to show
-            if slider.delegate?.sliderNumberOfItems(slider) ?? 0 > 0 {
-                self.tableView.tableHeaderView = slider
-                slider.reloadData()
-            } else {
-                self.tableView.tableHeaderView = nil
-            }
-        }
-    }
-
     // MARK: - Actions
-
-    fileprivate func openSeriesDetail(_ viewModel: SeriesViewModel, animated: Bool = true) {
-        let vc = SeriesTabBarController(with: viewModel.series.id)
-        vc.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(vc, animated: animated)
-    }
 
     @objc fileprivate func didChangeSegment() {
         tableView.reloadData()
@@ -222,8 +206,55 @@ class SeriesFeedViewController: UIViewController, Shimmable {
         AppPrefs.lastSelectedSeriesFilter = selectedFilter
     }
 
+    @objc fileprivate func didPressSearchButton(_ sender: Any) {
+        let vc = UniversalSearchViewController()
+        let nc = NavigationController(rootViewController: vc)
+        present(nc, animated: true)
+    }
+
+    fileprivate func openSeriesDetail(_ viewModel: SeriesViewModel, animated: Bool = true) {
+        let vc = SeriesTabBarController(with: viewModel.series.id)
+        vc.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(vc, animated: animated)
+    }
+
     @objc fileprivate func didPullRefreshControl() {
-        loadContent()
+        loadContent(forced: true)
+    }
+
+    // MARK: - Data Update
+
+    fileprivate func loadContent(forced: Bool = false) {
+
+        if !refreshControl.isRefreshing {
+            isLoadingList(true)
+        }
+
+        seriesFeedController.viewModels(for: selectedFilter, forceFetch: forced) { [weak self] objects, cached, error in
+            guard let s = self else { return }
+
+            if let error = error {
+                print("SeriesFeedController loadContent error : \(error.debugDescription)")
+                return
+            }
+
+            s.isLoadingList(false)
+
+            if s.refreshControl.isRefreshing && !cached { // don't dismiss the refresh control from cache callbacks
+                s.refreshControl.endRefreshing()
+            }
+
+            let slider = s.sliderHeaderView
+            let count = slider.delegate?.sliderNumberOfItems(slider) ?? 0
+
+            if slider.numberOfItems == 0 && count > 0 {
+                slider.reloadData()
+            } else if count == 0 { // Hiding the slider if nothing to show
+                s.tableView.tableHeaderView = nil
+            }
+
+            s.tableView.reloadData()
+        }
     }
 }
 

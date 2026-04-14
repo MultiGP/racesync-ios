@@ -150,7 +150,10 @@ class RacePaymentsViewController: UIViewController, RaceTabbable {
 
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
-            $0.top.leading.trailing.bottom.equalToSuperview()
+            $0.width.equalTo(UIScreen.main.bounds.width)
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
 
         view.addSubview(activityIndicatorView)

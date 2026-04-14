@@ -130,8 +130,10 @@ class RacePilotsPickerController: UIViewController, Shimmable {
 
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
+            $0.width.equalTo(UIScreen.main.bounds.width)
             $0.top.equalTo(searchBar.snp.bottom)
-            $0.leading.trailing.bottom.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
 
         view.addSubview(shimmeringView)
