@@ -37,6 +37,15 @@ class ProfileHeaderView: UIView {
     }
 
     var delegate: ProfileHeaderViewDelegate?
+    var backgroundViewSize = CGSize(width: UIScreen.main.bounds.width, height: backgroundViewHeight)
+
+    func hideLeftBadgeButton(_ hide: Bool) {
+        leftBadgeButton.isHidden = hide
+    }
+
+    func hideRightBadgeButton(_ hide: Bool) {
+        rightBadgeButton.isHidden = hide
+    }
 
     lazy var locationButton: PasteboardButton = {
         let button = PasteboardButton(type: .system)
@@ -47,7 +56,7 @@ class ProfileHeaderView: UIView {
         return button
     }()
 
-    fileprivate lazy var locationIconView: UIImageView = {
+    lazy var locationIconView: UIImageView = {
         let view = UIImageView()
         view.image = SystemImg.pin_small?.withRenderingMode(.alwaysTemplate)
         view.contentMode = .scaleAspectFit
@@ -84,30 +93,27 @@ class ProfileHeaderView: UIView {
         return view
     }()
 
-    var backgroundViewSize = CGSize(width: UIScreen.main.bounds.width, height: backgroundViewHeight)
-
     static var backgroundViewHeight: CGFloat {
-        // TODO: Use dynamic values instead of hardcoding them.
-        if Constants.backgroundImageHeight - 44 < Constants.avatarImageSize {
-            return Constants.avatarImageSize + 44
+        let barHeight: CGFloat = 44
+        if Constants.backgroundImageHeight - barHeight < Constants.avatarImageSize {
+            return Constants.avatarImageSize + barHeight
         }
         return Constants.backgroundImageHeight
     }
 
-    func hideLeftBadgeButton(_ hide: Bool) {
-        leftBadgeButton.isHidden = hide
-    }
-
-    func hideRightBadgeButton(_ hide: Bool) {
-        rightBadgeButton.isHidden = hide
-    }
-
     // MARK: - Private Variables
+
+    fileprivate lazy var separatorView: UIView = {
+        let view = UIView()
+        view.backgroundColor = Color.clear
+        return view
+    }()
 
     fileprivate lazy var mainTextLabel: PasteboardLabel = {
         let label = PasteboardLabel()
-        label.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        label.font = UIFont.systemFont(ofSize: 18, weight: .regular)
         label.textColor = Color.black
+        label.textAlignment = .center
         label.numberOfLines = 2
         return label
     }()
@@ -115,7 +121,7 @@ class ProfileHeaderView: UIView {
     fileprivate lazy var topBadgeButton: UIButton = {
         let button = UIButton(type: .system)
         button.tintColor = Color.white
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .medium)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.titleEdgeInsets = UIEdgeInsets(right: -Constants.padding/2)
         button.isUserInteractionEnabled = false
         button.layer.shadowColor = Color.black.cgColor
@@ -128,7 +134,7 @@ class ProfileHeaderView: UIView {
     fileprivate lazy var leftBadgeButton: UIButton = {
         let button = UIButton(type: .system)
         button.tintColor = Color.gray400
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         button.titleEdgeInsets = UIEdgeInsets(right: -Constants.padding/2)
         button.isUserInteractionEnabled = false
         return button
@@ -137,7 +143,7 @@ class ProfileHeaderView: UIView {
     fileprivate lazy var rightBadgeButton: UIButton = {
         let button = UIButton(type: .system)
         button.tintColor = Color.gray400
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -Constants.padding/2, bottom: 0, right: 0)
         button.isUserInteractionEnabled = false
         return button
@@ -152,7 +158,7 @@ class ProfileHeaderView: UIView {
 
         let stackView2 = UIStackView(arrangedSubviews: [mainTextLabel, stackView1])
         stackView2.axis = .vertical
-        stackView2.alignment = .leading
+        stackView2.alignment = .center
         stackView2.distribution = .fill
         stackView2.spacing = Constants.padding
         return stackView2
@@ -161,6 +167,7 @@ class ProfileHeaderView: UIView {
     fileprivate var hasLaidOut: Bool = false
 
     fileprivate var imagePicker: ImagePickerController?
+    fileprivate var separatorViewHeightConstraint: Constraint?
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -191,10 +198,19 @@ class ProfileHeaderView: UIView {
 
         addSubview(backgroundView)
         backgroundView.snp.makeConstraints {
-            $0.top.equalTo(snp.top).offset(-topLayoutInset)
+            $0.top.equalToSuperview().offset(-topLayoutInset)
             $0.leading.trailing.equalToSuperview()
             $0.width.equalTo(UIScreen.main.bounds.width)
             $0.height.equalTo(Self.backgroundViewHeight)
+        }
+
+        addSubview(separatorView)
+        separatorView.snp.makeConstraints {
+            $0.top.equalTo(backgroundView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+
+            separatorViewHeightConstraint = $0.height.equalTo(0).constraint
+            separatorViewHeightConstraint?.activate()
         }
 
         addSubview(avatarView)
@@ -212,25 +228,25 @@ class ProfileHeaderView: UIView {
 
         addSubview(leftBadgeButton)
         leftBadgeButton.snp.makeConstraints {
-            $0.top.equalTo(backgroundView.snp.bottom).offset(Constants.padding/2)
+            $0.top.equalTo(separatorView.snp.bottom).offset(Constants.padding)
             $0.leading.equalToSuperview().offset(Constants.padding)
         }
 
         addSubview(rightBadgeButton)
         rightBadgeButton.snp.makeConstraints {
-            $0.top.equalTo(backgroundView.snp.bottom).offset(Constants.padding/2)
+            $0.top.equalTo(separatorView.snp.bottom).offset(Constants.padding)
             $0.trailing.equalToSuperview().offset(-Constants.padding)
         }
 
         addSubview(topBadgeButton)
         topBadgeButton.snp.makeConstraints {
             $0.top.equalTo(backgroundView.snp.bottom).offset(-Constants.padding*2)
-            $0.leading.equalToSuperview().offset(Constants.padding/2)
+            $0.leading.equalToSuperview().offset(Constants.padding)
         }
 
         addSubview(headerLabelStackView)
         headerLabelStackView.snp.makeConstraints {
-            $0.top.equalTo(avatarView.snp.bottom).offset(Constants.padding)
+            $0.top.equalTo(leftBadgeButton.snp.bottom).offset(Constants.padding*2)
             $0.leading.equalToSuperview().offset(Constants.padding)
             $0.trailing.equalToSuperview().offset(-Constants.padding)
             $0.bottom.equalToSuperview()
@@ -257,9 +273,9 @@ class ProfileHeaderView: UIView {
             avatarView.isHidden = false
         }
 
+        // 3 times the width helps with making fit most background images on the header nicely
         let headerImageSize = CGSize(width: UIScreen.main.bounds.width*3, height: Self.backgroundViewHeight)
-        let headerPlaceholderSize = CGSize(width: UIScreen.main.bounds.width, height: Self.backgroundViewHeight)
-        let headerPlaceholder = UIImage.image(withColor: Color.gray100, imageSize: headerPlaceholderSize)
+        let headerPlaceholder = UIImage.image(withColor: Color.gray100, imageSize: headerImageSize)
 
         if let headerImageUrl = ImageUtil.getImageUrl(for: viewModel.backgroundUrl) {
             backgroundView.imageView.setImage(with: headerImageUrl, placeholderImage: headerPlaceholder, size: headerImageSize) { (image) in
@@ -280,10 +296,15 @@ class ProfileHeaderView: UIView {
             avatarView.isHidden = true
         }
 
-        mainTextLabel.text = viewModel.displayName
+        mainTextLabel.text = viewModel.mainTextLabel
 
-        if !viewModel.locationName.isEmpty {
-            locationButton.setTitle(viewModel.locationName, for: .normal)
+        if let color = viewModel.color {
+            separatorView.backgroundColor = color
+            separatorViewHeightConstraint?.update(offset: Constants.padding)
+        }
+
+        if !viewModel.secondaryTextLabel.isEmpty {
+            locationButton.setTitle(viewModel.secondaryTextLabel, for: .normal)
             locationButton.isHidden = false
         } else {
             locationButton.setTitle(nil, for: .normal)

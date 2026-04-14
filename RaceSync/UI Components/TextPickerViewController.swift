@@ -75,6 +75,10 @@ class TextPickerViewController: FormBaseViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    deinit {
+
+    }
+
     // MARK: - Lifecycle Methods
 
     override func viewDidLoad() {

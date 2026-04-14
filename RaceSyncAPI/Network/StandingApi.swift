@@ -9,16 +9,6 @@
 import Foundation
 import ObjectMapper
 
-public enum StandingSeason: String, CaseIterable {
-    case y2025 = "2025"
-    case y2024 = "2024"
-    case y2023 = "2023"
-}
-
-//enum RaceTabs: Int {
-//    case details, results, schedule
-//}
-
 // MARK: - Interface
 public protocol StandingApiInterface {
 
@@ -39,20 +29,27 @@ public class StandingApi: StandingApiInterface {
         var headers = ["position", "firstName", "userName", "lastName", "userId", "chapterName",
                        "email", "country", "season1", "season1Score"]
 
-        if season != .y2023 {
+        if season == .y2024 || season == .y2025 {
             headers += ["season2", "season2Score"]
         }
 
-        fetchCSVAndConvertToJSON(from: baseUrl, knownHeaders: headers) { result in
+        fetchStandings(from: baseUrl) { result in
             DispatchQueue.main.async {
+                var log: String = "+ Ended request with "
+
                 switch result {
                     case .success(let jsonArray):
                         let models = Mapper<Standing>().mapArray(JSONArray: jsonArray)
+                        log += "(\(models.count) objects)"
                         completion(models, nil)
 
                     case .failure(let error):
-                        completion(nil, error as NSError)
+                        let err = error as NSError
+                        log += " Network Error: \(err.debugDescription)"
+                        completion(nil, err)
                     }
+
+                Clog.log("\(log)")
             }
         }
     }
@@ -60,61 +57,22 @@ public class StandingApi: StandingApiInterface {
 
 extension StandingApi {
 
-    fileprivate func fetchCSVAndConvertToJSON(from url: URL, knownHeaders: [String]? = nil, completion: @escaping (Result<[[String: Any]], Error>) -> Void) {
+    fileprivate func fetchStandings(from url: URL, completion: @escaping (Result<[[String: Any]], Error>) -> Void) {
         Clog.log("Starting request \(String(describing: url))")
+
         URLSession.shared.dataTask(with: url) { data, _, error in
             if let error = error {
                 return completion(.failure(error))
             }
 
             guard let data = data,
-                  let rawHTML = String(data: data, encoding: .utf8) else {
+                  let json = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] else {
                 return completion(.failure(NSError(domain: "InvalidData", code: 0)))
             }
 
-            let csv = self.extractCleanCSV(from: rawHTML, injectingHeaders: knownHeaders)
-            let result = self.parseCSV(csv)
-            completion(result)
+            completion(.success(json))
 
         }.resume()
-    }
-
-    fileprivate func extractCleanCSV(from html: String, injectingHeaders headers: [String]? = nil) -> String {
-        var text = html.stripHTML(false)
-
-        if let range = text.range(of: "\n1,") ?? text.range(of: "1,") {
-            text = String(text[range.lowerBound...])
-        }
-
-        text = text.replacingOccurrences(of: "[email protected]", with: "")
-
-        if let headers = headers, !headers.isEmpty {
-            let headerLine = headers.joined(separator: ",")
-            return headerLine + "\n" + text
-        }
-
-        return text
-    }
-
-    fileprivate func parseCSV(_ csv: String) -> Result<[[String: Any]], Error> {
-        let lines = csv.components(separatedBy: .newlines).filter { !$0.isEmpty }
-
-        guard let firstLine = lines.first else {
-            return .failure(NSError(domain: "NoHeader", code: 0))
-        }
-
-        let keys = firstLine.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-        var jsonArray: [[String: Any]] = []
-
-        for line in lines.dropFirst() {
-            let values = line.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-            guard values.count == keys.count else { continue }
-
-            let dict = Dictionary(uniqueKeysWithValues: zip(keys, values))
-            jsonArray.append(dict)
-        }
-
-        return .success(jsonArray)
     }
 
     static func getStandingsUrl(for season: StandingSeason) -> URL? {
@@ -122,7 +80,7 @@ extension StandingApi {
 
         var params = [(String, String)]()
 
-        if season != .y2023 {
+        if season == .y2024 || season == .y2025 {
             params += [
                 ("season1", "\(season.rawValue)Summer"),
                 ("season2", "\(season.rawValue)Spring")
@@ -133,7 +91,7 @@ extension StandingApi {
             ]
         }
 
-        params += [("exportcsv", "true")]
+        params += [("exportjson", "true")]
 
         var components = URLComponents(string: baseUrl.absoluteString)
         components?.queryItems = params.map { URLQueryItem(name: $0.0, value: $0.1) }

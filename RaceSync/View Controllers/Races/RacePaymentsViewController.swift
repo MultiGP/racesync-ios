@@ -394,6 +394,7 @@ extension RacePaymentsViewController: UITableViewDataSource {
         cell.detailTextLabel?.text = nil
         cell.columnLabel1.text = String(format: "$%.2f", totalPaid)
         cell.columnLabel2.text = String(format: "$%.2f", totalReceived)
+        cell.backgroundView?.backgroundColor = Color.white
         return cell
     }
 }

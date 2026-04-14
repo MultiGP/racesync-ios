@@ -22,8 +22,10 @@ class RepositoryAdapter {
             request.responseObject(keyPath: keyPath, completionHandler: { (response: DataResponse<Element>) in
                 Clog.log("Ended request with code \(String(describing: response.response?.statusCode))")
 
-                if let code = response.response?.statusCode, code == 401 {
-                    Clog.log("Detected 401. Should log out User!")
+                if let response = response.response {
+                    if response.statusCode == 401 {
+                        Clog.log("Detected 401. Should log out User!")
+                    }
                 }
 
                 switch response.result {

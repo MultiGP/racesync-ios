@@ -22,13 +22,58 @@ class ApplicationControl: NSObject {
 
     fileprivate var deeplinkObserver: NSObjectProtocol?
 
+
+    // MARK: - Initialization
+
+    override init() {
+        super.init()
+
+        deeplinkObserver = NotificationCenter.default.addObserver(with: .joinedRaceViaDeeplink) { note in
+            guard let deeplink = note.object as? DeepLink else { return }
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: { [weak self] in
+                self?.handle(deeplink)
+            })
+        }
+    }
+
+    deinit {
+        // Add more observers to collections instead of variables?
+        if let observer = deeplinkObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
+
     // MARK: - Public Methods
+
+    static func initializeRaceSyncAPI() {
+
+        let path = Bundle.main.path(forResource: "credentials", ofType: "plist")
+        let dict = NSDictionary(contentsOfFile: path ?? "")
+
+        guard let key = dict?["API_KEY"] as? String else {
+            fatalError("API key missing from credentials.plist")
+        }
+
+#if DEBUG
+        // Used for auto-completing in the login screen
+        let email = dict?["EMAIL"] as? String ?? ""
+        let password = dict?["PASSWORD"] as? String ?? ""
+#else
+        let email = APISessionManager.getSessionEmail() ?? ""
+        let password = APISessionManager.getSessionPasword() ?? ""
+#endif
+
+        let credential = APICredential(apiKey: key, email: email, password: password)
+        APIServices.configure(with: credential)
+    }
 
     func invalidateSession(forced: Bool = false) {
         guard let window = UIApplication.shared.delegate?.window else { return }
 
         if forced {
             APISessionManager.invalidateSession()
+            APIServices.shared.credential.invalidateLogin()
         } else {
             APISessionManager.invalidateSessionId() // doesn't remove email & pwd
         }
@@ -66,25 +111,6 @@ class ApplicationControl: NSObject {
     func openAppSettings() {
         guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
         UIApplication.shared.open(url)
-    }
-
-    override init() {
-        super.init()
-
-        deeplinkObserver = NotificationCenter.default.addObserver(with: .joinedRaceViaDeeplink) { note in
-            guard let deeplink = note.object as? DeepLink else { return }
-
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: { [weak self] in
-                self?.handle(deeplink)
-            })
-        }
-    }
-
-    deinit {
-        // Add more observers to collections instead of variables?
-        if let observer = deeplinkObserver {
-            NotificationCenter.default.removeObserver(observer)
-        }
     }
 }
 

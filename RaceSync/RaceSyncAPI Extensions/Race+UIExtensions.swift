@@ -31,9 +31,12 @@ extension Race {
     }
 
     var canShowResults: Bool {
-        if isFinalized { return true } // Assume results should be displayed since the race is finalized already
         guard let results = results, results.count > 0 else { return false }
-        return hasStarted
+
+        return results.contains { entry in
+            [entry.score, entry.totalLaps, entry.totalTime, entry.fastest3Laps, entry.fastest2Laps, entry.fastestLap]
+                .contains { $0 != nil && !$0!.isEmpty }
+        }
     }
 
     var canShowSchedule: Bool {

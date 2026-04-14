@@ -162,7 +162,7 @@ class ChapterViewController: ProfileViewController, ViewJoinable, RaceEditable {
     override func didPressLocationButton() {
         guard let coordinates = chapterCoordinates else { return }
 
-        let vc = MapViewController(with: coordinates, address: profileViewModel.locationName)
+        let vc = MapViewController(with: coordinates, address: profileViewModel.secondaryTextLabel)
         vc.title = "Chapter Location"
         vc.showsDirection = false
         let nc = NavigationController(rootViewController: vc)

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RaceSyncAPI
 
 protocol HeaderStretchable {
 
@@ -22,31 +23,38 @@ protocol HeaderStretchable {
 extension HeaderStretchable where Self: UIViewController {
 
     func stretchHeaderView(with contentOffset: CGPoint) {
-        let layoutInset = topLayoutInset
+
+        let topInset = topLayoutInset
 
         // skipping from doing calculations if not needed
-        guard contentOffset.y < -layoutInset else { return }
+        guard contentOffset.y < -topInset else { return }
 
-        let scrollRatio = contentOffset.y + layoutInset
+        let scrollRatio = contentOffset.y + topInset
         let movingUp: Bool = scrollRatio < 0
 
-        let imageViewSize = targetHeaderViewSize
-        let scrollXOffset = movingUp ? scrollRatio : 0
-        let scrollYOffset = movingUp ? contentOffset.y : -layoutInset
-        let newWidth = movingUp ? imageViewSize.width - scrollRatio*2 : imageViewSize.width
-        let newHeight = movingUp ? imageViewSize.height - scrollRatio : imageViewSize.height
+        let targetViewSize = targetHeaderViewSize
 
-        let newFrame = CGRect(x: scrollXOffset, y: scrollYOffset, width: newWidth , height: newHeight)
+        let newWidth = movingUp ? targetViewSize.width - scrollRatio*2 : targetViewSize.width
+        let newHeight = movingUp ? targetViewSize.height - scrollRatio : targetViewSize.height
+        let newX = movingUp ? -(newWidth - targetViewSize.width) / 2 : 0
+        let newY = movingUp ? contentOffset.y : -topInset
+
+        let newFrame = CGRect(x: newX, y: newY, width: newWidth , height: newHeight)
         targetHeaderView.changeLayerFrame(newFrame)
 
         if let anchoredViews = anchoredViews {
             for view in anchoredViews {
-                view.layer.frame.origin.y = layoutInset + UniversalConstants.padding + scrollYOffset
+                view.layer.frame.origin.y = topInset + UniversalConstants.padding + newY
             }
         }
+
+//        let maxBlurOffset: CGFloat = 120
+//        let percentage = min(1, abs(contentOffset.y+topInset) / maxBlurOffset)
+//        targetHeaderView.changeLayerEffect(percentage)
     }
 }
 
 protocol StretchableView {
     func changeLayerFrame(_ frame: CGRect)
+    func changeLayerEffect(_ percentage: CGFloat)
 }

@@ -10,7 +10,7 @@ import Foundation
 import SnapKit
 import UIKit
 
-@objc protocol TextEditorViewControllerDelegate {
+@objc protocol TextEditorViewControllerDelegate: AnyObject {
     func textEditorViewController(_ viewController: TextEditorViewController, didEditText text: String)
 }
 
@@ -72,6 +72,10 @@ class TextEditorViewController: UIViewController {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    deinit {
+
     }
 
     // MARK: - Lifecycle Methods

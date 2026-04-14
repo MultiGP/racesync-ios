@@ -6,24 +6,48 @@
 //  Copyright © 2025 MultiGP Inc. All rights reserved.
 //
 
-import Foundation
+import RaceSyncAPI
 
 typealias AppPrefs = AppplicationPreferences
 
 class AppplicationPreferences {
 
-    private enum Key {
-        static let lastSelectedTab = "com.multigp.RaceSync.preferences.last_selected_tab"
+    private enum LastSelected {
+        static let homeTab = "com.multigp.RaceSync.preferences.last_selected.home_tab"
+        static let raceFilter = "com.multigp.RaceSync.preferences.last_selected.races_filters"
+        static let seriesFilter = "com.multigp.RaceSync.preferences.last_selected.series_filters"
     }
 
-    static var lastSelectedTab: Int {
+    static var lastSelectedHomeTab: HomeTabs {
         get {
-            if let value = UserDefaults.standard.string(forKey: Key.lastSelectedTab) {
-                return Int(value) ?? HomeTabs.default.rawValue
-            } else {
-                return HomeTabs.default.rawValue
-            }
+            let string = UserDefaults.standard.string(forKey: LastSelected.homeTab)
+            return string.flatMap { Int($0) }.flatMap { HomeTabs(rawValue: $0) } ?? HomeTabs.default
         }
-        set { UserDefaults.standard.set("\(newValue)", forKey: Key.lastSelectedTab) }
+        set {
+            UserDefaults.standard.set("\(newValue.rawValue)", forKey: LastSelected.homeTab)
+            UserDefaults.standard.synchronize()
+        }
+    }
+
+    static var lastSelectedRaceFilter: RaceFilter {
+        get {
+            let string = UserDefaults.standard.string(forKey: LastSelected.raceFilter)
+            return string.flatMap { RaceFilter(title: $0) } ?? RaceFilter.joined
+        }
+        set {
+            UserDefaults.standard.set(newValue.title, forKey: LastSelected.raceFilter)
+            UserDefaults.standard.synchronize()
+        }
+    }
+
+    static var lastSelectedSeriesFilter: SeriesFilter {
+        get {
+            let string = UserDefaults.standard.string(forKey: LastSelected.seriesFilter)
+            return string.flatMap { SeriesFilter(title: $0) } ?? SeriesFilter.default
+        }
+        set {
+            UserDefaults.standard.set(newValue.title, forKey: LastSelected.seriesFilter)
+            UserDefaults.standard.synchronize()
+        }
     }
 }

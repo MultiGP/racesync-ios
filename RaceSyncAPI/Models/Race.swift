@@ -8,9 +8,8 @@
 
 import Foundation
 import ObjectMapper
-import Alamofire
 
-public class Race: Mappable, Joinable, Descriptable {
+public class Race: Mappable, Descriptable {
 
     public var id: ObjectId = ""
     public var name: String = ""
@@ -20,6 +19,7 @@ public class Race: Mappable, Joinable, Descriptable {
     public var statusString: String = ""
     public var status: RaceStatus = .open
     public var isJoined: Bool = false
+    public var isApproved: Bool = false
     public var type: EventType = .public
     public var scoringFormat: ScoringFormat = .fastest3Laps
     public var raceClass: RaceClass = .open
@@ -105,6 +105,7 @@ public class Race: Mappable, Joinable, Descriptable {
         endDate <- (map[ParamKey.endDate], MapperUtil.dateTransform)
         mainImageFileName <- map[ParamKey.mainImageFileName]
         isJoined <- map[ParamKey.isJoined]
+        isApproved <- map[ParamKey.approved]
         statusString <- map[ParamKey.status] // The API returns a status string, instead of enum
 
         if statusString == RaceStatus.open.title {

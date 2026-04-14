@@ -171,11 +171,9 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         tableView.tableFooterView = UIView()
         tableView.isScrollEnabled = false
 
-        let separatorLine = UIView()
-        separatorLine.backgroundColor = Color.gray100
+        let separatorLine = UIView.separatorLine()
         tableView.tableHeaderView = separatorLine
         separatorLine.snp.makeConstraints {
-            $0.height.greaterThanOrEqualTo(0.5)
             $0.width.equalToSuperview()
         }
         return tableView
@@ -259,18 +257,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     fileprivate var canDisplayMap: Bool {
         guard raceViewModel.race.raceClass != .esport else { return false }
         return raceCoordinates != nil
-    }
-
-    fileprivate var canDisplayDescription: Bool {
-        return raceViewModel.race.description.stripHTML().count > 0
-    }
-
-    fileprivate var canDisplayContent: Bool {
-        return raceViewModel.race.content.stripHTML().count > 0
-    }
-
-    fileprivate var canDisplayItinerary: Bool {
-        return raceViewModel.race.itinerary.stripHTML().count > 0
     }
 
     fileprivate var canDisplayFee: Bool {
@@ -542,16 +528,17 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     fileprivate func configureHTML() {
         var html = ""
         let spacing = Constants.padding * 3/4
+        let race = raceViewModel.race
 
-        if canDisplayDescription {
+        if race.description.stripHTML().count > 0 {
             let description = race.description.replaceHTMLColorTag(with: Color.gray300).stripHTMLFontTag().stripHTMLEdges()
             html += "<div id=\"description\">\(description)</div>"
         }
-        if canDisplayContent {
+        if race.content.stripHTML().count > 0 {
             let content = race.content.replaceHTMLColorTag(with: Color.black).stripHTMLFontTag().stripHTMLEdges()
             html += "<div id=\"content\" style=\"color:\(Color.black.toHexString()); padding-top: \(spacing)px; padding-bottom: \(spacing)px;\">\(content)</div>"
         }
-        if canDisplayItinerary {
+        if race.itinerary.stripHTML().count > 0 {
             let itinerary = race.description.replaceHTMLColorTag(with: Color.gray100).stripHTMLFontTag().stripHTMLEdges()
             html += "<hr style=\"border-top: 0.25px solid;\">"
             html += "<div id=\"itinerary\" style=\"padding-top: \(spacing)px;\">\(itinerary)</div>"
@@ -594,10 +581,10 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     }
 
     @objc fileprivate func didPressJoinButton(_ sender: JoinButton) {
-        let joinState = sender.joinState
+        let state = sender.joinState
 
         toggleJoinButton(sender, forRace: raceViewModel.race, raceApi: raceApi) { [weak self] (newState) in
-            if joinState != newState {
+            if state != newState {
                 self?.race.isJoined = (newState == .joined)
                 self?.reloadRace()
             }

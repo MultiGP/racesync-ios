@@ -13,6 +13,7 @@ public enum MGPWebPath: String {
     case raceView = "/races/view/?race"
     case chapterView = "/chapters/view/?chapter"
     case userView = "/pilots/view/?pilot"
+    case seriesView = "/multigp-series/?seriesId"
     case zippyqView = "/MultiGP/views/zippyq.php?raceId"
     case chapterLeaderboard = "https://www.multigp.com/chapters/leaderboard/view/?chapter"
 

@@ -6,15 +6,12 @@
 //  Copyright © 2022 MultiGP Inc. All rights reserved.
 //
 
-import Foundation
 import RaceSyncAPI
+import EmptyDataSet_Swift
 import SnapKit
-import UIKit
 
 /**
  Generic display of pre-loaded races.
-
- TODO: Needs an empty data set, for when races count = 0
  */
 class RaceListViewController: UIViewController, ViewJoinable {
 
@@ -25,6 +22,7 @@ class RaceListViewController: UIViewController, ViewJoinable {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(cellType: RaceTableViewCell.self)
+        tableView.emptyDataSetSource = self
         tableView.tableFooterView = UIView()
         return tableView
     }()
@@ -33,10 +31,14 @@ class RaceListViewController: UIViewController, ViewJoinable {
 
     fileprivate var raceList: [RaceViewModel]
     fileprivate let raceApi = RaceApi()
+    fileprivate let seriesApi = SeriesApi()
+
     fileprivate var seasonId: ObjectId?
-    fileprivate var seriesId: ObjectId?
     fileprivate var raceClass: RaceClass?
-    fileprivate var raceName: String?
+    fileprivate var raceName: String? // used for searching races with similar names
+    fileprivate var series: Series?
+
+    fileprivate let emptyStateNoRaces = EmptyStateViewModel(.noRaces)
 
     // MARK: - Initialization
 
@@ -52,9 +54,9 @@ class RaceListViewController: UIViewController, ViewJoinable {
         super.init(nibName: nil, bundle: nil)
     }
 
-    init(_ raceViewModels: [RaceViewModel], seriesId: ObjectId) {
+    init(_ raceViewModels: [RaceViewModel], series: Series) {
         self.raceList = raceViewModels
-        self.seriesId = seriesId
+        self.series = series
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -76,6 +78,12 @@ class RaceListViewController: UIViewController, ViewJoinable {
         self.raceName = raceName
         super.init(nibName: nil, bundle: nil)
         self.title = raceName
+    }
+
+    init(_ raceViewModels: [RaceViewModel], title: String) {
+        self.raceList = raceViewModels
+        super.init(nibName: nil, bundle: nil)
+        self.title = title
     }
 
     required init?(coder: NSCoder) {
@@ -111,14 +119,15 @@ class RaceListViewController: UIViewController, ViewJoinable {
 
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
+            $0.width.equalTo(UIScreen.main.bounds.width)
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(view.snp.bottom)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
     }
 
     fileprivate func configureNavigationItems() {
-        title = "Races"
+        if title == nil { title = "Races" }
         tabBarItem = UITabBarItem(title: title, image: SystemImg.flagCheckeredCrossed, selectedImage: nil)
     }
 
@@ -126,14 +135,28 @@ class RaceListViewController: UIViewController, ViewJoinable {
 
     @objc fileprivate func didPressJoinButton(_ sender: JoinButton) {
         guard let objectId = sender.objectId, let race = raceList.race(withId: objectId) else { return }
-        let joinState = sender.joinState
+        let state = sender.joinState
 
         toggleJoinButton(sender, forRace: race, raceApi: raceApi) { [weak self] (newState) in
-            if joinState != newState {
+            if state != newState {
                 // reload races to reflect race changes, specially join counts
                 self?.loadContent()
             }
         }
+    }
+
+    @objc fileprivate func didPressApproveButton(_ sender: ApproveButton) {
+        guard let objectId = sender.objectId, let race = raceList.race(withId: objectId) else { return }
+        guard let series = series else { return }
+
+        toggleApprovalButton(sender, race: race, series: series)
+    }
+
+    @objc fileprivate func didPressRemoveButton(_ sender: ApproveButton) {
+        guard let objectId = sender.objectId, let race = raceList.race(withId: objectId) else { return }
+        guard let series = series else { return }
+
+        handleRemoving(race: race, from: series, sender: sender)
     }
 
     fileprivate func openRaceDetail(_ viewModel: RaceViewModel) {
@@ -144,12 +167,17 @@ class RaceListViewController: UIViewController, ViewJoinable {
 
     // MARK: - Data Update
 
+    fileprivate func raceViewModel(for indexPath: IndexPath) -> RaceViewModel? {
+        guard indexPath.row < raceList.count else { return nil }
+        return raceList[indexPath.row]
+    }
+
     // ViewJoinable
     func loadContent(forced: Bool = false) {
         if let seasonId = seasonId {
             raceApi.getRaces(seasonId: seasonId) { [weak self] (races, error) in
                 if let races = races {
-                    self?.raceList = RaceViewModel.sortedViewModels(with: races)
+                    self?.raceList = RaceViewModel.sortedViewModels(with: races) // Keep the original order
                     self?.tableView.reloadData()
                 } else if let _ = error {
                     // handle error ?
@@ -167,18 +195,92 @@ class RaceListViewController: UIViewController, ViewJoinable {
         } else if let raceName = raceName {
             raceApi.getRaces(name: raceName) { [weak self] (races, error) in
                 if let races = races {
-                    self?.raceList = RaceViewModel.sortedViewModels(with: races)
+                    self?.raceList = RaceViewModel.sortedViewModels(with: races) // Keep the original order
                     self?.tableView.reloadData()
                 } else if let _ = error {
                     // handle error ?
                 }
             }
+        } else if let series = series {
+            seriesApi.view(series: series.id) { [weak self] newSeries, error in
+                if let races = newSeries?.races {
+                    self?.raceList = RaceViewModel.sortedViewModels(with: races, sorting: .ascending)
+                    self?.tableView.reloadData()
+                }
+            }
         }
     }
 
-    fileprivate func raceViewModel(for indexPath: IndexPath) -> RaceViewModel? {
-        guard indexPath.row < raceList.count else { return nil }
-        return raceList[indexPath.row]
+    func toggleApprovalButton(_ button: ApproveButton, race: Race, series: Series) {
+
+        button.isLoading = true
+        let state = button.approveState
+
+        switch state {
+            case .notApproved:
+                seriesApi.approve(series: series.id, raceId: race.id) { [weak self] (status, error) in
+                    let newState = status ? .approved : state
+                    self?.handleStateChange(state, newState: newState, in: button)
+                }
+            case .approved:
+                let handler: AlertCompletionBlock = { [weak self] _ in
+                    self?.seriesApi.unapprove(series: series.id, raceId: race.id) { [weak self] (status, error) in
+                        let newState = status ? .notApproved : state
+                        self?.handleStateChange(state, newState: newState, in: button)
+                    }
+                }
+
+                ActionSheetUtil.presentDestructiveActionSheet(
+                    withTitle: "Are you sure you want to unapprove this race?",
+                    destructiveTitle: "Yes, Continue",
+                    completion: handler,
+                    cancel: { _ in
+                        button.isLoading = false
+                    })
+            default:
+                break
+        }
+    }
+
+    fileprivate func handleRemoving(race: Race, from series: Series, sender: ApproveButton) {
+
+        sender.isLoading = true
+
+        let handler: AlertCompletionBlock = { _ in
+
+            self.seriesApi.remove(race: race.id, from: series.id) { [weak self] status, error in
+                if status == true {
+                    // reload races to reflect changes, specially approval state
+                    self?.loadContent()
+                } else if let error = error {
+                    AlertUtil.presentAlertMessage("\(error.localizedDescription)", title: "Error", delay: 0.5)
+                } else {
+                    AlertUtil.presentAlertMessage("Couldn't remove this race. Please try again later.", title: "Error", delay: 0.5)
+                }
+                sender.isLoading = false
+            }
+        }
+
+        ActionSheetUtil.presentDestructiveActionSheet(
+            withTitle: "Remove this race from the series?",
+            destructiveTitle: "Yes, Remove",
+            completion: handler,
+            cancel: { _ in
+                sender.isLoading = false
+            }
+        )
+    }
+
+    fileprivate func handleStateChange(_ oldState: ApproveState, newState: ApproveState, in button: ApproveButton, _ completion: ApproveStateCompletionBlock? = nil) {
+
+        if oldState != newState {
+            loadContent()
+            RateMe.shared.userDidPerformEvent()
+        } else {
+            button.isLoading = false
+        }
+
+        completion?(newState)
     }
 }
 
@@ -204,18 +306,76 @@ extension RaceListViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let viewModel = raceViewModel(for: indexPath) else { return UITableViewCell() }
+        return raceTableViewCell(for: indexPath)
+    }
+
+    func raceTableViewCell(for indexPath: IndexPath) -> RaceTableViewCell {
+        guard let viewModel = raceViewModel(for: indexPath) else { return RaceTableViewCell() }
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as RaceTableViewCell
 
         cell.dateLabel.text = viewModel.startDateLabel //"Saturday Sept 14 @ 9:00 AM"
         cell.titleLabel.text = viewModel.titleLabel
         cell.subtitleLabel.text = viewModel.locationLabel
-        cell.joinButton.type = .race
-        cell.joinButton.objectId = viewModel.race.id
-        cell.joinButton.joinState = viewModel.joinState
-        cell.joinButton.addTarget(self, action: #selector(didPressJoinButton), for: .touchUpInside)
-        cell.memberBadgeView.count = viewModel.participantCount
         cell.avatarImageView.imageView.setImage(with: viewModel.imageUrl, placeholderImage: PlaceholderImg.medium)
+
+        // reset
+        resetRaceTableViewCell(cell: cell)
+
+        // Special feature for the Series' owner
+        if let series = series, series.canBeEdited {
+            let state = viewModel.approveState
+            cell.approveButton.type = .race
+            cell.approveButton.approveState = state
+
+            if !viewModel.race.isFinalized {
+                cell.approveButton.objectId = viewModel.race.id
+                cell.approveButton.addTarget(self, action: #selector(didPressApproveButton), for: .touchUpInside)
+
+                if state == .notApproved {
+                    cell.removeButton.isHidden = false
+                    cell.removeButton.objectId = viewModel.race.id
+                    cell.removeButton.addTarget(self, action: #selector(didPressRemoveButton), for: .touchUpInside)
+                }
+            } else {
+                cell.approveButton.approveState = .completed
+            }
+        } else {
+            cell.joinButton.joinState = viewModel.joinState
+            cell.joinButton.type = .race
+            cell.joinButton.objectId = viewModel.race.id
+            cell.joinButton.addTarget(self, action: #selector(didPressJoinButton), for: .touchUpInside)
+
+            cell.memberBadgeView.count = viewModel.participantCount
+            cell.memberBadgeView.isHidden = false
+        }
         return cell
+    }
+
+    func resetRaceTableViewCell(cell: RaceTableViewCell) {
+        cell.joinButton.isHidden = true
+        cell.memberBadgeView.isHidden = true
+        cell.approveButton.isHidden = true
+        cell.removeButton.isHidden = true
+        cell.accessoryType = .none
+
+        cell.joinButton.objectId = nil
+        cell.approveButton.objectId = nil
+        cell.removeButton.objectId = nil
+        cell.memberBadgeView.count = 0
+    }
+}
+
+extension RaceListViewController: EmptyDataSetSource {
+
+    func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        return emptyStateNoRaces.title
+    }
+
+    func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        return emptyStateNoRaces.description
+    }
+
+    func backgroundColor(forEmptyDataSet scrollView: UIScrollView) -> UIColor? {
+        return Color.white
     }
 }

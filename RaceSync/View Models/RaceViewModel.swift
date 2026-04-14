@@ -112,6 +112,10 @@ class RaceViewModel: Descriptable {
     var joinState: JoinState {
         return Self.joinState(for: race)
     }
+
+    var approveState: ApproveState {
+        return Self.approveState(for: race)
+    }
 }
 
 enum RaceViewSorting {
@@ -196,7 +200,11 @@ extension RaceViewModel {
     }
 
     static func imageUrl(for race: Race) -> String? {
-        return ImageUtil.getImageUrl(for: race.chapterImageFileName)
+        if let raceImageUrl = race.mainImageFileName {
+            return ImageUtil.getImageUrl(for: raceImageUrl)
+        } else {
+            return ImageUtil.getImageUrl(for: race.chapterImageFileName)
+        }
     }
 
     static func joinState(for race: Race) -> JoinState {
@@ -207,6 +215,10 @@ extension RaceViewModel {
         } else {
             return race.isJoined ? .joined : .notJoined
         }
+    }
+
+    static func approveState(for race: Race) -> ApproveState {
+        return race.isApproved ? .approved : .notApproved
     }
 
     static func distance(for race: Race) -> Double {

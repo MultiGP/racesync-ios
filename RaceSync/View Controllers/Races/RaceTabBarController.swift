@@ -89,26 +89,28 @@ class RaceTabBarController: UITabBarController {
         self.raceController = RaceController(with: race)
         self.initialSelectedIndex = selectedTab.rawValue
         super.init(nibName: nil, bundle: nil)
-
-        self.raceController.parentViewController = self
     }
 
     init(with raceId: ObjectId, selectedTab: RaceTabs = .details) {
         self.raceController = RaceController(id: raceId)
         self.initialSelectedIndex = selectedTab.rawValue
         super.init(nibName: nil, bundle: nil)
-
-        self.raceController.parentViewController = self
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+    deinit {
+        //
+    }
+
     // MARK: - Lifecycle Methods
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        raceController.parentViewController = self
 
         setupLayout()
         loadRace()
@@ -146,10 +148,10 @@ class RaceTabBarController: UITabBarController {
         var vcs = [UIViewController]()
         vcs += [RaceDetailViewController(with: controller)]
         vcs += [RacePilotsViewController(with: controller)]
-        vcs += [RaceScheduleViewController(with: controller)]
 
-        if let race = race, race.canManagePayments {
-            vcs += [RacePaymentsViewController(with: controller)]
+        if let race = race {
+            if race.canShowSchedule { vcs += [RaceScheduleViewController(with: controller)] }
+            if race.canManagePayments { vcs += [RacePaymentsViewController(with: controller)] }
         }
 
         configureTabBarController(with: vcs, selectedIndex: initialSelectedIndex)
@@ -225,9 +227,9 @@ class RaceTabBarController: UITabBarController {
 
     // MARK: - Error Handling
 
-    fileprivate func handleError(_ error: Error) {
+    fileprivate func handleError(_ error: NSError) {
 
-        emptyStateError = EmptyStateViewModel(.errorRaces)
+        emptyStateError = EmptyStateViewModel(.error(error))
 
         // temporary scroll view used to display the error message
         let scrollView = UIScrollView()
@@ -242,6 +244,22 @@ class RaceTabBarController: UITabBarController {
         }
 
         scrollView.reloadEmptyDataSet()
+    }
+}
+
+extension RaceTabBarController: UITabBarControllerDelegate {
+
+    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        return true
+    }
+
+    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+
+        (tabBar as? RoundedSelectionTabBar)?.updateSelectionFrame(animated: true)
+
+        if let index = viewControllers?.lastIndex(of: viewController) {
+            didSelectedIndex(index)
+        }
     }
 }
 
@@ -264,21 +282,5 @@ extension RaceTabBarController: EmptyDataSetDelegate {
 
     func emptyDataSetShouldAllowScroll(_ scrollView: UIScrollView) -> Bool {
         return false
-    }
-}
-
-extension RaceTabBarController: UITabBarControllerDelegate {
-
-    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
-        return true
-    }
-
-    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-
-        (tabBar as? RoundedSelectionTabBar)?.updateSelectionFrame(animated: true)
-
-        if let index = viewControllers?.lastIndex(of: viewController) {
-            didSelectedIndex(index)
-        }
     }
 }

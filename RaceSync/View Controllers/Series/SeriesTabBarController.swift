@@ -23,6 +23,14 @@ class SeriesTabBarController: UITabBarController {
     var seriesId: ObjectId
     var series: Series?
 
+    override var title: String? {
+        didSet {
+            titleButton.setTitle(title, for: .normal)
+            titleButton.invalidateIntrinsicContentSize()
+            titleButton.sizeToFit()
+        }
+    }
+
     // MARK: - Private Variables
 
     fileprivate lazy var activityIndicatorView: ActivityLoadingView = {
@@ -32,7 +40,19 @@ class SeriesTabBarController: UITabBarController {
         return view
     }()
 
+    fileprivate lazy var titleButton: PasteboardButton = {
+        let button = PasteboardButton(type: .system)
+        button.addTarget(self, action: #selector(didPressTitleButton), for: .touchUpInside)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+        button.titleLabel?.textAlignment = .center
+        button.setTitleColor(Color.black, for: .normal)
+        button.setTitle(self.title, for: .normal)
+        button.titleLabel?.lineBreakMode = .byClipping
+        return button
+    }()
+
     fileprivate var initialSelectedIndex: Int = SeriesTabs.default.rawValue
+    fileprivate var emptyStateError: EmptyStateViewModel?
 
     fileprivate let seriesApi = SeriesApi()
     fileprivate var seriesViewModels: SeriesViewModel?
@@ -42,6 +62,7 @@ class SeriesTabBarController: UITabBarController {
     init(with id: ObjectId) {
         self.seriesId = id
         super.init(nibName: nil, bundle: nil)
+        self.title = "Details"
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -69,6 +90,9 @@ class SeriesTabBarController: UITabBarController {
 
     fileprivate func setupLayout() {
 
+        // Using a custom button title in this case, to display the id of a Race on tap
+        navigationItem.titleView = titleButton
+
         view.backgroundColor = Color.white
         tabBar.isHidden = true // hiding temporarily, while the view loads
         delegate = self
@@ -84,18 +108,24 @@ class SeriesTabBarController: UITabBarController {
 
         var raceViewModels = [RaceViewModel]()
         if let races = series.races {
-            raceViewModels += RaceViewModel.viewModels(with: races)
+            raceViewModels += RaceViewModel.sortedViewModels(with: races, sorting: .ascending)
         }
 
+        let controller = SeriesController(with: series)
+
+        let raceListVC = RaceListViewController(raceViewModels, series: series)
+        raceListVC.navigationItem.rightBarButtonItem = controller.navigationItems()
+
         var vcs = [UIViewController]()
-        vcs += [SeriesDetailViewController(with: series)]
-        vcs += [RaceListViewController(raceViewModels, seriesId: seriesId)]
-        vcs += [SeriesStandingsViewController(with: series)]
+        vcs += [SeriesDetailViewController(with: controller)]
+        vcs += [raceListVC]
+        vcs += [SeriesStandingsViewController(with: controller)]
 
         configureTabBarController(with: vcs, selectedIndex: initialSelectedIndex)
 
         title = vcs.first?.title
         tabBar.isHidden = false
+        navigationItem.rightBarButtonItem = controller.navigationItems()
     }
 
     // MARK: - Data Update
@@ -133,25 +163,39 @@ class SeriesTabBarController: UITabBarController {
         navigationItem.rightBarButtonItem = vc.navigationItem.rightBarButtonItem
     }
 
+    // MARK: - Actions
+
+    @objc fileprivate func didPressTitleButton() {
+        guard let seriesId = series?.id else { return }
+
+        let btnTitle = titleButton.title(for: .normal)
+
+        if btnTitle == title {
+            titleButton.setTitle(seriesId, for: .normal)
+        } else if btnTitle == seriesId {
+            titleButton.setTitle(title, for: .normal)
+        }
+    }
+
     // MARK: - Error Handling
 
-    fileprivate func handleError(_ error: Error) {
+    fileprivate func handleError(_ error: NSError) {
 
-//        emptyStateError = EmptyStateViewModel(.errorRaces)
-//
-//        // temporary scroll view used to display the error message
-//        let scrollView = UIScrollView()
-//        scrollView.contentInsetAdjustmentBehavior = .never
-//        scrollView.emptyDataSetDelegate = self
-//        scrollView.emptyDataSetSource = self
-//
-//        view.addSubview(scrollView)
-//        scrollView.snp.makeConstraints {
-//            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-//            $0.bottom.leading.trailing.equalToSuperview()
-//        }
-//
-//        scrollView.reloadEmptyDataSet()
+        emptyStateError = EmptyStateViewModel(.error(error))
+
+        // temporary scroll view used to display the error message
+        let scrollView = UIScrollView()
+        scrollView.contentInsetAdjustmentBehavior = .never
+        scrollView.emptyDataSetDelegate = self
+        scrollView.emptyDataSetSource = self
+
+        view.addSubview(scrollView)
+        scrollView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.bottom.leading.trailing.equalToSuperview()
+        }
+
+        scrollView.reloadEmptyDataSet()
     }
 }
 
@@ -165,16 +209,34 @@ extension SeriesTabBarController: UITabBarControllerDelegate {
 
         (tabBar as? RoundedSelectionTabBar)?.updateSelectionFrame(animated: true)
 
-        if tabBarController.selectedViewController == viewController {
-            // Notify the currently visible VC to scroll to top
-            if let topVC = viewController as? ScrollToTop {
-                topVC.scrollToTop()
-            }
-        }
-
         if let index = viewControllers?.lastIndex(of: viewController) {
             didSelectedIndex(index)
         }
     }
 }
 
+extension SeriesTabBarController: EmptyDataSetSource {
+
+    func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        return emptyStateError?.title
+    }
+
+    func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        return emptyStateError?.description
+    }
+
+    func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
+        return emptyStateError?.buttonTitle(state)
+    }
+}
+
+extension SeriesTabBarController: EmptyDataSetDelegate {
+
+    func emptyDataSetShouldAllowScroll(_ scrollView: UIScrollView) -> Bool {
+        return false
+    }
+
+    func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
+        return -(navigationController?.navigationBar.frame.height ?? 0)
+    }
+}

@@ -21,10 +21,12 @@ public class SeriesResult: Mappable, Descriptable {
     public var country: String = ""
     public var score: String = ""
     public var eloScore: String = ""
-    public var imageUrl: String?
+    public var bestScores: [String]? = nil
+    public var time: String? = nil
+    public var imageUrl: String? = nil
 
-    public var pilotId: String?
-    public var chapterId: String?
+    public var pilotId: String? = nil
+    public var chapterId: String? = nil
 
     // MARK: - Init
     public required init?(map: Map) {
@@ -45,39 +47,35 @@ public class SeriesResult: Mappable, Descriptable {
         else if chapterId != nil { type = .chapter }
 
         // Display name: may come under several keys
-        displayName <- (map[ParamKey.displayName], MapperUtil.stringTransform)
+        displayName <- map[ParamKey.displayName]
+
         if displayName.isEmpty {
-            // fallback options
-            var firstName: String?
-            var lastName: String?
             var userName: String?
+            userName <- map[ParamKey.userName]
 
-            firstName <- (map[ParamKey.firstName], MapperUtil.stringTransform)
-            lastName  <- (map[ParamKey.lastName],  MapperUtil.stringTransform)
-            userName  <- (map[ParamKey.userName],  MapperUtil.stringTransform)
-
-            if let fn = firstName, let ln = lastName, !fn.isEmpty || !ln.isEmpty {
-                displayName = [fn, ln].compactMap { $0 }.joined(separator: " ")
-            } else if let un = userName, !un.isEmpty {
+            if let un = userName, !un.isEmpty {
                 displayName = un
             } else {
-                // fallback for chapter
-                displayName <- (map[ParamKey.chapterName], MapperUtil.stringTransform)
+                displayName <- map[ParamKey.chapterName]
             }
         }
 
         // Country (only present for pilots usually)
-        country <- (map[ParamKey.country], MapperUtil.stringTransform)
+        country <- map[ParamKey.country]
 
-        // Score (numeric sometimes, string sometimes)
-        if let numericScore = map.JSON[ParamKey.score] {
-            score = String(describing: numericScore)
-        } else if let timingScore = map.JSON[ParamKey.fastest3Laps] {
-            score = String(describing: timingScore)
+        if let value = map.JSON[ParamKey.score] {
+            score = String(describing: value)
+        }
+        if let value = map.JSON[ParamKey.fastest3Laps] {
+            time = String(describing: value)
         }
 
-        eloScore <- (map[ParamKey.eloScore], MapperUtil.stringTransform)
+        bestScores = map.JSON[ParamKey.bestRaces] as? [String]
 
+        if let value = map.JSON[ParamKey.eloScore] {
+            eloScore = String(describing: value)
+        }
+        
         // Image / profile picture
         imageUrl <- (map[ParamKey.profilePictureUrl], MapperUtil.stringTransform)
         if imageUrl == nil {

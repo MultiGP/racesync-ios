@@ -49,6 +49,11 @@ class StandingsController {
         }
     }
 
+    public func didFetchStandings(for season: StandingSeason) -> Bool {
+        let vms = standingCollection[season]
+        return vms != nil
+    }
+
     public func filter(with text: String, length: Int, for season: StandingSeason) -> [StandingViewModel] {
         let query = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard query.count >= length || query.containsEmoji else { return [] }

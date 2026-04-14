@@ -21,33 +21,42 @@ public extension Race {
         return true
     }
 
+    var canManagePilots: Bool {
+        guard canBeEdited else { return false }
+        return schedule != nil
+    }
+
     var canChangeEnrollment: Bool {
-        guard isMyChapter else { return false }
+        guard canBeEdited else { return false }
         return !isFinalized
     }
 
     var canBeDuplicated: Bool {
-        guard isMyChapter else { return false }
+        guard canBeEdited else { return false }
         guard raceType == .normal else { return false }
         return true
     }
 
+    var canJoinSeries: Bool {
+        guard canBeEdited else { return false }
+        guard !isFinalized else { return false }
+        return true
+    }
+
     var canBeDeleted: Bool {
-        guard isMyChapter else { return false }
+        guard canBeEdited else { return false }
         guard ownerId == APIServices.shared.myUser?.id else { return false }
         return true
     }
 
     var canBeFinalized: Bool {
-#if DEBUG
-        guard isMyChapter else { return false }
-        guard ownerId == APIServices.shared.myUser?.id else { return false }
-        guard let startDate = startDate, startDate.isPassed else { return false }
-        return !isFinalized
-#else
+//        guard canBeEdited else { return false }
+//        guard ownerId == APIServices.shared.myUser?.id else { return false }
+//        guard let startDate = startDate, startDate.isPassed else { return false }
+//        return !isFinalized
+
         // The API finalize(id) still returns 500 error. Reported https://github.com/MultiGP/multigp-com/issues/93
         return false
-#endif
     }
 
     var isGQ: Bool {

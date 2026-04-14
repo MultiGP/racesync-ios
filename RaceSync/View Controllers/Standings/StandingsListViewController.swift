@@ -16,7 +16,7 @@ class StandingsListViewController: UIViewController {
 
     fileprivate lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
-        tableView.register(cellType: UITableViewCell.self)
+        tableView.register(cellType: SimpleTableViewCell.self)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.tableFooterView = UIView()
@@ -28,9 +28,22 @@ class StandingsListViewController: UIViewController {
         return tableView
     }()
 
+    fileprivate var exception: StandingSeason?
+
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
         static let cellHeight: CGFloat = UniversalConstants.cellHeight
+    }
+
+    // MARK: - Initialization
+
+    init(with exception: StandingSeason? = nil) {
+        self.exception = exception
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     // MARK: - Lifecycle Methods
@@ -53,19 +66,22 @@ class StandingsListViewController: UIViewController {
 
     fileprivate func setupLayout() {
 
-        configureNavigationItems()
-
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+            $0.top.bottom.leading.trailing.equalToSuperview()
         }
     }
 
-    fileprivate func configureNavigationItems() {
-        title = "Standings"
-        tabBarItem = UITabBarItem(title: title, image: SystemImg.trophy, selectedImage: SystemImg.trophyFill)
+    // MARK: - Data
+
+    fileprivate var sections: [Section] {
+        get {
+            if let exception = exception {
+                return Section.allCases.filter { $0 != exception }
+            } else {
+                return Section.allCases
+            }
+        }
     }
 }
 
@@ -74,9 +90,9 @@ extension StandingsListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        let section = Section.allCases[indexPath.row]
-        let vc = StandingsViewController(with: section.season)
-        vc.title = section.shortTitle
+        let section = sections[indexPath.row]
+        let vc = StandingsViewController(with: section)
+        vc.title = section.title
 
         navigationController?.pushViewController(vc, animated: true)
     }
@@ -85,14 +101,16 @@ extension StandingsListViewController: UITableViewDelegate {
 extension StandingsListViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return Section.allCases.count
+        return sections.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as UITableViewCell
+        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as SimpleTableViewCell
 
-        let section = Section.allCases[indexPath.row]
-        cell.textLabel?.text = section.title
+        let section = sections[indexPath.row]
+        cell.titleLabel.text = section.shortTitle
+        cell.subtitleLabel.text = "\(section.pilotCount) Pilots"
+        cell.iconImageView.image = UIImage(named: "logo_gq\(section.year)")
         cell.accessoryType = .disclosureIndicator
 
         return cell
@@ -103,28 +121,4 @@ extension StandingsListViewController: UITableViewDataSource {
     }
 }
 
-fileprivate enum Section: EnumTitle {
-    case gq2025
-    case gq2024
-    case gq2023
-
-    var title: String {
-        return "\(year) MultiGP Global Qualifier"
-    }
-
-    var shortTitle: String {
-        return "MultiGP GQ \(year)"
-    }
-
-    var season: StandingSeason {
-        switch self {
-        case .gq2025: return .y2025
-        case .gq2024: return .y2024
-        case .gq2023: return .y2023
-        }
-    }
-
-    var year: String {
-        season.rawValue
-    }
-}
+fileprivate typealias Section = StandingSeason

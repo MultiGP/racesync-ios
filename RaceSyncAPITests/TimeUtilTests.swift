@@ -18,7 +18,7 @@ final class TimeUtilTests: XCTestCase {
     func testSecondConvertion() throws {
 
         let time = "9.204469"
-        let expected = "9.204"
+        let expected = "9.204s"
         let result = TimeUtil.lapTimeFormat(seconds: time)
 
         XCTAssertEqual(result, expected)
@@ -27,8 +27,17 @@ final class TimeUtilTests: XCTestCase {
     func testSecondsConvertion() throws {
 
         let time = "30.400624"
-        let expected = "30.400"
+        let expected = "30.400s"
         let result = TimeUtil.lapTimeFormat(seconds: time)
+
+        XCTAssertEqual(result, expected)
+    }
+
+    func testNoUnitConvertion() throws {
+
+        let time = "9.204469"
+        let expected = "9.204"
+        let result = TimeUtil.lapTimeFormat(seconds: time, showUnit: false)
 
         XCTAssertEqual(result, expected)
     }

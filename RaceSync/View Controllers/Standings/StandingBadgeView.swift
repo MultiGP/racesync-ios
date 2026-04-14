@@ -46,7 +46,9 @@ class StandingBadgeView: UIView {
         let positionText = String.stringWithOrdinalSuffix(for: viewModel.rank)
         let suffixText = String.ordinalSuffix(for: viewModel.rank)
 
+        let standing = viewModel.standing
         let textSize: CGFloat = 90
+        let isZipper = standing.season1.contains("2025") || standing.season1.contains("2024") // Only 2024 and 2025 had 2 scores per season
 
         // Define attributes
         let rankAttributes: [NSAttributedString.Key: Any] = [
@@ -71,10 +73,11 @@ class StandingBadgeView: UIView {
 
         titleLabel.text = viewModel.titleLabel
 
-        let score1 = StandingViewModel.timeLabel(for: viewModel.standing.season1Score)
-        let score2 = StandingViewModel.timeLabel(for: viewModel.standing.season2Score)
+        let score1 = StandingViewModel.timeLabel(for: standing.season1Score)
+        let score2 = StandingViewModel.timeLabel(for: standing.season2Score)
 
-        time1Label.attributedText = attributedScore(label: viewModel.score1Label, scores: [score1, score2])
+        // When not zipper (2 seasons), we are making this label slightly bigger since only will be displayed
+        time1Label.attributedText = attributedScore(label: viewModel.score1Label, scores: [score1, score2], size: isZipper ? 20 : 30)
         time2Label.attributedText = attributedScore(label: viewModel.score2Label, scores: [score1, score2])
 
         // Download the image and render
@@ -88,13 +91,13 @@ class StandingBadgeView: UIView {
         }
     }
 
-    fileprivate func attributedScore(label: String, scores: [String]) -> NSAttributedString {
+    fileprivate func attributedScore(label: String, scores: [String], size: CGFloat = 20) -> NSAttributedString {
         let white: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: 20, weight: .semibold),
+            .font: UIFont.systemFont(ofSize: size, weight: .semibold),
             .foregroundColor: UIColor.white
         ]
         let yellow: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: 20, weight: .semibold),
+            .font: UIFont.systemFont(ofSize: size, weight: .semibold),
             .foregroundColor: UIColor.yellow
         ]
 

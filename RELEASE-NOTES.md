@@ -3,6 +3,26 @@
 
 ---
 
+## 2.0
+
+### Introducing MultiGP Series:
+   * A new dedicated tab on the main screen lets you browse all MultiGP Series. Quickly find the ones you are part of, including the 2026 Regional Series qualifiers and more.
+   * View the leaderboard for each series, by scoring or fastest 3 consecutive lap times.
+   * Chapter organizers can submit races to specific series, from withing a race detail view.
+   * Series owners can approve, unapprove, or remove races within the series they manage.
+
+### New Features:
+   * Added 2026 GQ standings, along with the ability to browse past GQ standings from 2025 to 2019.
+   
+### Fixes and Enhancements:
+   * The app now opens on the last used tab and segment.
+   * Various user interface improvements for a smoother experience.
+   * Fixed race results sometimes not showing up for an ongoing race, due to timezone differences between the race and the app user.
+   * Fixed an issue where the chapters list would not load in the pilot profile.
+   * If available, races now display their own images; otherwise, the chapter image is shown.
+   
+---
+
 ## 1.8.2
 
 ### New Features:

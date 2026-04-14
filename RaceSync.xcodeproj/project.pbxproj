@@ -66,8 +66,13 @@
 		4F5001E523823C940025A593 /* FlagEmojiGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5001E423823C940025A593 /* FlagEmojiGenerator.swift */; };
 		4F5001E723827DE70025A593 /* ImageUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5001E623827DE70025A593 /* ImageUtil.swift */; };
 		4F5001E923830E180025A593 /* Race.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5001E823830E180025A593 /* Race.swift */; };
-		4F521F822E6E18D800AE7C03 /* SeriesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F521F812E6E18D800AE7C03 /* SeriesViewController.swift */; };
+		4F521F822E6E18D800AE7C03 /* SeriesFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F521F812E6E18D800AE7C03 /* SeriesFeedViewController.swift */; };
 		4F521F842E6E5F0A00AE7C03 /* ActivityLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F521F832E6E5F0A00AE7C03 /* ActivityLoadingView.swift */; };
+		4F536ECF2F8AD826006FF620 /* ViewApprovable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F536ECE2F8AD826006FF620 /* ViewApprovable.swift */; };
+		4F536ED12F8AEB35006FF620 /* ApproveButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F536ED02F8AEB35006FF620 /* ApproveButton.swift */; };
+		4F536ED32F8AFCEE006FF620 /* Series+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F536ED22F8AFCEE006FF620 /* Series+Extensions.swift */; };
+		4F536ED52F8C52B9006FF620 /* SeriesPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F536ED42F8C52B9006FF620 /* SeriesPickerViewController.swift */; };
+		4F536ED72F8C5869006FF620 /* SimpleTableViewCell+Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F536ED62F8C585F006FF620 /* SimpleTableViewCell+Configuration.swift */; };
 		4F5488962D2146C80056EA59 /* RaceScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5488952D2146C80056EA59 /* RaceScheduleViewController.swift */; };
 		4F5488982D2236950056EA59 /* String+HTML.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5488972D2236950056EA59 /* String+HTML.swift */; };
 		4F5614A42DDC4C2800EAD42A /* MessageEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5614A32DDC4C2800EAD42A /* MessageEnums.swift */; };
@@ -84,6 +89,7 @@
 		4F605603258C9FB4008AF93F /* UIScrollView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F605602258C9FB4008AF93F /* UIScrollView+Extensions.swift */; };
 		4F60562A258D59EC008AF93F /* GalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F605629258D59EC008AF93F /* GalleryViewController.swift */; };
 		4F605635258D89B5008AF93F /* CollectionViewCell+Reuse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F605634258D89B5008AF93F /* CollectionViewCell+Reuse.swift */; };
+		4F6425BA2F57CA4600A4199C /* UIView+Separator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6425B92F57CA4600A4199C /* UIView+Separator.swift */; };
 		4F6429122402DB00005E8036 /* ImageConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6429112402DB00005E8036 /* ImageConstants.swift */; };
 		4F6429142403AE9A005E8036 /* FormBaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6429132403AE9A005E8036 /* FormBaseViewController.swift */; };
 		4F64B34B2D22879C00FC5BF1 /* launch_bkgd.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4F64B34A2D22879C00FC5BF1 /* launch_bkgd.jpg */; };
@@ -159,6 +165,7 @@
 		4F90F0D22E8DD56D00D9F5AF /* SeriesStandingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F90F0D12E8DD56D00D9F5AF /* SeriesStandingsViewController.swift */; };
 		4F90F0D42E8DD60700D9F5AF /* SeriesTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F90F0D32E8DD60700D9F5AF /* SeriesTabBarController.swift */; };
 		4F91BC8A2398FBCE00539E95 /* ViewJoinable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F91BC892398FBCE00539E95 /* ViewJoinable.swift */; };
+		4F95A3282F7E1FA9004AE24F /* StandingSeasonEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F95A3272F7E1FA9004AE24F /* StandingSeasonEnum.swift */; };
 		4F9979BE26D57CFF00496451 /* AppIcon-KRU@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F9979BA26D57CFF00496451 /* AppIcon-KRU@2x.png */; };
 		4F9979BF26D57CFF00496451 /* AppIcon-KRU@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F9979BB26D57CFF00496451 /* AppIcon-KRU@3x.png */; };
 		4F9A886B297473AF00B52092 /* Parameters+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9A886A297473AF00B52092 /* Parameters+Extensions.swift */; };
@@ -228,6 +235,7 @@
 		4FCD99B62976242A0094C562 /* RaceFeedMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCD99B52976242A0094C562 /* RaceFeedMenuViewController.swift */; };
 		4FCD99B829788F720094C562 /* AppWebConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCD99B729788F720094C562 /* AppWebConstants.swift */; };
 		4FCEAB442F0CD81F00CAE0BD /* UIApplication+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCEAB432F0CD81F00CAE0BD /* UIApplication+Extensions.swift */; };
+		4FCEAB462F11761900CAE0BD /* SeriesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCEAB452F11761900CAE0BD /* SeriesController.swift */; };
 		4FD4E1BC237DCAA3008816B3 /* UserApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1BB237DCAA3008816B3 /* UserApi.swift */; };
 		4FD4E1BE237DCB24008816B3 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1BD237DCB24008816B3 /* User.swift */; };
 		4FD4E1C1237DDFB4008816B3 /* RaceFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1C0237DDFB4008816B3 /* RaceFeedViewController.swift */; };
@@ -269,6 +277,8 @@
 		4FF16CBE2E70EC7D00B4FC51 /* WeakRef.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF16CBD2E70EC7D00B4FC51 /* WeakRef.swift */; };
 		4FF16CC02E70EC9300B4FC51 /* ViewJoinableRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF16CBF2E70EC9300B4FC51 /* ViewJoinableRegistry.swift */; };
 		4FF16CC22E79FF0400B4FC51 /* RaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF16CC12E79FF0300B4FC51 /* RaceController.swift */; };
+		4FFDE1222F44ED680031DDA5 /* MapError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFDE1212F44ED680031DDA5 /* MapError.swift */; };
+		4FFDE1262F4535AD0031DDA5 /* SeriesFeedController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFDE1252F4535AD0031DDA5 /* SeriesFeedController.swift */; };
 		9545A27A3685C3F227C6CCDC /* Pods_RaceSync.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03ADD4F5A98600BFEB5B6C6E /* Pods_RaceSync.framework */; };
 		FA8A945598D582AC78BB26B0 /* Pods_RaceSyncAPITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 912450B59256F98707505DCE /* Pods_RaceSyncAPITests.framework */; };
 /* End PBXBuildFile section */
@@ -379,8 +389,13 @@
 		4F5001E423823C940025A593 /* FlagEmojiGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagEmojiGenerator.swift; sourceTree = "<group>"; };
 		4F5001E623827DE70025A593 /* ImageUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUtil.swift; sourceTree = "<group>"; };
 		4F5001E823830E180025A593 /* Race.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Race.swift; sourceTree = "<group>"; };
-		4F521F812E6E18D800AE7C03 /* SeriesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesViewController.swift; sourceTree = "<group>"; };
+		4F521F812E6E18D800AE7C03 /* SeriesFeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesFeedViewController.swift; sourceTree = "<group>"; };
 		4F521F832E6E5F0A00AE7C03 /* ActivityLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityLoadingView.swift; sourceTree = "<group>"; };
+		4F536ECE2F8AD826006FF620 /* ViewApprovable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewApprovable.swift; sourceTree = "<group>"; };
+		4F536ED02F8AEB35006FF620 /* ApproveButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApproveButton.swift; sourceTree = "<group>"; };
+		4F536ED22F8AFCEE006FF620 /* Series+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Series+Extensions.swift"; sourceTree = "<group>"; };
+		4F536ED42F8C52B9006FF620 /* SeriesPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesPickerViewController.swift; sourceTree = "<group>"; };
+		4F536ED62F8C585F006FF620 /* SimpleTableViewCell+Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SimpleTableViewCell+Configuration.swift"; sourceTree = "<group>"; };
 		4F5488952D2146C80056EA59 /* RaceScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceScheduleViewController.swift; sourceTree = "<group>"; };
 		4F5488972D2236950056EA59 /* String+HTML.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+HTML.swift"; sourceTree = "<group>"; };
 		4F5614A32DDC4C2800EAD42A /* MessageEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEnums.swift; sourceTree = "<group>"; };
@@ -397,6 +412,7 @@
 		4F605602258C9FB4008AF93F /* UIScrollView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Extensions.swift"; sourceTree = "<group>"; };
 		4F605629258D59EC008AF93F /* GalleryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryViewController.swift; sourceTree = "<group>"; };
 		4F605634258D89B5008AF93F /* CollectionViewCell+Reuse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollectionViewCell+Reuse.swift"; sourceTree = "<group>"; };
+		4F6425B92F57CA4600A4199C /* UIView+Separator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Separator.swift"; sourceTree = "<group>"; };
 		4F6429112402DB00005E8036 /* ImageConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageConstants.swift; sourceTree = "<group>"; };
 		4F6429132403AE9A005E8036 /* FormBaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormBaseViewController.swift; sourceTree = "<group>"; };
 		4F64B34A2D22879C00FC5BF1 /* launch_bkgd.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = launch_bkgd.jpg; sourceTree = "<group>"; };
@@ -473,6 +489,7 @@
 		4F90F0D12E8DD56D00D9F5AF /* SeriesStandingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesStandingsViewController.swift; sourceTree = "<group>"; };
 		4F90F0D32E8DD60700D9F5AF /* SeriesTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesTabBarController.swift; sourceTree = "<group>"; };
 		4F91BC892398FBCE00539E95 /* ViewJoinable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewJoinable.swift; sourceTree = "<group>"; };
+		4F95A3272F7E1FA9004AE24F /* StandingSeasonEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandingSeasonEnum.swift; sourceTree = "<group>"; };
 		4F9979BA26D57CFF00496451 /* AppIcon-KRU@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-KRU@2x.png"; sourceTree = "<group>"; };
 		4F9979BB26D57CFF00496451 /* AppIcon-KRU@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-KRU@3x.png"; sourceTree = "<group>"; };
 		4F9A886A297473AF00B52092 /* Parameters+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Parameters+Extensions.swift"; sourceTree = "<group>"; };
@@ -545,6 +562,7 @@
 		4FCD99B52976242A0094C562 /* RaceFeedMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceFeedMenuViewController.swift; sourceTree = "<group>"; };
 		4FCD99B729788F720094C562 /* AppWebConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppWebConstants.swift; sourceTree = "<group>"; };
 		4FCEAB432F0CD81F00CAE0BD /* UIApplication+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extensions.swift"; sourceTree = "<group>"; };
+		4FCEAB452F11761900CAE0BD /* SeriesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesController.swift; sourceTree = "<group>"; };
 		4FD4E1BB237DCAA3008816B3 /* UserApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserApi.swift; sourceTree = "<group>"; };
 		4FD4E1BD237DCB24008816B3 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		4FD4E1C0237DDFB4008816B3 /* RaceFeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceFeedViewController.swift; sourceTree = "<group>"; };
@@ -586,6 +604,8 @@
 		4FF16CBD2E70EC7D00B4FC51 /* WeakRef.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeakRef.swift; sourceTree = "<group>"; };
 		4FF16CBF2E70EC9300B4FC51 /* ViewJoinableRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewJoinableRegistry.swift; sourceTree = "<group>"; };
 		4FF16CC12E79FF0300B4FC51 /* RaceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceController.swift; sourceTree = "<group>"; };
+		4FFDE1212F44ED680031DDA5 /* MapError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapError.swift; sourceTree = "<group>"; };
+		4FFDE1252F4535AD0031DDA5 /* SeriesFeedController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesFeedController.swift; sourceTree = "<group>"; };
 		912450B59256F98707505DCE /* Pods_RaceSyncAPITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RaceSyncAPITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0AD3F0FAC42488B672FD23B /* Pods-RaceSyncAPITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RaceSyncAPITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RaceSyncAPITests/Pods-RaceSyncAPITests.debug.xcconfig"; sourceTree = "<group>"; };
 		D073602CBE253F96567B3B54 /* Pods_RaceSyncAPI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RaceSyncAPI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -652,6 +672,7 @@
 				4F68BE6C2399DBCF009D44F7 /* UIViewController+Lookup.swift */,
 				4F7BE2662722354F00592297 /* UIViewController+Navigation.swift */,
 				4F64B34C2D235EE300FC5BF1 /* UIView+Parallax.swift */,
+				4F6425B92F57CA4600A4199C /* UIView+Separator.swift */,
 				4FAC24A723DC3E06009AD585 /* UILabel+LinesCount.swift */,
 				4FA1AB3C23C94F5F007CF389 /* UIEdgeInsets+Extensions.swift */,
 				4FEBB27523A1F9DA007514B4 /* UITabBarController+Extensions.swift */,
@@ -821,10 +842,13 @@
 		4F521F802E6E18BD00AE7C03 /* Series */ = {
 			isa = PBXGroup;
 			children = (
-				4F521F812E6E18D800AE7C03 /* SeriesViewController.swift */,
+				4F521F812E6E18D800AE7C03 /* SeriesFeedViewController.swift */,
+				4FFDE1252F4535AD0031DDA5 /* SeriesFeedController.swift */,
 				4F90F0D32E8DD60700D9F5AF /* SeriesTabBarController.swift */,
 				4F90F0CD2E8DD04100D9F5AF /* SeriesDetailViewController.swift */,
 				4F90F0D12E8DD56D00D9F5AF /* SeriesStandingsViewController.swift */,
+				4F536ED42F8C52B9006FF620 /* SeriesPickerViewController.swift */,
+				4FCEAB452F11761900CAE0BD /* SeriesController.swift */,
 			);
 			path = Series;
 			sourceTree = "<group>";
@@ -856,6 +880,7 @@
 				4FD4E1DE237FEC0A008816B3 /* Appearance.swift */,
 				4F91BC892398FBCE00539E95 /* ViewJoinable.swift */,
 				4FF16CBF2E70EC9300B4FC51 /* ViewJoinableRegistry.swift */,
+				4F536ECE2F8AD826006FF620 /* ViewApprovable.swift */,
 				4F4129DA2DC0AE32006A2763 /* NotificationsController.swift */,
 				4F5001E423823C940025A593 /* FlagEmojiGenerator.swift */,
 				4F5C1E4E2390B01700D756EB /* ImageNetworking.swift */,
@@ -895,6 +920,7 @@
 				4FDD499723B0470E009DD2DB /* ChapterEnums.swift */,
 				4F7974B424A4A4D4003D623A /* ImageEnums.swift */,
 				4F5614A32DDC4C2800EAD42A /* MessageEnums.swift */,
+				4F95A3272F7E1FA9004AE24F /* StandingSeasonEnum.swift */,
 			);
 			path = Enums;
 			sourceTree = "<group>";
@@ -905,6 +931,7 @@
 				4FEBB27E23A310BB007514B4 /* User+Extensions.swift */,
 				4FC51B202409EC8E00D654D0 /* Chapter+Extensions.swift */,
 				4FC51B222409EEB400D654D0 /* Race+Extensions.swift */,
+				4F536ED22F8AFCEE006FF620 /* Series+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1028,6 +1055,7 @@
 				4FEADB7124147D2D00F82F0D /* LocationManager.swift */,
 				4FA26829237A4CE9008970AC /* CompletionBlock.swift */,
 				4FA2682E237A5896008970AC /* ErrorUtil.swift */,
+				4FFDE1212F44ED680031DDA5 /* MapError.swift */,
 				4F5001E623827DE70025A593 /* ImageUtil.swift */,
 				4F8F2C0D23846AEB00DC4907 /* DateUtil.swift */,
 				4F6A28E22D14F55200FF692D /* TimeUtil.swift */,
@@ -1121,6 +1149,7 @@
 			isa = PBXGroup;
 			children = (
 				4FE272352580A36D00EC121B /* SimpleTableViewCell.swift */,
+				4F536ED62F8C585F006FF620 /* SimpleTableViewCell+Configuration.swift */,
 				4FD53FAE23A0B20900158206 /* AvatarTableViewCell.swift */,
 				4FD4E1D8237FB1EA008816B3 /* RaceTableViewCell.swift */,
 				4FD53FB023A0D48F00158206 /* UserRaceTableViewCell.swift */,
@@ -1146,6 +1175,7 @@
 				4F65033D2E467EFB00FA8AED /* ColumnTableViewHeaderView.swift */,
 				4F0F2F482E888100006788A7 /* SliderTableViewHeaderView.swift */,
 				4FD4E1DA237FBE36008816B3 /* JoinButton.swift */,
+				4F536ED02F8AEB35006FF620 /* ApproveButton.swift */,
 				4FA26834237A80B9008970AC /* ActionButton.swift */,
 				4FD4E1C2237F960A008816B3 /* CustomButton.swift */,
 				4F71B3272E490F760029D3CB /* RoundedSelectionTabBar.swift */,
@@ -1256,6 +1286,7 @@
 				4F1342412360B67D00A9DBDE /* Frameworks */,
 				4F1342422360B67D00A9DBDE /* Resources */,
 				3B4D116BF1F8D1B8A506C31E /* [CP] Embed Pods Frameworks */,
+				4FFDE1242F4518370031DDA5 /* [MGP] Copy Credentials plist to framework bundle */,
 			);
 			buildRules = (
 			);
@@ -1276,7 +1307,6 @@
 				4F1342692360DA4B00A9DBDE /* Sources */,
 				4F13426A2360DA4B00A9DBDE /* Frameworks */,
 				4F13426B2360DA4B00A9DBDE /* Resources */,
-				4F1DC123298069A9005EDAE0 /* [MGP] Copy Credentials plist to framework bundle */,
 			);
 			buildRules = (
 			);
@@ -1419,7 +1449,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RaceSync/Pods-RaceSync-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		4F1DC123298069A9005EDAE0 /* [MGP] Copy Credentials plist to framework bundle */ = {
+		4FFDE1242F4518370031DDA5 /* [MGP] Copy Credentials plist to framework bundle */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1435,7 +1465,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Since app credentials/api key are not being versioned on the repository\n# we are copying them into the build directory of the framework instead.\n#\n# This plist file must be placed in a directory located at ../credentials/\n# and contain the following keys:\n# @key \"API_KEY\"    The MGP client API key\n# @key \"EMAIL\"      The debug email to login with (optional)\n# @key \"PASSWORD\"   The debug email to login with (optional) \n#\n\nRESOURCE_PATH=$SRCROOT/../credentials/\nFILENAME=credentials.plist\nDEBUG_FILENAME=credentials-debug.plist\n\nBUILD_APP_DIR=${BUILT_PRODUCTS_DIR}/${FULL_PRODUCT_NAME}\n\nif [ \"$CONFIGURATION\" == \"Debug\" ]; then\n    # copy file or fail silently (cause ci)\n    cp \"$RESOURCE_PATH/$DEBUG_FILENAME\" \"$BUILD_APP_DIR/$FILENAME\" 2>/dev/null || :\nelse\n    # copy file or fail\n    cp \"$RESOURCE_PATH/$FILENAME\" \"$BUILD_APP_DIR/$FILENAME\"\nfi\n";
+			shellScript = "#!/bin/bash\nset -euo pipefail\n\nFILENAME=\"credentials.plist\"\nDEBUG_FILENAME=\"credentials-debug.plist\"\n\n# Pick source file by configuration\nif [[ \"${CONFIGURATION}\" == \"Debug\" ]]; then\n  SRC_NAME=\"${DEBUG_FILENAME}\"\nelse\n  SRC_NAME=\"${FILENAME}\"\nfi\n\n# Search upwards from SRCROOT for a credentials/ folder\nSEARCH_DIR=\"${SRCROOT}\"\nwhile [[ \"${SEARCH_DIR}\" != \"/\" ]]; do\n  if [[ -d \"${SEARCH_DIR}/credentials\" ]]; then\n    SRC_PATH=\"${SEARCH_DIR}/credentials/${SRC_NAME}\"\n    break\n  fi\n  SEARCH_DIR=\"$(dirname \"${SEARCH_DIR}\")\"\ndone\n\nif [[ -z \"${SRC_PATH:-}\" ]]; then\n  echo \"ERROR: Could not find credentials/ folder above SRCROOT=${SRCROOT}\" >&2\n  exit 1\nfi\n\nif [[ ! -f \"${SRC_PATH}\" ]]; then\n  echo \"ERROR: Source file not found: ${SRC_PATH}\" >&2\n  exit 1\nfi\n\n# Destination is always the app bundle — no framework hunting needed\nDEST_PATH=\"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/${FILENAME}\"\n\necho \"Copying: ${SRC_PATH} → ${DEST_PATH}\"\ncp -fv \"${SRC_PATH}\" \"${DEST_PATH}\"\necho \"Done.\"\n";
 		};
 		7F2DC3FC3A2F8DECDD85A749 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1523,6 +1553,7 @@
 				4FD4E1D1237F9DC8008816B3 /* DummyViewController.swift in Sources */,
 				4F5488962D2146C80056EA59 /* RaceScheduleViewController.swift in Sources */,
 				4F8668F423860900005E310A /* UniversalConstants.swift in Sources */,
+				4F536ED72F8C5869006FF620 /* SimpleTableViewCell+Configuration.swift in Sources */,
 				4FF16CC02E70EC9300B4FC51 /* ViewJoinableRegistry.swift in Sources */,
 				4F791C9823A6105700F15FD7 /* TextPill.swift in Sources */,
 				4F8B4A162DDD250D00B735DA /* MessageViewCell.swift in Sources */,
@@ -1531,6 +1562,8 @@
 				4F65033A2E45CE5900FA8AED /* RacePaymentsViewController.swift in Sources */,
 				4FE1DADF2DEB9EEF009143C4 /* StandingViewModel.swift in Sources */,
 				4F0F2F492E888100006788A7 /* SliderTableViewHeaderView.swift in Sources */,
+				4F536ED52F8C52B9006FF620 /* SeriesPickerViewController.swift in Sources */,
+				4F536ED12F8AEB35006FF620 /* ApproveButton.swift in Sources */,
 				4F86690223876E71005E310A /* ChapterViewModel.swift in Sources */,
 				4F8F2C112384903F00DC4907 /* RaceViewModel.swift in Sources */,
 				4FF16CBE2E70EC7D00B4FC51 /* WeakRef.swift in Sources */,
@@ -1548,6 +1581,7 @@
 				4F605635258D89B5008AF93F /* CollectionViewCell+Reuse.swift in Sources */,
 				4F004EA9295BB282009C46AA /* DatePickerViewController.swift in Sources */,
 				4FF16CC22E79FF0400B4FC51 /* RaceController.swift in Sources */,
+				4FFDE1262F4535AD0031DDA5 /* SeriesFeedController.swift in Sources */,
 				4F3D640F23FC65F700DE6DF2 /* TextPickerViewController.swift in Sources */,
 				4F1342482360B67D00A9DBDE /* AppDelegate.swift in Sources */,
 				4FC4C59C24D8F3F2007D3B71 /* DimmableView.swift in Sources */,
@@ -1580,6 +1614,7 @@
 				4F8376DC23EE87CC00256AEC /* RotatingIconView.swift in Sources */,
 				4F0B613C238528C300930D91 /* PasteboardLabel.swift in Sources */,
 				4FD4E1DD237FBE8B008816B3 /* MemberBadgeView.swift in Sources */,
+				4F6425BA2F57CA4600A4199C /* UIView+Separator.swift in Sources */,
 				4FC50258242700DC0088320B /* RacePilotsPickerController.swift in Sources */,
 				4FD4E1DB237FBE36008816B3 /* JoinButton.swift in Sources */,
 				4F90F0D42E8DD60700D9F5AF /* SeriesTabBarController.swift in Sources */,
@@ -1603,6 +1638,7 @@
 				4F6429122402DB00005E8036 /* ImageConstants.swift in Sources */,
 				4FD4E1C5237F9746008816B3 /* UserViewController.swift in Sources */,
 				4F6FA16E2E4C66940056E115 /* AppplicationPreferences.swift in Sources */,
+				4FCEAB462F11761900CAE0BD /* SeriesController.swift in Sources */,
 				4FD4E1DF237FEC0A008816B3 /* Appearance.swift in Sources */,
 				4F71B3262E47C1880029D3CB /* PaypalActivity.swift in Sources */,
 				4F2724362515D88A000C7408 /* Chapter+UIExtensions.swift in Sources */,
@@ -1655,12 +1691,13 @@
 				4FE4C0A22945E0EF00F47F0A /* RaceListViewController.swift in Sources */,
 				4F00E076242932F2001DCFC4 /* RateMeConstants.swift in Sources */,
 				4FC1797D24B0801900D2EA2D /* ImagePickerController.swift in Sources */,
+				4F536ECF2F8AD826006FF620 /* ViewApprovable.swift in Sources */,
 				4F8B4A122DDD155100B735DA /* PushMessage.swift in Sources */,
 				4F9DB7B023D618D100570483 /* UISegmentedControl+Extensions.swift in Sources */,
 				4F6AE78D2D2DCD4B008636B7 /* RankView.swift in Sources */,
 				4F5C1E45238D1BD200D756EB /* PasteboardButton.swift in Sources */,
 				4F149A112E5E70FC00A00B5D /* Pinnable.swift in Sources */,
-				4F521F822E6E18D800AE7C03 /* SeriesViewController.swift in Sources */,
+				4F521F822E6E18D800AE7C03 /* SeriesFeedViewController.swift in Sources */,
 				4FD53FB323A0E9B700158206 /* AvatarImageView.swift in Sources */,
 				4FA1FC8F23D74D29006D4704 /* StringConstants.swift in Sources */,
 				4F8B4A142DDD15B100B735DA /* PushMessageViewModel.swift in Sources */,
@@ -1694,6 +1731,7 @@
 				4F5001E723827DE70025A593 /* ImageUtil.swift in Sources */,
 				4FA268222378F8A0008970AC /* APIServices.swift in Sources */,
 				4F2B7E872E86309300643697 /* SeriesApi.swift in Sources */,
+				4FFDE1222F44ED680031DDA5 /* MapError.swift in Sources */,
 				4F8668F623861736005E310A /* Chapter.swift in Sources */,
 				4F65033C2E45CEBA00FA8AED /* RacePayment.swift in Sources */,
 				4FC86BA32D274B8C004297E7 /* APIRaceFilters.swift in Sources */,
@@ -1716,6 +1754,7 @@
 				4F8F2C0E23846AEB00DC4907 /* DateUtil.swift in Sources */,
 				4FA2682F237A5897008970AC /* ErrorUtil.swift in Sources */,
 				4F8F2C132385136300DC4907 /* NumberUtil.swift in Sources */,
+				4F536ED32F8AFCEE006FF620 /* Series+Extensions.swift in Sources */,
 				4F8668F823864389005E310A /* Descriptable.swift in Sources */,
 				4FEBB27D23A30F99007514B4 /* Date+Extensions.swift in Sources */,
 				4FBADDF624D4E2DB00A7D291 /* Array+Extensions.swift in Sources */,
@@ -1730,6 +1769,7 @@
 				4F9A886B297473AF00B52092 /* Parameters+Extensions.swift in Sources */,
 				4FC51B1D2409B3A700D654D0 /* APIUnitSystem.swift in Sources */,
 				4FA2682A237A4CE9008970AC /* CompletionBlock.swift in Sources */,
+				4F95A3282F7E1FA9004AE24F /* StandingSeasonEnum.swift in Sources */,
 				4FD4E1BE237DCB24008816B3 /* User.swift in Sources */,
 				4FA1FC9123D7B571006D4704 /* APIEnvironment.swift in Sources */,
 				4FA2681A2378BE4A008970AC /* APIConstants.swift in Sources */,
@@ -1933,7 +1973,7 @@
 				CODE_SIGN_ENTITLEMENTS = RaceSync/RaceSync.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 89;
+				CURRENT_PROJECT_VERSION = 98;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = TJ4PB66YQS;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
@@ -1944,7 +1984,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.8.2;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.multigp.RaceSyncApp;
 				PRODUCT_NAME = RaceSync;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1970,7 +2010,7 @@
 				CODE_SIGN_ENTITLEMENTS = RaceSync/RaceSync.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 89;
+				CURRENT_PROJECT_VERSION = 98;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = TJ4PB66YQS;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
@@ -1981,7 +2021,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.8.2;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.multigp.RaceSyncApp;
 				PRODUCT_NAME = RaceSync;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2000,7 +2040,7 @@
 			baseConfigurationReference = 40DB5CAFF0B302311BAF739B /* Pods-RaceSyncAPI.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
@@ -2026,6 +2066,7 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
 				PRODUCT_BUNDLE_IDENTIFIER = com.multigp.RaceSyncAPI;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -2045,7 +2086,7 @@
 			baseConfigurationReference = 0B33D87E0F5A0D3C15F5A09A /* Pods-RaceSyncAPI.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
@@ -2071,6 +2112,7 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
 				PRODUCT_BUNDLE_IDENTIFIER = com.multigp.RaceSyncAPI;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

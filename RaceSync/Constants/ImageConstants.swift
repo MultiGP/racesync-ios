@@ -40,6 +40,9 @@ enum PlaceholderImg {
     static let profileAvatar = UIImage(named: "placeholder_profile_avatar")
     static let profileBkgd = UIImage(named: "placeholder_profile_background")
     static let shimmerList = UIImage(named: "placeholder_shimmer_list")
+
+    static let seriesSmall = UIImage(named: "placeholder_series_small")
+    static let seriesMedium = UIImage(named: "placeholder_series_medium")
 }
 
 enum ButtonImg {
@@ -90,11 +93,14 @@ enum SystemImg {
     static let gearshapeFill = UIImage(systemName:"gearshape.fill") // iOS 14.0+
     static let stack = UIImage(systemName:"rectangle.stack") // iOS 13.0+
     static let stackFill = UIImage(systemName:"rectangle.stack.fill") // iOS 13.0+
+    static let chevronLeft = UIImage(systemName:"chevron.left") // iOS 13.0+
+    static let chevronRight = UIImage(systemName:"chevron.right") // iOS 13.0+
 
     static let pin_small = UIImage(systemName:"mappin.and.ellipse") // iOS 13.0+
     static let globe = UIImage(systemName:"globe") // iOS 13.0+
     static let search = UIImage(systemName: "magnifyingglass") // iOS 13.0+
     static let badge_cross_small = UIImage(systemName: "xmark.square.fill") // iOS 13.0+
+    static let trashFill = UIImage(systemName:"trash.fill") // iOS 13.0+
 
     static var flagCheckeredCrossed: UIImage? {
         if #available(iOS 18.0, *) {

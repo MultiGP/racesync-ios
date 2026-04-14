@@ -39,6 +39,7 @@ public extension User {
             "20676",    // Ignacio Romero
             "96",       // Roger Bess
             "2145",     // Mark Grohe
+            "35533",    // Viki Baarathi
         ]
 
         return ids.contains(where: { (someId) -> Bool in

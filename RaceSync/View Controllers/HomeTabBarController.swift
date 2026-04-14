@@ -11,9 +11,9 @@ import SnapKit
 import RaceSyncAPI
 
 enum HomeTabs: Int {
-    case races, standings, series
-    
-    static let `default`: Self = .standings
+    case races, series, standings
+
+    static let `default`: Self = .series
 }
 
 class HomeTabBarController: UITabBarController {
@@ -23,15 +23,20 @@ class HomeTabBarController: UITabBarController {
     fileprivate lazy var raceFeedVC: RaceFeedViewController = {
         let settings = APIServices.shared.settings
         let filters = settings.raceFeedFilters
-        return RaceFeedViewController(filters, selectedFilter: filters.first!)
+        let selectedFilter = AppPrefs.lastSelectedRaceFilter
+        return RaceFeedViewController(filters, selectedFilter: selectedFilter)
     }()
 
-    fileprivate lazy var seriesVC: SeriesViewController = {
-        return SeriesViewController()
+    fileprivate lazy var seriesVC: SeriesFeedViewController = {
+        return SeriesFeedViewController()
     }()
 
     fileprivate lazy var standingsVC: StandingsViewController = {
-        return StandingsViewController(with: .y2025)
+        let vc = StandingsViewController(with: .y2026)
+        vc.title = "Standings"
+        vc.tabBarItem = UITabBarItem(title: vc.title, image: SystemImg.trophy, selectedImage: SystemImg.trophyFill)
+        vc.isRootTabBar = true
+        return vc
     }()
 
     fileprivate lazy var titleView: UIView = {
@@ -216,9 +221,9 @@ class HomeTabBarController: UITabBarController {
 
     fileprivate func loadContent() {
         let vcs: [UIViewController] = [raceFeedVC, seriesVC, standingsVC]
-        let idx = AppPrefs.lastSelectedTab
+        let tab = AppPrefs.lastSelectedHomeTab
 
-        configureTabBarController(with: vcs, selectedIndex: idx)
+        configureTabBarController(with: vcs, selectedIndex: tab.rawValue)
 
         if APIServices.shared.myUser == nil {
             loadMyUser()
@@ -313,7 +318,7 @@ extension HomeTabBarController: ChapterPickerViewControllerDelegate {
 
 extension HomeTabBarController: UITabBarControllerDelegate {
 
-    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+    func tabBarController(_ controller: UITabBarController, didSelect viewController: UIViewController) {
 
         (tabBar as? RoundedSelectionTabBar)?.updateSelectionFrame(animated: true)
 
@@ -323,14 +328,16 @@ extension HomeTabBarController: UITabBarControllerDelegate {
             hideNavigationShadow(false)
         }
 
-        if tabBarController.selectedViewController == viewController {
-            // Notify the currently visible VC to scroll to top
+        if controller.selectedViewController == viewController {
+            // Scroll the visible VC to the top
             if let topVC = viewController as? ScrollToTop {
                 topVC.scrollToTop()
             }
         }
 
         // To open the last tab at launch
-        AppPrefs.lastSelectedTab = tabBarController.selectedIndex
+        if let tab = HomeTabs(rawValue: controller.selectedIndex) {
+            AppPrefs.lastSelectedHomeTab = tab
+        }
     }
 }

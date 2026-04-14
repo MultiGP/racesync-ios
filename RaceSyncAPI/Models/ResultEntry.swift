@@ -23,8 +23,8 @@ public class ResultEntry: Mappable, Descriptable {
     public var lastName: String = ""
     public var profilePictureUrl: String?
 
-    public var score: String? // Make number
-    public var totalLaps: String? // Make number
+    public var score: String?
+    public var totalLaps: String?
     public var totalTime: String?
     public var fastest3Laps: String?
     public var fastest2Laps: String?

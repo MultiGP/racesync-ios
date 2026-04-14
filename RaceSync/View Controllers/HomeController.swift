@@ -12,7 +12,6 @@ import RaceSyncAPI
 class HomeController {
 
     static func homeViewController() -> UIViewController {
-
         let vc = HomeTabBarController()
         vc.hidesBottomBarWhenPushed = true
         return NavigationController(rootViewController: vc)

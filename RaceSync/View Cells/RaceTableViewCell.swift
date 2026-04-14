@@ -45,13 +45,31 @@ class RaceTableViewCell: UITableViewCell {
     lazy var joinButton: JoinButton = {
         let button = JoinButton(type: .system)
         button.hitTestEdgeInsets = UIEdgeInsets(proportionally: -10)
+        button.isHidden = false
         return button
     }()
 
     lazy var memberBadgeView: MemberBadgeView = {
         let view = MemberBadgeView(type: .system)
         view.isUserInteractionEnabled = false
+        view.isHidden = false
         return view
+    }()
+
+    lazy var approveButton: ApproveButton = {
+        let button = ApproveButton(type: .system)
+        button.hitTestEdgeInsets = UIEdgeInsets(proportionally: -10)
+        button.isHidden = true
+        return button
+    }()
+
+    lazy var removeButton: ApproveButton = {
+        let button = ApproveButton(type: .system)
+        button.hitTestEdgeInsets = UIEdgeInsets(proportionally: -10)
+        button.approveState = .remove
+        button.type = .race
+        button.isHidden = true
+        return button
     }()
 
     // MARK: - Private Variables
@@ -66,9 +84,9 @@ class RaceTableViewCell: UITableViewCell {
     }()
 
     fileprivate lazy var buttonStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [joinButton, memberBadgeView])
+        let stackView = UIStackView(arrangedSubviews: [joinButton, approveButton, removeButton, memberBadgeView])
         stackView.axis = .vertical
-        stackView.distribution = .fillEqually
+        stackView.distribution = .fillProportionally
         stackView.alignment = .trailing
         stackView.spacing = 7
         return stackView
@@ -78,7 +96,6 @@ class RaceTableViewCell: UITableViewCell {
         static let padding: CGFloat = UniversalConstants.padding
         static let cellHeight: CGFloat = UniversalConstants.cellHeight
         static let imageHeight: CGFloat = UniversalConstants.cellAvatarHeight
-        static let minButtonSize: CGFloat = 72
     }
 
     // MARK: - Initialization
@@ -119,5 +136,14 @@ class RaceTableViewCell: UITableViewCell {
             $0.trailing.equalTo(buttonStackView.snp.leading).offset(-Constants.padding)
             $0.centerY.equalToSuperview()
         }
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        joinButton.setTitle(nil, for: .normal)
+        memberBadgeView.setTitle(nil, for: .normal)
+        approveButton.setTitle(nil, for: .normal)
+        removeButton.setTitle(nil, for: .normal)
     }
 }

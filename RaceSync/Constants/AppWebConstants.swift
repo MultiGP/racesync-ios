@@ -23,7 +23,8 @@ public class AppWebConstants {
     static let livefpv = "https://livefpv.com/"
     static let fpvscores = "https://fpvscores.com/"
 
-    static let betaSignup = "https://testflight.apple.com/join/BRXIQJLb"
+    static let testflight = "https://testflight.apple.com/join/BRXIQJLb"
+    static let github = "https://github.com/MultiGP/racesync-ios"
 }
 
 enum AppWeb: Int {

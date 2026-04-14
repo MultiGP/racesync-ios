@@ -10,11 +10,15 @@ import UIKit
 import SnapKit
 import RaceSyncAPI
 
+public enum JoinableType {
+    case race, chapter
+}
+
 class JoinButton: CustomButton {
 
     // MARK: - Public Variables
 
-    /// Optional race id for callback usage
+    /// Optional race/chapter id for callback usage
     var objectId: ObjectId?
 
     var type: JoinableType?
@@ -47,7 +51,6 @@ class JoinButton: CustomButton {
         view.snp.makeConstraints { (make) -> Void in
             make.centerX.centerY.equalToSuperview()
         }
-
         return view
     }()
 
@@ -90,7 +93,7 @@ class JoinButton: CustomButton {
 
     fileprivate func updateLayout() {
 
-        UIView.performWithoutAnimation {
+        func layout() {
             var state = joinState
             isHidden = false
 
@@ -122,24 +125,24 @@ class JoinButton: CustomButton {
                 layer.borderWidth = 0
             }
         }
+
+        UIView.performWithoutAnimation {
+            layout()
+        }
     }
+
+    // MARK: - Animation
 
     fileprivate func updateAnimation() {
         spinnerView.isHidden = !isLoading
         isUserInteractionEnabled = !isLoading
         animateSpinner(isLoading)
 
-        // Since iOS7, setting titleLabel.hidden doesn't work anymore
-        if isLoading {
-            titleLabel?.removeFromSuperview()
-            imageView?.removeFromSuperview()
-        } else {
-            if let label = titleLabel { addSubview(label) }
-            if let imageView = imageView { addSubview(imageView) }
-        }
+        let state = joinState
+        let icon = state.icon?.image(withColor: state.titleColor)
+        setTitle(isLoading ? nil : state.title, for: .normal)
+        setImage(isLoading ? nil : icon, for: .normal)
     }
-
-    // MARK: - Animation
 
     fileprivate func animateSpinner(_ animate: Bool) {
         if animate && !spinnerView.isAnimating {
@@ -234,11 +237,10 @@ extension JoinState {
 
     var font: UIFont {
         switch self {
-        case .joined:       return UIFont.systemFont(ofSize: 14, weight: .regular)
-        case .notJoined:    return UIFont.systemFont(ofSize: 14, weight: .bold)
-        case .closed:       return UIFont.systemFont(ofSize: 14, weight: .regular)
-        case .notPaid(fee: _):
+        case .notJoined, .notPaid(fee: _):
                             return UIFont.systemFont(ofSize: 14, weight: .bold)
+        default:            return UIFont.systemFont(ofSize: 14, weight: .regular)
+
         }
     }
 

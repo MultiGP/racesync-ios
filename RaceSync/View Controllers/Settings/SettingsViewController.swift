@@ -97,13 +97,13 @@ class SettingsViewController: UIViewController {
     func loadSections() {
 
         sections = {
-            let resources: [Row] = [.tracksGuide, .buildGuide, .seasonRules, .visitSite]
+            let resources: [Row] = [.buildGuide, .seasonRules, .visitSite]
             var auth: [Row] = [.logout]
             if let user = APIServices.shared.myUser, user.isDevTeam, isDevModeEnabled {
                 auth += [.switchEnv]
             }
 
-            var about: [Row] = [.feedback, .joinBeta]
+            var about: [Row] = [.feedback, .joinBeta, .viewProject]
             if UIApplication.shared.supportsAlternateIcons { about += [.appicon] }
 
             return [.notifications: [Row.notifications], .resources: resources, .about: about, .auth: auth]
@@ -216,7 +216,9 @@ extension SettingsViewController: UITableViewDelegate {
             vc.title = row.title
             navigationController?.pushViewController(vc, animated: true)
         case .joinBeta:
-            WebViewController.open(AppWebConstants.betaSignup)
+            WebViewController.open(AppWebConstants.testflight)
+        case .viewProject:
+            WebViewController.open(AppWebConstants.github)
         case .visitSite:
             WebViewController.open(AppWebConstants.homepage)
         case .logout:
@@ -281,6 +283,8 @@ extension SettingsViewController: UITableViewDataSource {
             cell.detailTextLabel?.text = icon.title
         } else if row == .joinBeta {
             cell.detailTextLabel?.text = "Testflight"
+        } else if row == .viewProject {
+            cell.detailTextLabel?.text = "Github"
         } else if row == .logout {
             cell.detailTextLabel?.text = APISessionManager.getSessionEmail()
         } else if row == .switchEnv {
@@ -311,6 +315,7 @@ fileprivate enum Row: Int, EnumTitle {
     case visitSite
     case feedback
     case joinBeta
+    case viewProject
     case appicon
     case logout
     case switchEnv
@@ -324,6 +329,7 @@ fileprivate enum Row: Int, EnumTitle {
         case .visitSite:            return "Visit MultiGP.com"
         case .feedback:             return "Share Feedback"
         case .joinBeta:             return "Join the Beta"
+        case .viewProject:          return "View Project"
         case .appicon:              return "Change App Icon"
         case .logout:               return "Logout"
         case .switchEnv:            return "Switch to"
@@ -339,7 +345,8 @@ fileprivate enum Row: Int, EnumTitle {
         case .seasonRules:          return "icn_settings_handbook"
         case .visitSite:            return "icn_settings_mgp"
         case .feedback:             return "icn_settings_feedback"
-        case .joinBeta:             return "icn_settings_beta"
+        case .joinBeta:             return "icn_settings_testflight"
+        case .viewProject:          return "icn_settings_github"
         case .appicon:              return "icn_settings_appicn"
         case .logout:               return "icn_settings_logout"
         case .switchEnv:            return "icn_settings_logout"

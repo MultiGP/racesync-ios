@@ -24,7 +24,7 @@ class FormBaseViewController: UIViewController {
     var didDismiss: VoidCompletionBlock?
 }
 
-@objc protocol FormBaseViewControllerDelegate {
+@objc protocol FormBaseViewControllerDelegate: AnyObject {
     func formViewController(_ viewController: FormBaseViewController, didSelectItem item: String)
     func formViewControllerDidDismiss(_ viewController: FormBaseViewController)
 

@@ -21,6 +21,13 @@ class SliderTableViewHeaderView: UIView {
 
     var isCarouselEnabled: Bool = true
 
+    var autoScrollInterval: TimeInterval = 3.0 {
+        didSet {
+            guard autoScrollInterval != oldValue, numberOfItems > 0 else { return }
+            startAutoScroll(interval: autoScrollInterval)
+        }
+    }
+
     weak var delegate: SliderTableViewHeaderViewDelegate?
 
     static var height: CGFloat {
@@ -125,14 +132,7 @@ class SliderTableViewHeaderView: UIView {
             make.bottom.equalToSuperview().offset(-Constants.spacing/5)
         }
 
-        let separatorLine = UIView()
-        separatorLine.backgroundColor = Color.gray100
-        addSubview(separatorLine)
-        separatorLine.snp.makeConstraints {
-            $0.height.equalTo(0.5)
-            $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(self.snp.bottom)
-        }
+        addSeparatorLine(.bottom)
     }
 
     override var intrinsicContentSize: CGSize {

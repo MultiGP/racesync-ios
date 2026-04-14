@@ -9,18 +9,27 @@
 import UIKit
 import SnapKit
 import RaceSyncAPI
+import EmptyDataSet_Swift
 
 class SeriesStandingsViewController: UIViewController, Pinnable {
 
     // MARK: - Public Variables
 
-    let series: Series
+    var seriesController: SeriesController
+
+    var series: Series {
+        get { return seriesController.series }
+    }
+
+    var seriesApi: SeriesApi {
+        get { return seriesController.seriesApi }
+    }
 
     lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.dataSource = self
         tableView.delegate = self
-//        tableView.emptyDataSetSource = self
+        tableView.emptyDataSetSource = self
         tableView.register(cellType: AvatarTableViewCell.self)
         tableView.tableFooterView = UIView()
 
@@ -41,6 +50,8 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
 
     fileprivate var userApi = UserApi()
 
+    fileprivate let emptyStateSeriesResults = EmptyStateViewModel(.noSeriesResults)
+
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
         static let cellHeight: CGFloat = 86
@@ -48,8 +59,8 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
 
     // MARK: - Initialization
 
-    init(with series: Series) {
-        self.series = series
+    init(with controller: SeriesController) {
+        self.seriesController = controller
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -80,16 +91,21 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
         configureNavigationItems()
 
         registerPinnedView(viewType: AvatarTableViewCell.self)
-
+        
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
-            $0.top.bottom.leading.trailing.equalToSuperview()
+            $0.width.equalTo(UIScreen.main.bounds.width)
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
     }
 
     fileprivate func configureNavigationItems() {
         title = "Leaderboard"
         tabBarItem = UITabBarItem(title: title, image: SystemImg.trophy, selectedImage: SystemImg.trophyFill)
+
+        navigationItem.rightBarButtonItem = seriesController.navigationItems()
     }
 
     // MARK: - Data Update
@@ -150,7 +166,10 @@ extension SeriesStandingsViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return series.typeString
+        if let results = series.pilotResults, results.count > 0 {
+            return series.scoreTypeString
+        }
+        return nil
     }
 }
 
@@ -176,15 +195,31 @@ extension SeriesStandingsViewController: UITableViewDataSource {
     func configure<T>(_ view: T, forRowAt indexPath: IndexPath) where T : UITableViewCell {
         guard let cell = view as? AvatarTableViewCell, let result = result(at: indexPath) else { return }
 
+        // TODO: Convert to View Model
+        let flag = FlagEmojiGenerator.flag(country: result.country)
+
         cell.rankView.rank = Int32(indexPath.row + 1)
-        cell.titleLabel.text = result.displayName
+        cell.titleLabel.text = "\(result.displayName) \(flag)"
+        cell.subtitleLabel.text = nil
+        cell.textPill.text = nil
         cell.avatarImageView.imageView.setImage(with: result.imageUrl, placeholderImage: PlaceholderImg.medium)
         cell.accessoryView = nil
 
-        if series.type == .fastest3laps {
-            cell.subtitleLabel.text = TimeUtil.lapTimeFormat(seconds: result.score)
+        if series.scoreType == .fastest3laps, let time = result.time {
+            cell.subtitleLabel.text = "\(TimeUtil.lapTimeFormat(seconds: time))"
+        } else if series.scoreType == .collegiate {
+            cell.textPill.text = result.score
+            cell.textPill.style = .text
+
+            if let time = result.time {
+                cell.subtitleLabel.text = "\(TimeUtil.lapTimeFormat(seconds: time))"
+            }
         } else {
-            cell.subtitleLabel.text = result.score
+            cell.subtitleLabel.text = "Elo: \(result.eloScore)"
+
+            let unit = (result.score == "1") ? "pt" : "pts"
+            cell.textPill.text = "\(result.score) \(unit)"
+            cell.textPill.style = .text
         }
 
         if let pilotId = result.pilotId, let userId = myUserId, pilotId == userId {
@@ -211,9 +246,17 @@ extension SeriesStandingsViewController: UIScrollViewDelegate {
     }
 }
 
-extension SeriesStandingsViewController: ScrollToTop {
+extension SeriesStandingsViewController: EmptyDataSetSource {
 
-    func scrollToTop() {
-        tableView.setContentOffset(.zero, animated: true)
+    func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        return emptyStateSeriesResults.title
+    }
+
+    func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        return emptyStateSeriesResults.description
+    }
+
+    func backgroundColor(forEmptyDataSet scrollView: UIScrollView) -> UIColor? {
+        return Color.white
     }
 }

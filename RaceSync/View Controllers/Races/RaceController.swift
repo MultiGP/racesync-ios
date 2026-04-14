@@ -17,10 +17,9 @@ class RaceController {
     var race: Race?
     let raceApi = RaceApi()
 
-    var parentViewController: RaceTabBarController? = nil
     var isLoading: Bool = false
-
     var menuCompletion: BoolCompletionBlock? = nil
+    weak var parentViewController: RaceTabBarController? = nil
 
     // MARK: - Private
 
@@ -33,6 +32,8 @@ class RaceController {
         ?? (visibleViewController?.navigationController as? NavigationController)
     }
 
+    fileprivate let seriesFeedController = SeriesFeedController()
+
     // MARK: - Initialization
 
     init(with race: Race) {
@@ -43,6 +44,11 @@ class RaceController {
     init(id raceId: ObjectId) {
         self.raceId = raceId
         self.race = nil
+    }
+
+    deinit {
+        parentViewController = nil
+        race = nil
     }
 
     // MARK: - Data Update
@@ -154,6 +160,9 @@ class RaceController {
 
         if race.canBeEdited {
             alert.addAction(makeEditRaceAction())
+        }
+
+        if race.canManagePilots {
             alert.addAction(makeManagePilotsAction())
         }
 
@@ -163,6 +172,10 @@ class RaceController {
 
         if race.canBeDuplicated {
             alert.addAction(makeDuplicateAction())
+        }
+
+        if race.canJoinSeries {
+            alert.addAction(makeJoinSeriesAction(for: race))
         }
 
         if race.canBeFinalized {
@@ -321,6 +334,12 @@ class RaceController {
         }
     }
 
+    fileprivate func makeJoinSeriesAction(for race: Race) -> UIAlertAction {
+        UIAlertAction(title: "Join a Series", style: .default) { [weak self] _ in
+            self?.showSeriesPicker()
+        }
+    }
+
     fileprivate func makeFinalizeAction(for race: Race) -> UIAlertAction {
         UIAlertAction(title: "Finalize", style: .destructive) { [weak self] _ in
             ActionSheetUtil.presentDestructiveActionSheet(
@@ -407,6 +426,22 @@ class RaceController {
         let nc = NavigationController(rootViewController: vc)
         nc.modalPresentationStyle = .fullScreen
         visibleViewController?.present(nc, animated: true)
+    }
+
+    func showSeriesPicker() {
+        guard let race = race else { return }
+
+        seriesFeedController.viewModels(for: .all) { viewModels, error in
+            if let vms = viewModels, vms.count > 0 {
+                let vc = SeriesPickerViewController(vms, raceId: race.id)
+
+                let nc = NavigationController(rootViewController: vc)
+                nc.modalPresentationStyle = .fullScreen
+                self.visibleViewController?.present(nc, animated: true)
+            } else {
+                AlertUtil.presentAlertMessage("Couldn't fetch series. Please try again later.", title: "Error", delay: 0.5)
+            }
+        }
     }
 
     func finalizeRace() {

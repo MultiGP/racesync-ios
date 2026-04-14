@@ -18,8 +18,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - UIApplicationDelegate Methods
 
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+
+        // It is important to call this before anything else
+        ApplicationControl.initializeRaceSyncAPI()
+
+        // Appearance must be called before any UI element is created
         Appearance.configureUIAppearance()
+
+        // Push notifications config
         UNUserNotificationCenter.current().delegate = PushMessagesController.shared
+
         return true
     }
 

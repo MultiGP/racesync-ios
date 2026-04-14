@@ -192,10 +192,10 @@ class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
 
     @objc func didPressJoinButton(_ sender: JoinButton) {
         guard let objectId = sender.objectId, let race = raceViewModels.race(withId: objectId) else { return }
-        let joinState = sender.joinState
+        let state = sender.joinState
 
         toggleJoinButton(sender, forRace: race, raceApi: raceApi) { [weak self] (newState) in
-            if joinState != newState {
+            if state != newState {
                 // reload races to reflect race changes, specially join counts
                 self?.fetchRaces(nil)
             }
@@ -233,7 +233,7 @@ class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
     }
 
     fileprivate func loadChapters(_ forced: Bool = false) {
-        loadList(forced: forced, isEmpty: raceViewModels.isEmpty,
+        loadList(forced: forced, isEmpty: chapterViewModels.isEmpty,
                 segment: .right, fetch: fetchChapters)
     }
 

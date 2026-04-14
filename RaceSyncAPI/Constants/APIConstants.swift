@@ -44,6 +44,11 @@ enum EndPoint {
 
     static let seriesList = "series/list"
     static let seriesView = "series/view"
+    static let seriesApprove = "series/approve"
+    static let seriesUnapprove = "series/unapprove"
+    static let seriesJoin = "series/join"
+    static let seriesLeave = "series/leave"
+    static let seriesRemove = "series/remove"
 
     static let chapterList = "chapter/list"
     static let chapterFindLocal = "chapter/findLocal"
@@ -119,6 +124,7 @@ public enum ParamKey {
     // Model attributes
     static let joined = "joined"
     static let isJoined = "isJoined"
+    static let approved = "approved"
     static let isApproved = "isApproved"
     static let upcoming = "upcoming"
     static let past = "past"
@@ -156,6 +162,7 @@ public enum ParamKey {
     static let fastest3Laps = "fastest3Laps"
     static let fastest2Laps = "fastest2Laps"
     static let fastestLap = "fastestLap"
+    static let bestRaces = "bestRaces"
     static let cycleCount = "cycleCount"
     static let maxZippyqDepth = "maxZippyqDepth"
     static let zippyqIterator = "zippyqIterator"
@@ -195,7 +202,6 @@ public enum ParamKey {
     static let amountDue = "amountdue"
     static let datePaid = "datepaid"
     static let paymentsEnabled = "paymentsEnabled"
-    static let approved = "approved"
     static let pilotCount = "pilotCount"
     static let chapterApprovedCount = "chapterApprovedCount"
     static let raceApprovedCount = "raceApprovedCount"

@@ -16,6 +16,10 @@ protocol EmptyStateViewModelInterface {
     var backgroundColor: UIColor? { get }
 
     func buttonTitle(_ state: UIControl.State) -> NSAttributedString?
+
+    static func attributtedStringForTitle(_ string: String?) -> NSAttributedString?
+    static func attributtedStringForDescription(_ string: String?) -> NSAttributedString?
+    static func attributtedStringForButton(_ string: String?, state: UIControl.State) -> NSAttributedString?
 }
 
 enum EmptyState {
@@ -29,6 +33,9 @@ enum EmptyState {
     case noChapters
     case noChapterMembers
 
+    case noSeries
+    case noJoinedSeries
+    case noSeriesResults
     case noProfileRaces
     case noProfileChapters
     case noMyProfileRaces
@@ -38,15 +45,12 @@ enum EmptyState {
     case noPushAuthorized
     case noPushEnabled
 
-    case commingSoon
+    case comingSoon
 
     case noSearchResults
-    case errorRaces
     case errorChapters
     case errorUsers
-    case errorStandings
-
-    case noInternet
+    case error(_: NSError)
 }
 
 struct EmptyStateViewModel: EmptyStateViewModelInterface {
@@ -74,7 +78,11 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
         case .noChapterMembers:
             text = "No Chapter Members"
         case .noRaces, .noMyProfileRaces, .noProfileRaces:
-            text = "No Races"
+            text = "No Races Found"
+        case .noSeries, .noJoinedSeries:
+            text = "No Series Found"
+        case .noSeriesResults:
+            text = "No Series Results"
         case .noRacePayments:
             text = "No Race Payments"
         case .noChapters, .noMyProfileChapters, .noProfileChapters:
@@ -85,23 +93,17 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "Push Notifications"
         case .noPushEnabled:
             text = "Push Notifications Disabled"
-        case .commingSoon:
+        case .comingSoon:
             text = "Coming Soon"
         case .noSearchResults:
             text = "No Results"
-        case .errorRaces, .errorStandings:
+        case .error( _):
             text = "Error"
         default:
             return nil
         }
 
-        guard let title = text else { return nil }
-
-        var attributes: [NSAttributedString.Key: Any] = [:]
-        attributes[NSAttributedString.Key.font] = UIFont.boldSystemFont(ofSize: 25)
-        attributes[NSAttributedString.Key.foregroundColor] = Color.gray200
-
-        return NSAttributedString.init(string: title, attributes: attributes)
+        return Self.attributtedStringForTitle(text)
     }
 
     var description: NSAttributedString? {
@@ -122,6 +124,10 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "There are no registered pilots yet."
         case .noRaceResults:
             text = "There are no race results available just yet."
+        case .noSeries, .noJoinedSeries:
+            text = "There are no series available yet under this category."
+        case .noSeriesResults:
+            text = "There are no series results available just yet."
         case .noRacePayments:
             text = "No payments found yet, or a network error occurred."
         case .noChapterMembers:
@@ -138,23 +144,15 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "Want race updates sent to you?\nTurn on Push Notifications to stay updated!"
         case .noPushEnabled:
             text = "Please enable Push Notifications to continue."
-        case .commingSoon:
+        case .comingSoon:
             text = "This section is under development."
-        case .errorRaces:
-            text = "Could not load the race details.\nPlease try again later or report a bug."
-        case .errorStandings:
-            text = "Could not load the season standings.\nPlease try again later or report a bug."
+        case .error(let error):
+            text = "\(error.localizedDescription)\nPlease try again later or report a bug."
         default:
             return nil
         }
 
-        guard let title = text else { return nil }
-
-        var attributes: [NSAttributedString.Key: Any] = [:]
-        attributes[NSAttributedString.Key.font] = UIFont.systemFont(ofSize: 19)
-        attributes[NSAttributedString.Key.foregroundColor] = Color.gray200
-
-        return NSAttributedString.init(string: title, attributes: attributes)
+        return Self.attributtedStringForDescription(text)
     }
 
     var image: UIImage? {
@@ -178,7 +176,35 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             return nil
         }
 
-        guard let title = text else { return nil }
+        return Self.attributtedStringForButton(text, state: state)
+    }
+
+    var backgroundColor: UIColor? {
+        return Color.white
+    }
+
+    static func attributtedStringForTitle(_ string: String?) -> NSAttributedString? {
+        guard let string = string else { return nil }
+
+        var attributes: [NSAttributedString.Key: Any] = [:]
+        attributes[NSAttributedString.Key.font] = UIFont.boldSystemFont(ofSize: 25)
+        attributes[NSAttributedString.Key.foregroundColor] = Color.gray200
+
+        return NSAttributedString.init(string: string, attributes: attributes)
+    }
+
+    static func attributtedStringForDescription(_ string: String?) -> NSAttributedString? {
+        guard let string = string else { return nil }
+
+        var attributes: [NSAttributedString.Key: Any] = [:]
+        attributes[NSAttributedString.Key.font] = UIFont.systemFont(ofSize: 19)
+        attributes[NSAttributedString.Key.foregroundColor] = Color.gray200
+
+        return NSAttributedString.init(string: string, attributes: attributes)
+    }
+
+    static func attributtedStringForButton(_ string: String?, state: UIControl.State) -> NSAttributedString? {
+        guard let string = string else { return nil }
 
         var attributes: [NSAttributedString.Key: Any] = [:]
         attributes[NSAttributedString.Key.font] = UIFont.boldSystemFont(ofSize: 19)
@@ -189,10 +215,6 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             attributes[NSAttributedString.Key.foregroundColor] = Color.blue
         }
 
-        return NSAttributedString.init(string: title, attributes: attributes)
-    }
-
-    var backgroundColor: UIColor? {
-        return Color.white
+        return NSAttributedString.init(string: string, attributes: attributes)
     }
 }
