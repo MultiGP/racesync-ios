@@ -40,10 +40,10 @@ class RacePilotsPickerController: UIViewController, Shimmable {
 
     fileprivate lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
-        searchBar.delegate = self
-        searchBar.searchBarStyle = .minimal
         searchBar.placeholder = "Filter pilots"
-        searchBar.barTintColor = .white
+        searchBar.delegate = self
+        searchBar.searchBarStyle = .default
+        searchBar.barTintColor = Color.white
         searchBar.isTranslucent = false
         searchBar.backgroundImage = UIImage()
         searchBar.tintColor = Color.blue
