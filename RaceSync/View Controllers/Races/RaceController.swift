@@ -431,7 +431,7 @@ class RaceController {
     func showSeriesPicker() {
         guard let race = race else { return }
 
-        seriesFeedController.viewModels(for: .all) { viewModels, error in
+        seriesFeedController.viewModels(for: .all) { viewModels, cache, error in
             if let vms = viewModels, vms.count > 0 {
                 let vc = SeriesPickerViewController(vms, raceId: race.id)
 

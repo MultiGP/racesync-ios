@@ -26,7 +26,7 @@ enum SeriesFilter: EnumTitle {
     static let `default`: Self = .regionals
 }
 
-public typealias SeriesFeedControllerCompletionBlock<T> = (_ object: T?, _ error: NSError?) -> Void
+public typealias SeriesFeedControllerCompletionBlock<T> = (_ object: T?, _ cached: Bool, _ error: NSError?) -> Void
 
 class SeriesFeedController {
 
@@ -52,7 +52,7 @@ class SeriesFeedController {
     func viewModels(for filter: SeriesFilter, forceFetch: Bool = false, completion: SeriesFeedControllerCompletionBlock<[SeriesViewModel]>?) {
         
         if let viewModels = viewModels(for: filter) {
-            completion?(viewModels, nil)
+            completion?(viewModels, true, nil)
             guard forceFetch else { return }
         }
 
@@ -61,9 +61,9 @@ class SeriesFeedController {
                 self.collection[.joined] = self.getJoinedSeries(from: objects)
                 self.collection[.regionals] = self.getRegionalSeries(from: objects)
                 self.collection[.all] = self.getAllSeries(from: objects)
-                completion?(self.collection[filter], nil)
+                completion?(self.collection[filter], false, nil)
             } else if error != nil {
-                completion?(nil, error)
+                completion?(nil, false, error)
             }
         }
     }

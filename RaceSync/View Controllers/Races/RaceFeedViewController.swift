@@ -328,20 +328,20 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
         }
 
         raceFeedController.viewModels(for: selectedList, forceFetch: forced) { [weak self] (viewModels, cached, error) in
-            guard let strongSelf = self else { return }
+            guard let s = self else { return }
 
-            strongSelf.isLoadingList(false)
+            s.isLoadingList(false)
 
-            if let _ = viewModels, selectedList == strongSelf.selectedRaceFilter {
-
-                if strongSelf.refreshControl.isRefreshing, !cached {
-                    strongSelf.refreshControl.endRefreshing()
-                }
-
-                strongSelf.tableView.reloadData()
-            } else {
-                print("getMyRaces error : \(error.debugDescription)")
+            if s.refreshControl.isRefreshing, !cached { // don't dismiss the refresh control from cache callbacks
+                s.refreshControl.endRefreshing()
             }
+
+            if let error = error {
+                print("RaceFeedController loadContent error : \(error.debugDescription)")
+                return
+            }
+
+            s.tableView.reloadData()
         }
     }
 }

@@ -28,7 +28,7 @@ class SeriesFeedViewController: UIViewController, Shimmable {
         tableView.register(cellType: SimpleTableViewCell.self)
         tableView.tableHeaderView = self.sliderHeaderView
         tableView.tableFooterView = UIView()
-//        tableView.refreshControl = self.refreshControl
+        tableView.refreshControl = self.refreshControl
         return tableView
     }()
 
@@ -198,35 +198,6 @@ class SeriesFeedViewController: UIViewController, Shimmable {
         tabBarItem = UITabBarItem(title: title, image: SystemImg.stack, selectedImage: SystemImg.stackFill)
     }
 
-    // MARK: - Data Update
-
-    fileprivate func loadContent(forced: Bool = false) {
-
-        if !refreshControl.isRefreshing {
-            isLoadingList(true)
-        }
-
-        seriesFeedController.viewModels(for: selectedFilter, forceFetch: forced) { objects, error in
-            if self.refreshControl.isRefreshing {
-                self.refreshControl.endRefreshing()
-            } else {
-                self.isLoadingList(false)
-            }
-
-            let tableView = self.tableView
-            let slider = self.sliderHeaderView
-            let count = slider.delegate?.sliderNumberOfItems(slider) ?? 0
-
-            if slider.numberOfItems == 0 && count > 0 {
-                slider.reloadData()
-            } else if count == 0 { // Hiding the slider if nothing to show
-                tableView.tableHeaderView = nil
-            }
-
-            tableView.reloadData()
-        }
-    }
-
     // MARK: - Actions
 
     @objc fileprivate func didChangeSegment() {
@@ -249,6 +220,41 @@ class SeriesFeedViewController: UIViewController, Shimmable {
 
     @objc fileprivate func didPullRefreshControl() {
         loadContent(forced: true)
+    }
+
+    // MARK: - Data Update
+
+    fileprivate func loadContent(forced: Bool = false) {
+
+        if !refreshControl.isRefreshing {
+            isLoadingList(true)
+        }
+
+        seriesFeedController.viewModels(for: selectedFilter, forceFetch: forced) { [weak self] objects, cached, error in
+            guard let s = self else { return }
+
+            if let error = error {
+                print("SeriesFeedController loadContent error : \(error.debugDescription)")
+                return
+            }
+
+            s.isLoadingList(false)
+
+            if s.refreshControl.isRefreshing && !cached { // don't dismiss the refresh control from cache callbacks
+                s.refreshControl.endRefreshing()
+            }
+
+            let slider = s.sliderHeaderView
+            let count = slider.delegate?.sliderNumberOfItems(slider) ?? 0
+
+            if slider.numberOfItems == 0 && count > 0 {
+                slider.reloadData()
+            } else if count == 0 { // Hiding the slider if nothing to show
+                s.tableView.tableHeaderView = nil
+            }
+
+            s.tableView.reloadData()
+        }
     }
 }
 
