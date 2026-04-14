@@ -3,12 +3,12 @@
 
 ---
 
-## 1.9.0
+## 2.0
 
 ### Introducing MultiGP Series:
    * A new dedicated tab on the main screen lets you browse all MultiGP Series. Quickly find the ones you are part of, including the 2026 Regional Series qualifiers and more.
-   * View the leaderboard for each series.
-   * Chapter organizers can submit races to specific series.
+   * View the leaderboard for each series, by scoring or fastest 3 consecutive lap times.
+   * Chapter organizers can submit races to specific series, from withing a race detail view.
    * Series owners can approve, unapprove, or remove races within the series they manage.
 
 ### New Features:
