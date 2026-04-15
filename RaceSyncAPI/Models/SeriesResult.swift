@@ -72,7 +72,10 @@ public class SeriesResult: Mappable, Descriptable {
         }
         
         if let value = map.JSON[ParamKey.fastest3Laps] {
-            time = String(describing: value)
+            let str = String(describing: value)
+            if let number = Double(str), number < 600 { // no drone flies more than 10 mins
+                time = String(describing: value)
+            }
         }
 
         if let value = map.JSON[ParamKey.eloScore] {

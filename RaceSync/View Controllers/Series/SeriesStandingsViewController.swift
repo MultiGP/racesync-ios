@@ -311,9 +311,15 @@ extension SeriesStandingsViewController: UITableViewDataSource {
         cell.avatarImageView.imageView.setImage(with: result.imageUrl, placeholderImage: PlaceholderImg.medium)
         cell.accessoryView = nil
 
-        if series.scoreType == .fastest3laps, let time = result.time {
-            cell.subtitleLabel.text = "\(TimeUtil.lapTimeFormat(seconds: time))"
-        } else if series.scoreType == .collegiate {
+        if series.scoreType == .fastest3laps {
+            if let time = result.time {
+                cell.subtitleLabel.text = "\(TimeUtil.lapTimeFormat(seconds: time))"
+            } else {
+                cell.subtitleLabel.text = "--"
+                cell.rankView.rank = 0
+            }
+        }
+        else if series.scoreType == .collegiate {
 
             if (!result.score.isEmpty && result.score != "0") {
                 cell.textPill.text = result.score
