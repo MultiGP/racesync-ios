@@ -46,15 +46,12 @@ class SeriesResultViewModel: Descriptable {
             if result.type == .pilot, let time = result.time {
                 labels += ["\(TimeUtil.lapTimeFormat(seconds: time))"]
             }
-            if result.type == .chapter, let best = result.bestResults {
+            else if result.type == .chapter, let best = result.bestResults {
                 labels += ["Best: [\(best.map { String(format: "%g", $0) }.joined(separator: ", "))]"]
-            }
-            if result.raceCount > 0 {
-                labels += ["Races: \(result.raceCount)"]
             }
 
             if labels.count > 0 {
-                self.subtitleLabel = labels.joined(separator: " | ")
+                self.subtitleLabel = labels.joined(separator: "  |  ")
             } else {
                 self.subtitleLabel = Self.emptyLabel
             }
@@ -69,13 +66,13 @@ class SeriesResultViewModel: Descriptable {
         }
         else {
             var labels = [String]()
-            if result.eloScore > 0 {
-                labels += ["Elo: \(result.eloScore)"]
-            }
             if result.raceCount > 0 {
                 labels += ["Races: \(result.raceCount)"]
             }
-            self.subtitleLabel = labels.joined(separator: " | ")
+            if result.type == .pilot {
+                labels += ["Elo: \(result.eloScore)"]
+            }
+            self.subtitleLabel = labels.joined(separator: "  |  ")
 
             let unit = (result.score == 1) ? "pt" : "pts"
             self.scoreLabel = "\(String(format: "%.0f", result.score)) \(unit)"

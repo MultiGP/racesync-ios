@@ -304,12 +304,6 @@ extension SeriesStandingsViewController: UITableViewDataSource {
     func configure<T>(_ view: T, forRowAt indexPath: IndexPath) where T : UITableViewCell {
         guard let cell = view as? AvatarTableViewCell, let viewModel = viewModel(at: indexPath) else { return }
 
-        cell.titleLabel.numberOfLines = 1
-        cell.titleLabel.text = nil
-        cell.subtitleLabel.text = nil
-        cell.textPill.text = nil
-        cell.accessoryView = nil
-
         cell.rankView.rank = Int32(indexPath.row + 1)
         cell.titleLabel.text = viewModel.titleLabel
         cell.subtitleLabel.text = viewModel.subtitleLabel

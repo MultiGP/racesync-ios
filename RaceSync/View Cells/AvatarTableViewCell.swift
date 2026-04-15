@@ -156,4 +156,14 @@ class AvatarTableViewCell: UITableViewCell {
             rankLabelLeadingConstraint?.update(offset: Constants.padding)
         }
     }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        titleLabel.numberOfLines = 1
+        titleLabel.text = nil
+        subtitleLabel.text = nil
+        textPill.text = nil
+        accessoryView = nil
+    }
 }
