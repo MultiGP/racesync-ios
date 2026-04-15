@@ -12,10 +12,9 @@ import UIKit
 class SeriesController {
 
     // MARK: - Public
-
-    var seriesId: ObjectId
-    var series: Series
-
+    let series: Series
+    let pilotResultViewModels: [SeriesResultViewModel]
+    let chapterResultViewModels: [SeriesResultViewModel]
     let seriesApi = SeriesApi()
 
     var menuCompletion: BoolCompletionBlock? = nil
@@ -29,8 +28,12 @@ class SeriesController {
     // MARK: - Initialization
 
     init(with series: Series) {
-        self.seriesId = series.id
         self.series = series
+        self.pilotResultViewModels = SeriesResultViewModel.viewModels(with: series.pilotResults,
+                                                                      scoreType: series.scoreType)
+
+        self.chapterResultViewModels = SeriesResultViewModel.viewModels(with: series.chapterResults,
+                                                                        scoreType: series.scoreType)
     }
 
     // MARK: - Data Update
@@ -40,7 +43,7 @@ class SeriesController {
 
     func showShareMenu() {
 
-        let url = MGPWeb.getURL(for: .seriesView, value: seriesId)
+        let url = MGPWeb.getURL(for: .seriesView, value: series.id)
         let items: [Any] = [url]
 
         var activities = [UIActivity]()

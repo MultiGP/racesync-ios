@@ -184,16 +184,15 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
 
     // MARK: - Data Update
 
-    fileprivate func result(at indexPath: IndexPath) -> SeriesResult? {
-        guard let results = seriesResults() else { return nil }
-        return results[indexPath.row]
+    fileprivate func viewModel(at indexPath: IndexPath) -> SeriesResultViewModel? {
+        return viewModels()[indexPath.row]
     }
 
-    fileprivate func seriesResults() -> [SeriesResult]? {
+    fileprivate func viewModels() -> [SeriesResultViewModel] {
         if showsSegmentedControl && selectedFilter == .chapters {
-            return series.chapterResults
+            return seriesController.chapterResultViewModels
         }
-        return series.pilotResults
+        return seriesController.pilotResultViewModels
     }
 
     // MARK: - Pinnable
@@ -203,13 +202,14 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
     }
 
     func pinnedViewIndexPath() -> IndexPath? {
-        guard let userId = myUserId, let results = seriesResults() else { return nil }
+        guard let userId = myUserId else { return nil }
 
         if let cached = cachedPinnedIndexPath {
             return cached
         }
 
-        guard let index = results.firstIndex(where: { $0.pilotId == userId }) else {
+        let viewModels = viewModels()
+        guard let index = viewModels.firstIndex(where: { $0.pilotId == userId }) else {
             return nil
         }
 
@@ -226,7 +226,7 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
     }
 
     func showUserProfile(forUserAt indexPath: IndexPath, from cell: AvatarTableViewCell) {
-        guard let result = result(at: indexPath), let id = result.pilotId else { return }
+        guard let viewModel = viewModel(at: indexPath), let id = viewModel.pilotId else { return }
 
         cell.isLoading = true
 
@@ -242,7 +242,7 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
     }
 
     func showChapterProfile(forUserAt indexPath: IndexPath, from cell: AvatarTableViewCell) {
-        guard let result = result(at: indexPath), let id = result.chapterId else { return }
+        guard let viewModel = viewModel(at: indexPath), let id = viewModel.chapterId else { return }
 
         cell.isLoading = true
 
@@ -272,7 +272,7 @@ extension SeriesStandingsViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if let results = seriesResults(), results.count > 0 {
+        if viewModels().count > 0 {
             return series.scoreTypeString
         }
         return nil
@@ -282,10 +282,7 @@ extension SeriesStandingsViewController: UITableViewDelegate {
 extension SeriesStandingsViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let results = seriesResults() {
-            return results.count
-        }
-        return 0
+        return viewModels().count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -295,8 +292,9 @@ extension SeriesStandingsViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        guard let viewModel = viewModel(at: indexPath) else { return 0 }
 
-        if series.scoreType == .collegiate && selectedFilter == .chapters {
+        if series.scoreType == .collegiate && viewModel.type == .chapter {
             return Constants.cellHeight*1.25 // higher cell since collegiate chapter names are longer
         } else {
             return Constants.cellHeight
@@ -304,67 +302,33 @@ extension SeriesStandingsViewController: UITableViewDataSource {
     }
 
     func configure<T>(_ view: T, forRowAt indexPath: IndexPath) where T : UITableViewCell {
-        guard let cell = view as? AvatarTableViewCell, let result = result(at: indexPath) else { return }
+        guard let cell = view as? AvatarTableViewCell, let viewModel = viewModel(at: indexPath) else { return }
 
-        // TODO: Move to reuse method
+        cell.titleLabel.numberOfLines = 1
         cell.titleLabel.text = nil
         cell.subtitleLabel.text = nil
         cell.textPill.text = nil
         cell.accessoryView = nil
 
-
-        // TODO: Convert to View Model
-        let flag = FlagEmojiGenerator.flag(country: result.country)
-
         cell.rankView.rank = Int32(indexPath.row + 1)
-        cell.titleLabel.text = "\(result.displayName) \(flag)"
-        cell.avatarImageView.imageView.setImage(with: result.imageUrl, placeholderImage: PlaceholderImg.medium)
+        cell.titleLabel.text = viewModel.titleLabel
+        cell.subtitleLabel.text = viewModel.subtitleLabel
+        cell.avatarImageView.imageView.setImage(with: viewModel.imageUrl, placeholderImage: PlaceholderImg.medium)
 
-        if series.scoreType == .fastest3laps {
-            if let time = result.time {
-                cell.subtitleLabel.text = "\(TimeUtil.lapTimeFormat(seconds: time))"
-            } else {
-                cell.subtitleLabel.text = "--"
-                cell.rankView.rank = 0
-            }
-        }
-        else if series.scoreType == .collegiate {
-
-            if (!result.score.isEmpty && result.score != "0") {
-                cell.textPill.text = result.score
-                cell.textPill.style = .text
-            }
-            if let time = result.time {
-                cell.subtitleLabel.text = "\(TimeUtil.lapTimeFormat(seconds: time))"
-            }
-
-            if selectedFilter == .chapters {
-                cell.titleLabel.numberOfLines = 2
-            }
-        } else {
-            var info = [String]()
-            if result.eloScore > 0 {
-                info += ["Elo: \(result.eloScore)"]
-            }
-            if result.raceCount > 0 {
-                info += ["Races: \(result.raceCount)"]
-            }
-            cell.subtitleLabel.text = info.joined(separator: " | ")
-
-            let unit = (result.score == "1") ? "pt" : "pts"
-            cell.textPill.text = "\(result.score) \(unit)"
+        if !viewModel.scoreLabel.isEmpty {
+            cell.textPill.text = viewModel.scoreLabel
             cell.textPill.style = .text
         }
 
-        if showsSegmentedControl && selectedFilter == .chapters {
-            if result.raceCount > 0 {
-                cell.subtitleLabel.text = "Races: \(result.raceCount)"
-            } else if let best = result.bestResults, best.count > 0 {
-                cell.subtitleLabel.text = "Best: [\(best.map { String(format: "%g", $0) }.joined(separator: ", "))]"
-            }
+        if viewModel.subtitleLabel == SeriesResultViewModel.emptyLabel {
+            cell.rankView.rank = 0
         }
 
-        if let pilotId = result.pilotId, let userId = myUserId, pilotId == userId {
+        if series.scoreType == .collegiate && viewModel.type == .chapter {
+            cell.titleLabel.numberOfLines = 2
+        }
+
+        if viewModel.pilotId == myUserId {
             cell.titleLabel.textColor = Color.white
             cell.subtitleLabel.textColor = Color.gray20
             cell.rankView.titleLabel.textColor = Color.gray20
@@ -383,7 +347,7 @@ extension SeriesStandingsViewController: UITableViewDataSource {
 extension SeriesStandingsViewController: UIScrollViewDelegate {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard let results = seriesResults(), results.count > 0 else { return }
+        guard viewModels().count > 0 else { return }
         layoutPinnedView()
     }
 }

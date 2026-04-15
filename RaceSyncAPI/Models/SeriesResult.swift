@@ -19,7 +19,7 @@ public class SeriesResult: Mappable, Descriptable {
     public var type: SeriesResultType = .pilot
     public var displayName: String = ""
     public var country: String = ""
-    public var score: String = ""
+    public var score: Double = 0
     public var eloScore: Int32 = 0
     public var bestPilots: [String]? = nil
     public var bestResults: [Double]? = nil
@@ -28,6 +28,9 @@ public class SeriesResult: Mappable, Descriptable {
     public var raceCount: Int = 0
     public var pilotId: String? = nil
     public var chapterId: String? = nil
+
+    public var mainImageUrl: String? //profilePictureUrl
+    public var profileImageUrl: String? //mainImageFileName
 
     // MARK: - Init
     public required init?(map: Map) {
@@ -42,7 +45,6 @@ public class SeriesResult: Mappable, Descriptable {
         // Pilot or chapter id
         pilotId   <- map[ParamKey.pilotId]
         chapterId <- map[ParamKey.chapterId]
-
         raceCount <- map[ParamKey.raceCount]
 
         // Determine type from what exists
@@ -66,12 +68,10 @@ public class SeriesResult: Mappable, Descriptable {
         // Country (only present for pilots usually)
         country <- map[ParamKey.country]
 
-        if let value = map.JSON[ParamKey.score] {
-            let str = String(describing: value)
-            let decimals = str.components(separatedBy: ".").last?.count ?? 0
-            score = decimals > 3 ? String(format: "%.3f", Double(str) ?? 0).replacingOccurrences(of: #"\.?0+$"#, with: "", options: .regularExpression) : str
+        if let value = map.JSON[ParamKey.score], let number = Double(String(describing: value)) {
+            score = number
         }
-        
+
         if let value = map.JSON[ParamKey.fastest3Laps] {
             let str = String(describing: value)
             if let number = Double(str), number < 600 { // no drone flies more than 10 mins
@@ -83,10 +83,7 @@ public class SeriesResult: Mappable, Descriptable {
         bestPilots = map.JSON[ParamKey.bestPilots] as? [String]
         bestResults <- (map[ParamKey.bestResults], MapperUtil.doubleArrayTransform)
         
-        // Image / profile picture
-        imageUrl <- (map[ParamKey.profilePictureUrl], MapperUtil.stringTransform)
-        if imageUrl == nil {
-            imageUrl <- (map[ParamKey.mainImageFileName], MapperUtil.stringTransform)
-        }
+        mainImageUrl <- (map[ParamKey.mainImageFileName], MapperUtil.stringTransform)
+        profileImageUrl <- (map[ParamKey.profilePictureUrl], MapperUtil.stringTransform)
     }
 }
