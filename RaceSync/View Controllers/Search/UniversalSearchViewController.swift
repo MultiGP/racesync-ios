@@ -509,11 +509,11 @@ fileprivate enum Section: EnumTitle {
     var title: String { plural }
 
     init(index: Int) {
-        self = Section.allCases[safe: index] ?? .races
+        self = Self.allCases[safe: index] ?? .races
     }
 
     // Dynamic index based on position in allCases
-    var index: Int { Section.allCases.firstIndex(of: self) ?? 0 }
+    var index: Int { Self.allCases.firstIndex(of: self) ?? 0 }
 
     func title(with count: Int) -> String {
         let word = (count == 1) ? singular : plural

@@ -41,20 +41,62 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
 
     // MARK: - Private Variables
 
-    fileprivate var myUserId: ObjectId? {
-        get { return APIServices.shared.myUser?.id }
-    }
+    fileprivate lazy var headerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = Color.navigationBarColor
+        view.tintColor = Color.blue
+
+        let spacing: CGFloat = 10
+        let width = UIScreen.main.bounds.width/8
+
+        view.addSubview(segmentedControl)
+        segmentedControl.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(spacing)
+            $0.leading.equalToSuperview().offset(width)
+            $0.trailing.equalToSuperview().offset(-width)
+        }
+
+        view.addSeparatorLine(.bottom)
+        return view
+    }()
+
+    fileprivate lazy var segmentedControl: UISegmentedControl = {
+        let control = UISegmentedControl(items: SeriesStandingsFilter.titles)
+        control.selectedSegmentIndex = SeriesStandingsFilter.pilots.index
+        control.addTarget(self, action: #selector(didChangeSegment), for: .valueChanged)
+        return control
+    }()
 
     var pinnedView: UIView?
     var cachedPinnedIndexPath: IndexPath?
 
+    fileprivate var showsSegmentedControl: Bool {
+        get {
+            guard let pilotResults = series.pilotResults, let chapterResults = series.chapterResults else { return false }
+
+            if pilotResults.count > 0 && chapterResults.count > 0 {
+                return (series.scoreType == .collegiate || series.scoreType == .regionals)
+            }
+            return false
+        }
+    }
+
+    fileprivate var selectedFilter: SeriesStandingsFilter {
+        SeriesStandingsFilter(index: segmentedControl.selectedSegmentIndex) ?? .pilots
+    }
+
+    fileprivate var chapterApi = ChapterApi()
     fileprivate var userApi = UserApi()
+    fileprivate var myUserId: ObjectId? {
+        get { return APIServices.shared.myUser?.id }
+    }
 
     fileprivate let emptyStateSeriesResults = EmptyStateViewModel(.noSeriesResults)
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
         static let cellHeight: CGFloat = 86
+        static let headerViewHeight: CGFloat = 51
     }
 
     // MARK: - Initialization
@@ -78,10 +120,22 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
+        if showsSegmentedControl {
+            hideNavigationShadow()
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        if showsSegmentedControl {
+            hideNavigationShadow(false)
+        }
     }
 
     // MARK: - Layout
@@ -91,18 +145,38 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
         configureNavigationItems()
 
         registerPinnedView(viewType: AvatarTableViewCell.self)
-        
+
+        if showsSegmentedControl {
+            view.addSubview(headerView)
+            headerView.snp.makeConstraints {
+                $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+                $0.height.equalTo(Constants.headerViewHeight)
+                $0.leading.trailing.equalToSuperview()
+            }
+        }
+
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
+            if showsSegmentedControl {
+                $0.top.equalTo(headerView.snp.bottom)
+            } else {
+                $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            }
+
             $0.width.equalTo(UIScreen.main.bounds.width)
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
     }
 
     fileprivate func configureNavigationItems() {
-        title = "Leaderboard"
+
+        if showsSegmentedControl {
+            title = "Leaderboards"
+        } else {
+            title = "Leaderboard"
+        }
+
         tabBarItem = UITabBarItem(title: title, image: SystemImg.trophy, selectedImage: SystemImg.trophyFill)
 
         navigationItem.rightBarButtonItem = seriesController.navigationItems()
@@ -111,8 +185,15 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
     // MARK: - Data Update
 
     fileprivate func result(at indexPath: IndexPath) -> SeriesResult? {
-        guard let results = series.pilotResults else { return nil }
+        guard let results = seriesResults() else { return nil }
         return results[indexPath.row]
+    }
+
+    fileprivate func seriesResults() -> [SeriesResult]? {
+        if showsSegmentedControl && selectedFilter == .chapters {
+            return series.chapterResults
+        }
+        return series.pilotResults
     }
 
     // MARK: - Pinnable
@@ -122,7 +203,7 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
     }
 
     func pinnedViewIndexPath() -> IndexPath? {
-        guard let userId = myUserId, let results = series.pilotResults else { return nil }
+        guard let userId = myUserId, let results = seriesResults() else { return nil }
 
         if let cached = cachedPinnedIndexPath {
             return cached
@@ -139,14 +220,35 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
 
     // MARK: - Actions
 
+    @objc fileprivate func didChangeSegment() {
+        tableView.setContentOffset(.zero, animated: false)
+        tableView.reloadData()
+    }
+
     func showUserProfile(forUserAt indexPath: IndexPath, from cell: AvatarTableViewCell) {
-        guard let result = result(at: indexPath), let pilotId = result.pilotId else { return }
+        guard let result = result(at: indexPath), let id = result.pilotId else { return }
 
         cell.isLoading = true
 
-        userApi.getUser(with: pilotId) { [weak self] (user, error) in
+        userApi.getUser(with: id) { [weak self] (user, error) in
             if let user = user {
                 let vc = UserViewController(with: user)
+                self?.navigationController?.pushViewController(vc, animated: true)
+            } else if let _ = error {
+                // handle error
+            }
+            cell.isLoading = false
+        }
+    }
+
+    func showChapterProfile(forUserAt indexPath: IndexPath, from cell: AvatarTableViewCell) {
+        guard let result = result(at: indexPath), let id = result.chapterId else { return }
+
+        cell.isLoading = true
+
+        chapterApi.getChapter(with: id) { [weak self] (chapter, error) in
+            if let chapter = chapter {
+                let vc = ChapterViewController(with: chapter)
                 self?.navigationController?.pushViewController(vc, animated: true)
             } else if let _ = error {
                 // handle error
@@ -162,11 +264,15 @@ extension SeriesStandingsViewController: UITableViewDelegate {
         guard let cell = tableView.cellForRow(at: indexPath) as? AvatarTableViewCell else { return }
         tableView.deselectRow(at: indexPath, animated: true)
 
-        showUserProfile(forUserAt: indexPath, from: cell)
+        if showsSegmentedControl && selectedFilter == .chapters {
+            showChapterProfile(forUserAt: indexPath, from: cell)
+        } else {
+            showUserProfile(forUserAt: indexPath, from: cell)
+        }
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if let results = series.pilotResults, results.count > 0 {
+        if let results = seriesResults(), results.count > 0 {
             return series.scoreTypeString
         }
         return nil
@@ -176,7 +282,7 @@ extension SeriesStandingsViewController: UITableViewDelegate {
 extension SeriesStandingsViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let results = series.pilotResults {
+        if let results = seriesResults() {
             return results.count
         }
         return 0
@@ -208,9 +314,11 @@ extension SeriesStandingsViewController: UITableViewDataSource {
         if series.scoreType == .fastest3laps, let time = result.time {
             cell.subtitleLabel.text = "\(TimeUtil.lapTimeFormat(seconds: time))"
         } else if series.scoreType == .collegiate {
-            cell.textPill.text = result.score
-            cell.textPill.style = .text
 
+            if (!result.score.isEmpty && result.score != "0") {
+                cell.textPill.text = result.score
+                cell.textPill.style = .text
+            }
             if let time = result.time {
                 cell.subtitleLabel.text = "\(TimeUtil.lapTimeFormat(seconds: time))"
             }
@@ -220,6 +328,10 @@ extension SeriesStandingsViewController: UITableViewDataSource {
             let unit = (result.score == "1") ? "pt" : "pts"
             cell.textPill.text = "\(result.score) \(unit)"
             cell.textPill.style = .text
+        }
+
+        if showsSegmentedControl && selectedFilter == .chapters {
+            cell.subtitleLabel.text = "Races: \(result.raceCount)"
         }
 
         if let pilotId = result.pilotId, let userId = myUserId, pilotId == userId {
@@ -241,7 +353,7 @@ extension SeriesStandingsViewController: UITableViewDataSource {
 extension SeriesStandingsViewController: UIScrollViewDelegate {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard let results = series.pilotResults, results.count > 0 else { return }
+        guard let results = seriesResults(), results.count > 0 else { return }
         layoutPinnedView()
     }
 }
@@ -258,5 +370,25 @@ extension SeriesStandingsViewController: EmptyDataSetSource {
 
     func backgroundColor(forEmptyDataSet scrollView: UIScrollView) -> UIColor? {
         return Color.white
+    }
+}
+
+fileprivate enum SeriesStandingsFilter: EnumTitle {
+    case pilots, chapters
+
+    var title: String {
+        switch self {
+        case .pilots:       return "Individual"
+        case .chapters:     return "Chapters"
+        }
+    }
+
+    var index: Int {
+        Self.allCases.firstIndex(of: self)!
+    }
+
+    init?(index: Int) {
+        guard index >= 0, index < Self.allCases.count else { return nil }
+        self = Self.allCases[index]
     }
 }

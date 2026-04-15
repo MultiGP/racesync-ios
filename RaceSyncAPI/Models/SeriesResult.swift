@@ -24,7 +24,7 @@ public class SeriesResult: Mappable, Descriptable {
     public var bestScores: [String]? = nil
     public var time: String? = nil
     public var imageUrl: String? = nil
-
+    public var raceCount: Int = 0
     public var pilotId: String? = nil
     public var chapterId: String? = nil
 
@@ -41,6 +41,8 @@ public class SeriesResult: Mappable, Descriptable {
         // Pilot or chapter id
         pilotId   <- map[ParamKey.pilotId]
         chapterId <- map[ParamKey.chapterId]
+
+        raceCount <- map[ParamKey.raceCount]
 
         // Determine type from what exists
         if pilotId != nil { type = .pilot }
@@ -64,18 +66,21 @@ public class SeriesResult: Mappable, Descriptable {
         country <- map[ParamKey.country]
 
         if let value = map.JSON[ParamKey.score] {
-            score = String(describing: value)
+            let str = String(describing: value)
+            let decimals = str.components(separatedBy: ".").last?.count ?? 0
+            score = decimals > 3 ? String(format: "%.3f", Double(str) ?? 0).replacingOccurrences(of: #"\.?0+$"#, with: "", options: .regularExpression) : str
         }
+        
         if let value = map.JSON[ParamKey.fastest3Laps] {
             time = String(describing: value)
         }
 
-        bestScores = map.JSON[ParamKey.bestRaces] as? [String]
-
         if let value = map.JSON[ParamKey.eloScore] {
             eloScore = String(describing: value)
         }
-        
+
+        bestScores = map.JSON[ParamKey.bestRaces] as? [String]
+
         // Image / profile picture
         imageUrl <- (map[ParamKey.profilePictureUrl], MapperUtil.stringTransform)
         if imageUrl == nil {
