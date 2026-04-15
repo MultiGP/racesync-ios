@@ -60,7 +60,7 @@ class AvatarTableViewCell: UITableViewCell {
     fileprivate lazy var textStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
         stackView.axis = .vertical
-        stackView.distribution = .fillEqually
+        stackView.distribution = .fillProportionally
         stackView.alignment = .leading
         stackView.spacing = 5
         return stackView

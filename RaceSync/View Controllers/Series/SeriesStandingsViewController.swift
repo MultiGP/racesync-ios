@@ -295,21 +295,30 @@ extension SeriesStandingsViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return Constants.cellHeight
+
+        if series.scoreType == .collegiate && selectedFilter == .chapters {
+            return Constants.cellHeight*1.25 // higher cell since collegiate chapter names are longer
+        } else {
+            return Constants.cellHeight
+        }
     }
 
     func configure<T>(_ view: T, forRowAt indexPath: IndexPath) where T : UITableViewCell {
         guard let cell = view as? AvatarTableViewCell, let result = result(at: indexPath) else { return }
+
+        // TODO: Move to reuse method
+        cell.titleLabel.text = nil
+        cell.subtitleLabel.text = nil
+        cell.textPill.text = nil
+        cell.accessoryView = nil
+
 
         // TODO: Convert to View Model
         let flag = FlagEmojiGenerator.flag(country: result.country)
 
         cell.rankView.rank = Int32(indexPath.row + 1)
         cell.titleLabel.text = "\(result.displayName) \(flag)"
-        cell.subtitleLabel.text = nil
-        cell.textPill.text = nil
         cell.avatarImageView.imageView.setImage(with: result.imageUrl, placeholderImage: PlaceholderImg.medium)
-        cell.accessoryView = nil
 
         if series.scoreType == .fastest3laps {
             if let time = result.time {
@@ -328,8 +337,19 @@ extension SeriesStandingsViewController: UITableViewDataSource {
             if let time = result.time {
                 cell.subtitleLabel.text = "\(TimeUtil.lapTimeFormat(seconds: time))"
             }
+
+            if selectedFilter == .chapters {
+                cell.titleLabel.numberOfLines = 2
+            }
         } else {
-            cell.subtitleLabel.text = "Elo: \(result.eloScore)"
+            var info = [String]()
+            if result.eloScore > 0 {
+                info += ["Elo: \(result.eloScore)"]
+            }
+            if result.raceCount > 0 {
+                info += ["Races: \(result.raceCount)"]
+            }
+            cell.subtitleLabel.text = info.joined(separator: " | ")
 
             let unit = (result.score == "1") ? "pt" : "pts"
             cell.textPill.text = "\(result.score) \(unit)"
@@ -337,7 +357,11 @@ extension SeriesStandingsViewController: UITableViewDataSource {
         }
 
         if showsSegmentedControl && selectedFilter == .chapters {
-            cell.subtitleLabel.text = "Races: \(result.raceCount)"
+            if result.raceCount > 0 {
+                cell.subtitleLabel.text = "Races: \(result.raceCount)"
+            } else if let best = result.bestResults, best.count > 0 {
+                cell.subtitleLabel.text = "Best: [\(best.map { String(format: "%g", $0) }.joined(separator: ", "))]"
+            }
         }
 
         if let pilotId = result.pilotId, let userId = myUserId, pilotId == userId {

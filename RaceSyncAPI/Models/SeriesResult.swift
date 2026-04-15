@@ -20,8 +20,9 @@ public class SeriesResult: Mappable, Descriptable {
     public var displayName: String = ""
     public var country: String = ""
     public var score: String = ""
-    public var eloScore: String = ""
-    public var bestScores: [String]? = nil
+    public var eloScore: Int32 = 0
+    public var bestPilots: [String]? = nil
+    public var bestResults: [Double]? = nil
     public var time: String? = nil
     public var imageUrl: String? = nil
     public var raceCount: Int = 0
@@ -78,12 +79,10 @@ public class SeriesResult: Mappable, Descriptable {
             }
         }
 
-        if let value = map.JSON[ParamKey.eloScore] {
-            eloScore = String(describing: value)
-        }
-
-        bestScores = map.JSON[ParamKey.bestRaces] as? [String]
-
+        eloScore <- (map[ParamKey.eloScore], IntegerTransform())
+        bestPilots = map.JSON[ParamKey.bestPilots] as? [String]
+        bestResults <- (map[ParamKey.bestResults], MapperUtil.doubleArrayTransform)
+        
         // Image / profile picture
         imageUrl <- (map[ParamKey.profilePictureUrl], MapperUtil.stringTransform)
         if imageUrl == nil {
