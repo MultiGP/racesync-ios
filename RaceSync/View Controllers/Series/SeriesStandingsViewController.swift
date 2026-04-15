@@ -73,11 +73,7 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
     fileprivate var showsSegmentedControl: Bool {
         get {
             guard let pilotResults = series.pilotResults, let chapterResults = series.chapterResults else { return false }
-
-            if pilotResults.count > 0 && chapterResults.count > 0 {
-                return (series.scoreType == .collegiate || series.scoreType == .regionals)
-            }
-            return false
+            return (pilotResults.count > 0 && chapterResults.count > 0)
         }
     }
 
