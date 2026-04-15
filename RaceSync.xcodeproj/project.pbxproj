@@ -48,6 +48,8 @@
 		4F1DC112297E42BA005EDAE0 /* BooleanTransform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1DC111297E42BA005EDAE0 /* BooleanTransform.swift */; };
 		4F1E150524107BCE0082C486 /* URL+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1E150424107BCE0082C486 /* URL+Extensions.swift */; };
 		4F21086B2F90142B007C7716 /* SeriesResultViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F21086A2F90142B007C7716 /* SeriesResultViewModel.swift */; };
+		4F21086E2F9041C9007C7716 /* AppIcon-SDC@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F21086D2F9041C9007C7716 /* AppIcon-SDC@3x.png */; };
+		4F21086F2F9041C9007C7716 /* AppIcon-SDC@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F21086C2F9041C9007C7716 /* AppIcon-SDC@2x.png */; };
 		4F2724362515D88A000C7408 /* Chapter+UIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2724352515D88A000C7408 /* Chapter+UIExtensions.swift */; };
 		4F27243B2517DB1C000C7408 /* CopyLinkActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F27243A2517DB1C000C7408 /* CopyLinkActivity.swift */; };
 		4F2724402517DC5B000C7408 /* UIActivityViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F27243F2517DC5B000C7408 /* UIActivityViewController+Extensions.swift */; };
@@ -372,6 +374,8 @@
 		4F1DC111297E42BA005EDAE0 /* BooleanTransform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooleanTransform.swift; sourceTree = "<group>"; };
 		4F1E150424107BCE0082C486 /* URL+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Extensions.swift"; sourceTree = "<group>"; };
 		4F21086A2F90142B007C7716 /* SeriesResultViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesResultViewModel.swift; sourceTree = "<group>"; };
+		4F21086C2F9041C9007C7716 /* AppIcon-SDC@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-SDC@2x.png"; sourceTree = "<group>"; };
+		4F21086D2F9041C9007C7716 /* AppIcon-SDC@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-SDC@3x.png"; sourceTree = "<group>"; };
 		4F2724352515D88A000C7408 /* Chapter+UIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Chapter+UIExtensions.swift"; sourceTree = "<group>"; };
 		4F27243A2517DB1C000C7408 /* CopyLinkActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyLinkActivity.swift; sourceTree = "<group>"; };
 		4F27243F2517DC5B000C7408 /* UIActivityViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIActivityViewController+Extensions.swift"; sourceTree = "<group>"; };
@@ -837,6 +841,8 @@
 				4FA213F22947A7C600C8E45A /* AppIcon-CFPV@3x.png */,
 				4FA213F52947AB5900C8E45A /* AppIcon-FMR@2x.png */,
 				4FA213F62947AB5900C8E45A /* AppIcon-FMR@3x.png */,
+				4F21086C2F9041C9007C7716 /* AppIcon-SDC@2x.png */,
+				4F21086D2F9041C9007C7716 /* AppIcon-SDC@3x.png */,
 			);
 			path = AppIcons;
 			sourceTree = "<group>";
@@ -1397,6 +1403,8 @@
 				4FB06AB4296B521000F14E59 /* AppIcon-MGP2@2x.png in Resources */,
 				4F80A65E296F9951008B19AF /* rich_editor_normalize.css in Resources */,
 				4FA213E82946ADD400C8E45A /* AppIcon-OTTFPV@3x.png in Resources */,
+				4F21086E2F9041C9007C7716 /* AppIcon-SDC@3x.png in Resources */,
+				4F21086F2F9041C9007C7716 /* AppIcon-SDC@2x.png in Resources */,
 				4FA213F82947AB5900C8E45A /* AppIcon-FMR@3x.png in Resources */,
 				4F80A65A296F9951008B19AF /* rich_editor.js in Resources */,
 				4F80A65D296F9951008B19AF /* rich_editor_style.css in Resources */,

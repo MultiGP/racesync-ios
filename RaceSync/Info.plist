@@ -59,6 +59,13 @@
 					<string>AppIcon-S3</string>
 				</array>
 			</dict>
+			<key>SDC</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>AppIcon-SDC</string>
+				</array>
+			</dict>
 		</dict>
 	</dict>
 	<key>CFBundleIdentifier</key>
