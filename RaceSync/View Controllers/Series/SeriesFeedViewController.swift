@@ -145,6 +145,8 @@ class SeriesFeedViewController: UIViewController, Shimmable {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
+        hideNavigationShadow()
+
         if feedCount() == 0 {
             isLoadingList(true)
         }
@@ -152,8 +154,6 @@ class SeriesFeedViewController: UIViewController, Shimmable {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
-        hideNavigationShadow()
 
         // reload whenever we transition back
         if feedCount() == 0 || animated {
@@ -163,6 +163,8 @@ class SeriesFeedViewController: UIViewController, Shimmable {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+
+        hideNavigationShadow(false)
     }
 
     // MARK: - Layout

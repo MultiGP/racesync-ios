@@ -108,8 +108,6 @@ class HomeTabBarController: UITabBarController {
     fileprivate let userApi = UserApi()
     fileprivate let chapterApi = ChapterApi()
 
-    fileprivate let hidesNavigationShadowAtRoot: Bool = true
-
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
         static let buttonSpacing: CGFloat = 12
@@ -127,24 +125,19 @@ class HomeTabBarController: UITabBarController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
+        hideNavigationShadow()
         loadContent()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
-        if hidesNavigationShadowAtRoot {
-            hideNavigationShadow()
-        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
         if let nc = navigationController, nc.viewControllers.count == 2 {
-            if hidesNavigationShadowAtRoot {
-                hideNavigationShadow(false)
-            }
+            hideNavigationShadow(false)
         }
     }
 
@@ -322,10 +315,8 @@ extension HomeTabBarController: UITabBarControllerDelegate {
 
         (tabBar as? RoundedSelectionTabBar)?.updateSelectionFrame(animated: true)
 
-        if hidesNavigationShadowAtRoot, let vcs = viewControllers, vcs.contains(viewController) {
+        if let vcs = viewControllers, vcs.contains(viewController) {
             hideNavigationShadow()
-        } else {
-            hideNavigationShadow(false)
         }
 
         if controller.selectedViewController == viewController {
