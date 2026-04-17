@@ -215,8 +215,6 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-
-        hideNavigationShadow(false)
     }
 
     // MARK: - Initialization

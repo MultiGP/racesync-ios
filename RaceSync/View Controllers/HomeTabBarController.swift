@@ -125,12 +125,13 @@ class HomeTabBarController: UITabBarController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        hideNavigationShadow()
         loadContent()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
+        hideNavigationShadow()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -317,6 +318,8 @@ extension HomeTabBarController: UITabBarControllerDelegate {
 
         if let vcs = viewControllers, vcs.contains(viewController) {
             hideNavigationShadow()
+        } else {
+            hideNavigationShadow(false)
         }
 
         if controller.selectedViewController == viewController {

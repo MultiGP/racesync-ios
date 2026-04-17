@@ -163,8 +163,6 @@ class SeriesFeedViewController: UIViewController, Shimmable {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-
-        hideNavigationShadow(false)
     }
 
     // MARK: - Layout
