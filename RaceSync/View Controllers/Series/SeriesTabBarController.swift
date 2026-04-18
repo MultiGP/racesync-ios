@@ -65,6 +65,13 @@ class SeriesTabBarController: UITabBarController {
         self.title = "Details"
     }
 
+    init(with series: Series) {
+        self.seriesId = series.id
+        self.series = series
+        super.init(nibName: nil, bundle: nil)
+        self.title = "Details"
+    }
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -75,7 +82,10 @@ class SeriesTabBarController: UITabBarController {
         super.viewDidLoad()
 
         setupLayout()
-        loadSeries()
+
+        if series == nil {
+            loadSeries()
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -97,9 +107,8 @@ class SeriesTabBarController: UITabBarController {
         tabBar.isHidden = true // hiding temporarily, while the view loads
         delegate = self
 
-        view.addSubview(activityIndicatorView)
-        activityIndicatorView.snp.makeConstraints {
-            $0.centerX.centerY.equalToSuperview()
+        if series != nil {
+            configureViewControllers()
         }
     }
 
@@ -131,11 +140,19 @@ class SeriesTabBarController: UITabBarController {
     // MARK: - Data Update
 
     fileprivate func loadSeries() {
-        setLoading(true)
+
+        view.addSubview(activityIndicatorView)
+        activityIndicatorView.snp.makeConstraints {
+            $0.centerX.centerY.equalToSuperview()
+        }
+
+        activityIndicatorView.isLoading = true
 
         seriesApi.view(series: seriesId) { [weak self] series, error in
             guard let self = self else { return }
-            self.setLoading(false)
+            self.activityIndicatorView.isLoading = false
+            self.activityIndicatorView.removeFromSuperview()
+
             self.series = series
 
             if let error = error {
@@ -144,10 +161,6 @@ class SeriesTabBarController: UITabBarController {
                 self.configureViewControllers()
             }
         }
-    }
-
-    fileprivate func setLoading(_ loading: Bool) {
-        activityIndicatorView.isLoading = loading
     }
 
     // MARK: - Actions

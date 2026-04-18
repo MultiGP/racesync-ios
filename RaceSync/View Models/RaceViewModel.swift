@@ -30,6 +30,7 @@ class RaceViewModel: Descriptable {
     let participantCount: Int
     let feeLabel: String
     let chapterLabel: String
+    let seriesLabel: String
     let ownerLabel: String
     let seasonLabel: String
     let imageUrl: String?
@@ -53,6 +54,7 @@ class RaceViewModel: Descriptable {
         self.distance = Self.distance(for: race)
         self.participantCount = Int(race.participantCount) ?? 0
         self.chapterLabel = race.chapterName
+        self.seriesLabel = race.seriesName
         self.ownerLabel = race.ownerUserName
         self.seasonLabel = race.seasonName
         self.imageUrl = Self.imageUrl(for: race)

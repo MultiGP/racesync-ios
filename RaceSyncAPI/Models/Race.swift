@@ -65,6 +65,8 @@ public class Race: Mappable, Descriptable {
     public var seasonName: String = ""
     public var courseId: ObjectId?
     public var courseName: String = ""
+    public var seriesId: ObjectId?
+    public var seriesName: String = ""
 
     public var typeRestriction: String = ""
     public var sizeRestriction: String = ""
@@ -159,6 +161,8 @@ public class Race: Mappable, Descriptable {
         seasonName <- (map[ParamKey.seasonName], MapperUtil.stringTransform)
         courseId <- map[ParamKey.courseId]
         courseName <- (map[ParamKey.courseName], MapperUtil.stringTransform)
+        seriesId <- map[ParamKey.seriesId]
+        seriesName <- (map[ParamKey.seriesName], MapperUtil.stringTransform)
 
         typeRestriction <- map[ParamKey.typeRestriction]
         sizeRestriction <- map[ParamKey.sizeRestriction]

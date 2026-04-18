@@ -269,6 +269,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     fileprivate var raceViewModel: RaceViewModel
     fileprivate var chapterApi = ChapterApi()
     fileprivate var userApi = UserApi()
+    fileprivate var seriesApi = SeriesApi()
 
     fileprivate var htmlViewHeightConstraint: Constraint?
 //    fileprivate let ignoreFinalizingError: Bool = true // The API finalize(id) still returns 500 error. Reported https://github.com/MultiGP/multigp-com/issues/93
@@ -438,6 +439,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         tableViewRows = [
             !race.ownerUserName.isEmpty && !race.ownerId.isEmpty ? Row.owner : nil,
             raceViewModel.chapterLabel.isEmpty ? nil : Row.chapter,
+            raceViewModel.seriesLabel.isEmpty ? nil : Row.series,
             raceViewModel.seasonLabel.isEmpty ? nil : Row.season,
             race.isZippyQEnabled ? Row.zippyQ : nil,
             raceViewModel.subtitleLabel.string.isEmpty ? nil : Row.class,
@@ -614,7 +616,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
                 let vc = UserViewController(with: user)
                 self?.navigationController?.pushViewController(vc, animated: true)
             } else if let _ = error {
-                // handle error
+                // TODO: Handle error
             }
             self?.setLoading(cell, loading: false)
         }
@@ -632,7 +634,37 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
                 let vc = RaceListViewController(sortedViewModels, raceClass: raceClass)
                 self?.navigationController?.pushViewController(vc, animated: true)
             } else if let _ = error {
-                // handle error
+                // TODO: Handle error
+            }
+            self?.setLoading(cell, loading: false)
+        }
+    }
+
+    func showChapterProfile(_ cell: FormTableViewCell) {
+        guard canInteract(with: cell) else { return }
+        setLoading(cell, loading: true)
+
+        chapterApi.getChapter(with: race.chapterId) { [weak self] (chapter, error) in
+            if let chapter = chapter {
+                let vc = ChapterViewController(with: chapter)
+                self?.navigationController?.pushViewController(vc, animated: true)
+            } else if let _ = error {
+                // TODO: Handle error
+            }
+            self?.setLoading(cell, loading: false)
+        }
+    }
+
+    func showSeriesDetail(_ cell: FormTableViewCell) {
+        guard canInteract(with: cell), let seriesId = race.seriesId else { return }
+        setLoading(cell, loading: true)
+
+        seriesApi.view(series: seriesId) { [weak self] (series, error) in
+            if let series = series {
+                let vc = SeriesTabBarController(with: series)
+                self?.navigationController?.pushViewController(vc, animated: true)
+            } else if let _ = error {
+                // TODO: Handle error
             }
             self?.setLoading(cell, loading: false)
         }
@@ -649,22 +681,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
                 vc.title = self?.race.seasonName
                 self?.navigationController?.pushViewController(vc, animated: true)
             } else if let _ = error {
-                // handle error
-            }
-            self?.setLoading(cell, loading: false)
-        }
-    }
-
-    func showChapterProfile(_ cell: FormTableViewCell) {
-        guard canInteract(with: cell) else { return }
-        setLoading(cell, loading: true)
-
-        chapterApi.getChapter(with: race.chapterId) { [weak self] (chapter, error) in
-            if let chapter = chapter {
-                let vc = ChapterViewController(with: chapter)
-                self?.navigationController?.pushViewController(vc, animated: true)
-            } else if let _ = error {
-                // handle error
+                // TODO: Handle error
             }
             self?.setLoading(cell, loading: false)
         }
@@ -767,6 +784,8 @@ extension RaceDetailViewController: UITableViewDelegate {
             showUserProfile(cell)
         } else if row == .chapter {
             showChapterProfile(cell)
+        } else if row == .series {
+            showSeriesDetail(cell)
         } else if row == .season {
             showSeasonRaces(cell)
         } else if row == .zippyQ {
@@ -806,7 +825,9 @@ extension RaceDetailViewController: UITableViewDataSource {
         if row == .chapter {
             cell.detailTextLabel?.text = raceViewModel.chapterLabel
         } else if row == .owner {
-            cell.detailTextLabel?.text = race.ownerUserName
+            cell.detailTextLabel?.text = raceViewModel.ownerLabel
+        } else if row == .series {
+            cell.detailTextLabel?.text = raceViewModel.seriesLabel
         } else if row == .season {
             cell.detailTextLabel?.text = raceViewModel.seasonLabel
         } else if row == .zippyQ {
@@ -874,12 +895,13 @@ extension RaceDetailViewController: MKMapViewDelegate {
 }
 
 fileprivate enum Row: Int, EnumTitle, CaseIterable {
-    case chapter, owner, season, zippyQ, `class`, results
+    case chapter, owner, series, season, zippyQ, `class`, results
 
     var title: String {
         switch self {
         case .chapter:          return "Chapter"
         case .owner:            return "Coordinator"
+        case .series:           return "Series"
         case .season:           return "Season"
         case .zippyQ:           return "ZippyQ"
         case .class:            return "Class"
