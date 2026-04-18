@@ -177,6 +177,8 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
+        hideNavigationShadow()
+
         if feedCount() == 0 {
             isLoadingList(true)
         }

@@ -162,7 +162,6 @@ public enum ParamKey {
     static let fastest3Laps = "fastest3Laps"
     static let fastest2Laps = "fastest2Laps"
     static let fastestLap = "fastestLap"
-    static let bestRaces = "bestRaces"
     static let cycleCount = "cycleCount"
     static let maxZippyqDepth = "maxZippyqDepth"
     static let zippyqIterator = "zippyqIterator"
@@ -205,6 +204,8 @@ public enum ParamKey {
     static let pilotCount = "pilotCount"
     static let chapterApprovedCount = "chapterApprovedCount"
     static let raceApprovedCount = "raceApprovedCount"
+    static let bestPilots = "bestPilots"
+    static let bestResults = "bestResults"
 
     // Geo-location
     static let address = "address"

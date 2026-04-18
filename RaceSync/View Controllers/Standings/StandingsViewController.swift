@@ -196,6 +196,8 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
+        hideNavigationShadow()
+
         if !standingsController.didFetchStandings(for: season) {
             isLoadingList(true)
         } else {
@@ -206,8 +208,6 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        hideNavigationShadow()
-
         if !standingsController.didFetchStandings(for: season) {
             loadContent()
         }
@@ -215,8 +215,6 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-
-        hideNavigationShadow(false)
     }
 
     // MARK: - Initialization

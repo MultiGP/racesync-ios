@@ -19,14 +19,18 @@ public class SeriesResult: Mappable, Descriptable {
     public var type: SeriesResultType = .pilot
     public var displayName: String = ""
     public var country: String = ""
-    public var score: String = ""
-    public var eloScore: String = ""
-    public var bestScores: [String]? = nil
+    public var score: Double = 0
+    public var eloScore: Int32 = 0
+    public var bestPilots: [String]? = nil
+    public var bestResults: [Double]? = nil
     public var time: String? = nil
     public var imageUrl: String? = nil
-
+    public var raceCount: Int = 0
     public var pilotId: String? = nil
     public var chapterId: String? = nil
+
+    public var mainImageUrl: String? //profilePictureUrl
+    public var profileImageUrl: String? //mainImageFileName
 
     // MARK: - Init
     public required init?(map: Map) {
@@ -41,6 +45,7 @@ public class SeriesResult: Mappable, Descriptable {
         // Pilot or chapter id
         pilotId   <- map[ParamKey.pilotId]
         chapterId <- map[ParamKey.chapterId]
+        raceCount <- map[ParamKey.raceCount]
 
         // Determine type from what exists
         if pilotId != nil { type = .pilot }
@@ -63,23 +68,22 @@ public class SeriesResult: Mappable, Descriptable {
         // Country (only present for pilots usually)
         country <- map[ParamKey.country]
 
-        if let value = map.JSON[ParamKey.score] {
-            score = String(describing: value)
+        if let value = map.JSON[ParamKey.score], let number = Double(String(describing: value)) {
+            score = number
         }
+
         if let value = map.JSON[ParamKey.fastest3Laps] {
-            time = String(describing: value)
+            let str = String(describing: value)
+            if let number = Double(str), number < 600 { // no drone flies more than 10 mins
+                time = String(describing: value)
+            }
         }
 
-        bestScores = map.JSON[ParamKey.bestRaces] as? [String]
-
-        if let value = map.JSON[ParamKey.eloScore] {
-            eloScore = String(describing: value)
-        }
+        eloScore <- (map[ParamKey.eloScore], IntegerTransform())
+        bestPilots = map.JSON[ParamKey.bestPilots] as? [String]
+        bestResults <- (map[ParamKey.bestResults], MapperUtil.doubleArrayTransform)
         
-        // Image / profile picture
-        imageUrl <- (map[ParamKey.profilePictureUrl], MapperUtil.stringTransform)
-        if imageUrl == nil {
-            imageUrl <- (map[ParamKey.mainImageFileName], MapperUtil.stringTransform)
-        }
+        mainImageUrl <- (map[ParamKey.mainImageFileName], MapperUtil.stringTransform)
+        profileImageUrl <- (map[ParamKey.profilePictureUrl], MapperUtil.stringTransform)
     }
 }

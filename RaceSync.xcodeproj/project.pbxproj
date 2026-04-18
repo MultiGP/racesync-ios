@@ -47,6 +47,9 @@
 		4F1571AE24D8D74F004A7CEE /* ProfileBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1571AD24D8D74F004A7CEE /* ProfileBackgroundView.swift */; };
 		4F1DC112297E42BA005EDAE0 /* BooleanTransform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1DC111297E42BA005EDAE0 /* BooleanTransform.swift */; };
 		4F1E150524107BCE0082C486 /* URL+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1E150424107BCE0082C486 /* URL+Extensions.swift */; };
+		4F21086B2F90142B007C7716 /* SeriesResultViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F21086A2F90142B007C7716 /* SeriesResultViewModel.swift */; };
+		4F21086E2F9041C9007C7716 /* AppIcon-SDC@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F21086D2F9041C9007C7716 /* AppIcon-SDC@3x.png */; };
+		4F21086F2F9041C9007C7716 /* AppIcon-SDC@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F21086C2F9041C9007C7716 /* AppIcon-SDC@2x.png */; };
 		4F2724362515D88A000C7408 /* Chapter+UIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2724352515D88A000C7408 /* Chapter+UIExtensions.swift */; };
 		4F27243B2517DB1C000C7408 /* CopyLinkActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F27243A2517DB1C000C7408 /* CopyLinkActivity.swift */; };
 		4F2724402517DC5B000C7408 /* UIActivityViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F27243F2517DC5B000C7408 /* UIActivityViewController+Extensions.swift */; };
@@ -370,6 +373,9 @@
 		4F1571AD24D8D74F004A7CEE /* ProfileBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileBackgroundView.swift; sourceTree = "<group>"; };
 		4F1DC111297E42BA005EDAE0 /* BooleanTransform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooleanTransform.swift; sourceTree = "<group>"; };
 		4F1E150424107BCE0082C486 /* URL+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Extensions.swift"; sourceTree = "<group>"; };
+		4F21086A2F90142B007C7716 /* SeriesResultViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesResultViewModel.swift; sourceTree = "<group>"; };
+		4F21086C2F9041C9007C7716 /* AppIcon-SDC@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-SDC@2x.png"; sourceTree = "<group>"; };
+		4F21086D2F9041C9007C7716 /* AppIcon-SDC@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-SDC@3x.png"; sourceTree = "<group>"; };
 		4F2724352515D88A000C7408 /* Chapter+UIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Chapter+UIExtensions.swift"; sourceTree = "<group>"; };
 		4F27243A2517DB1C000C7408 /* CopyLinkActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyLinkActivity.swift; sourceTree = "<group>"; };
 		4F27243F2517DC5B000C7408 /* UIActivityViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIActivityViewController+Extensions.swift"; sourceTree = "<group>"; };
@@ -835,6 +841,8 @@
 				4FA213F22947A7C600C8E45A /* AppIcon-CFPV@3x.png */,
 				4FA213F52947AB5900C8E45A /* AppIcon-FMR@2x.png */,
 				4FA213F62947AB5900C8E45A /* AppIcon-FMR@3x.png */,
+				4F21086C2F9041C9007C7716 /* AppIcon-SDC@2x.png */,
+				4F21086D2F9041C9007C7716 /* AppIcon-SDC@3x.png */,
 			);
 			path = AppIcons;
 			sourceTree = "<group>";
@@ -983,11 +991,12 @@
 			isa = PBXGroup;
 			children = (
 				4F8F2C102384903F00DC4907 /* RaceViewModel.swift */,
-				4F2B7E882E8635D200643697 /* SeriesViewModel.swift */,
 				4F86690123876E71005E310A /* ChapterViewModel.swift */,
 				4F0B61462385F69E00930D91 /* ProfileViewModel.swift */,
 				4FD53FAC23A0B01E00158206 /* UserViewModel.swift */,
 				4F6A28E62D15046900FF692D /* ResultEntryViewModel.swift */,
+				4F2B7E882E8635D200643697 /* SeriesViewModel.swift */,
+				4F21086A2F90142B007C7716 /* SeriesResultViewModel.swift */,
 				4F9DB7AB23D5A1DE00570483 /* EmptyStateViewModel.swift */,
 				4F0B61422385EEFF00930D91 /* ViewModelHelper.swift */,
 			);
@@ -1394,6 +1403,8 @@
 				4FB06AB4296B521000F14E59 /* AppIcon-MGP2@2x.png in Resources */,
 				4F80A65E296F9951008B19AF /* rich_editor_normalize.css in Resources */,
 				4FA213E82946ADD400C8E45A /* AppIcon-OTTFPV@3x.png in Resources */,
+				4F21086E2F9041C9007C7716 /* AppIcon-SDC@3x.png in Resources */,
+				4F21086F2F9041C9007C7716 /* AppIcon-SDC@2x.png in Resources */,
 				4FA213F82947AB5900C8E45A /* AppIcon-FMR@3x.png in Resources */,
 				4F80A65A296F9951008B19AF /* rich_editor.js in Resources */,
 				4F80A65D296F9951008B19AF /* rich_editor_style.css in Resources */,
@@ -1701,6 +1712,7 @@
 				4FD53FB323A0E9B700158206 /* AvatarImageView.swift in Sources */,
 				4FA1FC8F23D74D29006D4704 /* StringConstants.swift in Sources */,
 				4F8B4A142DDD15B100B735DA /* PushMessageViewModel.swift in Sources */,
+				4F21086B2F90142B007C7716 /* SeriesResultViewModel.swift in Sources */,
 				4FA213F02946C9FA00C8E45A /* AppIcon.swift in Sources */,
 				4F8B4A102DDCEECD00B735DA /* BadgeHub.swift in Sources */,
 				4FD53FAD23A0B01E00158206 /* UserViewModel.swift in Sources */,
@@ -1973,7 +1985,7 @@
 				CODE_SIGN_ENTITLEMENTS = RaceSync/RaceSync.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 100;
+				CURRENT_PROJECT_VERSION = 103;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = TJ4PB66YQS;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
@@ -1984,7 +1996,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.1;
+				MARKETING_VERSION = 2.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.multigp.RaceSyncApp;
 				PRODUCT_NAME = RaceSync;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2010,7 +2022,7 @@
 				CODE_SIGN_ENTITLEMENTS = RaceSync/RaceSync.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 100;
+				CURRENT_PROJECT_VERSION = 103;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = TJ4PB66YQS;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
@@ -2021,7 +2033,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.1;
+				MARKETING_VERSION = 2.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.multigp.RaceSyncApp;
 				PRODUCT_NAME = RaceSync;
 				PROVISIONING_PROFILE_SPECIFIER = "";

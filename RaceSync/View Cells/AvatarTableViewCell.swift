@@ -60,7 +60,7 @@ class AvatarTableViewCell: UITableViewCell {
     fileprivate lazy var textStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
         stackView.axis = .vertical
-        stackView.distribution = .fillEqually
+        stackView.distribution = .fillProportionally
         stackView.alignment = .leading
         stackView.spacing = 5
         return stackView
@@ -155,5 +155,15 @@ class AvatarTableViewCell: UITableViewCell {
             rankLabelWidthConstraint?.activate()
             rankLabelLeadingConstraint?.update(offset: Constants.padding)
         }
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        titleLabel.numberOfLines = 1
+        titleLabel.text = nil
+        subtitleLabel.text = nil
+        textPill.text = nil
+        accessoryView = nil
     }
 }

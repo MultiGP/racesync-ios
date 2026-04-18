@@ -20,7 +20,7 @@ enum SeriesFilter: EnumTitle {
     }
 
     var index: Int {
-        SeriesFilter.allCases.firstIndex(of: self)!
+        Self.allCases.firstIndex(of: self)!
     }
 
     static let `default`: Self = .regionals

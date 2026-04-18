@@ -32,4 +32,9 @@ public class MapperUtil {
         },
         toJSON: { _ in nil }
     )
+
+    public static let doubleArrayTransform = TransformOf<[Double], [Any]>(
+        fromJSON: { $0?.compactMap { Double(String(describing: $0)) } ?? [] },
+        toJSON: { $0 }
+    )
 }
