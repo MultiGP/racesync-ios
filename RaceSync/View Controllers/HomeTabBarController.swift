@@ -11,14 +11,15 @@ import SnapKit
 import RaceSyncAPI
 
 enum HomeTabs: Int {
-    case races, series, standings
-
+    case races, series, standings, events
     static let `default`: Self = .series
 }
 
 class HomeTabBarController: UITabBarController {
 
     // MARK: - Private Variables
+    
+    fileprivate let isEventsTabEnable: Bool = false
 
     fileprivate lazy var raceFeedVC: RaceFeedViewController = {
         let settings = APIServices.shared.settings
@@ -30,13 +31,17 @@ class HomeTabBarController: UITabBarController {
     fileprivate lazy var seriesVC: SeriesFeedViewController = {
         return SeriesFeedViewController()
     }()
-
+    
     fileprivate lazy var standingsVC: StandingsViewController = {
         let vc = StandingsViewController(with: .y2026)
         vc.title = "Standings"
         vc.tabBarItem = UITabBarItem(title: vc.title, image: SystemImg.trophy, selectedImage: SystemImg.trophyFill)
         vc.isRootTabBar = true
         return vc
+    }()
+    
+    fileprivate lazy var eventsVC: EventsViewController = {
+        return EventsViewController()
     }()
 
     fileprivate lazy var titleView: UIView = {
@@ -214,7 +219,12 @@ class HomeTabBarController: UITabBarController {
     // MARK: - Data Update
 
     fileprivate func loadContent() {
-        let vcs: [UIViewController] = [raceFeedVC, seriesVC, standingsVC]
+        var vcs = [UIViewController]()
+        vcs += [raceFeedVC]
+        vcs += [seriesVC]
+        vcs += [standingsVC]
+        if isEventsTabEnable { vcs += [eventsVC] }
+
         let tab = AppPrefs.lastSelectedHomeTab
 
         configureTabBarController(with: vcs, selectedIndex: tab.rawValue)

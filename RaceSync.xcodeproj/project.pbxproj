@@ -207,6 +207,7 @@
 		4FA26833237A5983008970AC /* ObjectMapper+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA26832237A5983008970AC /* ObjectMapper+Extensions.swift */; };
 		4FA26835237A80B9008970AC /* ActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA26834237A80B9008970AC /* ActionButton.swift */; };
 		4FA706072EC33873006EAE70 /* RaceSyncAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F13426F2360DA4B00A9DBDE /* RaceSyncAPI.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4FA7FDA22F9E821300D33266 /* EventsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA7FDA12F9E821300D33266 /* EventsViewController.swift */; };
 		4FAAA88523AA15EA00A004DC /* MapKit+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAAA88423AA15EA00A004DC /* MapKit+Extensions.swift */; };
 		4FAAF8242E80FFF5002CF62E /* Series.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAAF8232E80FFF5002CF62E /* Series.swift */; };
 		4FAC24A823DC3E06009AD585 /* UILabel+LinesCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAC24A723DC3E06009AD585 /* UILabel+LinesCount.swift */; };
@@ -536,6 +537,7 @@
 		4FA26830237A58E1008970AC /* ApiError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiError.swift; sourceTree = "<group>"; };
 		4FA26832237A5983008970AC /* ObjectMapper+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ObjectMapper+Extensions.swift"; sourceTree = "<group>"; };
 		4FA26834237A80B9008970AC /* ActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButton.swift; sourceTree = "<group>"; };
+		4FA7FDA12F9E821300D33266 /* EventsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsViewController.swift; sourceTree = "<group>"; };
 		4FAAA88423AA15EA00A004DC /* MapKit+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MapKit+Extensions.swift"; sourceTree = "<group>"; };
 		4FAAF8232E80FFF5002CF62E /* Series.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Series.swift; sourceTree = "<group>"; };
 		4FAC24A723DC3E06009AD585 /* UILabel+LinesCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+LinesCount.swift"; sourceTree = "<group>"; };
@@ -1103,6 +1105,14 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		4FA7FDA02F9E81FC00D33266 /* Events */ = {
+			isa = PBXGroup;
+			children = (
+				4FA7FDA12F9E821300D33266 /* EventsViewController.swift */,
+			);
+			path = Events;
+			sourceTree = "<group>";
+		};
 		4FD4E1D2237F9DEF008816B3 /* Search */ = {
 			isa = PBXGroup;
 			children = (
@@ -1142,6 +1152,7 @@
 				4FE1DADC2DEB6F6D009143C4 /* HomeTabBarController.swift */,
 				4FD4E1D3237F9DF8008816B3 /* Races */,
 				4F521F802E6E18BD00AE7C03 /* Series */,
+				4FA7FDA02F9E81FC00D33266 /* Events */,
 				4FE1DAD92DEB6AE4009143C4 /* Standings */,
 				4F5C1E41238CF68F00D756EB /* Profiles */,
 				4F714DE423CD769F000C4036 /* Map */,
@@ -1451,9 +1462,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-RaceSync/Pods-RaceSync-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-RaceSync/Pods-RaceSync-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1522,9 +1537,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-RaceSyncAPITests/Pods-RaceSyncAPITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-RaceSyncAPITests/Pods-RaceSyncAPITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1565,6 +1584,7 @@
 				4F5488962D2146C80056EA59 /* RaceScheduleViewController.swift in Sources */,
 				4F8668F423860900005E310A /* UniversalConstants.swift in Sources */,
 				4F536ED72F8C5869006FF620 /* SimpleTableViewCell+Configuration.swift in Sources */,
+				4FA7FDA22F9E821300D33266 /* EventsViewController.swift in Sources */,
 				4FF16CC02E70EC9300B4FC51 /* ViewJoinableRegistry.swift in Sources */,
 				4F791C9823A6105700F15FD7 /* TextPill.swift in Sources */,
 				4F8B4A162DDD250D00B735DA /* MessageViewCell.swift in Sources */,
