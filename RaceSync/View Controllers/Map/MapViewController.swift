@@ -47,7 +47,7 @@ class MapViewController: UIViewController {
     }()
 
     fileprivate lazy var navigationBarButtonItem: UIBarButtonItem = {
-        return UIBarButtonItem(image: ButtonImg.directions, style: .done, target: self, action: #selector(didPressDirectionsButton))
+        return UIBarButtonItem(image: ButtonImg.directions, style: .plain, target: self, action: #selector(didPressDirectionsButton))
     }()
 
     fileprivate enum Constants {
@@ -90,7 +90,7 @@ class MapViewController: UIViewController {
     // MARK: - Layout
 
     fileprivate func setupLayout() {
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .plain, target: self, action: #selector(didPressCloseButton))
         if showsDirection {
             navigationItem.rightBarButtonItem = navigationBarButtonItem
         }

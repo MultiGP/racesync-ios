@@ -109,7 +109,7 @@ class RaceFeedMenuViewController: UIViewController {
 
         // Adds a close button in case of being presented modally
         if navigationController?.viewControllers.count == 1 {
-            navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
+            navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .plain, target: self, action: #selector(didPressCloseButton))
         }
 
         view.addSubview(tableView)

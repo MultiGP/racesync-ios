@@ -33,7 +33,7 @@ class RaceTabBarController: UITabBarController {
     var isDismissable: Bool = false {
         didSet {
             if isDismissable {
-                navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
+                navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .plain, target: self, action: #selector(didPressCloseButton))
                 navigationItem.backBarButtonItem = nil
             } else {
                 navigationItem.leftBarButtonItem = nil

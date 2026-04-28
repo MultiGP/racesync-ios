@@ -134,7 +134,7 @@ class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightStackView)
 
         if navigationController?.viewControllers.count == 1 {
-            navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
+            navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .plain, target: self, action: #selector(didPressCloseButton))
         }
     }
 

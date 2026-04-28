@@ -88,7 +88,7 @@ class SettingsViewController: UIViewController {
         title = "Settings"
         tabBarItem = UITabBarItem(title: title, image: SystemImg.gearshape, selectedImage: SystemImg.gearshapeFill)
 
-        let leftBtnItem = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
+        let leftBtnItem = UIBarButtonItem(image: ButtonImg.close, style: .plain, target: self, action: #selector(didPressCloseButton))
         navigationItem.leftBarButtonItem = leftBtnItem
     }
 

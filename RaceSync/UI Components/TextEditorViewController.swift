@@ -101,7 +101,7 @@ class TextEditorViewController: UIViewController {
         view.backgroundColor = Color.white
 
         let rightBarButtonTitle = "Save"
-        let rightBarButtonItem = UIBarButtonItem(title: rightBarButtonTitle, style: .done, target: self, action: #selector(didPressSaveButton))
+        let rightBarButtonItem = UIBarButtonItem(title: rightBarButtonTitle, style: .plain, target: self, action: #selector(didPressSaveButton))
         rightBarButtonItem.isEnabled = canSaveChanges()
         navigationItem.rightBarButtonItem = rightBarButtonItem
 

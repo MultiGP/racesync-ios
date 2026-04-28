@@ -30,13 +30,13 @@ class SeriesPickerViewController: UIViewController {
     // MARK: - Private Variables
 
     fileprivate lazy var rightBarButtonItem: UIBarButtonItem = {
-        let item = UIBarButtonItem(title: "Join", style: .done, target: self, action: #selector(didPressJoinButton))
+        let item = UIBarButtonItem(title: "Join", style: .plain, target: self, action: #selector(didPressJoinButton))
         item.isEnabled = false
         return item
     }()
 
     fileprivate lazy var leftBarButtonItem: UIBarButtonItem = {
-        let item = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
+        let item = UIBarButtonItem(image: ButtonImg.close, style: .plain, target: self, action: #selector(didPressCloseButton))
         item.isEnabled = true
         return item
     }()

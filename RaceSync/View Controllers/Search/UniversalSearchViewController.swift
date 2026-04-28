@@ -184,7 +184,7 @@ class UniversalSearchViewController: UIViewController, Shimmable {
     fileprivate func configureNavigationItems() {
         title = "Universal Search"
 
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .plain, target: self, action: #selector(didPressCloseButton))
     }
 
     // MARK: - Data
