@@ -37,6 +37,12 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
         tableView.refreshControl = self.refreshControl
         tableView.tableFooterView = UIView()
         tableView.backgroundColor = Color.gray50
+        
+        let longPress = UILongPressGestureRecognizer(target: self,action: #selector(didLongPress(_:)))
+        longPress.minimumPressDuration = 0.3
+        longPress.delaysTouchesBegan = true
+        tableView.addGestureRecognizer(longPress)
+        
         return tableView
     }()
 
@@ -171,6 +177,41 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
         guard !cell.isLoading else { return false }
         guard !didTapCell else { return false }
         return true
+    }
+    
+    @objc func didLongPress(_ gesture: UIGestureRecognizer) {
+        let location = gesture.location(in: tableView)
+        guard let indexPath = tableView.indexPathForRow(at: location) else { return }
+
+        guard gesture.state == .began else {
+            tableView.deselectRow(at: indexPath, animated: true)
+            return
+        }
+
+        tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+        guard race.canBeEdited else { return }
+
+        let viewModel = userViewModels[indexPath.row]
+        let deselect = { [weak self] in self?.tableView.deselectRow(at: indexPath, animated: true) }
+
+        ActionSheetUtil.presentDestructiveActionSheet(
+            withTitle: "Remove \(viewModel.username) from this race?",
+            destructiveTitle: "Yes, Remove",
+            completion: { [weak self] _ in
+                guard let self else { return }
+                raceApi.forceResign(race: race.id, pilotId: viewModel.userId) { status, error in
+                    if let error {
+                        AlertUtil.presentAlertMessage(
+                            "Couldn't remove this pilot from the race. Please try again later. \(error.localizedDescription)",
+                            title: "Error", delay: 0.5)
+                    } else {
+                        self.reloadRace()
+                    }
+                    deselect()
+                }
+            },
+            cancel: { _ in deselect() }
+        )
     }
 
     // MARK: - Data Update

@@ -133,9 +133,9 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
         case .noChapterMembers:
             text = "There are no registered members yet."
         case .noProfileRaces:
-            text = "This user hasn't joined any races yet."
+            text = "This pilot hasn't joined any races yet."
         case .noProfileChapters:
-            text = "This user hasn't joined any chapters yet."
+            text = "This pilot hasn't joined any chapters yet."
         case .noMyProfileChapters:
             text = "You haven't joined any chapters yet."
         case .noPushMessages:
