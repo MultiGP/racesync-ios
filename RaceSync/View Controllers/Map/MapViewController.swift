@@ -91,6 +91,7 @@ class MapViewController: UIViewController {
 
     fileprivate func setupLayout() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .plain, target: self, action: #selector(didPressCloseButton))
+        
         if showsDirection {
             navigationItem.rightBarButtonItem = navigationBarButtonItem
         }

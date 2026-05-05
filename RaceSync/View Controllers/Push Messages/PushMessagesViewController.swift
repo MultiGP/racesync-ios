@@ -113,10 +113,14 @@ class PushMessagesViewController: UIViewController {
         let leftBtnItem = UIBarButtonItem(image: ButtonImg.close, style: .plain, target: self, action: #selector(didPressCloseButton))
         navigationItem.leftBarButtonItem = leftBtnItem
 
-        let rightBtnItem = UIBarButtonItem(title: "Clear All", style: .plain, target: self, action: #selector(didPressClearButton))
+        let rightBtnItem = UIBarButtonItem(title: "Clear", style: .plain, target: self, action: #selector(didPressClearButton))
         rightBtnItem.isEnabled = false
-        if #available(iOS 16.0, *) { rightBtnItem.isHidden = true }
         navigationItem.rightBarButtonItem = rightBtnItem
+
+        if #available(iOS 16.0, *) { rightBtnItem.isHidden = true }
+        if #available(iOS 26.0, *) {
+            rightBtnItem.hidesSharedBackground = true
+        }
     }
     
     fileprivate func updateClearButton() {

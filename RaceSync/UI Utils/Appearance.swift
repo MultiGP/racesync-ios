@@ -90,12 +90,20 @@ fileprivate extension Appearance {
         tabBarAppearance.configureWithTransparentBackground()
         tabBarAppearance.backgroundColor = backgroundColor
         tabBarAppearance.shadowColor = Color.gray100
+        
+        // TODO: This isn't working on iOS26 but let's revisit at another time. The idea is to give more separation to each tab.
+        if #available(iOS 18.0, *) {
+            tabBarAppearance.stackedItemPositioning = .centered
+            tabBarAppearance.stackedItemSpacing = 80
+            tabBarAppearance.stackedItemWidth = 40
+        }
+        
         UITabBar.appearance().standardAppearance = tabBarAppearance
 
         if #available(iOS 15.0, *) {
             UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
         }
-
+        
         // set the color and font for the title
         let barAppearance = UITabBar.appearance()
         barAppearance.barTintColor = backgroundColor
@@ -105,6 +113,7 @@ fileprivate extension Appearance {
         barAppearance.backgroundImage = backgroundImage
         barAppearance.isOpaque = false
         barAppearance.isTranslucent = true
+        
     }
 
     static func configureToolBarAppearance() {

@@ -59,6 +59,9 @@ class ChapterPickerViewController: UIViewController, Shimmable {
     fileprivate lazy var rightBarButtonItem: UIBarButtonItem = {
         let item = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(didPressSaveButton))
         item.isEnabled = canSave()
+        if #available(iOS 26.0, *) {
+            item.hidesSharedBackground = true
+        }
         return item
     }()
 

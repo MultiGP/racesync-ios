@@ -165,13 +165,18 @@ class HomeTabBarController: UITabBarController {
         leftStackView.alignment = .leading
         leftStackView.spacing = Constants.padding
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftStackView)
-
+        
         let rightStackView = UIStackView(arrangedSubviews: [chapterProfileButton, userProfileButton])
         rightStackView.axis = .horizontal
         rightStackView.distribution = .fillEqually
         rightStackView.alignment = .trailing
         rightStackView.spacing = Constants.buttonSpacing
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightStackView)
+        
+        if #available(iOS 26.0, *) {
+            navigationItem.leftBarButtonItem?.hidesSharedBackground = true
+            navigationItem.rightBarButtonItem?.hidesSharedBackground = true
+        }
     }
 
     // MARK: - Actions

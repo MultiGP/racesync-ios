@@ -63,6 +63,9 @@ class GalleryViewController: UIViewController {
         let navigationItem = UINavigationItem(title: title ?? "")
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .plain, target: self, action: #selector(didPressCloseButton))
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: ButtonImg.share, style: .plain, target: self, action: #selector(didPressShareButton))
+        if #available(iOS 26.0, *) {
+            navigationItem.rightBarButtonItem?.hidesSharedBackground = true
+        }
 
         if #available(iOS 15.0, *) {
             let navigationBarAppearance = UINavigationBarAppearance()
