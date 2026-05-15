@@ -122,7 +122,7 @@ class RaceScheduleViewController: UIViewController, RaceTabbable {
         title = "Schedule"
         tabBarItem = UITabBarItem(title: title, image: SystemImg.flagCheckered, selectedImage: nil)
 
-        navigationItem.rightBarButtonItem = raceController.navigationItems(for: [.zippyQ, .share])
+        navigationItem.rightBarButtonItems = raceController.navigationItems(for: [.zippyQ, .share])
     }
 
     // MARK: - Data Update

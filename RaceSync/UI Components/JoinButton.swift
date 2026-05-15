@@ -38,9 +38,29 @@ class JoinButton: CustomButton {
         }
     }
 
-    static let minHeight: CGFloat = 32
-    static let minWidth: CGFloat = 76
-    static let cornerRadius: CGFloat = 6
+    static let minHeight: CGFloat = {
+        if #available(iOS 26.0, *) {
+            return 36
+        } else {
+            return 32
+        }
+    }()
+    
+    static let minWidth: CGFloat = {
+        if #available(iOS 26.0, *) {
+            return 80
+        } else {
+            return 76
+        }
+    }()
+    
+    static let cornerRadius: CGFloat = {
+        if #available(iOS 26.0, *) {
+            return minHeight/2
+        } else {
+            return 6
+        }
+    }()
 
     // MARK: - Private Variables
 
@@ -87,6 +107,7 @@ class JoinButton: CustomButton {
         setContentHuggingPriority(.required, for: .horizontal)
         setContentCompressionResistancePriority(.required, for: .horizontal)
 
+        layer.cornerCurve = .continuous
         layer.cornerRadius = Self.cornerRadius
         layer.borderWidth = 0
     }
@@ -158,7 +179,7 @@ class JoinButton: CustomButton {
     override var intrinsicContentSize: CGSize {
         return CGSize(width: Self.minWidth, height: Self.minHeight)
     }
-
+    
     override var isHighlighted: Bool {
         get {
             if !joinState.interactionEnabled {

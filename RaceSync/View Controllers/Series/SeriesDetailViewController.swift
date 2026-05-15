@@ -146,7 +146,7 @@ class SeriesDetailViewController: UIViewController {
         title = "Details"
         tabBarItem = UITabBarItem(title: title, image: SystemImg.calendarCclock, selectedImage: nil)
 
-        navigationItem.rightBarButtonItem = seriesController.navigationItems()
+        navigationItem.rightBarButtonItems = seriesController.navigationItems()
     }
 
     fileprivate func populateContent() {

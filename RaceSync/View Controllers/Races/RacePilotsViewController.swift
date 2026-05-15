@@ -132,7 +132,6 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
     }
 
     fileprivate func configureNavigationItems() {
-        navigationItem.rightBarButtonItem = raceController.navigationItems()
 
         if race.canShowResults {
             title = "Race Results"
@@ -141,6 +140,8 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
             title = "Racing Pilots"
             tabBarItem = UITabBarItem(title: "Pilots", image: SystemImg.person, selectedImage: SystemImg.personFill)
         }
+        
+        navigationItem.rightBarButtonItems = raceController.navigationItems()
     }
 
     // MARK: - Actions

@@ -175,7 +175,7 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
 
         tabBarItem = UITabBarItem(title: title, image: SystemImg.trophy, selectedImage: SystemImg.trophyFill)
 
-        navigationItem.rightBarButtonItem = seriesController.navigationItems()
+        navigationItem.rightBarButtonItems = seriesController.navigationItems()
     }
 
     // MARK: - Data Update

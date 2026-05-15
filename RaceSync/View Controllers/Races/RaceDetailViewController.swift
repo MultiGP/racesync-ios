@@ -432,7 +432,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         title = "Details"
         tabBarItem = UITabBarItem(title: title, image: SystemImg.calendarCclock, selectedImage: nil)
 
-        navigationItem.rightBarButtonItem = raceController.navigationItems()
+        navigationItem.rightBarButtonItems = raceController.navigationItems()
     }
 
     fileprivate func loadRows() {

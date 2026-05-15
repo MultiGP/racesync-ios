@@ -168,7 +168,7 @@ class RacePaymentsViewController: UIViewController, RaceTabbable {
         tabBarItem = UITabBarItem(title: title, image: SystemImg.banknote, selectedImage: SystemImg.banknoteFill)
         tabBarItem.isEnabled = true
 
-        navigationItem.rightBarButtonItem = raceController.navigationItems()
+        navigationItem.rightBarButtonItems = raceController.navigationItems()
     }
 
     // MARK: - Content

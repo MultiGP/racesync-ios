@@ -124,27 +124,21 @@ class ChapterViewController: ProfileViewController, ViewJoinable, RaceEditable {
     }
 
     fileprivate func configureBarButtonItems() {
-
-        var buttons = [UIButton]()
-
+        // Build the action list
+        var actions: [BarButtonAction] = [
+            (ButtonImg.share, #selector(didPressShareButton), 0)
+        ]
         if canCreateRaces {
-            let addButton = CustomButton(type: .system)
-            addButton.addTarget(self, action: #selector(didPressAddButton), for: .touchUpInside)
-            addButton.setImage(ButtonImg.add, for: .normal)
-            buttons += [addButton]
+            actions.append((ButtonImg.add, #selector(didPressAddButton), 0))
         }
 
-        let shareButton = CustomButton(type: .system)
-        shareButton.addTarget(self, action: #selector(didPressShareButton), for: .touchUpInside)
-        shareButton.setImage(ButtonImg.share, for: .normal)
-        buttons += [shareButton]
-
-        let rightStackView = UIStackView(arrangedSubviews: buttons)
-        rightStackView.axis = .horizontal
-        rightStackView.distribution = .fillEqually
-        rightStackView.alignment = .lastBaseline
-        rightStackView.spacing = Constants.buttonSpacing
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightStackView)
+        if #available(iOS 26, *) {
+            navigationItem.rightBarButtonItems = actions.map { action in
+                UIBarButtonItem(image: action.image, style: .plain, target: self, action: action.selector)
+            }.interspersed(with: UIBarButtonItem.spacer())
+        } else {
+            navigationItem.rightBarButtonItem = UIBarButtonItem.stackedBarButtonItem(for: actions)
+        }
 
         if navigationController?.viewControllers.count == 1 {
             navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .plain, target: self, action: #selector(didPressCloseButton))

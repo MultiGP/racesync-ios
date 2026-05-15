@@ -269,6 +269,7 @@
 		4FE1DADF2DEB9EEF009143C4 /* StandingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE1DADE2DEB9EEF009143C4 /* StandingViewModel.swift */; };
 		4FE272362580A36D00EC121B /* SimpleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE272352580A36D00EC121B /* SimpleTableViewCell.swift */; };
 		4FE4C0A22945E0EF00F47F0A /* RaceListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE4C0A12945E0EF00F47F0A /* RaceListViewController.swift */; };
+		4FE91EE12FB670F000460A74 /* UIBarButtonItem+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EE02FB670F000460A74 /* UIBarButtonItem+Extensions.swift */; };
 		4FE96E9224E3E687009A7F53 /* HeaderStretchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE96E9124E3E687009A7F53 /* HeaderStretchable.swift */; };
 		4FEADB7224147D2D00F82F0D /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEADB7124147D2D00F82F0D /* LocationManager.swift */; };
 		4FEADB742416B3D400F82F0D /* EventTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEADB732416B3D400F82F0D /* EventTracker.swift */; };
@@ -600,6 +601,7 @@
 		4FE1DADE2DEB9EEF009143C4 /* StandingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandingViewModel.swift; sourceTree = "<group>"; };
 		4FE272352580A36D00EC121B /* SimpleTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleTableViewCell.swift; sourceTree = "<group>"; };
 		4FE4C0A12945E0EF00F47F0A /* RaceListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceListViewController.swift; sourceTree = "<group>"; };
+		4FE91EE02FB670F000460A74 /* UIBarButtonItem+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem+Extensions.swift"; sourceTree = "<group>"; };
 		4FE96E9124E3E687009A7F53 /* HeaderStretchable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeaderStretchable.swift; sourceTree = "<group>"; };
 		4FEADB7124147D2D00F82F0D /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		4FEADB732416B3D400F82F0D /* EventTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTracker.swift; sourceTree = "<group>"; };
@@ -684,6 +686,7 @@
 				4FAC24A723DC3E06009AD585 /* UILabel+LinesCount.swift */,
 				4FA1AB3C23C94F5F007CF389 /* UIEdgeInsets+Extensions.swift */,
 				4FEBB27523A1F9DA007514B4 /* UITabBarController+Extensions.swift */,
+				4FE91EE02FB670F000460A74 /* UIBarButtonItem+Extensions.swift */,
 				4F791C9923A66BA900F15FD7 /* NSAttributedString+Extensions.swift */,
 				4FAAA88423AA15EA00A004DC /* MapKit+Extensions.swift */,
 				4F9DB7AF23D618D100570483 /* UISegmentedControl+Extensions.swift */,
@@ -1578,6 +1581,7 @@
 				4F03693D26D457DE00E30821 /* AppIconManager.swift in Sources */,
 				4F3D641123FE664A00DE6DF2 /* TextFieldViewController.swift in Sources */,
 				4FC5025A2428710D0088320B /* RaceTabbable.swift in Sources */,
+				4FE91EE12FB670F000460A74 /* UIBarButtonItem+Extensions.swift in Sources */,
 				4F00E072242932D7001DCFC4 /* RateMe.swift in Sources */,
 				4F71B32B2E4910100029D3CB /* Collection+Extensions.swift in Sources */,
 				4FD4E1D1237F9DC8008816B3 /* DummyViewController.swift in Sources */,

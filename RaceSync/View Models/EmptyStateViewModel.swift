@@ -117,17 +117,17 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
         case .noJoinedRaces, .noMyProfileRaces:
             text = "You haven't joined any upcoming races yet."
         case .noSeriesRaces:
-            text = "There are no \(Date().thisYear()) GQ races available just yet."
+            text = "There are no \(Date().thisYear()) GQ races available yet."
         case .noNearbydRaces:
             text = "There are no races available in a \(settings.searchRadius)\(settings.lengthUnit.symbol) radius."
         case .noRacePilots:
             text = "There are no registered pilots yet."
         case .noRaceResults:
-            text = "There are no race results available just yet."
+            text = "There are no race results available yet."
         case .noSeries, .noJoinedSeries:
             text = "There are no series available yet under this category."
         case .noSeriesResults:
-            text = "There are no series results available just yet."
+            text = "There are no series results available yet."
         case .noRacePayments:
             text = "No payments found yet, or a network error occurred."
         case .noChapterMembers:

@@ -239,45 +239,44 @@ class RaceController {
 
     enum RaceAction: Int, CaseIterable {
         case edit, calendar, share, zippyQ
-
-        func makeButton(target: Any?, action: Selector) -> UIButton {
-            let button = CustomButton(type: .system)
-            var image: UIImage?
-
+        
+        var image: UIImage? {
             switch self {
-            case .edit:     image = ButtonImg.edit
-            case .calendar: image = ButtonImg.calendar
-            case .share:    image = ButtonImg.share
-            case .zippyQ:   image = ButtonImg.safari
+                case .edit:     return ButtonImg.edit
+                case .calendar: return ButtonImg.calendar
+                case .share:    return ButtonImg.share
+                case .zippyQ:   return ButtonImg.safari
             }
-
-            button.setImage(image, for: .normal)
-            button.addTarget(target, action: action, for: .touchUpInside)
-            return button
+        }
+        
+        func makeButton(target: Any?, action: Selector) -> UIBarButtonItem {
+            return UIBarButtonItem(image: image, style: .plain, target: target, action: action)
         }
     }
 
-    func navigationItems(for options: [RaceAction] = [.edit, .calendar, .share]) -> UIBarButtonItem? {
-        guard let race = race else { return nil }
-        guard !options.isEmpty else { return nil }
+    func navigationItems(for options: [RaceAction] = [.edit, .calendar, .share]) -> [UIBarButtonItem] {
+        guard let race, !options.isEmpty else { return [] }
 
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-        stackView.alignment = .lastBaseline
-        stackView.spacing = 12
-
-        for option in options {
-            if (option == .edit && !race.canBeEdited) { continue }
-            if (option == .calendar && !race.canCreateCalendarEvent()) { continue }
-            if (option == .zippyQ && !race.isZippyQEnabled) { continue }
-
-            let button = option.makeButton(target: self, action: #selector(raceActionTapped(_:)))
-            button.tag = option.rawValue
-            stackView.addArrangedSubview(button)
+        let filtered = options.filter { option in
+            switch option {
+                case .edit:         return race.canBeEdited
+                case .calendar:     return race.canCreateCalendarEvent()
+                case .zippyQ:       return race.isZippyQEnabled
+                case .share:        return true
+            }
+        }.sorted { $0.rawValue > $1.rawValue }
+                
+        if #available(iOS 26, *) {
+            return filtered.map { option in
+                let item = option.makeButton(target: self, action: #selector(raceActionTapped(_:)))
+                item.tag = option.rawValue
+                return item
+            }.interspersed(with: UIBarButtonItem.spacer())
+        } else {
+            // Still needed for versions of iOS previous to iOS26
+            let actions = filtered.map { (image: $0.image, selector: #selector(raceActionTapped(_:)), tag: $0.rawValue) }
+            return [UIBarButtonItem.stackedBarButtonItem(for: actions)]
         }
-
-        return UIBarButtonItem(customView: stackView)
     }
 
     @objc private func raceActionTapped(_ sender: UIButton) {
@@ -467,6 +466,19 @@ class RaceController {
                 AlertUtil.presentAlertMessage("Couldn't delete this race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
             }
         }
+    }
+}
+
+extension Array where Element == UIBarButtonItem {
+    func interspersedIfNeeded() -> [UIBarButtonItem] {
+        guard #available(iOS 26, *) else {
+            // iOS 18 and below: manually add small fixed spacing between items
+            let space = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
+            space.width = 5
+            return interspersed(with: space)
+        }
+        // iOS 26+: Liquid Glass handles its own inter-button spacing
+        return self
     }
 }
 

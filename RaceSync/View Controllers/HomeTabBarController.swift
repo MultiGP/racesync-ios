@@ -54,20 +54,6 @@ class HomeTabBarController: UITabBarController {
         return view
     }()
 
-    fileprivate lazy var notificationsButton: CustomButton = {
-        let button = CustomButton(type: .system)
-        button.addTarget(self, action: #selector(didPressNotificationsButton), for: .touchUpInside)
-        button.setImage(ButtonImg.notifications, for: .normal)
-        return button
-    }()
-
-    fileprivate lazy var settingsButton: CustomButton = {
-        let button = CustomButton(type: .system)
-        button.addTarget(self, action: #selector(didPressSettingsButton), for: .touchUpInside)
-        button.setImage(ButtonImg.settings, for: .normal)
-        return button
-    }()
-
     fileprivate lazy var userProfileButton: UIButton = {
         let button = UIButton(type: .system)
         button.addTarget(self, action: #selector(didPressUserProfileButton), for: .touchUpInside)
@@ -96,18 +82,21 @@ class HomeTabBarController: UITabBarController {
             button.layer.borderColor = Color.gray100.cgColor
             button.layer.masksToBounds = true
         }
+        
+//        button.frame = CGRect(origin: .zero, size: Constants.miniProfileSize)
+
         return button
     }()
 
-    fileprivate lazy var badgeHub: BadgeHub = {
-        let hub = BadgeHub(view: notificationsButton)
-        hub.setCircleColor(Color.lightRed, label: Color.white)
-        hub.setCircleBorderColor(Color.white, borderWidth: 1)
-        hub.setMaxCount(to: 100)
-        hub.scaleCircleSize(by: 0.7)
-        hub.moveCircleBy(x: 35.0, y: 0)
-        return hub
-    }()
+//    fileprivate lazy var badgeHub: BadgeHub = {
+//        let hub = BadgeHub(barButtonItem: notificationsButton)
+//        hub.setCircleColor(Color.lightRed, label: Color.white)
+//        hub.setCircleBorderColor(Color.white, borderWidth: 1)
+//        hub.setMaxCount(to: 100)
+//        hub.scaleCircleSize(by: 0.7)
+//        hub.moveCircleBy(x: 35.0, y: 0)
+//        return hub
+//    }()
 
     fileprivate let presenter = Appearance.defaultPresenter()
     fileprivate let userApi = UserApi()
@@ -157,14 +146,19 @@ class HomeTabBarController: UITabBarController {
     fileprivate func configureNavigationItems() {
 
         navigationItem.titleView = titleView
-
-        let leftStackSubviews = [notificationsButton, settingsButton]
-        let leftStackView = UIStackView(arrangedSubviews: leftStackSubviews)
-        leftStackView.axis = .horizontal
-        leftStackView.distribution = .fillEqually
-        leftStackView.alignment = .leading
-        leftStackView.spacing = Constants.padding
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftStackView)
+        
+        let leftActions: [BarButtonAction] = [
+            (ButtonImg.notifications, #selector(didPressNotificationsButton), 0),
+            (ButtonImg.settings, #selector(didPressSettingsButton), 0)
+        ]
+        
+        if #available(iOS 26, *) {
+            navigationItem.leftBarButtonItems = leftActions.map { action in
+                UIBarButtonItem(image: action.image, style: .plain, target: self, action: action.selector)
+            }.interspersed(with: UIBarButtonItem.spacer())
+        } else {
+            navigationItem.leftBarButtonItem = UIBarButtonItem.stackedBarButtonItem(for: leftActions)
+        }
         
         let rightStackView = UIStackView(arrangedSubviews: [chapterProfileButton, userProfileButton])
         rightStackView.axis = .horizontal
@@ -172,11 +166,6 @@ class HomeTabBarController: UITabBarController {
         rightStackView.alignment = .trailing
         rightStackView.spacing = Constants.buttonSpacing
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightStackView)
-        
-        if #available(iOS 26.0, *) {
-            navigationItem.leftBarButtonItem?.hidesSharedBackground = true
-            navigationItem.rightBarButtonItem?.hidesSharedBackground = true
-        }
     }
 
     // MARK: - Actions
@@ -286,17 +275,15 @@ class HomeTabBarController: UITabBarController {
     fileprivate func updateUserProfileImage() {
         let imageUrl = APIServices.shared.myUser?.miniProfilePictureUrl
         let placeholder = PlaceholderImg.small?.withRenderingMode(.alwaysOriginal)
-
+        
         userProfileButton.isHidden = false
-        userProfileButton.setImage(with: imageUrl, placeholderImage: placeholder, forState: .normal, size: Constants.miniProfileSize) { (image) in
-            //
-        }
+        userProfileButton.setImage(with: imageUrl, placeholderImage: placeholder, forState: .normal, size: Constants.miniProfileSize)
     }
 
     fileprivate func updateChapterProfileImage() {
         let imageUrl = APIServices.shared.myChapter?.miniProfilePictureUrl
         let placeholder = PlaceholderImg.small?.withRenderingMode(.alwaysOriginal)
-
+        
         chapterProfileButton.isHidden = false
         chapterProfileButton.setImage(with: imageUrl, placeholderImage: placeholder, forState: .normal, size: Constants.miniProfileSize)
     }
@@ -304,6 +291,16 @@ class HomeTabBarController: UITabBarController {
     fileprivate func updateMyHomeChapter(with chapter: Chapter) {
         APIServices.shared.myChapter = chapter
         updateChapterProfileImage()
+    }
+}
+
+extension UIImage {
+    func roundedImage(ofSize size: CGSize) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { ctx in
+            UIBezierPath(ovalIn: CGRect(origin: .zero, size: size)).addClip()
+            draw(in: CGRect(origin: .zero, size: size))
+        }
     }
 }
 

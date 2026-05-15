@@ -118,9 +118,6 @@ class PushMessagesViewController: UIViewController {
         navigationItem.rightBarButtonItem = rightBtnItem
 
         if #available(iOS 16.0, *) { rightBtnItem.isHidden = true }
-        if #available(iOS 26.0, *) {
-            rightBtnItem.hidesSharedBackground = true
-        }
     }
     
     fileprivate func updateClearButton() {

@@ -169,7 +169,7 @@ class RaceTabBarController: UITabBarController {
         guard let vc = viewControllers?[index] else { return }
 
         title = vc.title
-        navigationItem.rightBarButtonItem = vc.navigationItem.rightBarButtonItem
+        navigationItem.rightBarButtonItems = vc.navigationItem.rightBarButtonItems
     }
 
     @objc fileprivate func didPressTitleButton() {

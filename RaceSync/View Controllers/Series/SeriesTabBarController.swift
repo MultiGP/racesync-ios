@@ -123,7 +123,7 @@ class SeriesTabBarController: UITabBarController {
         let controller = SeriesController(with: series)
 
         let raceListVC = RaceListViewController(raceViewModels, series: series)
-        raceListVC.navigationItem.rightBarButtonItem = controller.navigationItems()
+        raceListVC.navigationItem.rightBarButtonItems = controller.navigationItems()
 
         var vcs = [UIViewController]()
         vcs += [SeriesDetailViewController(with: controller)]
@@ -134,7 +134,7 @@ class SeriesTabBarController: UITabBarController {
 
         title = vcs.first?.title
         tabBar.isHidden = false
-        navigationItem.rightBarButtonItem = controller.navigationItems()
+        navigationItem.rightBarButtonItems = controller.navigationItems()
     }
 
     // MARK: - Data Update

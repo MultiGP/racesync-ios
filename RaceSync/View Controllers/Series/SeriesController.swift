@@ -57,38 +57,41 @@ class SeriesController {
     // MARK: - Navigation Action Builders
 
     enum SeriesAction: Int, CaseIterable {
-        case share
-
-        func makeButton(target: Any?, action: Selector) -> UIButton {
-            let button = CustomButton(type: .system)
-            var image: UIImage?
-
+        case edit, share
+        
+        var image: UIImage? {
             switch self {
-            case .share:    image = ButtonImg.share
+                case .edit:     return ButtonImg.edit
+                case .share:    return ButtonImg.share
             }
+        }
 
-            button.setImage(image, for: .normal)
-            button.addTarget(target, action: action, for: .touchUpInside)
-            return button
+        func makeButton(target: Any?, action: Selector) -> UIBarButtonItem {
+            return UIBarButtonItem(image: image, style: .plain, target: target, action: action)
         }
     }
 
-    func navigationItems(for options: [SeriesAction] = [.share]) -> UIBarButtonItem? {
-        guard !options.isEmpty else { return nil }
-
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-        stackView.alignment = .lastBaseline
-        stackView.spacing = 12
-
-        for option in options {
-            let button = option.makeButton(target: self, action: #selector(seriesActionTapped(_:)))
-            button.tag = option.rawValue
-            stackView.addArrangedSubview(button)
+    func navigationItems(for options: [SeriesAction] = [.edit, .share]) -> [UIBarButtonItem]{
+        guard !options.isEmpty else { return [UIBarButtonItem]() }
+        
+        let filtered = options.filter { option in
+            switch option {
+                case .edit:         return series.canBeEdited
+                case .share:        return true
+            }
+        }.sorted { $0.rawValue > $1.rawValue }
+        
+        if #available(iOS 26, *) {
+            return filtered.map { option in
+                let item = option.makeButton(target: self, action: #selector(seriesActionTapped(_:)))
+                item.tag = option.rawValue
+                return item
+            }.interspersed(with: UIBarButtonItem.spacer())
+        } else {
+            // Still needed for versions of iOS previous to iOS26
+            let actions = options.map { (image: $0.image, selector: #selector(seriesActionTapped(_:)), tag: $0.rawValue) }
+            return [UIBarButtonItem.stackedBarButtonItem(for: actions)]
         }
-
-        return UIBarButtonItem(customView: stackView)
     }
 
     @objc private func seriesActionTapped(_ sender: UIButton) {
@@ -101,6 +104,8 @@ class SeriesController {
         menuCompletion = completion
 
         switch action {
+        case .edit:
+            return
         case .share:
             showShareMenu()
         }
