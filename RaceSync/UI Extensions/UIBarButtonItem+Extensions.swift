@@ -23,7 +23,7 @@ extension UIBarButtonItem {
     static func stackedBarButtonItem(for actions: [BarButtonAction]) -> UIBarButtonItem {
         let stack = UIStackView()
         stack.axis = .horizontal
-        stack.spacing = 4
+        stack.spacing = 12
         stack.alignment = .center
 
         for action in actions {

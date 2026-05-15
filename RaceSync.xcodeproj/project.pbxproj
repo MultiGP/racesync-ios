@@ -121,7 +121,6 @@
 		4F714DE123CD4906000C4036 /* CalendarActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F714DE023CD4906000C4036 /* CalendarActivity.swift */; };
 		4F714DE323CD5EAA000C4036 /* SafariActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F714DE223CD5EAA000C4036 /* SafariActivity.swift */; };
 		4F71B3262E47C1880029D3CB /* PaypalActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F71B3252E47C1880029D3CB /* PaypalActivity.swift */; };
-		4F71B3282E490F760029D3CB /* RoundedSelectionTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F71B3272E490F760029D3CB /* RoundedSelectionTabBar.swift */; };
 		4F71B32B2E4910100029D3CB /* Collection+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F71B32A2E4910100029D3CB /* Collection+Extensions.swift */; };
 		4F73DAEA2DEE7300007B15F2 /* String+UIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F73DAE92DEE7300007B15F2 /* String+UIExtensions.swift */; };
 		4F791C9823A6105700F15FD7 /* TextPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F791C9723A6105700F15FD7 /* TextPill.swift */; };
@@ -449,7 +448,6 @@
 		4F714DE023CD4906000C4036 /* CalendarActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarActivity.swift; sourceTree = "<group>"; };
 		4F714DE223CD5EAA000C4036 /* SafariActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariActivity.swift; sourceTree = "<group>"; };
 		4F71B3252E47C1880029D3CB /* PaypalActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaypalActivity.swift; sourceTree = "<group>"; };
-		4F71B3272E490F760029D3CB /* RoundedSelectionTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedSelectionTabBar.swift; sourceTree = "<group>"; };
 		4F71B32A2E4910100029D3CB /* Collection+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+Extensions.swift"; sourceTree = "<group>"; };
 		4F73DAE92DEE7300007B15F2 /* String+UIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+UIExtensions.swift"; sourceTree = "<group>"; };
 		4F791C9723A6105700F15FD7 /* TextPill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPill.swift; sourceTree = "<group>"; };
@@ -1201,7 +1199,6 @@
 				4F536ED02F8AEB35006FF620 /* ApproveButton.swift */,
 				4FA26834237A80B9008970AC /* ActionButton.swift */,
 				4FD4E1C2237F960A008816B3 /* CustomButton.swift */,
-				4F71B3272E490F760029D3CB /* RoundedSelectionTabBar.swift */,
 				4F8B4A0F2DDCEECD00B735DA /* BadgeHub.swift */,
 				4F791C9723A6105700F15FD7 /* TextPill.swift */,
 				4F6AE78C2D2DCD4B008636B7 /* RankView.swift */,
@@ -1684,7 +1681,6 @@
 				4F605603258C9FB4008AF93F /* UIScrollView+Extensions.swift in Sources */,
 				4F004EA7295B83F6009C46AA /* RaceForm.swift in Sources */,
 				4F8B4A0A2DDC7AEF00B735DA /* PushMessagesViewController.swift in Sources */,
-				4F71B3282E490F760029D3CB /* RoundedSelectionTabBar.swift in Sources */,
 				4FC57C33258E1362006E210F /* AppUtil.swift in Sources */,
 				4F80A660296F9951008B19AF /* RichEditorToolbar.swift in Sources */,
 				4F7BE2672722354F00592297 /* UIViewController+Navigation.swift in Sources */,

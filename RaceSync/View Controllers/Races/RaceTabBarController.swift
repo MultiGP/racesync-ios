@@ -255,8 +255,6 @@ extension RaceTabBarController: UITabBarControllerDelegate {
 
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
 
-        (tabBar as? RoundedSelectionTabBar)?.updateSelectionFrame(animated: true)
-
         if let index = viewControllers?.lastIndex(of: viewController) {
             didSelectedIndex(index)
         }

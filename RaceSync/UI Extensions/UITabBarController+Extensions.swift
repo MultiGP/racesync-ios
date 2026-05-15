@@ -13,8 +13,6 @@ extension UITabBarController {
     func configureTabBarController(with vcs: [UIViewController], selectedIndex: Int) {
         guard self.viewControllers == nil else { return } // only once
 
-        self.setValue(RoundedSelectionTabBar(), forKey: "tabBar")
-
         self.viewControllers = vcs
 
         // Trick to pre-load each view controller

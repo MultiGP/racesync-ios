@@ -168,9 +168,9 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
     fileprivate func configureNavigationItems() {
 
         if showsSegmentedControl {
-            title = "Leaderboards"
+            title = "Rankings"
         } else {
-            title = "Leaderboard"
+            title = "Rankings"
         }
 
         tabBarItem = UITabBarItem(title: title, image: SystemImg.trophy, selectedImage: SystemImg.trophyFill)

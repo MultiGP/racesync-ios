@@ -326,8 +326,6 @@ extension HomeTabBarController: UITabBarControllerDelegate {
 
     func tabBarController(_ controller: UITabBarController, didSelect viewController: UIViewController) {
 
-        (tabBar as? RoundedSelectionTabBar)?.updateSelectionFrame(animated: true)
-
         if let vcs = viewControllers, vcs.contains(viewController) {
             hideNavigationShadow()
         } else {
