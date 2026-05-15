@@ -83,7 +83,7 @@ class EventsViewController: UIViewController {
     fileprivate func configureNavigationItems() {
         title = "IO26"
         tabBarItem = UITabBarItem(title: title, image: SystemImg.globe, selectedImage: SystemImg.globeFill)
-        tabBarItem.isEnabled = false
+        tabBarItem.isEnabled = true
     }
 
     // MARK: - Actions

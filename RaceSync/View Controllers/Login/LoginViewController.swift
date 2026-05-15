@@ -96,6 +96,13 @@ class LoginViewController: UIViewController {
         button.layer.borderColor = Color.gray100.cgColor
         button.layer.borderWidth = 0.5
         button.addTarget(self, action:#selector(didPressLoginButton), for: .touchUpInside)
+        
+        if #available(iOS 26.0, *) {
+            button.layer.cornerRadius = Constants.actionButtonHeight/2
+        } else {
+            button.layer.cornerRadius = Constants.padding/2
+        }
+                
         return button
     }()
 

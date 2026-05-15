@@ -19,7 +19,7 @@ class HomeTabBarController: UITabBarController {
 
     // MARK: - Private Variables
     
-    fileprivate let isEventsTabEnable: Bool = false
+    fileprivate let isEventsTabEnable: Bool = true
 
     fileprivate lazy var raceFeedVC: RaceFeedViewController = {
         let settings = APIServices.shared.settings
@@ -82,9 +82,6 @@ class HomeTabBarController: UITabBarController {
             button.layer.borderColor = Color.gray100.cgColor
             button.layer.masksToBounds = true
         }
-        
-//        button.frame = CGRect(origin: .zero, size: Constants.miniProfileSize)
-
         return button
     }()
 
