@@ -61,7 +61,8 @@ class HomeTabBarController: UITabBarController {
 
         if let placeholder = PlaceholderImg.small?.withRenderingMode(.alwaysOriginal) {
             button.setImage(placeholder, for: .normal) // 32x32
-            button.layer.cornerRadius = placeholder.size.width / 2
+            button.layer.cornerRadius = Constants.miniProfileSize.width / 2
+            button.layer.cornerCurve = .continuous
             button.layer.borderWidth = 0.5
             button.layer.borderColor = Color.gray100.cgColor
             button.layer.masksToBounds = true
@@ -77,7 +78,8 @@ class HomeTabBarController: UITabBarController {
 
         if let placeholder = PlaceholderImg.small?.withRenderingMode(.alwaysOriginal) {
             button.setImage(placeholder, for: .normal) // 32x32
-            button.layer.cornerRadius = placeholder.size.width / 2
+            button.layer.cornerRadius = Constants.miniProfileSize.width / 2
+            button.layer.cornerCurve = .continuous
             button.layer.borderWidth = 0.5
             button.layer.borderColor = Color.gray100.cgColor
             button.layer.masksToBounds = true
@@ -102,9 +104,15 @@ class HomeTabBarController: UITabBarController {
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
         static let buttonSpacing: CGFloat = 12
-        static let miniProfileSize: CGSize = CGSize(width: 32, height: 32)
+        static let miniProfileSize: CGSize = {
+            if #available(iOS 26.0, *) {
+                CGSize(width: 38, height: 38)
+            } else {
+                CGSize(width: 32, height: 32)
+            }
+        }()
     }
-
+    
     // MARK: - Lifecycle Methods
 
     override func viewDidLoad() {
