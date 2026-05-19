@@ -127,6 +127,7 @@ class EventsViewController: UIViewController, Shimmable {
         button.setTitleColor(Color.white, for: .normal)
         button.backgroundColor = Color.blue
         button.layer.borderColor = Color.blue.cgColor
+        selectedButton = button
     }
 
     private func deselectButton() {
@@ -242,8 +243,6 @@ class EventsViewController: UIViewController, Shimmable {
             
             if enabled {
                 self.select(self.selectedButton)
-            } else {
-                self.deselectButton()
             }
         }
     }

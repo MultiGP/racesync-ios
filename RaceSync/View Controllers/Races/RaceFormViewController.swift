@@ -47,8 +47,10 @@ class RaceFormViewController: UIViewController {
     }()
 
     fileprivate lazy var rightBarButtonItem: UIBarButtonItem = {
-        let title = (currentSection == .specific) ? "Save" : "Next"
-        let item = UIBarButtonItem(title: title, style: .plain, target: self, action: #selector(goNextSection))
+        let action = #selector(goNextSection)
+        let item = currentSection == .general
+            ? UIBarButtonItem(title: "Next", style: .plain, target: self, action: action)
+            : UIBarButtonItem(barButtonSystemItem: .done, target: self, action: action)
         item.isEnabled = canGoNextSection()
         return item
     }()
