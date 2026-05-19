@@ -316,7 +316,6 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     }
 
 
-
     // MARK: - Search
 
     fileprivate func enableSearchBar(_ enable: Bool) {

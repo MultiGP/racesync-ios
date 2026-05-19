@@ -1,0 +1,71 @@
+//
+//  EventApi.swift
+//  RaceSyncAPI
+//
+//  Created by Ignacio Romero on 2026-05-18.
+//  Copyright © 2026 MultiGP Inc. All rights reserved.
+//
+
+import Foundation
+import ObjectMapper
+
+// MARK: - Interface
+public protocol MGPEventApiInterface {
+
+    /**
+     */
+    func getIO26Event(_ completion: @escaping ObjectCompletionBlock<MGPEvent>)
+}
+
+public class MGPEventApi: MGPEventApiInterface {
+    
+    public init() {}
+    
+    public func getIO26Event(_ completion: @escaping ObjectCompletionBlock<MGPEvent>) {
+        
+        let url = URL(string: "https://script.google.com/macros/s/AKfycbwxgL-ib1uq1EMyfkjrpvmdoMSxzKGG5x--MV4GAMExkM3UEV5FHovTM_UKbTtALQBj/exec")!
+        
+        fetchEvent(from: url) { result in
+            DispatchQueue.main.async {
+                var log: String = "+ Ended request with "
+
+                switch result {
+                    case .success(let json):
+                        let model = Mapper<MGPEvent>().map(JSONObject: json)
+                        log += "\(model?.name ?? "")"
+                        completion(model, nil)
+
+                    case .failure(let error):
+                        let err = error as NSError
+                        log += " Network Error: \(err.debugDescription)"
+                        completion(nil, err)
+                    }
+
+                Clog.log("\(log)")
+            }
+        }
+    }
+}
+
+
+extension MGPEventApi {
+
+    fileprivate func fetchEvent(from url: URL, completion: @escaping (Result<[String: Any], Error>) -> Void) {
+        
+        Clog.log("Starting request \(String(describing: url))")
+
+        URLSession.shared.dataTask(with: url) { data, _, error in
+            if let error = error {
+                return completion(.failure(error))
+            }
+
+            guard let data = data,
+                  let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+                return completion(.failure(NSError(domain: "InvalidData", code: 0)))
+            }
+
+            completion(.success(json))
+
+        }.resume()
+    }
+}

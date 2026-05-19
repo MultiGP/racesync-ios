@@ -6,11 +6,12 @@
 //  Copyright © 2026 MultiGP Inc. All rights reserved.
 //
 
-import Foundation
-import RaceSyncAPI
+import UIKit
 import SnapKit
+import RaceSyncAPI
+import ShimmerSwift
 
-class EventsViewController: UIViewController {
+class EventsViewController: UIViewController, Shimmable {
 
     // MARK: - Public Variables
 
@@ -20,13 +21,15 @@ class EventsViewController: UIViewController {
         tableView.backgroundView?.backgroundColor = Color.clear
         tableView.backgroundColor = Color.gray50
         tableView.contentInsetAdjustmentBehavior = .always
-//        tableView.dataSource = self
-//        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.delegate = self
         tableView.register(cellType: SimpleTableViewCell.self)
         tableView.tableFooterView = UIView()
         tableView.refreshControl = self.refreshControl
         return tableView
     }()
+
+    var shimmeringView: ShimmeringView = defaultShimmeringView()
 
     // MARK: - Private Variables
 
@@ -37,10 +40,111 @@ class EventsViewController: UIViewController {
         refreshControl.addTarget(self, action: #selector(didPullRefreshControl), for: .valueChanged)
         return refreshControl
     }()
+    
+    fileprivate lazy var headerScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.alwaysBounceHorizontal = true
+        scrollView.isUserInteractionEnabled = false
+        scrollView.alpha = 0.7
+        return scrollView
+    }()
+    
+    fileprivate lazy var headerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = Color.navigationBarColor
+        view.tintColor = Color.blue
+        
+        view.addSubview(headerScrollView)
+        headerScrollView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.distribution = .fillEqually
+        stackView.spacing = 12
+        stackView.isLayoutMarginsRelativeArrangement = true
+        stackView.layoutMargins = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
+        
+        headerScrollView.addSubview(stackView)
+        stackView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.height.equalToSuperview()
+            // Min width fits 5 buttons, expands if more
+            $0.width.greaterThanOrEqualTo(view.snp.width)
+        }
+
+        for date in eventsController.ios26Dates {
+            let button = UIButton(type: .system)
+            button.titleLabel?.numberOfLines = 2
+            button.titleLabel?.textAlignment = .center
+            button.setAttributedTitle(attributedTitle(for: date), for: .normal)
+            button.addTarget(self, action: #selector(didTapDateButton(_:)), for: .touchUpInside)
+            button.contentEdgeInsets = UIEdgeInsets(top: 6, left: 8, bottom: 6, right: 8)
+            button.backgroundColor = Color.gray20
+            button.tag = eventsController.ios26Dates.firstIndex(of: date)!
+
+            button.layer.cornerRadius = 8
+            button.layer.cornerCurve = .continuous
+            button.layer.borderWidth = 1
+            button.layer.borderColor = Color.gray50.cgColor
+
+            stackView.addArrangedSubview(button)
+            
+            if date == selectedDate {
+                selectedButton = button
+            }
+        }
+
+        view.addSeparatorLine(.bottom)
+        
+        return view
+    }()
+
+    private func attributedTitle(for date: Date) -> NSAttributedString {
+        let formatter = DateFormatter()
+        formatter.timeZone = TimeZone(identifier: "America/Indiana/Indianapolis")
+
+        formatter.dateFormat = "EEE"
+        let dayName = formatter.string(from: date) // "Wed"
+
+        formatter.dateFormat = "MMM d"
+        let dayDate = formatter.string(from: date) // "Jun 10"
+
+        let result = NSMutableAttributedString()
+        result.append(NSAttributedString(string: dayName + "\n", attributes: [
+            .font: UIFont.systemFont(ofSize: 12, weight: .semibold)
+        ]))
+        result.append(NSAttributedString(string: dayDate, attributes: [
+            .font: UIFont.systemFont(ofSize: 11, weight: .regular)
+        ]))
+        return result
+    }
+    
+    private func select(_ button: UIButton?) {
+        guard let button else { return }
+        button.setTitleColor(Color.white, for: .normal)
+        button.backgroundColor = Color.blue
+        button.layer.borderColor = Color.blue.cgColor
+    }
+
+    private func deselectButton() {
+        guard let button = selectedButton else { return }
+        button.setTitleColor(Color.blue, for: .normal)
+        button.backgroundColor = Color.gray20
+        button.layer.borderColor = Color.gray50.cgColor
+        selectedButton = nil
+    }
+    
+    fileprivate let eventsController = EventsController()
+    fileprivate var selectedDate: Date?
+    fileprivate var selectedButton: UIButton?
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
-        static let cellHeight: CGFloat = UniversalConstants.cellHeight
+        static let cellHeight: CGFloat = 72
+        static let headerViewHeight: CGFloat = 60
     }
 
     // MARK: - Lifecycle Methods
@@ -48,6 +152,8 @@ class EventsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        selectedDate = eventsController.ios26Dates.first
+        
         setupLayout()
     }
 
@@ -55,10 +161,20 @@ class EventsViewController: UIViewController {
         super.viewWillAppear(animated)
 
         hideNavigationShadow()
+        
+        if !eventsController.didFetchEvents() {
+            isLoadingList(true)
+        } else {
+            tableView.reloadData()
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
+        if !eventsController.didFetchEvents() {
+            loadContent()
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -70,29 +186,150 @@ class EventsViewController: UIViewController {
     fileprivate func setupLayout() {
         
         configureNavigationItems()
+        
+        view.addSubview(headerView)
+        headerView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.height.equalTo(Constants.headerViewHeight)
+            $0.leading.trailing.equalToSuperview()
+        }
 
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
-            $0.width.equalTo(UIScreen.main.bounds.width)
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.top.equalTo(headerView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+            $0.bottom.equalTo(view.snp.bottom)
+        }
+        
+        view.addSubview(shimmeringView)
+        shimmeringView.snp.makeConstraints {
+            $0.top.equalTo(tableView.snp.top)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.snp.bottom)
         }
     }
 
     fileprivate func configureNavigationItems() {
         title = "IO26"
         tabBarItem = UITabBarItem(title: title, image: SystemImg.globe, selectedImage: SystemImg.globeFill)
+        
+#if DEBUG
         tabBarItem.isEnabled = true
-    }
-
-    // MARK: - Actions
-
-    @objc fileprivate func didPullRefreshControl() {
-        //
+#else
+        tabBarItem.isEnabled = false
+#endif
     }
 
     // MARK: - Data Update
 
+    fileprivate func loadContent() {
+
+        if !refreshControl.isRefreshing {
+            isLoadingList(true)
+        }
+        
+        eventsController.fetchIO26Event { event, error in
+            if self.refreshControl.isRefreshing {
+                self.refreshControl.endRefreshing()
+                self.tableView.reloadData()
+            } else {
+                self.isLoadingList(false)
+            }
+            
+            let enabled = event != nil
+            self.headerScrollView.isUserInteractionEnabled = enabled
+            self.headerScrollView.alpha = enabled ? 1 : 0.7
+            
+            if enabled {
+                self.select(self.selectedButton)
+            } else {
+                self.deselectButton()
+            }
+        }
+    }
+        
+    fileprivate func resetTableView() {
+        tableView.setContentOffset(.zero, animated: false)
+        tableView.reloadData()
+    }
     
+    // MARK: - Actions
+
+    @objc fileprivate func didPullRefreshControl() {
+        loadContent()
+    }
+    
+    @objc private func didTapDateButton(_ button: UIButton) {
+        let newDate = eventsController.ios26Dates[button.tag] as Date
+        
+        if newDate == selectedDate {
+            return
+        }
+        
+        deselectButton()
+        select(button)
+        selectedDate = newDate
+
+        tableView.reloadData()
+    }
+}
+
+extension EventsViewController: UITableViewDataSource {
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        guard let _ = eventsController.io26Event else {
+            return 0
+        }
+        return 1
+    }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        guard let date = selectedDate else {
+            return 0
+        }
+        
+        let sessions = eventsController.io26Sessions(for: date, with: .scheduled)
+        return sessions.count
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as SimpleTableViewCell
+        configure(cell, forRowAt: indexPath)
+        return cell
+    }
+
+    func configure<T>(_ view: T, forRowAt indexPath: IndexPath) where T : UITableViewCell {
+        guard let date = selectedDate else { return }
+        guard let cell = view as? SimpleTableViewCell else { return }
+        
+        let sessions = eventsController.io26Sessions(for: date, with: .scheduled)
+        let session = sessions[indexPath.row]
+        let track = eventsController.track(for: session)
+        
+        cell.titleLabel.text = "\(session.activity)"
+        cell.subtitleLabel.text = track?.name
+
+        cell.accessoryType = .checkmark
+        cell.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : Color.gray20
+        cell.selectedBackgroundView?.backgroundColor = Color.gray50
+        cell.accessoryView = nil
+        
+        let star = SystemImg.star
+        let fillStar = SystemImg.starFill
+        cell.accessoryView = UIImageView(image: (indexPath.row == 3) ? fillStar : star)
+        cell.accessoryView?.tintColor = (indexPath.row == 3) ? Color.yellow : Color.gray100
+    }
+}
+
+extension EventsViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let cell = tableView.cellForRow(at: indexPath) as? SimpleTableViewCell else { return }
+        tableView.deselectRow(at: indexPath, animated: true)
+
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return Constants.cellHeight
+    }
 }

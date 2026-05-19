@@ -269,6 +269,9 @@
 		4FE272362580A36D00EC121B /* SimpleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE272352580A36D00EC121B /* SimpleTableViewCell.swift */; };
 		4FE4C0A22945E0EF00F47F0A /* RaceListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE4C0A12945E0EF00F47F0A /* RaceListViewController.swift */; };
 		4FE91EE12FB670F000460A74 /* UIBarButtonItem+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EE02FB670F000460A74 /* UIBarButtonItem+Extensions.swift */; };
+		4FE91EE32FBC098900460A74 /* EventApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EE22FBC098900460A74 /* EventApi.swift */; };
+		4FE91EE52FBC09C800460A74 /* MGPEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EE42FBC09C800460A74 /* MGPEvent.swift */; };
+		4FE91EE72FBC3AFB00460A74 /* EventsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EE62FBC3AFB00460A74 /* EventsController.swift */; };
 		4FE96E9224E3E687009A7F53 /* HeaderStretchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE96E9124E3E687009A7F53 /* HeaderStretchable.swift */; };
 		4FEADB7224147D2D00F82F0D /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEADB7124147D2D00F82F0D /* LocationManager.swift */; };
 		4FEADB742416B3D400F82F0D /* EventTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEADB732416B3D400F82F0D /* EventTracker.swift */; };
@@ -600,6 +603,9 @@
 		4FE272352580A36D00EC121B /* SimpleTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleTableViewCell.swift; sourceTree = "<group>"; };
 		4FE4C0A12945E0EF00F47F0A /* RaceListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceListViewController.swift; sourceTree = "<group>"; };
 		4FE91EE02FB670F000460A74 /* UIBarButtonItem+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem+Extensions.swift"; sourceTree = "<group>"; };
+		4FE91EE22FBC098900460A74 /* EventApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventApi.swift; sourceTree = "<group>"; };
+		4FE91EE42FBC09C800460A74 /* MGPEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MGPEvent.swift; sourceTree = "<group>"; };
+		4FE91EE62FBC3AFB00460A74 /* EventsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsController.swift; sourceTree = "<group>"; };
 		4FE96E9124E3E687009A7F53 /* HeaderStretchable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeaderStretchable.swift; sourceTree = "<group>"; };
 		4FEADB7124147D2D00F82F0D /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		4FEADB732416B3D400F82F0D /* EventTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTracker.swift; sourceTree = "<group>"; };
@@ -1037,6 +1043,7 @@
 				4F004E9B295A3027009C46AA /* SeasonApi.swift */,
 				4F004E9D295A3066009C46AA /* CourseApi.swift */,
 				4FE1DAD72DEAD443009143C4 /* StandingApi.swift */,
+				4FE91EE22FBC098900460A74 /* EventApi.swift */,
 				4F5C1E3F238A7BAF00D756EB /* RepositoryAdapter.swift */,
 				4FA268232378F9DD008970AC /* NetworkAdapter.swift */,
 				4F87E4342727976E0061425B /* NetworkProxy.swift */,
@@ -1100,6 +1107,7 @@
 				4FDD499523B0461D009DD2DB /* Season.swift */,
 				4F004E99295A2CA1009C46AA /* Course.swift */,
 				4FE1DAD52DEAD225009143C4 /* Standing.swift */,
+				4FE91EE42FBC09C800460A74 /* MGPEvent.swift */,
 				4FA26830237A58E1008970AC /* ApiError.swift */,
 				4F77D21A29940E5D009DEB41 /* Extensions */,
 			);
@@ -1110,6 +1118,7 @@
 			isa = PBXGroup;
 			children = (
 				4FA7FDA12F9E821300D33266 /* EventsViewController.swift */,
+				4FE91EE62FBC3AFB00460A74 /* EventsController.swift */,
 			);
 			path = Events;
 			sourceTree = "<group>";
@@ -1734,6 +1743,7 @@
 				4F8B4A142DDD15B100B735DA /* PushMessageViewModel.swift in Sources */,
 				4F21086B2F90142B007C7716 /* SeriesResultViewModel.swift in Sources */,
 				4FA213F02946C9FA00C8E45A /* AppIcon.swift in Sources */,
+				4FE91EE72FBC3AFB00460A74 /* EventsController.swift in Sources */,
 				4F8B4A102DDCEECD00B735DA /* BadgeHub.swift in Sources */,
 				4FD53FAD23A0B01E00158206 /* UserViewModel.swift in Sources */,
 				4F03693626D457CB00E30821 /* AppIconViewController.swift in Sources */,
@@ -1790,6 +1800,7 @@
 				4F8668F823864389005E310A /* Descriptable.swift in Sources */,
 				4FEBB27D23A30F99007514B4 /* Date+Extensions.swift in Sources */,
 				4FBADDF624D4E2DB00A7D291 /* Array+Extensions.swift in Sources */,
+				4FE91EE52FBC09C800460A74 /* MGPEvent.swift in Sources */,
 				4FA26833237A5983008970AC /* ObjectMapper+Extensions.swift in Sources */,
 				4FA26831237A58E1008970AC /* ApiError.swift in Sources */,
 				4FC51B212409EC8E00D654D0 /* Chapter+Extensions.swift in Sources */,
@@ -1803,6 +1814,7 @@
 				4FA2682A237A4CE9008970AC /* CompletionBlock.swift in Sources */,
 				4F95A3282F7E1FA9004AE24F /* StandingSeasonEnum.swift in Sources */,
 				4FD4E1BE237DCB24008816B3 /* User.swift in Sources */,
+				4FE91EE32FBC098900460A74 /* EventApi.swift in Sources */,
 				4FA1FC9123D7B571006D4704 /* APIEnvironment.swift in Sources */,
 				4FA2681A2378BE4A008970AC /* APIConstants.swift in Sources */,
 				4F5C1E40238A7BAF00D756EB /* RepositoryAdapter.swift in Sources */,
@@ -2008,7 +2020,7 @@
 				CODE_SIGN_ENTITLEMENTS = RaceSync/RaceSync.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 104;
+				CURRENT_PROJECT_VERSION = 105;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
 				INFOPLIST_FILE = RaceSync/Info.plist;
@@ -2043,7 +2055,7 @@
 				CODE_SIGN_ENTITLEMENTS = RaceSync/RaceSync.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 104;
+				CURRENT_PROJECT_VERSION = 105;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
 				INFOPLIST_FILE = RaceSync/Info.plist;
