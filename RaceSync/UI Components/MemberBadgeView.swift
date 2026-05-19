@@ -15,6 +15,24 @@ class MemberBadgeView: CustomButton {
             setTitle("\(count)", for: .normal)
         }
     }
+    
+    fileprivate var cornerRadius: CGFloat {
+        get {
+            if #available(iOS 26.0, *) {
+                return Self.minHeight/2
+            } else {
+                return 6
+            }
+        }
+    }
+    
+    fileprivate static let minHeight: CGFloat = {
+        if #available(iOS 26.0, *) {
+            return 28
+        } else {
+            return 26
+        }
+    }()
 
     // MARK: - Initialization
 
@@ -39,7 +57,7 @@ class MemberBadgeView: CustomButton {
         contentEdgeInsets = UIEdgeInsets(top: 5, left: 15, bottom: 5, right: 12)
 
         backgroundColor = Color.gray50
-        layer.cornerRadius = 6
+        layer.cornerRadius = cornerRadius
     }
 
     override var isSelected: Bool {
