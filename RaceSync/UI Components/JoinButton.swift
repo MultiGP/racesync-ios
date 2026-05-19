@@ -37,6 +37,16 @@ class JoinButton: CustomButton {
             updateAnimation()
         }
     }
+    
+    var cornerRadius: CGFloat {
+        get {
+            if #available(iOS 26.0, *) {
+                return self.isCompact ? 6: Self.minHeight/2
+            } else {
+                return 6
+            }
+        }
+    }
 
     static let minHeight: CGFloat = {
         if #available(iOS 26.0, *) {
@@ -54,14 +64,6 @@ class JoinButton: CustomButton {
         }
     }()
     
-    static let cornerRadius: CGFloat = {
-        if #available(iOS 26.0, *) {
-            return minHeight/2
-        } else {
-            return 6
-        }
-    }()
-
     // MARK: - Private Variables
 
     fileprivate lazy var spinnerView: UIActivityIndicatorView = {
@@ -108,7 +110,6 @@ class JoinButton: CustomButton {
         setContentCompressionResistancePriority(.required, for: .horizontal)
 
         layer.cornerCurve = .continuous
-        layer.cornerRadius = Self.cornerRadius
         layer.borderWidth = 0
     }
 
@@ -138,6 +139,8 @@ class JoinButton: CustomButton {
             tintColor = state.titleColor
             imageView?.tintColor = state.titleColor
             isUserInteractionEnabled = !isCompact
+            
+            layer.cornerRadius = cornerRadius
 
             if let borderColor = state.outlineColor {
                 layer.borderColor = borderColor.cgColor

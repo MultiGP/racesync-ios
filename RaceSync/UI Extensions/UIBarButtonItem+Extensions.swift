@@ -12,8 +12,8 @@ typealias BarButtonAction = (image: UIImage?, selector: Selector, tag: Int)
 
 extension UIBarButtonItem {
     
-    static func spacer(width: CGFloat = 0) -> UIBarButtonItem {
-        let item = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
+    class func spacer(width: CGFloat = 0) -> Self {
+        let item = Self(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
         item.width = width
         return item
     }

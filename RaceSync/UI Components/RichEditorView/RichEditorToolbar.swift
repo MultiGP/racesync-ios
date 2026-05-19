@@ -36,40 +36,36 @@ import SnapKit
 /// RichEditorToolbar is UIView that contains the toolbar for actions that can be performed on a RichEditorView
 class RichEditorToolbar: UIView {
 
-    /// The delegate to receive events that cannot be automatically completed
     weak var delegate: RichEditorToolbarDelegate?
-
-    /// A reference to the RichEditorView that it should be performing actions on
     weak var editor: RichEditorView?
 
-    /// The list of options to be displayed on the toolbar
     var options: [RichEditorOption] = [] {
         didSet { updateToolbar() }
     }
 
     fileprivate lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
-        scrollView.frame = bounds
-        scrollView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.showsVerticalScrollIndicator = false
         scrollView.backgroundColor = .clear
+        scrollView.keyboardDismissMode = .none
         return scrollView
     }()
 
-    fileprivate lazy var toolbar: UIToolbar = {
-        let toolbar = UIToolbar()
-        toolbar.autoresizingMask = .flexibleWidth
-        toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
-        return toolbar
+    fileprivate lazy var stackView: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.spacing = Constants.padding
+        stack.alignment = .center
+        return stack
     }()
 
     fileprivate enum Constants {
-        static let padding: CGFloat = UniversalConstants.padding
-        static let buttonWidth: CGFloat = 28
+        static let padding: CGFloat = UniversalConstants.padding * 2
+        static let buttonSize: CGFloat = 30
     }
 
-    // MARK: Initialization
+    // MARK: - Initialization
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -78,93 +74,60 @@ class RichEditorToolbar: UIView {
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        setupLayout()
     }
 
-    // MARK: View
-    
-    func setupLayout() {
+    // MARK: - Layout
+
+    private func setupLayout() {
         autoresizingMask = .flexibleWidth
         backgroundColor = Color.navigationBarColor
         addSeparatorLine()
 
         addSubview(scrollView)
-        scrollView.addSubview(toolbar)
+        scrollView.addSubview(stackView)
+
+        scrollView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        stackView.snp.makeConstraints {
+            $0.edges.equalToSuperview().inset(UIEdgeInsets(top: 0, left: Constants.padding, bottom: 0, right: Constants.padding))
+            $0.height.equalTo(scrollView)
+        }
 
         updateToolbar()
     }
-    
-    func updateToolbar() {
-        var buttons = [UIBarButtonItem]()
 
-        for i in 0..<options.count {
-            let option = options[i]
-            let handler = { [weak self] in
-                if let strongSelf = self {
-                    option.action(strongSelf)
-                }
-            }
+    func updateToolbar() {
+        
+        stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        guard !options.isEmpty else { return }
+
+        for option in options {
+            let button = UIButton(type: .system)
+            button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
 
             if let image = option.image {
-                let button = RichBarButtonItem(image: image, handler: handler)
-                buttons.append(button)
+                button.setImage(image, for: .normal)
             } else {
-                let title = option.title
-                let button = RichBarButtonItem(title: title, handler: handler)
-                buttons.append(button)
+                button.setTitle(option.title, for: .normal)
             }
 
-            // adding space expect for the last item, with half space
-            let spacing = (i < options.count-1) ? Constants.padding : Constants.padding/2
-
-            if #available(iOS 14.0, *) {
-                buttons.append(UIBarButtonItem.fixedSpace(spacing))
-            } else {
-                let space = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
-                space.width = spacing
-                buttons.append(space)
+            button.snp.makeConstraints {
+                $0.width.greaterThanOrEqualTo(Constants.buttonSize)
+                $0.height.equalTo(Constants.buttonSize)
             }
+
+            // Store option index as tag for identification
+            button.tag = options.firstIndex(where: { $0.title == option.title }) ?? 0
+            button.tintColor = Color.blue
+            stackView.addArrangedSubview(button)
         }
 
-        toolbar.items = buttons
-
-        let width: CGFloat = buttons.reduce(0) { sofar, new in
-            if let view = new.value(forKey: "view") as? UIView {
-                return sofar + view.frame.width
-            } else {
-                return sofar + Constants.buttonWidth
-            }
-        }
-        
-        if width < frame.width {
-            toolbar.frame.size.width = frame.width
-        } else {
-            toolbar.frame.size.width = width
-        }
-
-        toolbar.frame.size.height = bounds.height
-        scrollView.contentSize.width = width
-    }
-}
-
-fileprivate class RichBarButtonItem: UIBarButtonItem {
-
-    var actionHandler: (() -> Void)?
-
-    convenience init(image: UIImage? = nil, handler: (() -> Void)? = nil) {
-        self.init(image: image, style: .plain, target: nil, action: nil)
-        target = self
-        action = #selector(RichBarButtonItem.buttonWasTapped)
-        actionHandler = handler
+        // Content size is driven by Auto Layout — no manual calculation needed
+        scrollView.layoutIfNeeded()
     }
 
-    convenience init(title: String = "", handler: (() -> Void)? = nil) {
-        self.init(title: title, style: .plain, target: nil, action: nil)
-        target = self
-        action = #selector(RichBarButtonItem.buttonWasTapped)
-        actionHandler = handler
-    }
-
-    @objc func buttonWasTapped() {
-        actionHandler?()
+    @objc private func buttonTapped(_ sender: UIButton) {
+        guard sender.tag < options.count else { return }
+        options[sender.tag].action(self)
     }
 }
