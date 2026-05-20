@@ -243,12 +243,7 @@ class EventsViewController: UIViewController, Shimmable {
     fileprivate func configureNavigationItems() {
         title = "IO26"
         tabBarItem = UITabBarItem(title: title, image: SystemImg.globe, selectedImage: SystemImg.globeFill)
-        
-#if DEBUG
         tabBarItem.isEnabled = true
-#else
-        tabBarItem.isEnabled = false
-#endif
     }
 
     // MARK: - Data Update
