@@ -9,6 +9,8 @@
 import Foundation
 import ObjectMapper
 
+public let MGPEventTimeZone: TimeZone? = TimeZone(identifier: "America/Indiana/Indianapolis")
+
 public class MGPEvent: Mappable, Descriptable {
     
     public var name: String = ""
@@ -130,7 +132,7 @@ extension MGPEventSession {
     public static func io26Date(from string: String) -> Date? {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
-        formatter.timeZone = TimeZone(identifier: "America/Indiana/Indianapolis")
+        formatter.timeZone = MGPEventTimeZone
 
         return formatter.date(from: string)
     }
@@ -138,14 +140,14 @@ extension MGPEventSession {
     private static let dateFormatter: DateFormatter = {
         let f = DateFormatter()
         f.dateFormat = "yyyy-MM-dd"
-        f.timeZone = TimeZone(identifier: "UTC")
+        f.timeZone = MGPEventTimeZone
         return f
     }()
 
     private static let dateTimeFormatter: DateFormatter = {
         let f = DateFormatter()
         f.dateFormat = "yyyy-MM-dd HH:mm"
-        f.timeZone = TimeZone(identifier: "UTC")
+        f.timeZone = MGPEventTimeZone
         return f
     }()
 
@@ -157,5 +159,30 @@ extension MGPEventSession {
     private static func parseDateTime(date dateString: String?, time timeString: String?) -> Date? {
         guard let dateString, let timeString else { return nil }
         return dateTimeFormatter.date(from: "\(dateString) \(timeString)")
+    }
+}
+
+extension MGPEventSession: Hashable {
+    public static func == (lhs: MGPEventSession, rhs: MGPEventSession) -> Bool {
+        lhs.id == rhs.id
+    }
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}
+
+extension MGPEventSession {
+    
+    public func copy() -> MGPEventSession {
+        let copy = MGPEventSession()
+        copy.id        = id
+        copy.date      = date
+        copy.startTime = startTime
+        copy.endTime   = endTime
+        copy.dayName   = dayName
+        copy.trackId   = trackId
+        copy.activity  = activity
+        copy.status    = status
+        return copy
     }
 }
