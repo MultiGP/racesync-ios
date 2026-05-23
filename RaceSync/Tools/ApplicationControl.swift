@@ -48,6 +48,7 @@ class ApplicationControl: NSObject {
 
     static func initializeRaceSyncAPI() {
 
+        // This was moved to the main Bundle, but it will break whenever the API framework is used on another bundle
         let path = Bundle.main.path(forResource: "credentials", ofType: "plist")
         let dict = NSDictionary(contentsOfFile: path ?? "")
 

@@ -19,7 +19,12 @@ class HomeTabBarController: UITabBarController {
 
     // MARK: - Private Variables
     
-    fileprivate let isEventsTabEnable: Bool = true
+    fileprivate var isEventsTabEnable: Bool {
+        get {
+            // From May 22nd to June 16th
+            return Date().isBetween(day: 22, month: 5, andDay: 16, month: 6)
+        }
+    }
 
     fileprivate lazy var raceFeedVC: RaceFeedViewController = {
         let settings = APIServices.shared.settings
