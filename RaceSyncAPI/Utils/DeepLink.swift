@@ -16,8 +16,8 @@ public struct DeepLink {
     public enum Domain: String {
         case race
         case races
-        case pilto
-        case piltos
+        case pilot
+        case pilots
         case chapters
     }
 

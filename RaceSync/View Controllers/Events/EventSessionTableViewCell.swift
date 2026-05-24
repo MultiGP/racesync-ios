@@ -96,7 +96,7 @@ class EventSessionTableViewCell: UITableViewCell {
     fileprivate func setupLayout() {
         
         let selectedBackgroundView = UIView()
-        selectedBackgroundView.backgroundColor = Color.gray20
+        selectedBackgroundView.backgroundColor = Color.yellow
         self.selectedBackgroundView = selectedBackgroundView
         
         contentView.addSubview(smallLabelStackView)

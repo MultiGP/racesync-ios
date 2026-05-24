@@ -35,6 +35,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     #if !DEBUG
         EventTracker.configure()
     #endif
+        
+        UNUserNotificationCenter.current().delegate = self
+        UNUserNotificationCenter.current().getNotificationSettings { _ in }
+        
         return true
     }
 
@@ -63,7 +67,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         continue userActivity: NSUserActivity,
         restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
     ) -> Bool {
-
         return true
     }
 
@@ -80,5 +83,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         PushMessagesController.shared.didReceivePushNotification(with: userInfo)
         completionHandler(.newData)
+    }
+}
+
+extension AppDelegate: UNUserNotificationCenterDelegate {
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        // app is foreground when notification fires
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        // user tapped the notification
     }
 }

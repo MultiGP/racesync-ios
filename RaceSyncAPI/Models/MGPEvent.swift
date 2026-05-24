@@ -84,19 +84,21 @@ public class MGPEventSession: Mappable, Descriptable {
         trackId  <- map["trackId"]
         status   <- (map["status"], EnumTransform<MGPEventStatus>())
 
-        // Local vars — never stored on self
-        var rawDate:      String?
-        var rawStartTime: String?
-        var rawEndTime:   String?
+        _rawDate      <- map["date"]
+        _rawStartTime <- map["startTime"]
+        _rawEndTime   <- map["endTime"]
 
-        rawDate      <- map["date"]
-        rawStartTime <- map["startTime"]
-        rawEndTime   <- map["endTime"]
-
-        date      = Self.parseDate(rawDate)
-        startTime = Self.parseDateTime(date: rawDate, time: rawStartTime)
-        endTime   = Self.parseDateTime(date: rawDate, time: rawEndTime)
+        // Only parse dates when deserializing
+        if map.mappingType == .fromJSON {
+            date      = Self.parseDate(_rawDate)
+            startTime = Self.parseDateTime(date: _rawDate, time: _rawStartTime)
+            endTime   = Self.parseDateTime(date: _rawDate, time: _rawEndTime)
+        }
     }
+    
+    fileprivate var _rawDate: String?
+    fileprivate var _rawStartTime: String?
+    fileprivate var _rawEndTime: String?
 }
 
 public enum MGPEventStatus: String, EnumTitle {
@@ -112,8 +114,8 @@ public enum MGPEventStatus: String, EnumTitle {
 extension MGPEventSession {
     
     public static func io26Dates(from start: String, to end: String) -> [Date] {
-        guard let startDate = io26Date(from: start),
-              let endDate   = io26Date(from: end),
+        guard let startDate = dateFormatter.date(from: start),
+              let endDate   = dateFormatter.date(from: end),
               startDate <= endDate else { return [] }
 
         var dates: [Date] = []
@@ -130,11 +132,7 @@ extension MGPEventSession {
     }
 
     public static func io26Date(from string: String) -> Date? {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        formatter.timeZone = MGPEventTimeZone
-
-        return formatter.date(from: string)
+        return dateFormatter.date(from: string)
     }
     
     private static let dateFormatter: DateFormatter = {
@@ -176,13 +174,16 @@ extension MGPEventSession {
     public func copy() -> MGPEventSession {
         let copy = MGPEventSession()
         copy.id        = id
-        copy.date      = date
-        copy.startTime = startTime
-        copy.endTime   = endTime
         copy.dayName   = dayName
         copy.trackId   = trackId
         copy.activity  = activity
         copy.status    = status
+        copy.date      = date
+        copy.startTime = startTime
+        copy.endTime   = endTime
+        copy._rawDate = _rawDate
+        copy._rawStartTime = _rawStartTime
+        copy._rawEndTime = _rawEndTime
         return copy
     }
 }

@@ -167,9 +167,8 @@ class EventsViewController: UIViewController, Shimmable {
     }()
     
     fileprivate let eventsController = EventsController()
-    fileprivate var selectedSessions: [MGPEventSession]?
-    fileprivate var favedSessions = Set<MGPEventSession>()
-
+    
+    fileprivate var selectedSessions = [MGPEventSession]()
     fileprivate var selectedDate: Date?
     fileprivate var selectedButton: UIButton?
 
@@ -309,10 +308,10 @@ extension EventsViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let sessions = selectedSessions, sessions.count > 0 else {
+        guard selectedSessions.count > 0 else {
             return 0
         }
-        return sessions.count
+        return selectedSessions.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -322,10 +321,11 @@ extension EventsViewController: UITableViewDataSource {
     }
 
     func configure<T>(_ view: T, forRowAt indexPath: IndexPath) where T : UITableViewCell {
-        guard let sessions = selectedSessions, sessions.count > 0 else { return }
+        guard selectedSessions.count > 0 else { return }
         guard let cell = view as? EventSessionTableViewCell else { return }
-        
-        let session = sessions[indexPath.row]
+        cell.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : Color.gray20
+
+        let session = selectedSessions[indexPath.row]
         let track = eventsController.track(for: session)
         
         cell.titleLabel.text = "\(session.activity)"
@@ -343,10 +343,10 @@ extension EventsViewController: UITableViewDataSource {
             cell.endTimeLabel.text = timeFormatter.string(from: endTime)
         }
 
-        cell.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : Color.gray20
-        
-        let starImage = favedSessions.contains(session) ? SystemImg.starFill : SystemImg.star
-        let starColor = favedSessions.contains(session) ? Color.yellow : Color.gray100
+        let isFaved = eventsController.bucketlist.contains(session, for: selectedDate)
+                        
+        let starImage = isFaved ? SystemImg.starFill : SystemImg.star
+        let starColor = isFaved ? Color.yellow : Color.gray100
         cell.accessoryView = UIImageView(image: starImage)
         cell.accessoryView?.tintColor = starColor
     }
@@ -355,20 +355,29 @@ extension EventsViewController: UITableViewDataSource {
 extension EventsViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let sessions = selectedSessions, sessions.count > 0 else { return }
-
-//        guard let cell = tableView.cellForRow(at: indexPath) as? EventSessionTableViewCell else { return }
-//        tableView.deselectRow(at: indexPath, animated: true)
-
-        let session = sessions[indexPath.row]
-
-        if favedSessions.contains(session) {
-            favedSessions.remove(session)
+        guard let date = selectedDate, selectedSessions.count > 0 else { return }
+        
+        let session = selectedSessions[indexPath.row]
+        let bucketlist = eventsController.bucketlist
+        
+        if bucketlist.contains(session, for: date) {
+            bucketlist.delete(session, for: date)
+            NotificationScheduler.shared.cancel(for: session)
         } else {
-            favedSessions.insert(session)
+            bucketlist.save(session, for: date)
+            NotificationScheduler.shared.schedule(for: session)
         }
         
-        tableView.reloadRows(at: [indexPath], with: .none)
+        // Fade out the selection manually, then reload
+       if let cell = tableView.cellForRow(at: indexPath) {
+           UIView.animate(withDuration: 0.6, animations: {
+               cell.selectedBackgroundView?.alpha = 0
+           }) { _ in
+               tableView.deselectRow(at: indexPath, animated: false)
+               tableView.reloadRows(at: [indexPath], with: .automatic)
+               cell.selectedBackgroundView?.alpha = 1 // reset for next tap
+           }
+       }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

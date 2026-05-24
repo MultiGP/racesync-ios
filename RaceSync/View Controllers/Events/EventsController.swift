@@ -16,6 +16,7 @@ class EventsController {
     let eventApi = MGPEventApi()
     var io26Event: MGPEvent?
     var ios26Dates: [Date] = MGPEventSession.io26Dates(from: "2026-06-10", to: "2026-06-14")
+    var bucketlist = EventSessionBucketlist(eventName: "mgp_io26", timezone: MGPEventTimeZone!)
     
     // MARK: - Private Variables
     
@@ -71,9 +72,13 @@ class EventsController {
             })
 
             if let match {
+                match.startTime = min(match.startTime ?? .distantFuture, session.startTime ?? .distantFuture)
                 match.endTime = session.endTime
             } else {
-                merged.append(session.copy())
+                let copy = session.copy()
+                copy.startTime = session.startTime
+                copy.endTime = session.endTime
+                merged.append(copy)
             }
         }
 
