@@ -274,9 +274,11 @@
 		4FE91EE72FBC3AFB00460A74 /* EventsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EE62FBC3AFB00460A74 /* EventsController.swift */; };
 		4FE91EE92FBD2D6B00460A74 /* EventSessionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EE82FBD2D6B00460A74 /* EventSessionTableViewCell.swift */; };
 		4FE91EEB2FC2957900460A74 /* EventSessionBucketlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EEA2FC2957900460A74 /* EventSessionBucketlist.swift */; };
-		4FE91EED2FC29EC300460A74 /* FileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EEC2FC29EC300460A74 /* FileStore.swift */; };
 		4FE91EEF2FC2C6EE00460A74 /* Notificationscheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EEE2FC2C6EE00460A74 /* Notificationscheduler.swift */; };
 		4FE91EF12FC2C72000460A74 /* NotificationScheduler+EventSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EF02FC2C72000460A74 /* NotificationScheduler+EventSession.swift */; };
+		4FE91EF32FC4252600460A74 /* EventStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EF22FC4252600460A74 /* EventStore.swift */; };
+		4FE91EF52FC426F100460A74 /* MGPEventStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EF42FC426F100460A74 /* MGPEventStore.swift */; };
+		4FE91EF62FC4273B00460A74 /* FileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EEC2FC29EC300460A74 /* FileStore.swift */; };
 		4FE96E9224E3E687009A7F53 /* HeaderStretchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE96E9124E3E687009A7F53 /* HeaderStretchable.swift */; };
 		4FEADB7224147D2D00F82F0D /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEADB7124147D2D00F82F0D /* LocationManager.swift */; };
 		4FEADB742416B3D400F82F0D /* EventTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEADB732416B3D400F82F0D /* EventTracker.swift */; };
@@ -616,6 +618,8 @@
 		4FE91EEC2FC29EC300460A74 /* FileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileStore.swift; sourceTree = "<group>"; };
 		4FE91EEE2FC2C6EE00460A74 /* Notificationscheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notificationscheduler.swift; sourceTree = "<group>"; };
 		4FE91EF02FC2C72000460A74 /* NotificationScheduler+EventSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotificationScheduler+EventSession.swift"; sourceTree = "<group>"; };
+		4FE91EF22FC4252600460A74 /* EventStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventStore.swift; sourceTree = "<group>"; };
+		4FE91EF42FC426F100460A74 /* MGPEventStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MGPEventStore.swift; sourceTree = "<group>"; };
 		4FE96E9124E3E687009A7F53 /* HeaderStretchable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeaderStretchable.swift; sourceTree = "<group>"; };
 		4FEADB7124147D2D00F82F0D /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		4FEADB732416B3D400F82F0D /* EventTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTracker.swift; sourceTree = "<group>"; };
@@ -670,6 +674,7 @@
 			children = (
 				4F004EA1295B828E009C46AA /* RaceData.swift */,
 				4F6CAD8E298342DE00E80B5F /* UserData.swift */,
+				4FE91EF42FC426F100460A74 /* MGPEventStore.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -1029,7 +1034,6 @@
 				4F6FA16D2E4C66940056E115 /* AppplicationPreferences.swift */,
 				4FE91EEE2FC2C6EE00460A74 /* Notificationscheduler.swift */,
 				4FEADB732416B3D400F82F0D /* EventTracker.swift */,
-				4FE91EEC2FC29EC300460A74 /* FileStore.swift */,
 				4F00E065242930B3001DCFC4 /* RateMe */,
 			);
 			path = Tools;
@@ -1097,6 +1101,7 @@
 				4FA213FA29582CCB00C8E45A /* IntegerTransform.swift */,
 				4F6503372E45CE4900FA8AED /* FloatTransform.swift */,
 				4F1DC111297E42BA005EDAE0 /* BooleanTransform.swift */,
+				4FE91EEC2FC29EC300460A74 /* FileStore.swift */,
 				4FD4E1E22381E175008816B3 /* Random.swift */,
 				4F81759A2411917900685F83 /* Clog.swift */,
 			);
@@ -1131,6 +1136,7 @@
 			children = (
 				4FA7FDA12F9E821300D33266 /* EventsViewController.swift */,
 				4FE91EE62FBC3AFB00460A74 /* EventsController.swift */,
+				4FE91EF22FC4252600460A74 /* EventStore.swift */,
 				4FE91EE82FBD2D6B00460A74 /* EventSessionTableViewCell.swift */,
 				4FE91EEA2FC2957900460A74 /* EventSessionBucketlist.swift */,
 				4FE91EF02FC2C72000460A74 /* NotificationScheduler+EventSession.swift */,
@@ -1670,6 +1676,7 @@
 				4F8175A52411DDB900685F83 /* HomeController.swift in Sources */,
 				4F8376DC23EE87CC00256AEC /* RotatingIconView.swift in Sources */,
 				4F0B613C238528C300930D91 /* PasteboardLabel.swift in Sources */,
+				4FE91EF32FC4252600460A74 /* EventStore.swift in Sources */,
 				4FD4E1DD237FBE8B008816B3 /* MemberBadgeView.swift in Sources */,
 				4F6425BA2F57CA4600A4199C /* UIView+Separator.swift in Sources */,
 				4FC50258242700DC0088320B /* RacePilotsPickerController.swift in Sources */,
@@ -1736,7 +1743,6 @@
 				4FAC24A823DC3E06009AD585 /* UILabel+LinesCount.swift in Sources */,
 				4FE1DADD2DEB6F6D009143C4 /* HomeTabBarController.swift in Sources */,
 				4F5488982D2236950056EA59 /* String+HTML.swift in Sources */,
-				4FE91EED2FC29EC300460A74 /* FileStore.swift in Sources */,
 				4F2726E12EE8C59E00001C86 /* UniversalSearchViewController.swift in Sources */,
 				4F5001E523823C940025A593 /* FlagEmojiGenerator.swift in Sources */,
 				4FE91EE92FBD2D6B00460A74 /* EventSessionTableViewCell.swift in Sources */,
@@ -1779,8 +1785,10 @@
 				4F004E9A295A2CA1009C46AA /* Course.swift in Sources */,
 				4F8AFAFA2E8F37D000088304 /* SeriesResult.swift in Sources */,
 				4F1DC112297E42BA005EDAE0 /* BooleanTransform.swift in Sources */,
+				4FE91EF62FC4273B00460A74 /* FileStore.swift in Sources */,
 				4FCAF9FA23AB226500ACE7D3 /* MapperUtil.swift in Sources */,
 				4F8669062388D3BC005E310A /* AuthApi.swift in Sources */,
+				4FE91EF52FC426F100460A74 /* MGPEventStore.swift in Sources */,
 				4F6C8A8F23657DE00017FD78 /* APICredential.swift in Sources */,
 				4F6A28E32D14F55200FF692D /* TimeUtil.swift in Sources */,
 				4F004EA2295B828E009C46AA /* RaceData.swift in Sources */,

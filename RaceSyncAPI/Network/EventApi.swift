@@ -23,25 +23,32 @@ public class MGPEventApi: MGPEventApiInterface {
     
     public func getIO26Event(_ completion: @escaping ObjectCompletionBlock<MGPEvent>) {
         
+        // Return cache immediately if available
+        if let cached = MGPEventStore.shared.load() {
+            completion(cached, nil)
+        }
+
         let url = URL(string: "https://script.google.com/macros/s/AKfycbwxgL-ib1uq1EMyfkjrpvmdoMSxzKGG5x--MV4GAMExkM3UEV5FHovTM_UKbTtALQBj/exec")!
-        
+
+        // Always fetch from network and overwrite cache
         fetchEvent(from: url) { result in
             DispatchQueue.main.async {
-                var log: String = "+ Ended request with "
+                var log = "+ Ended request with "
 
                 switch result {
-                    case .success(let json):
-                        let model = Mapper<MGPEvent>().map(JSONObject: json)
-                        log += "\(model?.name ?? "")"
-                        completion(model, nil)
+                case .success(let json):
+                    let model = Mapper<MGPEvent>().map(JSONObject: json)
+                    log += "\(model?.name ?? "")"
+                    if let model { MGPEventStore.shared.save(model) }
+                    completion(model, nil)
 
-                    case .failure(let error):
-                        let err = error as NSError
-                        log += " Network Error: \(err.debugDescription)"
-                        completion(nil, err)
-                    }
+                case .failure(let error):
+                    let err = error as NSError
+                    log += " Network Error: \(err.debugDescription)"
+                    completion(nil, err)
+                }
 
-                Clog.log("\(log)")
+                Clog.log(log)
             }
         }
     }
