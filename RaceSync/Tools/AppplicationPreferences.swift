@@ -17,7 +17,11 @@ class AppplicationPreferences {
         static let raceFilter = "com.multigp.RaceSync.preferences.last_selected.races_filters"
         static let seriesFilter = "com.multigp.RaceSync.preferences.last_selected.series_filters"
     }
-
+    
+    private enum Prefs {
+        static let schedulerAlerts = "com.multigp.RaceSync.preferences.hide_notification_scheduler_alerts"
+    }
+    
     static var lastSelectedHomeTab: HomeTabs {
         get {
             let string = UserDefaults.standard.string(forKey: LastSelected.homeTab)
@@ -47,6 +51,16 @@ class AppplicationPreferences {
         }
         set {
             UserDefaults.standard.set(newValue.title, forKey: LastSelected.seriesFilter)
+            UserDefaults.standard.synchronize()
+        }
+    }
+    
+    static var hideNotificationSchedulerAlerts: Bool {
+        get {
+            return UserDefaults.standard.bool(forKey: Prefs.schedulerAlerts)
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: Prefs.schedulerAlerts)
             UserDefaults.standard.synchronize()
         }
     }

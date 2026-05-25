@@ -10,8 +10,18 @@ import UIKit
 
 class EventSessionTableViewCell: UITableViewCell {
     
+    var isFavorite: Bool = false {
+        didSet {
+            guard oldValue != isFavorite else { return }
+            starImageView.tintColor = isFavorite ? Color.yellow : Color.gray100
+            starImageView.image = isFavorite ? SystemImg.starFill : SystemImg.star
+        }
+    }
+    
     static let cellHeight: CGFloat = 72
     
+    // MARK: - Public Variables
+
     lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
@@ -49,8 +59,14 @@ class EventSessionTableViewCell: UITableViewCell {
         view.backgroundColor = Color.clear
         return view
     }()
-    
+        
     // MARK: - Private Variables
+        
+    fileprivate lazy var starImageView: UIImageView = {
+        let view = UIImageView(frame: CGRect(x: 0, y: 0, width: 26, height: 24))
+        view.backgroundColor = Color.clear
+        return view
+    }()
 
     lazy var labelStackView: UIStackView = {
         let stackView2 = UIStackView(arrangedSubviews: [iconView, subtitleLabel])
@@ -112,6 +128,9 @@ class EventSessionTableViewCell: UITableViewCell {
             $0.leading.equalTo(smallLabelStackView.snp.trailing).offset(Constants.padding)
             $0.trailing.equalToSuperview().inset(Constants.padding)
         }
+        
+        starImageView.frame.size = .init(width: 26, height: 24)
+        accessoryView = starImageView
     }
     
     override func prepareForReuse() {
@@ -122,6 +141,6 @@ class EventSessionTableViewCell: UITableViewCell {
         startTimeLabel.text = nil
         endTimeLabel.text = nil
         
-        accessoryView = nil
+        isFavorite = false
     }
 }

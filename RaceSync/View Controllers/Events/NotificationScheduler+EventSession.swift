@@ -65,7 +65,7 @@ extension NotificationScheduler {
             return
         }
         
-        let title = "IO16: Your next event is up!"
+        let title = "🔔 IO16: Your next event is up!"
         let body = sessionNotificationBody(for: session)
 
         // Pack the full session as JSON into userInfo for use when the notification is tapped
@@ -73,19 +73,29 @@ extension NotificationScheduler {
             SessionNotificationKey.sessionJSON: session.toJSONString() ?? "",
             SessionNotificationKey.categoryIdentifier: true
         ]
-
+        
         schedule(identifier: session.id, title: title, body: body, triggerDate: triggerDate, userInfo: userInfo)
         
-        // TODO: Display alert confirming the scheduling to the user
-        // OK / Don't show again
+        if !AppplicationPreferences.hideNotificationSchedulerAlerts {
+            AlertUtil.presentAlertMessage("We will notify you one (1) hour before '\(session.activity)' starts on \(session.dayName).",
+                                          title: "Added to your bucket list",
+                                          okTitle: "Don't Show Again", cancelTitle: "OK") { action in
+                AppplicationPreferences.hideNotificationSchedulerAlerts = true
+            }
+        }
     }
 
     /// Cancels the scheduled notification for the given session.
     func cancel(for session: MGPEventSession) {
         cancel(identifier: session.id)
-        
-        // TODO: Display alert confirming the scheduling cancellation to the user
-        // OK / Don't show again
+
+        if !AppplicationPreferences.hideNotificationSchedulerAlerts {
+            AlertUtil.presentAlertMessage("",
+                                          title: "Removed from bucket list",
+                                          okTitle: "Don't Show Again", cancelTitle: "OK") { action in
+                AppplicationPreferences.hideNotificationSchedulerAlerts = true
+            }
+        }
     }
 
     /// Reconstructs an MGPEventSession from a notification's userInfo, if present.
@@ -103,9 +113,9 @@ extension NotificationScheduler {
             formatter.dateFormat = "h:mm a"
             formatter.timeZone = MGPEventTimeZone
             
-            return "\(session.activity) starts at \(formatter.string(from: start))."
+            return "'\(session.activity)' starts at \(formatter.string(from: start))."
         } else {
-            return "\(session.activity) starts in 1 hour." // in track.name
+            return "'\(session.activity)' starts in 1 hour." // in track.name
         }
     }
 }

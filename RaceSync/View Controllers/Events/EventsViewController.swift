@@ -183,6 +183,7 @@ class EventsViewController: UIViewController, Shimmable {
         super.viewDidLoad()
 
         selectedDate = eventsController.ios26Dates.first
+        AppplicationPreferences.hideNotificationSchedulerAlerts = false
         
         setupLayout()
     }
@@ -343,12 +344,7 @@ extension EventsViewController: UITableViewDataSource {
             cell.endTimeLabel.text = timeFormatter.string(from: endTime)
         }
 
-        let isFaved = eventsController.bucketlist.contains(session, for: selectedDate)
-                        
-        let starImage = isFaved ? SystemImg.starFill : SystemImg.star
-        let starColor = isFaved ? Color.yellow : Color.gray100
-        cell.accessoryView = UIImageView(image: starImage)
-        cell.accessoryView?.tintColor = starColor
+        cell.isFavorite = eventsController.bucketlist.contains(session, for: selectedDate)        
     }
 }
 
