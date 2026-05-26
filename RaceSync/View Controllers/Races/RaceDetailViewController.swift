@@ -107,6 +107,8 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         button.titleLabel?.numberOfLines = 2
         button.tintColor = Color.black
+        button.contentHorizontalAlignment = .left
+        button.contentEdgeInsets = .zero
         return button
     }
 
@@ -132,8 +134,13 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate lazy var locationButton: PasteboardButton = {
         let button = contextualButton()
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        button.titleLabel?.numberOfLines = 3
         button.addTarget(self, action: #selector(didPressLocationButton), for: .touchUpInside)
         button.tintColor = Color.link
+        button.contentHorizontalAlignment = .left
+        button.contentEdgeInsets = .zero
+        button.titleEdgeInsets = .zero
         return button
     }()
 
@@ -183,10 +190,14 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         let topStackView = UIStackView(arrangedSubviews: [miniJoinButton, joinButton])
         topStackView.axis = .horizontal
         topStackView.distribution = .equalSpacing
-        topStackView.spacing = Constants.padding/4
+        topStackView.spacing = Constants.padding/2
 
         miniJoinButton.snp.makeConstraints {
-            $0.width.height.equalTo(Constants.minButtonHeight)
+            $0.width.height.equalTo(JoinButton.minHeight)
+        }
+
+        joinButton.snp.makeConstraints {
+            $0.height.greaterThanOrEqualTo(JoinButton.minHeight)
         }
 
         var subviews: [UIView] = [topStackView, feeLabel, memberBadgeView]
@@ -194,7 +205,8 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         stackView.axis = .vertical
         stackView.alignment = .trailing
         stackView.distribution = .equalSpacing
-        stackView.spacing = Constants.padding/2
+        stackView.spacing = Constants.padding * 3/4
+        stackView.backgroundColor = Color.clear
         return stackView
     }()
 
@@ -211,6 +223,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         stackView2.alignment = .center
         stackView2.distribution = .fill
         stackView2.spacing = Constants.padding * 3/4
+        stackView2.backgroundColor = Color.clear
 
         if canDisplayAddress {
             let stackView3 = UIStackView(arrangedSubviews: [locationIconView, locationButton])
@@ -225,7 +238,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             stackView4.alignment = .leading
             stackView4.distribution = .equalSpacing
             stackView4.spacing = Constants.padding / 2
-
+            stackView4.backgroundColor = Color.clear
             return stackView4
         } else {
             return stackView2
@@ -280,7 +293,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         static let mapHeight: CGFloat = UIScreen.main.bounds.height/3 // 1/3 of the screen
         static let cellHeight: CGFloat = 50
         static let maxButtonSize: CGFloat = 100
-        static let minButtonHeight: CGFloat = 32
         static let buttonSpacing: CGFloat = 12
         static let htmlpadding: CGFloat = 12
     }
@@ -379,15 +391,14 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         headerView.addSubview(rightStackView)
         rightStackView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(Constants.padding)
-            $0.width.greaterThanOrEqualTo(Constants.maxButtonSize)
-            $0.trailing.equalToSuperview().offset(-Constants.padding)
+            $0.trailing.equalToSuperview().inset(Constants.padding)
         }
 
         headerView.addSubview(leftStackView)
         leftStackView.snp.makeConstraints {
             $0.top.equalTo(rightStackView.snp.top)
             $0.leading.equalToSuperview().offset(Constants.padding)
-            $0.trailing.equalTo(rightStackView.snp.leading).offset(-Constants.padding/2)
+            $0.trailing.lessThanOrEqualTo(rightStackView.snp.leading).offset(-Constants.padding/2)
         }
 
         headerView.snp.makeConstraints {

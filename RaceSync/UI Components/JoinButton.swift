@@ -41,7 +41,7 @@ class JoinButton: CustomButton {
     var cornerRadius: CGFloat {
         get {
             if #available(iOS 26.0, *) {
-                return self.isCompact ? 6: Self.minHeight/2
+                return Self.minHeight/2
             } else {
                 return 6
             }
@@ -50,19 +50,21 @@ class JoinButton: CustomButton {
 
     static let minHeight: CGFloat = {
         if #available(iOS 26.0, *) {
-            return 36
+            return 38
         } else {
             return 32
         }
     }()
     
-    static let minWidth: CGFloat = {
-        if #available(iOS 26.0, *) {
-            return 80
-        } else {
-            return 76
+    var minWidth: CGFloat {
+        get {
+            if #available(iOS 26.0, *) {
+                return self.isCompact ? Self.minHeight : 80
+            } else {
+                return 76
+            }
         }
-    }()
+    }
     
     // MARK: - Private Variables
 
@@ -180,7 +182,7 @@ class JoinButton: CustomButton {
     // MARK: - Overrides
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: Self.minWidth, height: Self.minHeight)
+        return CGSize(width: self.minWidth, height: Self.minHeight)
     }
     
     override var isHighlighted: Bool {
