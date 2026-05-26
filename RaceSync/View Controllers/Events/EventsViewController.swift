@@ -65,7 +65,7 @@ class EventsViewController: UIViewController, Shimmable {
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
-        static let headerViewHeight: CGFloat = 90
+        static let headerViewHeight: CGFloat = 100
     }
 
     // MARK: - Lifecycle

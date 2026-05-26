@@ -111,13 +111,18 @@ class EventHeaderView: UIView {
         sv.alignment = .center
         sv.isLayoutMarginsRelativeArrangement = true
         sv.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 4, right: 16)
-        sv.backgroundColor = UIColor(hex: "f7f7f7")
+        
+        // to match the background from dateStackView, caused by the liquid glass effect
+        if #available(iOS 26, *) {
+            sv.backgroundColor = UIColor(hex: "f9f9f9")
+        }
+        
         return sv
     }()
 
     fileprivate enum Constants {
         static let dateRowHeight: CGFloat = 60
-        static let filterRowHeight: CGFloat = 36
+        static let filterRowHeight: CGFloat = 40
     }
 
     // MARK: - Init
@@ -227,20 +232,19 @@ class EventHeaderView: UIView {
             var config = UIButton.Configuration.glass()
             config.title = title
             config.contentInsets = NSDirectionalEdgeInsets(top: 6, leading: 12, bottom: 6, trailing: 12)
-            config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { attrs in
-                var updated = attrs
-                updated.font = UIFont.systemFont(ofSize: 12, weight: .semibold)
-                return updated
-            }
+            config.background.backgroundColor = Color.gray100.withAlphaComponent(0.5) // default unselected background
             button.configuration = config
-            
+
             button.configurationUpdateHandler = { [weak self] button in
                 guard let self else { return }
                 var updated = button.configuration
                 let active = button.isSelected && button.isEnabled
                 let disabled = !button.isEnabled
 
-                updated?.background.backgroundColor = active ? tintColor.withAlphaComponent(0.2) : .clear
+                updated?.background.backgroundColor = active
+                    ? tintColor.withAlphaComponent(0.2)
+                    : Color.gray100.withAlphaComponent(0.5)
+
                 updated?.attributedTitle = AttributedString(NSAttributedString(
                     string: button.configuration?.title ?? "",
                     attributes: [
@@ -254,11 +258,11 @@ class EventHeaderView: UIView {
         } else {
             button.setTitle(title, for: .normal)
             button.setTitleColor(Color.black, for: .normal)
-            button.setTitleColor(tintColor, for: .selected)
             button.titleLabel?.font = UIFont.systemFont(ofSize: 12, weight: .semibold)
             button.contentEdgeInsets = UIEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
             button.layer.cornerRadius = 8
             button.layer.cornerCurve = .continuous
+            button.backgroundColor = Color.gray100.withAlphaComponent(0.5) // match iOS 26 unselected
         }
 
         return button
@@ -296,37 +300,43 @@ class EventHeaderView: UIView {
 
     fileprivate func select(_ button: UIButton?) {
         guard let button else { return }
-        button.isSelected = true
 
         if #available(iOS 26, *) {
+            button.isSelected = true
             button.setNeedsUpdateConfiguration()
         } else {
             if dateStackView.arrangedSubviews.contains(button) {
+                button.isSelected = true
                 button.setTitleColor(Color.white, for: .normal)
                 button.backgroundColor = tintColor
                 button.layer.borderColor = tintColor.cgColor
             } else {
-                button.setTitleColor(tintColor, for: .normal)
+                button.setTitleColor(tintColor, for: .normal)  // tint text only
                 button.backgroundColor = tintColor.withAlphaComponent(0.2)
+                button.layer.borderColor = tintColor.withAlphaComponent(0.3).cgColor
             }
         }
     }
 
     fileprivate func deselect(_ button: UIButton?) {
         guard let button else { return }
-        button.isSelected = false
 
         if #available(iOS 26, *) {
+            button.isSelected = true
             button.setNeedsUpdateConfiguration()
         } else {
-            // Restore appearance based on which stack the button belongs to
             if dateStackView.arrangedSubviews.contains(button) {
-                button.setTitleColor(tintColor, for: .normal)
+                button.isSelected = false
+                button.setTitleColor(Color.black, for: .normal)
                 button.backgroundColor = Color.gray20
                 button.layer.borderColor = Color.gray50.cgColor
+                // Re-apply attributed title to reset color
+                if let index = dateStackView.arrangedSubviews.firstIndex(of: button), index < dates.count {
+                    button.setAttributedTitle(attributedTitle(for: dates[index]), for: .normal)
+                }
             } else {
                 button.setTitleColor(Color.black, for: .normal)
-                button.backgroundColor = Color.gray200
+                button.backgroundColor = Color.gray100.withAlphaComponent(0.75)
             }
         }
     }
