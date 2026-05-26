@@ -232,19 +232,20 @@ class EventHeaderView: UIView {
             var config = UIButton.Configuration.glass()
             config.title = title
             config.contentInsets = NSDirectionalEdgeInsets(top: 6, leading: 12, bottom: 6, trailing: 12)
-            config.background.backgroundColor = Color.gray100.withAlphaComponent(0.5) // default unselected background
+            config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { attrs in
+                var updated = attrs
+                updated.font = UIFont.systemFont(ofSize: 12, weight: .semibold)
+                return updated
+            }
             button.configuration = config
-
+            
             button.configurationUpdateHandler = { [weak self] button in
                 guard let self else { return }
                 var updated = button.configuration
                 let active = button.isSelected && button.isEnabled
                 let disabled = !button.isEnabled
 
-                updated?.background.backgroundColor = active
-                    ? tintColor.withAlphaComponent(0.2)
-                    : Color.gray100.withAlphaComponent(0.5)
-
+                updated?.background.backgroundColor = active ? tintColor.withAlphaComponent(0.2) : .clear
                 updated?.attributedTitle = AttributedString(NSAttributedString(
                     string: button.configuration?.title ?? "",
                     attributes: [
@@ -322,7 +323,7 @@ class EventHeaderView: UIView {
         guard let button else { return }
 
         if #available(iOS 26, *) {
-            button.isSelected = true
+            button.isSelected = false
             button.setNeedsUpdateConfiguration()
         } else {
             if dateStackView.arrangedSubviews.contains(button) {
