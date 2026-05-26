@@ -1,0 +1,109 @@
+{
+  "fill" : {
+    "automatic-gradient" : "extended-srgb:0.00000,0.53333,1.00000,1.00000"
+  },
+  "groups" : [
+    {
+      "blend-mode-specializations" : [
+        {
+          "appearance" : "dark",
+          "value" : "multiply"
+        }
+      ],
+      "blur-material" : 0.5,
+      "layers" : [
+        {
+          "fill" : "none",
+          "glass" : false,
+          "hidden" : false,
+          "image-name" : "icon3.png",
+          "name" : "icon3"
+        },
+        {
+          "blend-mode" : "normal",
+          "fill" : "none",
+          "glass" : false,
+          "hidden" : true,
+          "image-name" : "icon.png",
+          "name" : "icon",
+          "opacity" : 1
+        },
+        {
+          "blend-mode" : "normal",
+          "fill" : "none",
+          "glass" : false,
+          "hidden" : true,
+          "image-name" : "icon2.png",
+          "name" : "icon2",
+          "opacity" : 1
+        }
+      ],
+      "lighting" : "individual",
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "specular" : true,
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    },
+    {
+      "blend-mode-specializations" : [
+        {
+          "appearance" : "dark",
+          "value" : "normal"
+        }
+      ],
+      "blur-material" : null,
+      "hidden" : false,
+      "layers" : [
+        {
+          "blend-mode" : "plus-lighter",
+          "fill" : {
+            "linear-gradient" : [
+              "srgb:1.00000,1.00000,1.00000,1.00000",
+              "srgb:0.38142,0.37284,0.90874,1.00000"
+            ],
+            "orientation" : {
+              "start" : {
+                "x" : 0.5,
+                "y" : 1
+              },
+              "stop" : {
+                "x" : 0.5,
+                "y" : 0.3
+              }
+            }
+          },
+          "glass" : false,
+          "hidden" : true,
+          "image-name" : "icon-bkgd2.png",
+          "name" : "icon-bkgd2",
+          "opacity" : 0.39
+        },
+        {
+          "blend-mode" : "normal",
+          "glass" : false,
+          "hidden" : false,
+          "image-name" : "icon-bkgd.png",
+          "name" : "icon-bkgd",
+          "opacity" : 1
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "specular" : true,
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "squares" : "shared"
+  }
+}
