@@ -97,13 +97,14 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         let view = UIView()
         view.backgroundColor = Color.clear
         view.isUserInteractionEnabled = true
+        view.tintColor = Color.blue
 
         if !isEmpty {
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.lineSpacing = 2
 
             let label = UILabel()
-            label.attributedText = NSAttributedString(string: headerTitle, attributes: [.paragraphStyle: paragraphStyle])
+            label.attributedText = NSAttributedString(string: headerTitle.uppercased(), attributes: [.paragraphStyle: paragraphStyle])
             label.font = .systemFont(ofSize: 13)
             label.textColor = UIColor(hex: "3D3D42").withAlphaComponent(0.6) //Color.gray20
             label.textAlignment = .left
@@ -116,6 +117,10 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
             }
         }
 
+        guard isRootTabBar else {
+            return view
+        }
+        
         let buttonTitle = isEmpty ? "View Past Standings" : "Past Standings"
 
         let button = CustomButton(type: .system)
@@ -147,7 +152,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     fileprivate var headerTitle: String {
         get {
             if isRootTabBar {
-                return "\(season.rawValue) MultiGP Global Qualifier\nFastest 3 Consecutive Laps".uppercased()
+                return "\(season.rawValue) MultiGP Global Qualifier\nFastest 3 Consecutive Laps"
             } else {
                 return "Fastest 3 Consecutive Laps  - \(season.pilotCount) pilots"
             }
@@ -489,18 +494,14 @@ extension StandingsViewController: UITableViewDelegate {
             return count == 1 ? "Found \(count) Pilot" : "Found \(count) Pilots"
         }
 
-        if !standingsController.isEmpty(for: season) {
-            return headerTitle
-        } else {
-            return nil
-        }
+        return nil
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard !shimmeringView.isShimmering else {
             return nil
         }
-        guard isRootTabBar && !isSearching else {
+        guard !isSearching else {
             return nil
         }
 
@@ -508,10 +509,10 @@ extension StandingsViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if !isRootTabBar || isSearching {
-            return 40
-        } else {
+        if isRootTabBar && !isSearching {
             return 60 // 2 lines
+        } else {
+            return 50
         }
     }
 }

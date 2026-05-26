@@ -280,6 +280,7 @@
 		4FE91EFA2FC5266D00460A74 /* EventHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EF72FC5266D00460A74 /* EventHeaderView.swift */; };
 		4FE91EFB2FC5266D00460A74 /* EventsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EF82FC5266D00460A74 /* EventsController.swift */; };
 		4FE91EFC2FC5266D00460A74 /* EventsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EF92FC5266D00460A74 /* EventsViewController.swift */; };
+		4FE91EFE2FC6401700460A74 /* RaceSync.icon in Resources */ = {isa = PBXBuildFile; fileRef = 4FE91EFD2FC6401700460A74 /* RaceSync.icon */; };
 		4FE96E9224E3E687009A7F53 /* HeaderStretchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE96E9124E3E687009A7F53 /* HeaderStretchable.swift */; };
 		4FEADB7224147D2D00F82F0D /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEADB7124147D2D00F82F0D /* LocationManager.swift */; };
 		4FEADB742416B3D400F82F0D /* EventTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEADB732416B3D400F82F0D /* EventTracker.swift */; };
@@ -622,6 +623,7 @@
 		4FE91EF72FC5266D00460A74 /* EventHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventHeaderView.swift; sourceTree = "<group>"; };
 		4FE91EF82FC5266D00460A74 /* EventsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsController.swift; sourceTree = "<group>"; };
 		4FE91EF92FC5266D00460A74 /* EventsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsViewController.swift; sourceTree = "<group>"; };
+		4FE91EFD2FC6401700460A74 /* RaceSync.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = RaceSync.icon; sourceTree = "<group>"; };
 		4FE96E9124E3E687009A7F53 /* HeaderStretchable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeaderStretchable.swift; sourceTree = "<group>"; };
 		4FEADB7124147D2D00F82F0D /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		4FEADB732416B3D400F82F0D /* EventTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTracker.swift; sourceTree = "<group>"; };
@@ -759,6 +761,7 @@
 				4FA26825237A4005008970AC /* Constants */,
 				4F13424B2360B67D00A9DBDE /* Main.storyboard */,
 				4F1342502360B67D00A9DBDE /* LaunchScreen.storyboard */,
+				4FE91EFD2FC6401700460A74 /* RaceSync.icon */,
 				4F13424E2360B67D00A9DBDE /* Assets.xcassets */,
 				4F64B34A2D22879C00FC5BF1 /* launch_bkgd.jpg */,
 				4F9DB79F23D3816800570483 /* RaceSync.entitlements */,
@@ -1452,6 +1455,7 @@
 				4FA213F82947AB5900C8E45A /* AppIcon-FMR@3x.png in Resources */,
 				4F80A65A296F9951008B19AF /* rich_editor.js in Resources */,
 				4F80A65D296F9951008B19AF /* rich_editor_style.css in Resources */,
+				4FE91EFE2FC6401700460A74 /* RaceSync.icon in Resources */,
 				4FA213EE2946B5A300C8E45A /* AppIcon-S3@2x.png in Resources */,
 				4FB06AB5296B521000F14E59 /* AppIcon-MGP2@3x.png in Resources */,
 				4F1342522360B67D00A9DBDE /* LaunchScreen.storyboard in Resources */,
@@ -2046,7 +2050,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 02BF5AE129D7048EB6155053 /* Pods-RaceSync.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = RaceSync;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CODE_SIGN_ENTITLEMENTS = RaceSync/RaceSync.entitlements;
@@ -2081,7 +2085,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0A43AF1C49328F4DFB325FDA /* Pods-RaceSync.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = RaceSync;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CODE_SIGN_ENTITLEMENTS = RaceSync/RaceSync.entitlements;
