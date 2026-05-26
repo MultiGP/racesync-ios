@@ -37,16 +37,6 @@ class JoinButton: CustomButton {
             updateAnimation()
         }
     }
-    
-    var cornerRadius: CGFloat {
-        get {
-            if #available(iOS 26.0, *) {
-                return Self.minHeight/2
-            } else {
-                return 6
-            }
-        }
-    }
 
     static let minHeight: CGFloat = {
         if #available(iOS 26.0, *) {
@@ -142,7 +132,11 @@ class JoinButton: CustomButton {
             imageView?.tintColor = state.titleColor
             isUserInteractionEnabled = !isCompact
             
-            layer.cornerRadius = cornerRadius
+            if #available(iOS 26, *) {
+                // cornerRadius handled by layoutSubviews
+            } else {
+                layer.cornerRadius = 6
+            }
 
             if let borderColor = state.outlineColor {
                 layer.borderColor = borderColor.cgColor
@@ -183,6 +177,14 @@ class JoinButton: CustomButton {
 
     override var intrinsicContentSize: CGSize {
         return CGSize(width: self.minWidth, height: Self.minHeight)
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        if #available(iOS 26, *) {
+            layer.cornerRadius = bounds.height / 2
+        }
     }
     
     override var isHighlighted: Bool {
