@@ -233,22 +233,21 @@ class EventHeaderView: UIView {
             var config = UIButton.Configuration.glass()
             config.title = title
             config.contentInsets = NSDirectionalEdgeInsets(top: 6, leading: 12, bottom: 6, trailing: 12)
-            config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { attrs in
-                var updated = attrs
-                updated.font = UIFont.systemFont(ofSize: 12, weight: .semibold)
-                return updated
-            }
+            config.background.backgroundColor = Color.gray100.withAlphaComponent(0.5) // default unselected background
             button.configuration = config
-            
-            button.configurationUpdateHandler = { [weak self] button in
+
+            button.configurationUpdateHandler = { [weak self, title] button in
                 guard let self else { return }
                 var updated = button.configuration
                 let active = button.isSelected && button.isEnabled
                 let disabled = !button.isEnabled
 
-                updated?.background.backgroundColor = active ? tintColor.withAlphaComponent(0.2) : .clear
+                updated?.background.backgroundColor = active
+                    ? tintColor.withAlphaComponent(0.2)
+                    : Color.gray100.withAlphaComponent(0.5)
+
                 updated?.attributedTitle = AttributedString(NSAttributedString(
-                    string: button.configuration?.title ?? "",
+                    string: title,  // captured directly, never nil
                     attributes: [
                         .font: UIFont.systemFont(ofSize: 12, weight: .semibold),
                         .foregroundColor: disabled ? Color.gray100 : (active ? tintColor as UIColor : Color.black)
