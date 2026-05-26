@@ -32,6 +32,7 @@ enum EmptyState {
     case noRacePayments
     case noChapters
     case noChapterMembers
+    case noEvents
 
     case noSeries
     case noJoinedSeries
@@ -87,6 +88,8 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "No Race Payments"
         case .noChapters, .noMyProfileChapters, .noProfileChapters:
             text = "No Chapters"
+        case .noEvents:
+            text = "No Events"
         case .noPushMessages:
             text = "No Messages"
         case .noPushAuthorized:
@@ -138,6 +141,8 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "This pilot hasn't joined any chapters yet."
         case .noMyProfileChapters:
             text = "You haven't joined any chapters yet."
+        case .noEvents:
+            text = "You haven't favorited any events for this date yet."
         case .noPushMessages:
             text = "You don't have any messages yet."
         case .noPushAuthorized:

@@ -10,6 +10,7 @@ import UIKit
 import SnapKit
 import RaceSyncAPI
 import ShimmerSwift
+import EmptyDataSet_Swift
 
 class EventsViewController: UIViewController, Shimmable {
 
@@ -17,14 +18,16 @@ class EventsViewController: UIViewController, Shimmable {
 
     lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.emptyDataSetSource = self
+        tableView.emptyDataSetDelegate = self
+        tableView.tableFooterView = UIView()
         tableView.backgroundView = UIView()
         tableView.backgroundView?.backgroundColor = Color.clear
         tableView.backgroundColor = Color.gray50
         tableView.contentInsetAdjustmentBehavior = .always
-        tableView.dataSource = self
-        tableView.delegate = self
         tableView.register(cellType: EventSessionTableViewCell.self)
-        tableView.tableFooterView = UIView()
         tableView.refreshControl = refreshControl
         return tableView
     }()
@@ -62,6 +65,9 @@ class EventsViewController: UIViewController, Shimmable {
         f.timeZone = MGPEventTimeZone
         return f
     }()
+    
+    fileprivate let emptyStateNoEvents = EmptyStateViewModel(.noEvents)
+    fileprivate var emptyStateError: EmptyStateViewModel?
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -139,8 +145,12 @@ class EventsViewController: UIViewController, Shimmable {
         eventsController.fetchIO26Event { [weak self] event, error in
             guard let self else { return }
             
-            selectedSessions = eventsController.reloadSessions()
-            headerView.isEnabled = (event != nil)
+            if let error {
+                handleError(error)
+            } else {
+                selectedSessions = eventsController.reloadSessions()
+                headerView.isEnabled = (event != nil)
+            }
             
             if refreshControl.isRefreshing {
                 refreshControl.endRefreshing()
@@ -155,6 +165,14 @@ class EventsViewController: UIViewController, Shimmable {
 
     @objc fileprivate func didPullRefreshControl() {
         loadContent()
+    }
+    
+    // MARK: - Error Handling
+
+    fileprivate func handleError(_ error: NSError) {
+
+        emptyStateError = EmptyStateViewModel(.error(error))
+        tableView.reloadEmptyDataSet()
     }
 }
 
@@ -248,5 +266,49 @@ extension EventsViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         EventSessionTableViewCell.cellHeight
+    }
+}
+
+extension EventsViewController: EmptyDataSetSource {
+
+    func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        
+        if emptyStateError != nil {
+            return emptyStateError?.title
+        } else {
+            return emptyStateNoEvents.title
+        }
+    }
+
+    func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        
+        if let error = emptyStateError { return error.description }
+        let filter = eventsController.selectedFilter
+
+        if filter == .mySchedule { return emptyStateNoEvents.description }
+
+        let suffix = filter == .all ? "" : " for \(filter.title)"
+        return EmptyStateViewModel.attributtedStringForDescription(
+            "There are no events scheduled this day\(suffix)."
+        )
+    }
+
+    func image(forEmptyDataSet scrollView: UIScrollView) -> UIImage? {
+        return nil
+    }
+
+    func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
+        return -Constants.headerViewHeight
+    }
+
+    func backgroundColor(forEmptyDataSet scrollView: UIScrollView) -> UIColor? {
+        return Color.white
+    }
+}
+
+extension EventsViewController: EmptyDataSetDelegate {
+
+    func emptyDataSetShouldAllowScroll(_ scrollView: UIScrollView) -> Bool {
+        return false
     }
 }

@@ -21,9 +21,9 @@ class EventSessionTableViewCell: UITableViewCell {
     
     // MARK: - Public Variables
 
-    lazy var titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+    lazy var titleLabel: UppercasedLabel = {
+        let label = UppercasedLabel()
+        label.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
         label.textColor = Color.gray500
         label.numberOfLines = 2
         return label
@@ -141,5 +141,12 @@ class EventSessionTableViewCell: UITableViewCell {
         subtitleLabel.text = nil
         startTimeLabel.text = nil
         endTimeLabel.text = nil
+    }
+}
+
+class UppercasedLabel: UILabel {
+    override var text: String? {
+        get { super.text }
+        set { super.text = newValue?.uppercased() }
     }
 }
