@@ -239,8 +239,7 @@ class RaceTabBarController: UITabBarController {
 
         view.addSubview(scrollView)
         scrollView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            $0.bottom.leading.trailing.equalToSuperview()
+            $0.edges.equalToSuperview()
         }
 
         scrollView.reloadEmptyDataSet()

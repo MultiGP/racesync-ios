@@ -167,7 +167,7 @@ class HomeTabBarController: UITabBarController {
                 UIBarButtonItem(image: action.image, style: .plain, target: self, action: action.selector)
             }.interspersed(with: UIBarButtonItem.spacer())
         } else {
-            navigationItem.leftBarButtonItem = UIBarButtonItem.stackedBarButtonItem(for: leftActions)
+            navigationItem.leftBarButtonItem = UIBarButtonItem.stackedBarButtonItem(for: leftActions, target: self)
         }
         
         let rightStackView = UIStackView(arrangedSubviews: [chapterProfileButton, userProfileButton])

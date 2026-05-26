@@ -20,17 +20,18 @@ extension UIBarButtonItem {
     
     // Useful for versions of iOS previous to iOS26, where the UIBarButtonItem needed to be laid out
     // separately without too much space in between
-    static func stackedBarButtonItem(for actions: [BarButtonAction]) -> UIBarButtonItem {
+    static func stackedBarButtonItem(for actions: [BarButtonAction], target: AnyObject?) -> UIBarButtonItem {
         let stack = UIStackView()
         stack.axis = .horizontal
         stack.spacing = 12
         stack.alignment = .center
 
-        for action in actions {
+        for i in actions.indices.reversed() {
+            let action = actions[i]
             let button = UIButton(type: .system)
             button.tag = action.tag
             button.setImage(action.image, for: .normal)
-            button.addTarget(self, action: action.selector, for: .touchUpInside)
+            button.addTarget(target, action: action.selector, for: .touchUpInside)
             button.frame = CGRect(origin: .zero, size: CGSize(width: 32, height: 32))
             stack.addArrangedSubview(button)
         }

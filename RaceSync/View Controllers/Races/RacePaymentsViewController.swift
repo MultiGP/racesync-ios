@@ -101,7 +101,7 @@ class RacePaymentsViewController: UIViewController, RaceTabbable {
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
-        static let cellHeight: CGFloat = UniversalConstants.cellHeight
+        static let cellHeight: CGFloat = 80
         static let buttonSpacing: CGFloat = 12
     }
 
@@ -150,10 +150,8 @@ class RacePaymentsViewController: UIViewController, RaceTabbable {
 
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
             $0.width.equalTo(UIScreen.main.bounds.width)
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
 
         view.addSubview(activityIndicatorView)

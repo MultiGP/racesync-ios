@@ -275,7 +275,7 @@ class RaceController {
         } else {
             // Still needed for versions of iOS previous to iOS26
             let actions = filtered.map { (image: $0.image, selector: #selector(raceActionTapped(_:)), tag: $0.rawValue) }
-            return [UIBarButtonItem.stackedBarButtonItem(for: actions)]
+            return [UIBarButtonItem.stackedBarButtonItem(for: actions, target: self)]
         }
     }
 

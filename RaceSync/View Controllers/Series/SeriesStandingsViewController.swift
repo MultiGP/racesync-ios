@@ -155,13 +155,10 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
         tableView.snp.makeConstraints {
             if showsSegmentedControl {
                 $0.top.equalTo(headerView.snp.bottom)
+                $0.bottom.leading.trailing.equalToSuperview()
             } else {
-                $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+                $0.edges.equalToSuperview()
             }
-
-            $0.width.equalTo(UIScreen.main.bounds.width)
-            $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
     }
 

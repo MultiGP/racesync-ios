@@ -6,14 +6,12 @@
 ## 2.1
 
 ### 2026 International Open's interactive schedule:
-   * Filter the different races per day
-   * Fav the races you want to attend & get notified a few hours before they start (work in progress)
-   * Build your customized schedule
-   * Jump to the RaceSync races for each activity on the calendar, and browse live results and ZippyQ schedule (TBD)
-   * See the live ZippyQ lineup count for each activity on the calendar (TBD)
+   * Filter the different races per day.
+   * Fav the races you want to attend & get notified an hour before they start.
+   * Build your customized schedule, and filter with special macros.
 
 ### iOS26 upgrade:
-   * Compiling against the latest iOS26 SDK
+   * Compiling with the latest iOS26 SDK
    * Large UI refactoring to conform to iOS26's liquid glass UI
    
 ### Fixes and Enhancements:

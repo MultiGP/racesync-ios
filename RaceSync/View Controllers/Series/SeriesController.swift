@@ -71,7 +71,7 @@ class SeriesController {
         }
     }
 
-    func navigationItems(for options: [SeriesAction] = [.edit, .share]) -> [UIBarButtonItem]{
+    func navigationItems(for options: [SeriesAction] = [.share]) -> [UIBarButtonItem]{
         guard !options.isEmpty else { return [UIBarButtonItem]() }
         
         let filtered = options.filter { option in
@@ -90,7 +90,7 @@ class SeriesController {
         } else {
             // Still needed for versions of iOS previous to iOS26
             let actions = options.map { (image: $0.image, selector: #selector(seriesActionTapped(_:)), tag: $0.rawValue) }
-            return [UIBarButtonItem.stackedBarButtonItem(for: actions)]
+            return [UIBarButtonItem.stackedBarButtonItem(for: actions, target: self)]
         }
     }
 

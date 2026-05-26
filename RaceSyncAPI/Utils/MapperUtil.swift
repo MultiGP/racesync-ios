@@ -10,6 +10,17 @@ import Foundation
 import ObjectMapper
 
 public class MapperUtil {
+    
+    public static let anyStringTransform = TransformOf<String, Any>(
+        fromJSON: { value in
+            guard let value else { return nil }
+            if let str = value as? String { return str }
+            if let int = value as? Int { return String(int) }
+            if let double = value as? Double { return String(Int(double)) }
+            return nil
+        },
+        toJSON: { _ in nil }
+    )
 
     public static let dateTransform = TransformOf<Date, String>(fromJSON: { (value: String?) -> Date? in
         guard let value = value else { return nil }

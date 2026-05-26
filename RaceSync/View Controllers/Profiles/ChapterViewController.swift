@@ -137,7 +137,7 @@ class ChapterViewController: ProfileViewController, ViewJoinable, RaceEditable {
                 UIBarButtonItem(image: action.image, style: .plain, target: self, action: action.selector)
             }.interspersed(with: UIBarButtonItem.spacer())
         } else {
-            navigationItem.rightBarButtonItem = UIBarButtonItem.stackedBarButtonItem(for: actions)
+            navigationItem.rightBarButtonItem = UIBarButtonItem.stackedBarButtonItem(for: actions, target: self)
         }
 
         if navigationController?.viewControllers.count == 1 {

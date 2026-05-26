@@ -121,7 +121,7 @@ class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
             }.interspersed(with: UIBarButtonItem.spacer())
         } else {
             // Still needed for versions of iOS previous to iOS26
-            navigationItem.rightBarButtonItem = UIBarButtonItem.stackedBarButtonItem(for: actions)
+            navigationItem.rightBarButtonItem = UIBarButtonItem.stackedBarButtonItem(for: actions, target: self)
         }
 
         if navigationController?.viewControllers.count == 1 {
