@@ -60,6 +60,11 @@ public extension String {
 
         return nil
     }
+    
+    func containsAny(_ keywords: [String], caseInsensitive: Bool = true) -> Bool {
+        let options: String.CompareOptions = caseInsensitive ? .caseInsensitive : []
+        return keywords.contains { range(of: $0, options: options) != nil }
+    }
 }
 
 public extension String {

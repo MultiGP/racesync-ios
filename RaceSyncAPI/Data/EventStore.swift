@@ -1,5 +1,5 @@
 //
-//  MGPEventStore.swift
+//  EventStore.swift
 //  RaceSyncAPI
 //
 //  Created by Ignacio Romero on 2026-05-24.
@@ -9,29 +9,29 @@
 import Foundation
 import ObjectMapper
 
-class MGPEventStore {
+class EventStore {
 
-    static let shared = MGPEventStore()
+    static let shared = EventStore()
 
-    func save(_ event: MGPEvent) {
-        guard let json = Mapper<MGPEvent>().toJSONString(event, prettyPrint: true),
+    func save(_ event: Event) {
+        guard let json = Mapper<Event>().toJSONString(event, prettyPrint: true),
               let data = json.data(using: .utf8) else {
-            print("[MGPEventStore] Serialization failed")
+            print("[EventStore] Serialization failed")
             return
         }
         do {
             try data.write(to: fileURL)
         } catch {
-            print("[MGPEventStore] Write failed: \(error)")
+            print("[EventStore] Write failed: \(error)")
         }
     }
 
-    func load() -> MGPEvent? {
+    func load() -> Event? {
         guard let data = try? Data(contentsOf: fileURL),
               let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
             return nil
         }
-        return Mapper<MGPEvent>().map(JSONObject: json)
+        return Mapper<Event>().map(JSONObject: json)
     }
     
     private let fileURL = FileStore.url(for: "io26_event.json")

@@ -9,43 +9,76 @@
 import UIKit
 import RaceSyncAPI
 
-class EventsController {
+enum EventSessionFilter: EnumTitle, Hashable {
+    case all, mySchedule, spec, openFly
     
+    public var title: String {
+        switch self {
+        case .all: return "All"
+        case .mySchedule: return "My Schedule"
+        case .spec: return "Spec"
+        case .openFly: return "Open Fly"
+        }
+    }
+}
+
+class EventsController {
+
     // MARK: - Public Variables
 
-    let eventApi = MGPEventApi()
-    var io26Event: MGPEvent?
-    var ios26Dates: [Date] = MGPEventSession.io26Dates(from: "2026-06-10", to: "2026-06-14")
+    let eventApi = EventApi()
+    var io26Event: Event?
+    var ios26Dates: [Date] = EventSession.io26Dates(from: "2026-06-10", to: "2026-06-14")
     var bucketlist = EventSessionBucketlist(eventName: "mgp_io26", timezone: MGPEventTimeZone!)
-    
-    // MARK: - Private Variables
-    
+
+    var selectedDate: Date?
+    var selectedFilter: EventSessionFilter = AppplicationPreferences.lastSelectedEventFilter
 
     // MARK: - Public Functions
-    
-    public func track(for session: MGPEventSession) -> MGPEventTrack? {
-        guard let tracks = io26Event?.tracks else { return nil }
-        
-        let trackId = session.trackId
-        return tracks.first(where: { $0.id == trackId })
+
+    func didFetchEvents() -> Bool {
+        io26Event != nil
     }
-    
-    public func fetchIO26Event(_ completion: @escaping ObjectCompletionBlock<MGPEvent>) {
-        eventApi.getIO26Event { event, error in
-            if let event = event {
-                self.io26Event = event
+
+    func fetchIO26Event(_ completion: @escaping ObjectCompletionBlock<Event>) {
+        eventApi.getIO26Event { [weak self] event, error in
+            if let event {
+                self?.io26Event = event
                 completion(event, nil)
-            } else if error != nil {
+            } else {
                 completion(nil, error)
             }
         }
     }
-    
-    public func didFetchEvents() -> Bool {
-        return io26Event != nil
+
+    func reloadSessions() -> [EventSession] {
+        guard let date = selectedDate else { return [] }
+        return mergedSessions(for: date, with: .scheduled, filter: selectedFilter)
     }
-    
-    public func io26Sessions(for date: Date, with status: MGPEventStatus? = nil, id trackId: ObjectId? = nil) -> [MGPEventSession] {
+
+    func track(for session: EventSession) -> EventTrack? {
+        io26Event?.tracks?.first { $0.id == session.trackId }
+    }
+
+    func color(for track: EventTrack?) -> UIColor {
+        guard let id = track?.id else { return Color.gray300 }
+        return trackColors[id] ?? Color.gray300
+    }
+
+    // MARK: - Private
+
+    private let trackColors: [String: UIColor] = [
+        "main_stage":    UIColor(hex: "4a6cf7"),
+        "world_cup_1":   UIColor(hex: "e8384f"),
+        "all_skills":    UIColor(hex: "ca8a04"),
+        "whoopville":    UIColor(hex: "9b59b6"),
+        "world_cup_2":   UIColor(hex: "f06070"),
+        "spec":          UIColor(hex: "22c55e"),
+        "gq_rookie":     UIColor(hex: "06b6d4"),
+        "tiny_trainier": UIColor(hex: "2dd4bf")
+    ]
+
+    func sessions(for date: Date, with status: EventStatus? = nil, id trackId: ObjectId? = nil) -> [EventSession] {
         guard let sessions = io26Event?.sessions else { return [] }
 
         let calendar = Calendar.current
@@ -57,12 +90,12 @@ class EventsController {
             return true
         }
     }
-    
-    public func io26MergedSessions(for date: Date, with status: MGPEventStatus? = nil, id trackId: ObjectId? = nil) -> [MGPEventSession] {
-        let sessions = io26Sessions(for: date, with: status, id: trackId)
+
+    func mergedSessions(for date: Date, with status: EventStatus? = nil, id trackId: ObjectId? = nil, filter: EventSessionFilter = .all) -> [EventSession] {
+        let sessions = sessions(for: date, with: status, id: trackId)
             .sorted { ($0.startTime ?? .distantPast) < ($1.startTime ?? .distantPast) }
 
-        var merged: [MGPEventSession] = []
+        var merged: [EventSession] = []
 
         for session in sessions {
             let match = merged.last(where: {
@@ -75,45 +108,28 @@ class EventsController {
                 match.startTime = min(match.startTime ?? .distantFuture, session.startTime ?? .distantFuture)
                 match.endTime = session.endTime
             } else {
-                let copy = session.copy()
-                copy.startTime = session.startTime
-                copy.endTime = session.endTime
-                merged.append(copy)
+                merged.append(session.copy())
             }
         }
 
-        return merged
+        return apply(filter: filter, to: merged, for: date)
     }
-    
-    public func color(for track: MGPEventTrack?) -> UIColor {
-        guard let id = track?.id else { return Color.gray300 }
-        
-        if id == "main_stage" {
-            return UIColor(hex: "4a6cf7")
-        } else if id == "world_cup_1" {
-            return UIColor(hex: "e8384f")
-        } else if id == "all_skills" {
-            return UIColor(hex: "ca8a04")
-        } else if id == "whoopville" {
-            return UIColor(hex: "9b59b6")
-        } else if id == "world_cup_2" {
-            return UIColor(hex: "f06070")
-        } else if id == "spec" {
-            return UIColor(hex: "22c55e")
-        } else if id == "gq_rookie" {
-            return UIColor(hex: "06b6d4")
-        } else if id == "tiny_trainier" {
-            return UIColor(hex: "2dd4bf")
+
+    private func apply(filter: EventSessionFilter, to sessions: [EventSession], for date: Date) -> [EventSession] {
+        switch filter {
+        case .all:
+            return sessions
+        case .mySchedule:
+            return sessions.filter { bucketlist.contains($0, for: date) }
+        case .spec:
+            return sessions.filter { $0.activity.containsAny(["spec", "AER"], caseInsensitive: true) }
+        case .openFly:
+            return sessions.filter { $0.activity.containsAny(["open fly", "openfly"], caseInsensitive: true) }
         }
-        
-        return Color.gray300
     }
-    
-    private func isConsecutive(_ a: MGPEventSession, _ b: MGPEventSession) -> Bool {
+
+    private func isConsecutive(_ a: EventSession, _ b: EventSession) -> Bool {
         guard let endA = a.endTime, let startB = b.startTime else { return false }
-        // Allow up to 5 min gap to account for any scheduling slack
         return startB.timeIntervalSince(endA) <= 300
     }
-    
-    
 }

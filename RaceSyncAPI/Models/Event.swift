@@ -11,14 +11,14 @@ import ObjectMapper
 
 public let MGPEventTimeZone: TimeZone? = TimeZone(identifier: "America/Indiana/Indianapolis")
 
-public class MGPEvent: Mappable, Descriptable {
+public class Event: Mappable, Descriptable {
     
     public var name: String = ""
     public var venue: String = ""
     public var lastUpdated: Date?
     
-    public var tracks: [MGPEventTrack]? = nil
-    public var sessions: [MGPEventSession]? = nil
+    public var tracks: [EventTrack]? = nil
+    public var sessions: [EventSession]? = nil
     
     // MARK: - Initialization
 
@@ -37,7 +37,7 @@ public class MGPEvent: Mappable, Descriptable {
     }
 }
 
-public class MGPEventTrack: Mappable, Descriptable {
+public class EventTrack: Mappable, Descriptable {
     
     public var id: ObjectId = ""
     public var name: String = ""
@@ -57,7 +57,7 @@ public class MGPEventTrack: Mappable, Descriptable {
     }
 }
 
-public class MGPEventSession: Mappable, Descriptable {
+public class EventSession: Mappable, Descriptable {
     
     public var id: ObjectId = ""
 
@@ -68,7 +68,7 @@ public class MGPEventSession: Mappable, Descriptable {
 
     public var trackId: ObjectId = ""
     public var activity: String = ""
-    public var status: MGPEventStatus = .closed
+    public var status: EventStatus = .closed
 
     // MARK: - Initialization
 
@@ -82,7 +82,7 @@ public class MGPEventSession: Mappable, Descriptable {
         dayName  <- map["day"]
         activity <- map["activity"]
         trackId  <- map["trackId"]
-        status   <- (map["status"], EnumTransform<MGPEventStatus>())
+        status   <- (map["status"], EnumTransform<EventStatus>())
 
         _rawDate      <- map["date"]
         _rawStartTime <- map["startTime"]
@@ -101,7 +101,7 @@ public class MGPEventSession: Mappable, Descriptable {
     fileprivate var _rawEndTime: String?
 }
 
-public enum MGPEventStatus: String, EnumTitle {
+public enum EventStatus: String, EnumTitle {
     
     public var title: String {
         return self.rawValue.capitalized
@@ -111,7 +111,7 @@ public enum MGPEventStatus: String, EnumTitle {
     case scheduled = "scheduled"
 }
 
-extension MGPEventSession {
+extension EventSession {
     
     public static func io26Dates(from start: String, to end: String) -> [Date] {
         guard let startDate = dateFormatter.date(from: start),
@@ -131,8 +131,8 @@ extension MGPEventSession {
         return dates
     }
 
-    public static func io26Date(from string: String) -> Date? {
-        return dateFormatter.date(from: string)
+    public static func io26Date(from string: String) -> Date {
+        return dateFormatter.date(from: string)!
     }
     
     private static let dateFormatter: DateFormatter = {
@@ -160,8 +160,8 @@ extension MGPEventSession {
     }
 }
 
-extension MGPEventSession: Hashable {
-    public static func == (lhs: MGPEventSession, rhs: MGPEventSession) -> Bool {
+extension EventSession: Hashable {
+    public static func == (lhs: EventSession, rhs: EventSession) -> Bool {
         lhs.id == rhs.id
     }
     public func hash(into hasher: inout Hasher) {
@@ -169,10 +169,10 @@ extension MGPEventSession: Hashable {
     }
 }
 
-extension MGPEventSession {
+extension EventSession {
     
-    public func copy() -> MGPEventSession {
-        let copy = MGPEventSession()
+    public func copy() -> EventSession {
+        let copy = EventSession()
         copy.id        = id
         copy.dayName   = dayName
         copy.trackId   = trackId

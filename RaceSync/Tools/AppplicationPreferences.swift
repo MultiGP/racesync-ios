@@ -16,6 +16,7 @@ class AppplicationPreferences {
         static let homeTab = "com.multigp.RaceSync.preferences.last_selected.home_tab"
         static let raceFilter = "com.multigp.RaceSync.preferences.last_selected.races_filters"
         static let seriesFilter = "com.multigp.RaceSync.preferences.last_selected.series_filters"
+        static let eventFilter = "com.multigp.RaceSync.preferences.last_selected.event_filters"
     }
     
     private enum Prefs {
@@ -51,6 +52,17 @@ class AppplicationPreferences {
         }
         set {
             UserDefaults.standard.set(newValue.title, forKey: LastSelected.seriesFilter)
+            UserDefaults.standard.synchronize()
+        }
+    }
+    
+    static var lastSelectedEventFilter: EventSessionFilter {
+        get {
+            let string = UserDefaults.standard.string(forKey: LastSelected.eventFilter)
+            return string.flatMap { EventSessionFilter(title: $0) } ?? EventSessionFilter.all
+        }
+        set {
+            UserDefaults.standard.set(newValue.title, forKey: LastSelected.eventFilter)
             UserDefaults.standard.synchronize()
         }
     }

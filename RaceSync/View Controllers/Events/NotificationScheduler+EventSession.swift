@@ -10,20 +10,20 @@ import Foundation
 import RaceSyncAPI
 import ObjectMapper
 
-// MARK: - MGPEventSession Notification Keys
+// MARK: - EventSession Notification Keys
 
 enum SessionNotificationKey {
     static let sessionJSON = "sessionJSON"
-    static let categoryIdentifier = "MGPEventSession"
+    static let categoryIdentifier = "EventSession"
 }
 
-// MARK: - NotificationScheduler + MGPEventSession
+// MARK: - NotificationScheduler + EventSession
 
 extension NotificationScheduler {
 
     /// Schedules a local notification 1 hour before the session's startTime.
     /// Silently skips if startTime is missing or already in the past.
-    func schedule(for session: MGPEventSession, for hours: Double = 1) {
+    func schedule(for session: EventSession, for hours: Double = 1) {
         let center = UNUserNotificationCenter.current()
 
         center.getNotificationSettings { [weak self] settings in
@@ -51,7 +51,7 @@ extension NotificationScheduler {
         }
     }
     
-    private func scheduleNotification(for session: MGPEventSession, for hours: Double = 1) {
+    private func scheduleNotification(for session: EventSession, for hours: Double = 1) {
                 
         guard let startTime = session.startTime else {
             print("Session \(session.id) has no startTime, skipping.")
@@ -86,7 +86,7 @@ extension NotificationScheduler {
     }
 
     /// Cancels the scheduled notification for the given session.
-    func cancel(for session: MGPEventSession) {
+    func cancel(for session: EventSession) {
         cancel(identifier: session.id)
 
         if !AppplicationPreferences.hideNotificationSchedulerAlerts {
@@ -98,15 +98,15 @@ extension NotificationScheduler {
         }
     }
 
-    /// Reconstructs an MGPEventSession from a notification's userInfo, if present.
-    func session(from userInfo: [AnyHashable: Any]) -> MGPEventSession? {
+    /// Reconstructs an EventSession from a notification's userInfo, if present.
+    func session(from userInfo: [AnyHashable: Any]) -> EventSession? {
         guard let jsonString = userInfo[SessionNotificationKey.sessionJSON] as? String else { return nil }
-        return MGPEventSession(JSONString: jsonString)
+        return EventSession(JSONString: jsonString)
     }
 
     // MARK: - Private
 
-    private func sessionNotificationBody(for session: MGPEventSession) -> String {
+    private func sessionNotificationBody(for session: EventSession) -> String {
         
         if let start = session.startTime {
             let formatter = DateFormatter()

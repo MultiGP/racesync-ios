@@ -12,20 +12,20 @@ class EventSessionTableViewCell: UITableViewCell {
     
     var isFavorite: Bool = false {
         didSet {
-            guard oldValue != isFavorite else { return }
             starImageView.tintColor = isFavorite ? Color.yellow : Color.gray100
             starImageView.image = isFavorite ? SystemImg.starFill : SystemImg.star
         }
     }
     
-    static let cellHeight: CGFloat = 72
+    static let cellHeight: CGFloat = 90
     
     // MARK: - Public Variables
 
     lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
-        label.textColor = Color.black
+        label.textColor = Color.gray500
+        label.numberOfLines = 2
         return label
     }()
 
@@ -33,6 +33,7 @@ class EventSessionTableViewCell: UITableViewCell {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
         label.textColor = Color.gray300
+        label.numberOfLines = 1
         return label
     }()
     
@@ -140,7 +141,5 @@ class EventSessionTableViewCell: UITableViewCell {
         subtitleLabel.text = nil
         startTimeLabel.text = nil
         endTimeLabel.text = nil
-        
-        isFavorite = false
     }
 }

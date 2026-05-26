@@ -10,7 +10,7 @@ import Foundation
 import RaceSyncAPI
 import ObjectMapper
 
-/// Persists favorited MGPEventSession objects per day, scoped to a specific event.
+/// Persists favorited EventSession objects per day, scoped to a specific event.
 class EventSessionBucketlist {
 
     // MARK: - Init
@@ -25,7 +25,7 @@ class EventSessionBucketlist {
     // MARK: - Public API
 
     /// Saves a single session for the given day. Skips duplicates by id.
-    func save(_ session: MGPEventSession, for day: Date) {
+    func save(_ session: EventSession, for day: Date) {
         let key = dayKey(for: day)
         var bucket = buckets[key] ?? []
         guard !bucket.contains(where: { $0.id == session.id }) else { return }
@@ -35,7 +35,7 @@ class EventSessionBucketlist {
     }
 
     /// Saves an array of sessions for the given day. Skips duplicates by id.
-    func save(_ sessions: [MGPEventSession], for day: Date) {
+    func save(_ sessions: [EventSession], for day: Date) {
         let key = dayKey(for: day)
         var bucket = buckets[key] ?? []
         for session in sessions {
@@ -47,12 +47,12 @@ class EventSessionBucketlist {
     }
 
     /// Returns all saved sessions for the given day
-    func load(for day: Date) -> [MGPEventSession] {
+    func load(for day: Date) -> [EventSession] {
         return buckets[dayKey(for: day)] ?? []
     }
 
     /// Deletes a single session from the given day's bucket.
-    func delete(_ session: MGPEventSession, for day: Date) {
+    func delete(_ session: EventSession, for day: Date) {
         let key = dayKey(for: day)
         buckets[key]?.removeAll { $0.id == session.id }
         if buckets[key]?.isEmpty == true { buckets.removeValue(forKey: key) }
@@ -72,7 +72,7 @@ class EventSessionBucketlist {
 
     // MARK: - Private
 
-    fileprivate var buckets: [String: [MGPEventSession]] = [:]
+    fileprivate var buckets: [String: [EventSession]] = [:]
     fileprivate let fileURL: URL
     fileprivate let timezone: TimeZone
 
@@ -111,14 +111,14 @@ class EventSessionBucketlist {
             return
         }
         for (key, jsonArray) in raw {
-            buckets[key] = jsonArray.compactMap { MGPEventSession(JSON: $0) }
+            buckets[key] = jsonArray.compactMap { EventSession(JSON: $0) }
         }
     }
 }
 
 extension EventSessionBucketlist {
     
-    func contains(_ session: MGPEventSession, for day: Date?) -> Bool {
+    func contains(_ session: EventSession, for day: Date?) -> Bool {
         guard let day = day else { return false }
         return buckets[dayKey(for: day)]?.contains(where: { $0.id == session.id }) ?? false
     }

@@ -206,7 +206,6 @@
 		4FA26833237A5983008970AC /* ObjectMapper+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA26832237A5983008970AC /* ObjectMapper+Extensions.swift */; };
 		4FA26835237A80B9008970AC /* ActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA26834237A80B9008970AC /* ActionButton.swift */; };
 		4FA706072EC33873006EAE70 /* RaceSyncAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F13426F2360DA4B00A9DBDE /* RaceSyncAPI.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4FA7FDA22F9E821300D33266 /* EventsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FA7FDA12F9E821300D33266 /* EventsViewController.swift */; };
 		4FAAA88523AA15EA00A004DC /* MapKit+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAAA88423AA15EA00A004DC /* MapKit+Extensions.swift */; };
 		4FAAF8242E80FFF5002CF62E /* Series.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAAF8232E80FFF5002CF62E /* Series.swift */; };
 		4FAC24A823DC3E06009AD585 /* UILabel+LinesCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAC24A723DC3E06009AD585 /* UILabel+LinesCount.swift */; };
@@ -270,15 +269,17 @@
 		4FE4C0A22945E0EF00F47F0A /* RaceListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE4C0A12945E0EF00F47F0A /* RaceListViewController.swift */; };
 		4FE91EE12FB670F000460A74 /* UIBarButtonItem+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EE02FB670F000460A74 /* UIBarButtonItem+Extensions.swift */; };
 		4FE91EE32FBC098900460A74 /* EventApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EE22FBC098900460A74 /* EventApi.swift */; };
-		4FE91EE52FBC09C800460A74 /* MGPEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EE42FBC09C800460A74 /* MGPEvent.swift */; };
-		4FE91EE72FBC3AFB00460A74 /* EventsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EE62FBC3AFB00460A74 /* EventsController.swift */; };
+		4FE91EE52FBC09C800460A74 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EE42FBC09C800460A74 /* Event.swift */; };
 		4FE91EE92FBD2D6B00460A74 /* EventSessionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EE82FBD2D6B00460A74 /* EventSessionTableViewCell.swift */; };
 		4FE91EEB2FC2957900460A74 /* EventSessionBucketlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EEA2FC2957900460A74 /* EventSessionBucketlist.swift */; };
 		4FE91EEF2FC2C6EE00460A74 /* Notificationscheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EEE2FC2C6EE00460A74 /* Notificationscheduler.swift */; };
 		4FE91EF12FC2C72000460A74 /* NotificationScheduler+EventSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EF02FC2C72000460A74 /* NotificationScheduler+EventSession.swift */; };
 		4FE91EF32FC4252600460A74 /* EventStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EF22FC4252600460A74 /* EventStore.swift */; };
-		4FE91EF52FC426F100460A74 /* MGPEventStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EF42FC426F100460A74 /* MGPEventStore.swift */; };
+		4FE91EF52FC426F100460A74 /* EventStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EF42FC426F100460A74 /* EventStore.swift */; };
 		4FE91EF62FC4273B00460A74 /* FileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EEC2FC29EC300460A74 /* FileStore.swift */; };
+		4FE91EFA2FC5266D00460A74 /* EventHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EF72FC5266D00460A74 /* EventHeaderView.swift */; };
+		4FE91EFB2FC5266D00460A74 /* EventsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EF82FC5266D00460A74 /* EventsController.swift */; };
+		4FE91EFC2FC5266D00460A74 /* EventsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EF92FC5266D00460A74 /* EventsViewController.swift */; };
 		4FE96E9224E3E687009A7F53 /* HeaderStretchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE96E9124E3E687009A7F53 /* HeaderStretchable.swift */; };
 		4FEADB7224147D2D00F82F0D /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEADB7124147D2D00F82F0D /* LocationManager.swift */; };
 		4FEADB742416B3D400F82F0D /* EventTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEADB732416B3D400F82F0D /* EventTracker.swift */; };
@@ -546,7 +547,6 @@
 		4FA26830237A58E1008970AC /* ApiError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiError.swift; sourceTree = "<group>"; };
 		4FA26832237A5983008970AC /* ObjectMapper+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ObjectMapper+Extensions.swift"; sourceTree = "<group>"; };
 		4FA26834237A80B9008970AC /* ActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButton.swift; sourceTree = "<group>"; };
-		4FA7FDA12F9E821300D33266 /* EventsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsViewController.swift; sourceTree = "<group>"; };
 		4FAAA88423AA15EA00A004DC /* MapKit+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MapKit+Extensions.swift"; sourceTree = "<group>"; };
 		4FAAF8232E80FFF5002CF62E /* Series.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Series.swift; sourceTree = "<group>"; };
 		4FAC24A723DC3E06009AD585 /* UILabel+LinesCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+LinesCount.swift"; sourceTree = "<group>"; };
@@ -611,15 +611,17 @@
 		4FE4C0A12945E0EF00F47F0A /* RaceListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceListViewController.swift; sourceTree = "<group>"; };
 		4FE91EE02FB670F000460A74 /* UIBarButtonItem+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem+Extensions.swift"; sourceTree = "<group>"; };
 		4FE91EE22FBC098900460A74 /* EventApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventApi.swift; sourceTree = "<group>"; };
-		4FE91EE42FBC09C800460A74 /* MGPEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MGPEvent.swift; sourceTree = "<group>"; };
-		4FE91EE62FBC3AFB00460A74 /* EventsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsController.swift; sourceTree = "<group>"; };
+		4FE91EE42FBC09C800460A74 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		4FE91EE82FBD2D6B00460A74 /* EventSessionTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSessionTableViewCell.swift; sourceTree = "<group>"; };
 		4FE91EEA2FC2957900460A74 /* EventSessionBucketlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSessionBucketlist.swift; sourceTree = "<group>"; };
 		4FE91EEC2FC29EC300460A74 /* FileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileStore.swift; sourceTree = "<group>"; };
 		4FE91EEE2FC2C6EE00460A74 /* Notificationscheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notificationscheduler.swift; sourceTree = "<group>"; };
 		4FE91EF02FC2C72000460A74 /* NotificationScheduler+EventSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotificationScheduler+EventSession.swift"; sourceTree = "<group>"; };
 		4FE91EF22FC4252600460A74 /* EventStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventStore.swift; sourceTree = "<group>"; };
-		4FE91EF42FC426F100460A74 /* MGPEventStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MGPEventStore.swift; sourceTree = "<group>"; };
+		4FE91EF42FC426F100460A74 /* EventStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventStore.swift; sourceTree = "<group>"; };
+		4FE91EF72FC5266D00460A74 /* EventHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventHeaderView.swift; sourceTree = "<group>"; };
+		4FE91EF82FC5266D00460A74 /* EventsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsController.swift; sourceTree = "<group>"; };
+		4FE91EF92FC5266D00460A74 /* EventsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsViewController.swift; sourceTree = "<group>"; };
 		4FE96E9124E3E687009A7F53 /* HeaderStretchable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeaderStretchable.swift; sourceTree = "<group>"; };
 		4FEADB7124147D2D00F82F0D /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		4FEADB732416B3D400F82F0D /* EventTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTracker.swift; sourceTree = "<group>"; };
@@ -674,7 +676,7 @@
 			children = (
 				4F004EA1295B828E009C46AA /* RaceData.swift */,
 				4F6CAD8E298342DE00E80B5F /* UserData.swift */,
-				4FE91EF42FC426F100460A74 /* MGPEventStore.swift */,
+				4FE91EF42FC426F100460A74 /* EventStore.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -1124,7 +1126,7 @@
 				4FDD499523B0461D009DD2DB /* Season.swift */,
 				4F004E99295A2CA1009C46AA /* Course.swift */,
 				4FE1DAD52DEAD225009143C4 /* Standing.swift */,
-				4FE91EE42FBC09C800460A74 /* MGPEvent.swift */,
+				4FE91EE42FBC09C800460A74 /* Event.swift */,
 				4FA26830237A58E1008970AC /* ApiError.swift */,
 				4F77D21A29940E5D009DEB41 /* Extensions */,
 			);
@@ -1134,8 +1136,9 @@
 		4FA7FDA02F9E81FC00D33266 /* Events */ = {
 			isa = PBXGroup;
 			children = (
-				4FA7FDA12F9E821300D33266 /* EventsViewController.swift */,
-				4FE91EE62FBC3AFB00460A74 /* EventsController.swift */,
+				4FE91EF92FC5266D00460A74 /* EventsViewController.swift */,
+				4FE91EF82FC5266D00460A74 /* EventsController.swift */,
+				4FE91EF72FC5266D00460A74 /* EventHeaderView.swift */,
 				4FE91EF22FC4252600460A74 /* EventStore.swift */,
 				4FE91EE82FBD2D6B00460A74 /* EventSessionTableViewCell.swift */,
 				4FE91EEA2FC2957900460A74 /* EventSessionBucketlist.swift */,
@@ -1615,7 +1618,6 @@
 				4F5488962D2146C80056EA59 /* RaceScheduleViewController.swift in Sources */,
 				4F8668F423860900005E310A /* UniversalConstants.swift in Sources */,
 				4F536ED72F8C5869006FF620 /* SimpleTableViewCell+Configuration.swift in Sources */,
-				4FA7FDA22F9E821300D33266 /* EventsViewController.swift in Sources */,
 				4FF16CC02E70EC9300B4FC51 /* ViewJoinableRegistry.swift in Sources */,
 				4F791C9823A6105700F15FD7 /* TextPill.swift in Sources */,
 				4F8B4A162DDD250D00B735DA /* MessageViewCell.swift in Sources */,
@@ -1699,6 +1701,9 @@
 				4F2724402517DC5B000C7408 /* UIActivityViewController+Extensions.swift in Sources */,
 				4FA1AB3D23C94F5F007CF389 /* UIEdgeInsets+Extensions.swift in Sources */,
 				4F3750A92EF4C9510068FE16 /* RaceEditable.swift in Sources */,
+				4FE91EFA2FC5266D00460A74 /* EventHeaderView.swift in Sources */,
+				4FE91EFB2FC5266D00460A74 /* EventsController.swift in Sources */,
+				4FE91EFC2FC5266D00460A74 /* EventsViewController.swift in Sources */,
 				4F6429122402DB00005E8036 /* ImageConstants.swift in Sources */,
 				4FD4E1C5237F9746008816B3 /* UserViewController.swift in Sources */,
 				4F6FA16E2E4C66940056E115 /* AppplicationPreferences.swift in Sources */,
@@ -1768,7 +1773,6 @@
 				4F8B4A142DDD15B100B735DA /* PushMessageViewModel.swift in Sources */,
 				4F21086B2F90142B007C7716 /* SeriesResultViewModel.swift in Sources */,
 				4FA213F02946C9FA00C8E45A /* AppIcon.swift in Sources */,
-				4FE91EE72FBC3AFB00460A74 /* EventsController.swift in Sources */,
 				4F8B4A102DDCEECD00B735DA /* BadgeHub.swift in Sources */,
 				4FD53FAD23A0B01E00158206 /* UserViewModel.swift in Sources */,
 				4FE91EEB2FC2957900460A74 /* EventSessionBucketlist.swift in Sources */,
@@ -1788,7 +1792,7 @@
 				4FE91EF62FC4273B00460A74 /* FileStore.swift in Sources */,
 				4FCAF9FA23AB226500ACE7D3 /* MapperUtil.swift in Sources */,
 				4F8669062388D3BC005E310A /* AuthApi.swift in Sources */,
-				4FE91EF52FC426F100460A74 /* MGPEventStore.swift in Sources */,
+				4FE91EF52FC426F100460A74 /* EventStore.swift in Sources */,
 				4F6C8A8F23657DE00017FD78 /* APICredential.swift in Sources */,
 				4F6A28E32D14F55200FF692D /* TimeUtil.swift in Sources */,
 				4F004EA2295B828E009C46AA /* RaceData.swift in Sources */,
@@ -1828,7 +1832,7 @@
 				4F8668F823864389005E310A /* Descriptable.swift in Sources */,
 				4FEBB27D23A30F99007514B4 /* Date+Extensions.swift in Sources */,
 				4FBADDF624D4E2DB00A7D291 /* Array+Extensions.swift in Sources */,
-				4FE91EE52FBC09C800460A74 /* MGPEvent.swift in Sources */,
+				4FE91EE52FBC09C800460A74 /* Event.swift in Sources */,
 				4FA26833237A5983008970AC /* ObjectMapper+Extensions.swift in Sources */,
 				4FA26831237A58E1008970AC /* ApiError.swift in Sources */,
 				4FC51B212409EC8E00D654D0 /* Chapter+Extensions.swift in Sources */,
