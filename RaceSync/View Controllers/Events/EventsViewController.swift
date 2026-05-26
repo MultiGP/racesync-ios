@@ -73,7 +73,6 @@ class EventsViewController: UIViewController, Shimmable {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        eventsController.selectedDate = eventsController.ios26Dates.first
         setupLayout()
     }
 

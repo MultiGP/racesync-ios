@@ -137,7 +137,8 @@ class EventHeaderView: UIView {
         setupDateButtons()
         setupFilterButtons()
         
-        selectDate(at: 0, notify: false) // TODO: select current date, if in between of the range of dates
+        let initialIndex = Self.initialDateIndex(from: dates, timezone: timezone)
+        selectDate(at: initialIndex, notify: false)
     }
 
     required init?(coder: NSCoder) {
@@ -341,6 +342,12 @@ class EventHeaderView: UIView {
             }
         }
     }
+    
+    private static func initialDateIndex(from dates: [Date], timezone: TimeZone) -> Int {
+        guard let initialDate = dates.initialDate(timezone: timezone),
+              let index = dates.firstIndex(of: initialDate) else { return 0 }
+        return index
+    }
 
     // MARK: - Button Accessors
 
@@ -399,5 +406,14 @@ class EventHeaderView: UIView {
 fileprivate extension Array {
     subscript(safe index: Int) -> Element? {
         indices.contains(index) ? self[index] : nil
+    }
+}
+
+public extension Array where Element == Date {
+    func initialDate(timezone: TimeZone) -> Date? {
+        var calendar = Calendar.current
+        calendar.timeZone = timezone
+        let today = Date()
+        return first(where: { calendar.isDate($0, inSameDayAs: today) }) ?? first
     }
 }

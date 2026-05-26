@@ -52,6 +52,10 @@ class EventsController {
     }
 
     func reloadSessions() -> [EventSession] {
+        if selectedDate == nil {
+            selectedDate = ios26Dates.initialDate(timezone: MGPEventTimeZone!)
+        }
+
         guard let date = selectedDate else { return [] }
         return mergedSessions(for: date, with: .scheduled, filter: selectedFilter)
     }
