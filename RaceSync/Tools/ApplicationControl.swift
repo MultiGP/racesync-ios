@@ -17,11 +17,17 @@ class ApplicationControl: NSObject {
 
     static let shared = ApplicationControl()
     var authApi = AuthApi()
+    
+    var isIOWindowEnable: Bool {
+        get {
+            // From May 22nd to June 16th
+            return Date().isBetween(day: 22, month: 5, andDay: 16, month: 6)
+        }
+    }
 
     // MARK: - Private Variables
 
     fileprivate var deeplinkObserver: NSObjectProtocol?
-
 
     // MARK: - Initialization
 

@@ -19,6 +19,7 @@ public class AppWebConstants {
     static let tracks = "https://www.multigp.com/multigp-tracks/"
     static let obstaclesDoc = "https://www.multigp.com/multigp-drone-race-course-obstacles/"
     static let seasonRulesDoc = "https://www.multigp.com/organizer-resources/rule-book/"
+    static let io26RaceFormats = "https://www.multigp.com/io26/race-formats/"
 
     static let livefpv = "https://livefpv.com/"
     static let fpvscores = "https://fpvscores.com/"
