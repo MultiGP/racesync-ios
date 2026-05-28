@@ -60,6 +60,12 @@ class EventSessionTableViewCell: UITableViewCell {
         view.backgroundColor = Color.clear
         return view
     }()
+    
+    lazy var sideView: UIView = {
+        let view = UIView()
+        view.backgroundColor = Color.clear
+        return view
+    }()
         
     // MARK: - Private Variables
         
@@ -116,10 +122,17 @@ class EventSessionTableViewCell: UITableViewCell {
         selectedBackgroundView.backgroundColor = Color.yellow
         self.selectedBackgroundView = selectedBackgroundView
         
+        contentView.addSubview(sideView)
+        sideView.snp.makeConstraints {
+            $0.leading.top.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(1)
+            $0.width.equalTo(5)
+        }
+        
         contentView.addSubview(smallLabelStackView)
         smallLabelStackView.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.leading.equalToSuperview().offset(Constants.padding)
+            $0.leading.equalTo(sideView.snp.trailing).offset(Constants.padding)
             $0.width.equalTo(60) // fixed width so it never shifts
         }
 

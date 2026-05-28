@@ -14,12 +14,20 @@ enum EventSessionFilter: EnumTitle, Hashable {
     
     public var title: String {
         switch self {
-        case .all: return "All"
-        case .mySchedule: return "My Schedule"
-        case .spec: return "Spec"
-        case .openFly: return "Open Fly"
+        case .all:          return "All"
+        case .mySchedule:   return "My Schedule"
+        case .spec:         return "Spec"
+        case .openFly:      return "Open Fly"
         }
     }
+    
+    public var image: UIImage? {
+        switch self {
+        case .mySchedule:   return SystemImg.star
+        default:            return nil
+        }
+    }
+
 }
 
 class EventsController {

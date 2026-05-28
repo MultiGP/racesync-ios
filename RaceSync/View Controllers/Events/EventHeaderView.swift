@@ -31,14 +31,14 @@ class EventHeaderView: UIView {
 
     var selectedFilterTitle: String? {
         guard let index = selectedFilterIndex, index < filters.count else { return nil }
-        return filters[index]
+        return filters[index].0
     }
-    
+
     func selectFilter(titled title: String) {
-        guard let index = filters.firstIndex(of: title) else { return }
+        guard let index = filters.firstIndex(where: { $0.0 == title }) else { return }
         selectFilter(at: index, notify: false)
     }
-    
+
     var isEnabled: Bool = true {
         didSet {
             let allButtons = dateStackView.arrangedSubviews.compactMap { $0 as? UIButton }
@@ -47,7 +47,6 @@ class EventHeaderView: UIView {
 
             if #available(iOS 26, *) {
                 if !isEnabled {
-                    // Strip selected state so glass loses its tint
                     dateButton(at: selectedDateIndex)?.isSelected = false
                     dateButton(at: selectedDateIndex)?.setNeedsUpdateConfiguration()
                     if let filterIndex = selectedFilterIndex {
@@ -55,7 +54,6 @@ class EventHeaderView: UIView {
                         filterButton(at: filterIndex)?.setNeedsUpdateConfiguration()
                     }
                 } else {
-                    // Restore selected appearance
                     dateButton(at: selectedDateIndex)?.isSelected = true
                     dateButton(at: selectedDateIndex)?.setNeedsUpdateConfiguration()
                     if let filterIndex = selectedFilterIndex {
@@ -74,12 +72,11 @@ class EventHeaderView: UIView {
             }
         }
     }
-        
 
     // MARK: - Private
 
     fileprivate let dates: [Date]
-    fileprivate let filters: [String]
+    fileprivate let filters: [(String, UIImage?)]
     fileprivate let timezone: TimeZone
 
     fileprivate var selectedDateIndex: Int = 0
@@ -111,32 +108,31 @@ class EventHeaderView: UIView {
         sv.alignment = .center
         sv.isLayoutMarginsRelativeArrangement = true
         sv.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 4, right: 16)
-        
-        // to match the background from dateStackView, caused by the liquid glass effect
+
         if #available(iOS 26, *) {
             sv.backgroundColor = UIColor(hex: "f9f9f9")
         }
-        
+
         return sv
     }()
 
     fileprivate enum Constants {
         static let dateRowHeight: CGFloat = 60
-        static let filterRowHeight: CGFloat = 40
+        static let filterRowHeight: CGFloat = 50
     }
 
     // MARK: - Init
 
-    init(dates: [Date], timezone: TimeZone, filters: [String]? = nil) {
+    init(dates: [Date], timezone: TimeZone, filters: [(String, UIImage?)]? = nil) {
         self.dates = dates
         self.filters = filters ?? []
         self.timezone = timezone
         super.init(frame: .zero)
-        
+
         setupLayout()
         setupDateButtons()
         setupFilterButtons()
-        
+
         let initialIndex = Self.initialDateIndex(from: dates, timezone: timezone)
         selectDate(at: initialIndex, notify: false)
     }
@@ -185,8 +181,8 @@ class EventHeaderView: UIView {
     fileprivate func setupFilterButtons() {
         guard !filters.isEmpty else { return }
 
-        for (index, title) in filters.enumerated() {
-            let button = makeFilterButton(title: title, index: index)
+        for (index, (title, image)) in filters.enumerated() {
+            let button = makeFilterButton(title: title, image: image, index: index)
             filterStackView.addArrangedSubview(button)
         }
 
@@ -204,7 +200,7 @@ class EventHeaderView: UIView {
         button.titleLabel?.numberOfLines = 2
         button.titleLabel?.textAlignment = .center
         button.addTarget(self, action: #selector(didTapDateButton(_:)), for: .touchUpInside)
-        
+
         if #available(iOS 26, *) {
             var config = UIButton.Configuration.glass()
             config.attributedTitle = AttributedString(attributedTitle(for: date))
@@ -222,18 +218,22 @@ class EventHeaderView: UIView {
         return button
     }
 
-    fileprivate func makeFilterButton(title: String, index: Int) -> UIButton {
-        let button = UIButton(type: .system)
-        button.tag = index
-        button.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        button.setContentCompressionResistancePriority(.required, for: .horizontal)
-        button.addTarget(self, action: #selector(didTapFilterButton(_:)), for: .touchUpInside)
-
+    fileprivate func makeFilterButton(title: String, image: UIImage? = nil, index: Int) -> UIButton {
+        
         if #available(iOS 26, *) {
-            var config = UIButton.Configuration.glass()
+            let button = UIButton(type: .system)
+            button.tag = index
+            button.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+            button.setContentCompressionResistancePriority(.required, for: .horizontal)
+            button.addTarget(self, action: #selector(didTapFilterButton(_:)), for: .touchUpInside)
+            
+            var config = UIButton.Configuration.plain()
             config.title = title
-            config.contentInsets = NSDirectionalEdgeInsets(top: 6, leading: 12, bottom: 6, trailing: 12)
-            config.background.backgroundColor = Color.gray100.withAlphaComponent(0.5) // default unselected background
+            config.image = image?.withRenderingMode(.alwaysTemplate)
+                .withConfiguration(UIImage.SymbolConfiguration(pointSize: 10, weight: .semibold))
+            config.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 12, bottom: 10, trailing: 12)
+            config.imagePadding = 4
+            config.background.backgroundColor = Color.gray100.withAlphaComponent(0.5)
             button.configuration = config
 
             button.configurationUpdateHandler = { [weak self, title] button in
@@ -242,31 +242,59 @@ class EventHeaderView: UIView {
                 let active = button.isSelected && button.isEnabled
                 let disabled = !button.isEnabled
 
+                let foregroundColor: UIColor = disabled ? Color.gray100 : (active ? tintColor : Color.black)
+
                 updated?.background.backgroundColor = active
                     ? tintColor.withAlphaComponent(0.2)
                     : Color.gray100.withAlphaComponent(0.5)
 
+                updated?.baseForegroundColor = foregroundColor  // tints both image and title
+
                 updated?.attributedTitle = AttributedString(NSAttributedString(
-                    string: title,  // captured directly, never nil
+                    string: title,
                     attributes: [
                         .font: UIFont.systemFont(ofSize: 12, weight: .semibold),
-                        .foregroundColor: disabled ? Color.gray100 : (active ? tintColor as UIColor : Color.black)
+                        .foregroundColor: foregroundColor
                     ]
                 ))
 
                 button.configuration = updated
             }
+            return button
         } else {
+            let button = UIButton(type: .custom)
+            button.tag = index
+            button.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+            button.setContentCompressionResistancePriority(.required, for: .horizontal)
+            button.addTarget(self, action: #selector(didTapFilterButton(_:)), for: .touchUpInside)
+            
             button.setTitle(title, for: .normal)
             button.setTitleColor(Color.black, for: .normal)
+            button.setTitleColor(tintColor, for: .selected)
+            button.setTitleColor(Color.gray100, for: .disabled)
+            button.tintColor = Color.black  // unselected image color
             button.titleLabel?.font = UIFont.systemFont(ofSize: 12, weight: .semibold)
-            button.contentEdgeInsets = UIEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
             button.layer.cornerRadius = 8
             button.layer.cornerCurve = .continuous
-            button.backgroundColor = Color.gray100.withAlphaComponent(0.5) // match iOS 26 unselected
+            button.backgroundColor = Color.gray100.withAlphaComponent(0.5)
+            
+            let newImage = image?
+                .withConfiguration(UIImage.SymbolConfiguration(pointSize: 10, weight: .semibold))
+            button.setImage(newImage?.withTintColor(Color.black, renderingMode: .alwaysOriginal), for: .normal)
+            button.setImage(newImage?.withTintColor(tintColor, renderingMode: .alwaysOriginal), for: .selected)
+            button.setImage(newImage?.withTintColor(Color.gray100, renderingMode: .alwaysOriginal), for: .disabled)
+            
+            let spacing: CGFloat = 4
+            if newImage != nil {
+                button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -spacing/2, bottom: 0, right: spacing)
+                button.titleEdgeInsets = UIEdgeInsets(top: 0, left: spacing, bottom: 0, right: -spacing)
+                button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12 + spacing*2)
+            } else {
+                button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
+            }
+            
+            return button
         }
-
-        return button
     }
 
     // MARK: - Selection
@@ -274,7 +302,6 @@ class EventHeaderView: UIView {
     fileprivate func selectDate(at index: Int, notify: Bool = true) {
         guard index < dates.count else { return }
 
-        // Deselect previous
         deselect(dateButton(at: selectedDateIndex))
 
         selectedDateIndex = index
@@ -286,7 +313,6 @@ class EventHeaderView: UIView {
     }
 
     fileprivate func selectFilter(at index: Int, notify: Bool = true) {
-        // Deselect previous
         if let prev = selectedFilterIndex {
             deselect(filterButton(at: prev))
         }
@@ -312,9 +338,9 @@ class EventHeaderView: UIView {
                 button.backgroundColor = tintColor
                 button.layer.borderColor = tintColor.cgColor
             } else {
-                button.setTitleColor(tintColor, for: .normal)  // tint text only
+                button.isSelected = true  // triggers UIKit image swap
+                button.setTitleColor(tintColor, for: .normal)
                 button.backgroundColor = tintColor.withAlphaComponent(0.2)
-                button.layer.borderColor = tintColor.withAlphaComponent(0.3).cgColor
             }
         }
     }
@@ -331,17 +357,17 @@ class EventHeaderView: UIView {
                 button.setTitleColor(Color.black, for: .normal)
                 button.backgroundColor = Color.gray20
                 button.layer.borderColor = Color.gray50.cgColor
-                // Re-apply attributed title to reset color
                 if let index = dateStackView.arrangedSubviews.firstIndex(of: button), index < dates.count {
                     button.setAttributedTitle(attributedTitle(for: dates[index]), for: .normal)
                 }
             } else {
+                button.isSelected = false  // triggers UIKit image swap
                 button.setTitleColor(Color.black, for: .normal)
                 button.backgroundColor = Color.gray100.withAlphaComponent(0.75)
             }
         }
     }
-    
+
     private static func initialDateIndex(from dates: [Date], timezone: TimeZone) -> Int {
         guard let initialDate = dates.initialDate(timezone: timezone),
               let index = dates.firstIndex(of: initialDate) else { return 0 }
@@ -399,7 +425,7 @@ class EventHeaderView: UIView {
 }
 
 // ---------------------------------------------------------------------------
-// MARK: – Array safe subscript
+// MARK: – Array Extensions
 // ---------------------------------------------------------------------------
 
 fileprivate extension Array {

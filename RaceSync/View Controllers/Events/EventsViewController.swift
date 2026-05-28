@@ -48,7 +48,7 @@ class EventsViewController: UIViewController, Shimmable {
         let view = EventHeaderView(
             dates: eventsController.ios26Dates,
             timezone: MGPEventTimeZone!,
-            filters: EventSessionFilter.allCases.map { $0.title }
+            filters: EventSessionFilter.allCases.map { ($0.title, $0.image) }
         )
         view.delegate = self
         view.selectFilter(titled: eventsController.selectedFilter.title)
@@ -62,6 +62,7 @@ class EventsViewController: UIViewController, Shimmable {
     fileprivate lazy var timeFormatter: DateFormatter = {
         let f = DateFormatter()
         f.dateFormat = "h:mm a"
+        f.locale = Locale(identifier: USLocale)
         f.timeZone = MGPEventTimeZone
         return f
     }()
@@ -71,7 +72,7 @@ class EventsViewController: UIViewController, Shimmable {
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
-        static let headerViewHeight: CGFloat = 100
+        static let headerViewHeight: CGFloat = 120
     }
 
     // MARK: - Lifecycle
@@ -221,6 +222,7 @@ extension EventsViewController: UITableViewDataSource {
         cell.titleLabel.textColor = Color.black
         cell.subtitleLabel.text = track?.name
         cell.subtitleLabel.textColor = eventsController.color(for: track)
+        cell.sideView.backgroundColor = eventsController.color(for: track)
         cell.iconView.tintColor = cell.subtitleLabel.textColor
         cell.startTimeLabel.text = session.startTime.map { timeFormatter.string(from: $0) }
         cell.endTimeLabel.text = session.endTime.map   { timeFormatter.string(from: $0) }
