@@ -142,6 +142,7 @@ extension EventSession {
         let f = DateFormatter()
         f.dateFormat = "yyyy-MM-dd"
         f.timeZone = MGPEventTimeZone
+        f.locale = Locale(identifier: USLocale)
         return f
     }()
 
@@ -149,6 +150,7 @@ extension EventSession {
         let f = DateFormatter()
         f.dateFormat = "yyyy-MM-dd HH:mm"
         f.timeZone = MGPEventTimeZone
+        f.locale = Locale(identifier: USLocale)
         return f
     }()
 
