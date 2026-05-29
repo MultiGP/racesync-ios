@@ -227,9 +227,9 @@ class EventHeaderView: UIView {
             button.setContentCompressionResistancePriority(.required, for: .horizontal)
             button.addTarget(self, action: #selector(didTapFilterButton(_:)), for: .touchUpInside)
             
-            var config = UIButton.Configuration.plain()
+            var config = UIButton.Configuration.glass()
             config.title = title
-            config.image = image?.withRenderingMode(.alwaysTemplate)
+            config.image = image?.withRenderingMode(.alwaysOriginal)
                 .withConfiguration(UIImage.SymbolConfiguration(pointSize: 10, weight: .semibold))
             config.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 12, bottom: 10, trailing: 12)
             config.imagePadding = 4
@@ -243,13 +243,15 @@ class EventHeaderView: UIView {
                 let disabled = !button.isEnabled
 
                 let foregroundColor: UIColor = disabled ? Color.gray100 : (active ? tintColor : Color.black)
-
+                let foregroundImage = updated?.image?.withTintColor(foregroundColor)
+                
                 updated?.background.backgroundColor = active
                     ? tintColor.withAlphaComponent(0.2)
                     : Color.gray100.withAlphaComponent(0.5)
 
                 updated?.baseForegroundColor = foregroundColor  // tints both image and title
-
+                updated?.image = foregroundImage
+                
                 updated?.attributedTitle = AttributedString(NSAttributedString(
                     string: title,
                     attributes: [
