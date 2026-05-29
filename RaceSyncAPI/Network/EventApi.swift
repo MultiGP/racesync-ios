@@ -31,7 +31,7 @@ public class EventApi: EventApiInterface {
             return
 #endif
         }
-
+        
         let url = URL(string: "https://script.google.com/macros/s/AKfycbwxgL-ib1uq1EMyfkjrpvmdoMSxzKGG5x--MV4GAMExkM3UEV5FHovTM_UKbTtALQBj/exec")!
 
         // Always fetch from network and overwrite cache

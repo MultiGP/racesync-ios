@@ -274,7 +274,6 @@
 		4FE91EEB2FC2957900460A74 /* EventSessionBucketlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EEA2FC2957900460A74 /* EventSessionBucketlist.swift */; };
 		4FE91EEF2FC2C6EE00460A74 /* Notificationscheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EEE2FC2C6EE00460A74 /* Notificationscheduler.swift */; };
 		4FE91EF12FC2C72000460A74 /* NotificationScheduler+EventSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EF02FC2C72000460A74 /* NotificationScheduler+EventSession.swift */; };
-		4FE91EF32FC4252600460A74 /* EventStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EF22FC4252600460A74 /* EventStore.swift */; };
 		4FE91EF52FC426F100460A74 /* EventStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EF42FC426F100460A74 /* EventStore.swift */; };
 		4FE91EF62FC4273B00460A74 /* FileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EEC2FC29EC300460A74 /* FileStore.swift */; };
 		4FE91EFA2FC5266D00460A74 /* EventHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EF72FC5266D00460A74 /* EventHeaderView.swift */; };
@@ -618,7 +617,6 @@
 		4FE91EEC2FC29EC300460A74 /* FileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileStore.swift; sourceTree = "<group>"; };
 		4FE91EEE2FC2C6EE00460A74 /* Notificationscheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notificationscheduler.swift; sourceTree = "<group>"; };
 		4FE91EF02FC2C72000460A74 /* NotificationScheduler+EventSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotificationScheduler+EventSession.swift"; sourceTree = "<group>"; };
-		4FE91EF22FC4252600460A74 /* EventStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventStore.swift; sourceTree = "<group>"; };
 		4FE91EF42FC426F100460A74 /* EventStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventStore.swift; sourceTree = "<group>"; };
 		4FE91EF72FC5266D00460A74 /* EventHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventHeaderView.swift; sourceTree = "<group>"; };
 		4FE91EF82FC5266D00460A74 /* EventsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsController.swift; sourceTree = "<group>"; };
@@ -1142,7 +1140,6 @@
 				4FE91EF92FC5266D00460A74 /* EventsViewController.swift */,
 				4FE91EF82FC5266D00460A74 /* EventsController.swift */,
 				4FE91EF72FC5266D00460A74 /* EventHeaderView.swift */,
-				4FE91EF22FC4252600460A74 /* EventStore.swift */,
 				4FE91EE82FBD2D6B00460A74 /* EventSessionTableViewCell.swift */,
 				4FE91EEA2FC2957900460A74 /* EventSessionBucketlist.swift */,
 				4FE91EF02FC2C72000460A74 /* NotificationScheduler+EventSession.swift */,
@@ -1682,7 +1679,6 @@
 				4F8175A52411DDB900685F83 /* HomeController.swift in Sources */,
 				4F8376DC23EE87CC00256AEC /* RotatingIconView.swift in Sources */,
 				4F0B613C238528C300930D91 /* PasteboardLabel.swift in Sources */,
-				4FE91EF32FC4252600460A74 /* EventStore.swift in Sources */,
 				4FD4E1DD237FBE8B008816B3 /* MemberBadgeView.swift in Sources */,
 				4F6425BA2F57CA4600A4199C /* UIView+Separator.swift in Sources */,
 				4FC50258242700DC0088320B /* RacePilotsPickerController.swift in Sources */,

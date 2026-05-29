@@ -163,6 +163,48 @@ class EventsViewController: UIViewController, Shimmable {
     }
 
     // MARK: - Actions
+    
+    @objc fileprivate func didTapStarButton(_ sender: UIButton) {
+        guard sender.tag < selectedSessions.count, let date = eventsController.selectedDate else { return }
+        let bucketlist = eventsController.bucketlist
+        let session = selectedSessions[sender.tag]
+        
+        if bucketlist.contains(session, for: date) {
+            bucketlist.delete(session, for: date)
+            NotificationScheduler.shared.cancel(for: session)
+        } else {
+            bucketlist.save(session, for: date)
+            NotificationScheduler.shared.schedule(for: session)
+        }
+        
+        let delay = eventsController.selectedFilter == .mySchedule ? 0.3 : 0
+
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + delay) { [weak self] in
+            guard let sessions = self?.eventsController.reloadSessions() else { return }
+            self?.selectedSessions = sessions
+            
+            let indexPath = IndexPath(row: sender.tag, section: 0)
+            
+            self?.tableView.beginUpdates()
+            if self?.eventsController.selectedFilter == .mySchedule {
+                self?.tableView.deleteRows(at: [indexPath], with: .automatic) // must delete the row in this unique case
+            } else {
+                self?.tableView.reloadRows(at: [indexPath], with: .automatic)
+            }
+            self?.tableView.endUpdates()
+            
+            // Needed for updating the button's tags. There must be another way
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
+                self?.tableView.reloadData()
+            }
+        }
+    }
+    
+    fileprivate func openRaceDetail(_ raceId: ObjectId) {
+        let vc = RaceTabBarController(with: raceId, selectedTab: .details)
+        vc.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(vc, animated: true)
+    }
 
     @objc fileprivate func didPullRefreshControl() {
         loadContent()
@@ -226,43 +268,21 @@ extension EventsViewController: UITableViewDataSource {
         cell.iconView.tintColor = cell.subtitleLabel.textColor
         cell.startTimeLabel.text = session.startTime.map { timeFormatter.string(from: $0) }
         cell.endTimeLabel.text = session.endTime.map   { timeFormatter.string(from: $0) }
+        
+        cell.starButton.addTarget(self, action: #selector(didTapStarButton(_:)), for: .touchUpInside)
         cell.isFavorite = eventsController.bucketlist.contains(session, for: eventsController.selectedDate)
+        cell.starButton.tag = indexPath.row
     }
 }
 
 extension EventsViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard indexPath.row < selectedSessions.count, let date = eventsController.selectedDate else { return }
+        tableView.deselectRow(at: indexPath, animated: true)
 
         let session = selectedSessions[indexPath.row]
-        let bucketlist = eventsController.bucketlist
-
-        if bucketlist.contains(session, for: date) {
-            bucketlist.delete(session, for: date)
-            NotificationScheduler.shared.cancel(for: session)
-        } else {
-            bucketlist.save(session, for: date)
-            NotificationScheduler.shared.schedule(for: session)
-        }
-        
-        guard let cell = tableView.cellForRow(at: indexPath) else { return }
-        
-        selectedSessions = eventsController.reloadSessions()
-
-        UIView.animate(withDuration: 0.6) {
-            cell.selectedBackgroundView?.alpha = 0
-        } completion: { _ in
-            tableView.deselectRow(at: indexPath, animated: false)
-            cell.selectedBackgroundView?.alpha = 1
-            
-            tableView.beginUpdates()
-            if self.eventsController.selectedFilter == .mySchedule {
-                tableView.deleteRows(at: [indexPath], with: .automatic) // must delete the row in this unique case
-            } else {
-                tableView.reloadRows(at: [indexPath], with: .automatic)
-            }
-            tableView.endUpdates()
+        if let raceId = session.raceId {
+            openRaceDetail(raceId)
         }
     }
 

@@ -12,8 +12,8 @@ class EventSessionTableViewCell: UITableViewCell {
     
     var isFavorite: Bool = false {
         didSet {
-            starImageView.tintColor = isFavorite ? Color.yellow : Color.gray100
-            starImageView.image = isFavorite ? SystemImg.starFill : SystemImg.star
+            starButton.tintColor = isFavorite ? Color.yellow : Color.gray100
+            starButton.setImage(isFavorite ? SystemImg.starFill : SystemImg.star, for: .normal)
         }
     }
     
@@ -66,15 +66,17 @@ class EventSessionTableViewCell: UITableViewCell {
         view.backgroundColor = Color.clear
         return view
     }()
+    
+    lazy var starButton: UIButton = {
+        let button = CustomButton(type: .system)
+        button.tintColor = Color.gray100
+        button.backgroundColor = Color.clear
+        button.hitTestEdgeInsets = UIEdgeInsets(proportionally: -30)
+        return button
+    }()
         
     // MARK: - Private Variables
-        
-    fileprivate lazy var starImageView: UIImageView = {
-        let view = UIImageView(frame: CGRect(x: 0, y: 0, width: 26, height: 24))
-        view.backgroundColor = Color.clear
-        return view
-    }()
-
+    
     lazy var labelStackView: UIStackView = {
         let stackView2 = UIStackView(arrangedSubviews: [iconView, subtitleLabel])
         stackView2.axis = .horizontal
@@ -119,7 +121,7 @@ class EventSessionTableViewCell: UITableViewCell {
     fileprivate func setupLayout() {
         
         let selectedBackgroundView = UIView()
-        selectedBackgroundView.backgroundColor = Color.yellow
+        selectedBackgroundView.backgroundColor = Color.gray20
         self.selectedBackgroundView = selectedBackgroundView
         
         contentView.addSubview(sideView)
@@ -143,8 +145,13 @@ class EventSessionTableViewCell: UITableViewCell {
             $0.trailing.equalToSuperview().inset(Constants.padding)
         }
         
-        starImageView.frame.size = .init(width: 26, height: 24)
-        accessoryView = starImageView
+        contentView.addSubview(starButton)
+        starButton.snp.makeConstraints {
+            $0.height.equalTo(28)
+            $0.width.equalTo(30)
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(Constants.padding*2)
+        }
     }
     
     override func prepareForReuse() {

@@ -61,14 +61,16 @@ public class EventSession: Mappable, Descriptable {
     
     public var id: ObjectId = ""
 
-    public var date: Date?
-    public var startTime: Date?
-    public var endTime: Date?
+    public var date: Date? = nil
+    public var startTime: Date? = nil
+    public var endTime: Date? = nil
     public var dayName: String = ""
 
     public var trackId: ObjectId = ""
     public var activity: String = ""
     public var status: EventStatus = .closed
+
+    public var raceId: ObjectId? = nil
 
     // MARK: - Initialization
 
@@ -78,12 +80,13 @@ public class EventSession: Mappable, Descriptable {
     }
 
     public func mapping(map: Map) {
-        id       <- map["id"]
+        id       <- map[ParamKey.id]
         dayName  <- map["day"]
         activity <- map["activity"]
         trackId  <- map["trackId"]
-        status   <- (map["status"], EnumTransform<EventStatus>())
-
+        status   <- (map[ParamKey.status], EnumTransform<EventStatus>())
+        raceId   <- map[ParamKey.raceId]
+        
         _rawDate      <- map["date"]
         _rawStartTime <- map["startTime"]
         _rawEndTime   <- map["endTime"]
@@ -178,6 +181,7 @@ extension EventSession {
         copy.trackId   = trackId
         copy.activity  = activity
         copy.status    = status
+        copy.raceId    = raceId
         copy.date      = date
         copy.startTime = startTime
         copy.endTime   = endTime
