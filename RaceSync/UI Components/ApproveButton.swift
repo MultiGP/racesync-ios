@@ -32,10 +32,30 @@ class ApproveButton: CustomButton {
             updateAnimation()
         }
     }
-
-    fileprivate static let minHeight: CGFloat = 32
-    fileprivate static let minWidth: CGFloat = 82
-    fileprivate static let cornerRadius: CGFloat = 6
+    
+    static let minHeight: CGFloat = {
+        if #available(iOS 26.0, *) {
+            return 36
+        } else {
+            return 32
+        }
+    }()
+    
+    static let minWidth: CGFloat = {
+        if #available(iOS 26.0, *) {
+            return 86
+        } else {
+            return 82
+        }
+    }()
+    
+    static let cornerRadius: CGFloat = {
+        if #available(iOS 26.0, *) {
+            return minHeight/2
+        } else {
+            return 6
+        }
+    }()
 
     // MARK: - Private Variables
 
@@ -82,6 +102,7 @@ class ApproveButton: CustomButton {
         setContentHuggingPriority(.required, for: .horizontal)
         setContentCompressionResistancePriority(.required, for: .horizontal)
 
+        layer.cornerCurve = .continuous
         layer.cornerRadius = Self.cornerRadius
         layer.borderWidth = 0
     }
@@ -145,6 +166,15 @@ class ApproveButton: CustomButton {
             return CGSize(width: Self.minWidth/2, height: Self.minHeight)
         } else {
             return CGSize(width: Self.minWidth, height: Self.minHeight)
+        }
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        if #available(iOS 26.0, *) {
+            layer.cornerRadius = bounds.height / 2
+            layer.cornerCurve = .continuous  // matches Apple's "squircle" style
         }
     }
 }

@@ -17,6 +17,11 @@ public extension Array {
     mutating func rearrange(from: Int, to: Int) {
         insert(remove(at: from), at: to)
     }
+    
+    func interspersed(with separator: Element) -> [Element] {
+        guard count > 1 else { return self }
+        return dropLast().flatMap { [$0, separator] } + [last!]
+    }
 }
 
 public extension Array where Element: Equatable {

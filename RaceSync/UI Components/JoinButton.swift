@@ -38,10 +38,24 @@ class JoinButton: CustomButton {
         }
     }
 
-    static let minHeight: CGFloat = 32
-    static let minWidth: CGFloat = 76
-    static let cornerRadius: CGFloat = 6
-
+    static let minHeight: CGFloat = {
+        if #available(iOS 26.0, *) {
+            return 38
+        } else {
+            return 32
+        }
+    }()
+    
+    var minWidth: CGFloat {
+        get {
+            if #available(iOS 26.0, *) {
+                return self.isCompact ? Self.minHeight : 80
+            } else {
+                return 76
+            }
+        }
+    }
+    
     // MARK: - Private Variables
 
     fileprivate lazy var spinnerView: UIActivityIndicatorView = {
@@ -87,7 +101,7 @@ class JoinButton: CustomButton {
         setContentHuggingPriority(.required, for: .horizontal)
         setContentCompressionResistancePriority(.required, for: .horizontal)
 
-        layer.cornerRadius = Self.cornerRadius
+        layer.cornerCurve = .continuous
         layer.borderWidth = 0
     }
 
@@ -117,6 +131,12 @@ class JoinButton: CustomButton {
             tintColor = state.titleColor
             imageView?.tintColor = state.titleColor
             isUserInteractionEnabled = !isCompact
+            
+            if #available(iOS 26, *) {
+                // cornerRadius handled by layoutSubviews
+            } else {
+                layer.cornerRadius = 6
+            }
 
             if let borderColor = state.outlineColor {
                 layer.borderColor = borderColor.cgColor
@@ -156,9 +176,17 @@ class JoinButton: CustomButton {
     // MARK: - Overrides
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: Self.minWidth, height: Self.minHeight)
+        return CGSize(width: self.minWidth, height: Self.minHeight)
     }
-
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        if #available(iOS 26, *) {
+            layer.cornerRadius = bounds.height / 2
+        }
+    }
+    
     override var isHighlighted: Bool {
         get {
             if !joinState.interactionEnabled {

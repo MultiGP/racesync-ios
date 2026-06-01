@@ -33,7 +33,7 @@ class RaceTabBarController: UITabBarController {
     var isDismissable: Bool = false {
         didSet {
             if isDismissable {
-                navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
+                navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .plain, target: self, action: #selector(didPressCloseButton))
                 navigationItem.backBarButtonItem = nil
             } else {
                 navigationItem.leftBarButtonItem = nil
@@ -169,7 +169,7 @@ class RaceTabBarController: UITabBarController {
         guard let vc = viewControllers?[index] else { return }
 
         title = vc.title
-        navigationItem.rightBarButtonItem = vc.navigationItem.rightBarButtonItem
+        navigationItem.rightBarButtonItems = vc.navigationItem.rightBarButtonItems
     }
 
     @objc fileprivate func didPressTitleButton() {
@@ -239,8 +239,7 @@ class RaceTabBarController: UITabBarController {
 
         view.addSubview(scrollView)
         scrollView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            $0.bottom.leading.trailing.equalToSuperview()
+            $0.edges.equalToSuperview()
         }
 
         scrollView.reloadEmptyDataSet()
@@ -252,10 +251,13 @@ extension RaceTabBarController: UITabBarControllerDelegate {
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         return true
     }
+    
+    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+        // Trigger haptic gesture to emphasize the action
+        HapticEngine.shared.trigger()
+    }
 
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-
-        (tabBar as? RoundedSelectionTabBar)?.updateSelectionFrame(animated: true)
 
         if let index = viewControllers?.lastIndex(of: viewController) {
             didSelectedIndex(index)

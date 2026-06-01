@@ -96,6 +96,13 @@ class LoginViewController: UIViewController {
         button.layer.borderColor = Color.gray100.cgColor
         button.layer.borderWidth = 0.5
         button.addTarget(self, action:#selector(didPressLoginButton), for: .touchUpInside)
+        
+        if #available(iOS 26.0, *) {
+            button.layer.cornerRadius = Constants.actionButtonHeight/2
+        } else {
+            button.layer.cornerRadius = Constants.padding/2
+        }
+                
         return button
     }()
 
@@ -298,7 +305,10 @@ class LoginViewController: UIViewController {
     }
 
     @objc func didPressLoginButton() {
-        shouldLogin()
+        // Trigger haptic feedback to emphasize the action
+        HapticEngine.shared.trigger()
+        
+        prepareForLogin()
     }
 
     @objc func didPressLegalButton() {
@@ -362,7 +372,7 @@ class LoginViewController: UIViewController {
 
     // MARK: - Events
 
-    func shouldLogin() {
+    func prepareForLogin() {
         guard let email = emailField.text else { shakeLoginButton(); return }
         guard Validator.isEmail().apply(email) else { shakeLoginButton(); return }
 

@@ -107,6 +107,8 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         button.titleLabel?.numberOfLines = 2
         button.tintColor = Color.black
+        button.contentHorizontalAlignment = .left
+        button.contentEdgeInsets = .zero
         return button
     }
 
@@ -132,8 +134,13 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate lazy var locationButton: PasteboardButton = {
         let button = contextualButton()
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        button.titleLabel?.numberOfLines = 3
         button.addTarget(self, action: #selector(didPressLocationButton), for: .touchUpInside)
         button.tintColor = Color.link
+        button.contentHorizontalAlignment = .left
+        button.contentEdgeInsets = .zero
+        button.titleEdgeInsets = .zero
         return button
     }()
 
@@ -183,10 +190,14 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         let topStackView = UIStackView(arrangedSubviews: [miniJoinButton, joinButton])
         topStackView.axis = .horizontal
         topStackView.distribution = .equalSpacing
-        topStackView.spacing = Constants.padding/4
+        topStackView.spacing = Constants.padding/2
 
         miniJoinButton.snp.makeConstraints {
-            $0.width.height.equalTo(Constants.minButtonHeight)
+            $0.width.height.equalTo(JoinButton.minHeight)
+        }
+
+        joinButton.snp.makeConstraints {
+            $0.height.greaterThanOrEqualTo(JoinButton.minHeight)
         }
 
         var subviews: [UIView] = [topStackView, feeLabel, memberBadgeView]
@@ -194,7 +205,8 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         stackView.axis = .vertical
         stackView.alignment = .trailing
         stackView.distribution = .equalSpacing
-        stackView.spacing = Constants.padding/2
+        stackView.spacing = Constants.padding * 3/4
+        stackView.backgroundColor = Color.clear
         return stackView
     }()
 
@@ -211,6 +223,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         stackView2.alignment = .center
         stackView2.distribution = .fill
         stackView2.spacing = Constants.padding * 3/4
+        stackView2.backgroundColor = Color.clear
 
         if canDisplayAddress {
             let stackView3 = UIStackView(arrangedSubviews: [locationIconView, locationButton])
@@ -225,7 +238,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             stackView4.alignment = .leading
             stackView4.distribution = .equalSpacing
             stackView4.spacing = Constants.padding / 2
-
+            stackView4.backgroundColor = Color.clear
             return stackView4
         } else {
             return stackView2
@@ -269,6 +282,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     fileprivate var raceViewModel: RaceViewModel
     fileprivate var chapterApi = ChapterApi()
     fileprivate var userApi = UserApi()
+    fileprivate var seriesApi = SeriesApi()
 
     fileprivate var htmlViewHeightConstraint: Constraint?
 //    fileprivate let ignoreFinalizingError: Bool = true // The API finalize(id) still returns 500 error. Reported https://github.com/MultiGP/multigp-com/issues/93
@@ -279,7 +293,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         static let mapHeight: CGFloat = UIScreen.main.bounds.height/3 // 1/3 of the screen
         static let cellHeight: CGFloat = 50
         static let maxButtonSize: CGFloat = 100
-        static let minButtonHeight: CGFloat = 32
         static let buttonSpacing: CGFloat = 12
         static let htmlpadding: CGFloat = 12
     }
@@ -378,15 +391,14 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         headerView.addSubview(rightStackView)
         rightStackView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(Constants.padding)
-            $0.width.greaterThanOrEqualTo(Constants.maxButtonSize)
-            $0.trailing.equalToSuperview().offset(-Constants.padding)
+            $0.trailing.equalToSuperview().inset(Constants.padding)
         }
 
         headerView.addSubview(leftStackView)
         leftStackView.snp.makeConstraints {
             $0.top.equalTo(rightStackView.snp.top)
             $0.leading.equalToSuperview().offset(Constants.padding)
-            $0.trailing.equalTo(rightStackView.snp.leading).offset(-Constants.padding/2)
+            $0.trailing.lessThanOrEqualTo(rightStackView.snp.leading).offset(-Constants.padding/2)
         }
 
         headerView.snp.makeConstraints {
@@ -415,15 +427,13 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
         scrollView.addSubview(contentView)
         contentView.snp.makeConstraints {
-            $0.top.leading.trailing.bottom.equalToSuperview()
+            $0.edges.equalToSuperview()
         }
 
         view.addSubview(scrollView)
         scrollView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
             $0.width.equalTo(UIScreen.main.bounds.width)
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
     }
 
@@ -431,13 +441,14 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         title = "Details"
         tabBarItem = UITabBarItem(title: title, image: SystemImg.calendarCclock, selectedImage: nil)
 
-        navigationItem.rightBarButtonItem = raceController.navigationItems()
+        navigationItem.rightBarButtonItems = raceController.navigationItems()
     }
 
     fileprivate func loadRows() {
         tableViewRows = [
             !race.ownerUserName.isEmpty && !race.ownerId.isEmpty ? Row.owner : nil,
             raceViewModel.chapterLabel.isEmpty ? nil : Row.chapter,
+            raceViewModel.seriesLabel.isEmpty ? nil : Row.series,
             raceViewModel.seasonLabel.isEmpty ? nil : Row.season,
             race.isZippyQEnabled ? Row.zippyQ : nil,
             raceViewModel.subtitleLabel.string.isEmpty ? nil : Row.class,
@@ -614,7 +625,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
                 let vc = UserViewController(with: user)
                 self?.navigationController?.pushViewController(vc, animated: true)
             } else if let _ = error {
-                // handle error
+                // TODO: Handle error
             }
             self?.setLoading(cell, loading: false)
         }
@@ -632,7 +643,37 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
                 let vc = RaceListViewController(sortedViewModels, raceClass: raceClass)
                 self?.navigationController?.pushViewController(vc, animated: true)
             } else if let _ = error {
-                // handle error
+                // TODO: Handle error
+            }
+            self?.setLoading(cell, loading: false)
+        }
+    }
+
+    func showChapterProfile(_ cell: FormTableViewCell) {
+        guard canInteract(with: cell) else { return }
+        setLoading(cell, loading: true)
+
+        chapterApi.getChapter(with: race.chapterId) { [weak self] (chapter, error) in
+            if let chapter = chapter {
+                let vc = ChapterViewController(with: chapter)
+                self?.navigationController?.pushViewController(vc, animated: true)
+            } else if let _ = error {
+                // TODO: Handle error
+            }
+            self?.setLoading(cell, loading: false)
+        }
+    }
+
+    func showSeriesDetail(_ cell: FormTableViewCell) {
+        guard canInteract(with: cell), let seriesId = race.seriesId else { return }
+        setLoading(cell, loading: true)
+
+        seriesApi.view(series: seriesId) { [weak self] (series, error) in
+            if let series = series {
+                let vc = SeriesTabBarController(with: series)
+                self?.navigationController?.pushViewController(vc, animated: true)
+            } else if let _ = error {
+                // TODO: Handle error
             }
             self?.setLoading(cell, loading: false)
         }
@@ -649,22 +690,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
                 vc.title = self?.race.seasonName
                 self?.navigationController?.pushViewController(vc, animated: true)
             } else if let _ = error {
-                // handle error
-            }
-            self?.setLoading(cell, loading: false)
-        }
-    }
-
-    func showChapterProfile(_ cell: FormTableViewCell) {
-        guard canInteract(with: cell) else { return }
-        setLoading(cell, loading: true)
-
-        chapterApi.getChapter(with: race.chapterId) { [weak self] (chapter, error) in
-            if let chapter = chapter {
-                let vc = ChapterViewController(with: chapter)
-                self?.navigationController?.pushViewController(vc, animated: true)
-            } else if let _ = error {
-                // handle error
+                // TODO: Handle error
             }
             self?.setLoading(cell, loading: false)
         }
@@ -767,6 +793,8 @@ extension RaceDetailViewController: UITableViewDelegate {
             showUserProfile(cell)
         } else if row == .chapter {
             showChapterProfile(cell)
+        } else if row == .series {
+            showSeriesDetail(cell)
         } else if row == .season {
             showSeasonRaces(cell)
         } else if row == .zippyQ {
@@ -806,7 +834,9 @@ extension RaceDetailViewController: UITableViewDataSource {
         if row == .chapter {
             cell.detailTextLabel?.text = raceViewModel.chapterLabel
         } else if row == .owner {
-            cell.detailTextLabel?.text = race.ownerUserName
+            cell.detailTextLabel?.text = raceViewModel.ownerLabel
+        } else if row == .series {
+            cell.detailTextLabel?.text = raceViewModel.seriesLabel
         } else if row == .season {
             cell.detailTextLabel?.text = raceViewModel.seasonLabel
         } else if row == .zippyQ {
@@ -874,12 +904,13 @@ extension RaceDetailViewController: MKMapViewDelegate {
 }
 
 fileprivate enum Row: Int, EnumTitle, CaseIterable {
-    case chapter, owner, season, zippyQ, `class`, results
+    case chapter, owner, series, season, zippyQ, `class`, results
 
     var title: String {
         switch self {
         case .chapter:          return "Chapter"
         case .owner:            return "Coordinator"
+        case .series:           return "Series"
         case .season:           return "Season"
         case .zippyQ:           return "ZippyQ"
         case .class:            return "Class"

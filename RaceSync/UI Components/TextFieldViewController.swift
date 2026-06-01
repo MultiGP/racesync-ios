@@ -56,7 +56,7 @@ class TextFieldViewController: FormBaseViewController {
 
     fileprivate lazy var rightBarButtonItem: UIBarButtonItem = {
         let title = self.delegate?.formViewControllerRightBarButtonTitle?(self) ?? "OK"
-        let barButtonItem = UIBarButtonItem(title: title, style: .done, target: self, action: #selector(didPressOKButton))
+        let barButtonItem = UIBarButtonItem(title: title, style: .plain, target: self, action: #selector(didPressOKButton))
         barButtonItem.isEnabled = allowSelection(with: textField.text)
         return barButtonItem
     }()
@@ -113,7 +113,7 @@ class TextFieldViewController: FormBaseViewController {
         textField.text = item
 
         if let nc = navigationController, nc.viewControllers.count == 1 {
-            navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
+            navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .plain, target: self, action: #selector(didPressCloseButton))
         }
 
         navigationItem.rightBarButtonItem = rightBarButtonItem

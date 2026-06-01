@@ -37,6 +37,12 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
         tableView.refreshControl = self.refreshControl
         tableView.tableFooterView = UIView()
         tableView.backgroundColor = Color.gray50
+        
+        let longPress = UILongPressGestureRecognizer(target: self,action: #selector(didLongPress(_:)))
+        longPress.minimumPressDuration = 0.3
+        longPress.delaysTouchesBegan = true
+        tableView.addGestureRecognizer(longPress)
+        
         return tableView
     }()
 
@@ -118,23 +124,22 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
 
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
             $0.width.equalTo(UIScreen.main.bounds.width)
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
     }
 
     fileprivate func configureNavigationItems() {
-        navigationItem.rightBarButtonItem = raceController.navigationItems()
 
         if race.canShowResults {
-            title = "Race Results"
-            tabBarItem = UITabBarItem(title: "Results", image: SystemImg.medal, selectedImage: SystemImg.medalFill)
+            title = "Results"
+            tabBarItem = UITabBarItem(title: title, image: SystemImg.medal, selectedImage: SystemImg.medalFill)
         } else {
-            title = "Racing Pilots"
-            tabBarItem = UITabBarItem(title: "Pilots", image: SystemImg.person, selectedImage: SystemImg.personFill)
+            title = "Pilots"
+            tabBarItem = UITabBarItem(title: title, image: SystemImg.person, selectedImage: SystemImg.personFill)
         }
+        
+        navigationItem.rightBarButtonItems = raceController.navigationItems()
     }
 
     // MARK: - Actions
@@ -171,6 +176,41 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
         guard !cell.isLoading else { return false }
         guard !didTapCell else { return false }
         return true
+    }
+    
+    @objc func didLongPress(_ gesture: UIGestureRecognizer) {
+        let location = gesture.location(in: tableView)
+        guard let indexPath = tableView.indexPathForRow(at: location) else { return }
+
+        guard gesture.state == .began else {
+            tableView.deselectRow(at: indexPath, animated: true)
+            return
+        }
+
+        tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+        guard race.canBeEdited else { return }
+
+        let viewModel = userViewModels[indexPath.row]
+        let deselect = { [weak self] in self?.tableView.deselectRow(at: indexPath, animated: true) }
+
+        ActionSheetUtil.presentDestructiveActionSheet(
+            withTitle: "Remove \(viewModel.username) from this race?",
+            destructiveTitle: "Yes, Remove",
+            completion: { [weak self] _ in
+                guard let self else { return }
+                raceApi.forceResign(race: race.id, pilotId: viewModel.userId) { status, error in
+                    if let error {
+                        AlertUtil.presentAlertMessage(
+                            "Couldn't remove this pilot from the race. Please try again later. \(error.localizedDescription)",
+                            title: "Error", delay: 0.5)
+                    } else {
+                        self.reloadRace()
+                    }
+                    deselect()
+                }
+            },
+            cancel: { _ in deselect() }
+        )
     }
 
     // MARK: - Data Update

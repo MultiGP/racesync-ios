@@ -11,8 +11,7 @@ import SnapKit
 import RaceSyncAPI
 
 enum HomeTabs: Int {
-    case races, series, standings
-
+    case races, series, standings, events
     static let `default`: Self = .series
 }
 
@@ -30,13 +29,17 @@ class HomeTabBarController: UITabBarController {
     fileprivate lazy var seriesVC: SeriesFeedViewController = {
         return SeriesFeedViewController()
     }()
-
+    
     fileprivate lazy var standingsVC: StandingsViewController = {
         let vc = StandingsViewController(with: .y2026)
         vc.title = "Standings"
         vc.tabBarItem = UITabBarItem(title: vc.title, image: SystemImg.trophy, selectedImage: SystemImg.trophyFill)
         vc.isRootTabBar = true
         return vc
+    }()
+    
+    fileprivate lazy var eventsVC: EventsViewController = {
+        return EventsViewController()
     }()
 
     fileprivate lazy var titleView: UIView = {
@@ -49,20 +52,6 @@ class HomeTabBarController: UITabBarController {
         return view
     }()
 
-    fileprivate lazy var notificationsButton: CustomButton = {
-        let button = CustomButton(type: .system)
-        button.addTarget(self, action: #selector(didPressNotificationsButton), for: .touchUpInside)
-        button.setImage(ButtonImg.notifications, for: .normal)
-        return button
-    }()
-
-    fileprivate lazy var settingsButton: CustomButton = {
-        let button = CustomButton(type: .system)
-        button.addTarget(self, action: #selector(didPressSettingsButton), for: .touchUpInside)
-        button.setImage(ButtonImg.settings, for: .normal)
-        return button
-    }()
-
     fileprivate lazy var userProfileButton: UIButton = {
         let button = UIButton(type: .system)
         button.addTarget(self, action: #selector(didPressUserProfileButton), for: .touchUpInside)
@@ -70,7 +59,8 @@ class HomeTabBarController: UITabBarController {
 
         if let placeholder = PlaceholderImg.small?.withRenderingMode(.alwaysOriginal) {
             button.setImage(placeholder, for: .normal) // 32x32
-            button.layer.cornerRadius = placeholder.size.width / 2
+            button.layer.cornerRadius = Constants.miniProfileSize.width / 2
+            button.layer.cornerCurve = .continuous
             button.layer.borderWidth = 0.5
             button.layer.borderColor = Color.gray100.cgColor
             button.layer.masksToBounds = true
@@ -86,7 +76,8 @@ class HomeTabBarController: UITabBarController {
 
         if let placeholder = PlaceholderImg.small?.withRenderingMode(.alwaysOriginal) {
             button.setImage(placeholder, for: .normal) // 32x32
-            button.layer.cornerRadius = placeholder.size.width / 2
+            button.layer.cornerRadius = Constants.miniProfileSize.width / 2
+            button.layer.cornerCurve = .continuous
             button.layer.borderWidth = 0.5
             button.layer.borderColor = Color.gray100.cgColor
             button.layer.masksToBounds = true
@@ -94,15 +85,15 @@ class HomeTabBarController: UITabBarController {
         return button
     }()
 
-    fileprivate lazy var badgeHub: BadgeHub = {
-        let hub = BadgeHub(view: notificationsButton)
-        hub.setCircleColor(Color.lightRed, label: Color.white)
-        hub.setCircleBorderColor(Color.white, borderWidth: 1)
-        hub.setMaxCount(to: 100)
-        hub.scaleCircleSize(by: 0.7)
-        hub.moveCircleBy(x: 35.0, y: 0)
-        return hub
-    }()
+//    fileprivate lazy var badgeHub: BadgeHub = {
+//        let hub = BadgeHub(barButtonItem: notificationsButton)
+//        hub.setCircleColor(Color.lightRed, label: Color.white)
+//        hub.setCircleBorderColor(Color.white, borderWidth: 1)
+//        hub.setMaxCount(to: 100)
+//        hub.scaleCircleSize(by: 0.7)
+//        hub.moveCircleBy(x: 35.0, y: 0)
+//        return hub
+//    }()
 
     fileprivate let presenter = Appearance.defaultPresenter()
     fileprivate let userApi = UserApi()
@@ -111,9 +102,15 @@ class HomeTabBarController: UITabBarController {
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
         static let buttonSpacing: CGFloat = 12
-        static let miniProfileSize: CGSize = CGSize(width: 32, height: 32)
+        static let miniProfileSize: CGSize = {
+            if #available(iOS 26.0, *) {
+                CGSize(width: 38, height: 38)
+            } else {
+                CGSize(width: 32, height: 32)
+            }
+        }()
     }
-
+    
     // MARK: - Lifecycle Methods
 
     override func viewDidLoad() {
@@ -152,15 +149,20 @@ class HomeTabBarController: UITabBarController {
     fileprivate func configureNavigationItems() {
 
         navigationItem.titleView = titleView
-
-        let leftStackSubviews = [notificationsButton, settingsButton]
-        let leftStackView = UIStackView(arrangedSubviews: leftStackSubviews)
-        leftStackView.axis = .horizontal
-        leftStackView.distribution = .fillEqually
-        leftStackView.alignment = .leading
-        leftStackView.spacing = Constants.padding
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftStackView)
-
+        
+        let leftActions: [BarButtonAction] = [
+            (ButtonImg.notifications, #selector(didPressNotificationsButton), 0),
+            (ButtonImg.settings, #selector(didPressSettingsButton), 0)
+        ]
+        
+        if #available(iOS 26, *) {
+            navigationItem.leftBarButtonItems = leftActions.map { action in
+                UIBarButtonItem(image: action.image, style: .plain, target: self, action: action.selector)
+            }.interspersed(with: UIBarButtonItem.spacer())
+        } else {
+            navigationItem.leftBarButtonItem = UIBarButtonItem.stackedBarButtonItem(for: leftActions, target: self)
+        }
+        
         let rightStackView = UIStackView(arrangedSubviews: [chapterProfileButton, userProfileButton])
         rightStackView.axis = .horizontal
         rightStackView.distribution = .fillEqually
@@ -214,7 +216,12 @@ class HomeTabBarController: UITabBarController {
     // MARK: - Data Update
 
     fileprivate func loadContent() {
-        let vcs: [UIViewController] = [raceFeedVC, seriesVC, standingsVC]
+        var vcs = [UIViewController]()
+        vcs += [raceFeedVC]
+        vcs += [seriesVC]
+        vcs += [standingsVC]
+        if ApplicationControl.shared.isIOWindowEnable { vcs += [eventsVC] }
+
         let tab = AppPrefs.lastSelectedHomeTab
 
         configureTabBarController(with: vcs, selectedIndex: tab.rawValue)
@@ -271,17 +278,15 @@ class HomeTabBarController: UITabBarController {
     fileprivate func updateUserProfileImage() {
         let imageUrl = APIServices.shared.myUser?.miniProfilePictureUrl
         let placeholder = PlaceholderImg.small?.withRenderingMode(.alwaysOriginal)
-
+        
         userProfileButton.isHidden = false
-        userProfileButton.setImage(with: imageUrl, placeholderImage: placeholder, forState: .normal, size: Constants.miniProfileSize) { (image) in
-            //
-        }
+        userProfileButton.setImage(with: imageUrl, placeholderImage: placeholder, forState: .normal, size: Constants.miniProfileSize)
     }
 
     fileprivate func updateChapterProfileImage() {
         let imageUrl = APIServices.shared.myChapter?.miniProfilePictureUrl
         let placeholder = PlaceholderImg.small?.withRenderingMode(.alwaysOriginal)
-
+        
         chapterProfileButton.isHidden = false
         chapterProfileButton.setImage(with: imageUrl, placeholderImage: placeholder, forState: .normal, size: Constants.miniProfileSize)
     }
@@ -289,6 +294,16 @@ class HomeTabBarController: UITabBarController {
     fileprivate func updateMyHomeChapter(with chapter: Chapter) {
         APIServices.shared.myChapter = chapter
         updateChapterProfileImage()
+    }
+}
+
+extension UIImage {
+    func roundedImage(ofSize size: CGSize) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { ctx in
+            UIBezierPath(ovalIn: CGRect(origin: .zero, size: size)).addClip()
+            draw(in: CGRect(origin: .zero, size: size))
+        }
     }
 }
 
@@ -311,10 +326,17 @@ extension HomeTabBarController: ChapterPickerViewControllerDelegate {
 }
 
 extension HomeTabBarController: UITabBarControllerDelegate {
-
+    
+    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        return true
+    }
+    
+    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {        
+        // Trigger haptic gesture to emphasize the action
+        HapticEngine.shared.trigger()
+    }
+    
     func tabBarController(_ controller: UITabBarController, didSelect viewController: UIViewController) {
-
-        (tabBar as? RoundedSelectionTabBar)?.updateSelectionFrame(animated: true)
 
         if let vcs = viewControllers, vcs.contains(viewController) {
             hideNavigationShadow()

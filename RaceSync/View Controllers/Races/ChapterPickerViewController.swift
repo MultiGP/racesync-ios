@@ -57,7 +57,7 @@ class ChapterPickerViewController: UIViewController, Shimmable {
     // MARK: - Private Variables
 
     fileprivate lazy var rightBarButtonItem: UIBarButtonItem = {
-        let item = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(didPressSaveButton))
+        let item = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(didPressSaveButton))
         item.isEnabled = canSave()
         return item
     }()
@@ -110,7 +110,7 @@ class ChapterPickerViewController: UIViewController, Shimmable {
 
         // Adds a close button in case of being presented modally
         if navigationController?.viewControllers.count == 1 {
-            navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
+            navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .plain, target: self, action: #selector(didPressCloseButton))
         }
         navigationItem.rightBarButtonItem = rightBarButtonItem
 

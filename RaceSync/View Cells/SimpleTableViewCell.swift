@@ -22,6 +22,7 @@ class SimpleTableViewCell: UITableViewCell {
             imageViewWidthConstraint?.update(offset: Constants.imageHeight * imageRatio)
         }
     }
+    
     fileprivate var imageViewWidthConstraint: Constraint?
 
     lazy var iconImageView: UIImageView = {
@@ -44,10 +45,8 @@ class SimpleTableViewCell: UITableViewCell {
         label.textColor = Color.gray300
         return label
     }()
-
-    // MARK: - Private Variables
-
-    fileprivate lazy var labelStackView: UIStackView = {
+    
+    lazy var labelStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
         stackView.axis = .vertical
         stackView.distribution = .fillProportionally
@@ -55,6 +54,8 @@ class SimpleTableViewCell: UITableViewCell {
         stackView.spacing = 2
         return stackView
     }()
+
+    // MARK: - Private Variables
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -91,8 +92,18 @@ class SimpleTableViewCell: UITableViewCell {
         contentView.addSubview(labelStackView)
         labelStackView.snp.makeConstraints {
             $0.leading.equalTo(iconImageView.snp.trailing).offset(Constants.padding)
-            $0.trailing.equalToSuperview().offset(-Constants.padding)
+            $0.trailing.equalToSuperview().inset(Constants.padding)
             $0.centerY.equalToSuperview()
         }
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        iconImageView.image = nil
+        titleLabel.text = nil
+        subtitleLabel.text = nil
+
+        accessoryView = nil
     }
 }

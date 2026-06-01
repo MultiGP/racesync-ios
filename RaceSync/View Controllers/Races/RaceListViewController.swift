@@ -119,10 +119,7 @@ class RaceListViewController: UIViewController, ViewJoinable {
 
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
-            $0.width.equalTo(UIScreen.main.bounds.width)
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+            $0.edges.equalToSuperview()
         }
     }
 
@@ -212,6 +209,9 @@ class RaceListViewController: UIViewController, ViewJoinable {
     }
 
     func toggleApprovalButton(_ button: ApproveButton, race: Race, series: Series) {
+        
+        // Trigger haptic feedback to emphasize the action
+        HapticEngine.shared.trigger()
 
         button.isLoading = true
         let state = button.approveState
@@ -243,6 +243,9 @@ class RaceListViewController: UIViewController, ViewJoinable {
     }
 
     fileprivate func handleRemoving(race: Race, from series: Series, sender: ApproveButton) {
+        
+        // Trigger haptic feedback to emphasize the action
+        HapticEngine.shared.trigger()
 
         sender.isLoading = true
 

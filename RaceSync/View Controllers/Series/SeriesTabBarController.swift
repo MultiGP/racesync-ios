@@ -65,6 +65,13 @@ class SeriesTabBarController: UITabBarController {
         self.title = "Details"
     }
 
+    init(with series: Series) {
+        self.seriesId = series.id
+        self.series = series
+        super.init(nibName: nil, bundle: nil)
+        self.title = "Details"
+    }
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -75,7 +82,10 @@ class SeriesTabBarController: UITabBarController {
         super.viewDidLoad()
 
         setupLayout()
-        loadSeries()
+
+        if series == nil {
+            loadSeries()
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -97,9 +107,8 @@ class SeriesTabBarController: UITabBarController {
         tabBar.isHidden = true // hiding temporarily, while the view loads
         delegate = self
 
-        view.addSubview(activityIndicatorView)
-        activityIndicatorView.snp.makeConstraints {
-            $0.centerX.centerY.equalToSuperview()
+        if series != nil {
+            configureViewControllers()
         }
     }
 
@@ -114,7 +123,7 @@ class SeriesTabBarController: UITabBarController {
         let controller = SeriesController(with: series)
 
         let raceListVC = RaceListViewController(raceViewModels, series: series)
-        raceListVC.navigationItem.rightBarButtonItem = controller.navigationItems()
+        raceListVC.navigationItem.rightBarButtonItems = controller.navigationItems()
 
         var vcs = [UIViewController]()
         vcs += [SeriesDetailViewController(with: controller)]
@@ -125,17 +134,25 @@ class SeriesTabBarController: UITabBarController {
 
         title = vcs.first?.title
         tabBar.isHidden = false
-        navigationItem.rightBarButtonItem = controller.navigationItems()
+        navigationItem.rightBarButtonItems = controller.navigationItems()
     }
 
     // MARK: - Data Update
 
     fileprivate func loadSeries() {
-        setLoading(true)
+
+        view.addSubview(activityIndicatorView)
+        activityIndicatorView.snp.makeConstraints {
+            $0.centerX.centerY.equalToSuperview()
+        }
+
+        activityIndicatorView.isLoading = true
 
         seriesApi.view(series: seriesId) { [weak self] series, error in
             guard let self = self else { return }
-            self.setLoading(false)
+            self.activityIndicatorView.isLoading = false
+            self.activityIndicatorView.removeFromSuperview()
+
             self.series = series
 
             if let error = error {
@@ -144,10 +161,6 @@ class SeriesTabBarController: UITabBarController {
                 self.configureViewControllers()
             }
         }
-    }
-
-    fileprivate func setLoading(_ loading: Bool) {
-        activityIndicatorView.isLoading = loading
     }
 
     // MARK: - Actions
@@ -204,10 +217,13 @@ extension SeriesTabBarController: UITabBarControllerDelegate {
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         return true
     }
+    
+    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+        // Trigger haptic gesture to emphasize the action
+        HapticEngine.shared.trigger()
+    }
 
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-
-        (tabBar as? RoundedSelectionTabBar)?.updateSelectionFrame(animated: true)
 
         if let index = viewControllers?.lastIndex(of: viewController) {
             didSelectedIndex(index)

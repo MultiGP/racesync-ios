@@ -47,8 +47,10 @@ class RaceFormViewController: UIViewController {
     }()
 
     fileprivate lazy var rightBarButtonItem: UIBarButtonItem = {
-        let title = (currentSection == .specific) ? "Save" : "Next"
-        let item = UIBarButtonItem(title: title, style: .done, target: self, action: #selector(goNextSection))
+        let action = #selector(goNextSection)
+        let item = currentSection == .general
+            ? UIBarButtonItem(title: "Next", style: .plain, target: self, action: action)
+            : UIBarButtonItem(barButtonSystemItem: .done, target: self, action: action)
         item.isEnabled = canGoNextSection()
         return item
     }()
@@ -177,7 +179,7 @@ class RaceFormViewController: UIViewController {
 
         // Adds a close button in case of being presented modally
         if navigationController?.viewControllers.count == 1 {
-            navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
+            navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .plain, target: self, action: #selector(didPressCloseButton))
         }
 
         view.addSubview(tableView)

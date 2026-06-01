@@ -110,13 +110,14 @@ class PushMessagesViewController: UIViewController {
     fileprivate func configureNavigationItems() {
         title = "Messages"
 
-        let leftBtnItem = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
+        let leftBtnItem = UIBarButtonItem(image: ButtonImg.close, style: .plain, target: self, action: #selector(didPressCloseButton))
         navigationItem.leftBarButtonItem = leftBtnItem
 
-        let rightBtnItem = UIBarButtonItem(title: "Clear All", style: .done, target: self, action: #selector(didPressClearButton))
+        let rightBtnItem = UIBarButtonItem(title: "Clear", style: .plain, target: self, action: #selector(didPressClearButton))
         rightBtnItem.isEnabled = false
-        if #available(iOS 16.0, *) { rightBtnItem.isHidden = true }
         navigationItem.rightBarButtonItem = rightBtnItem
+
+        if #available(iOS 16.0, *) { rightBtnItem.isHidden = true }
     }
     
     fileprivate func updateClearButton() {
@@ -219,9 +220,6 @@ class PushMessagesViewController: UIViewController {
     fileprivate func populateDummySource() {
 //        messages += [
 //            PushMessage(title: "📣 Round 28 is up next", detail: "Get ready to race on round 28. Your channel is R1 LHCP.", timestamp: 1747793038),
-//            PushMessage(title: "📣 Round 17 is up next", detail: "Get ready to race on round 17. Your channel is R5 LHCP.", timestamp: 1747790038),
-//            PushMessage(title: "📣 Round 7 is up next", detail: "Get ready to race on round 7. Your channel is R2 RHCP.", timestamp: 1747779532),
-//            PushMessage(title: "📣 Round 2 is up next", detail: "Get ready to race on round 2. Your channel is R1 LHCP.", timestamp: 1747778078),
 //            PushMessage(title: "📌 NERDs published a new race!", detail: "Save the date! July 22nd NERDs will host '2025 MultiGP Summer Global Qualifier'.", timestamp: 1747774078),
 //            PushMessage(title: "💸 Payment received!", detail: "HeadsupFPV paid $23.00 USD for '2025 MultiGP Spring GQ - Last Chance'. 6 pilots have paid so far.", timestamp: 1747772048),
 //            PushMessage(title: "✅ HeadsupFPV joing your race", detail: "HeadsupFPV joined '2025 MultiGP Spring GQ - Last Chance'. 12 pilots have joined so far!", timestamp: 1747773038)

@@ -3,6 +3,23 @@
 
 ---
 
+## 2.1
+
+### 2026 International Open's interactive schedule:
+   * Filter the different races per day.
+   * Fav the races you want to attend & get notified an hour before they start.
+   * Build your customized schedule, and filter with special macros.
+
+### iOS26 upgrade:
+   * Compiling with the latest iOS26 SDK
+   * Large UI refactoring to conform to iOS26's liquid glass UI
+   
+### Fixes and Enhancements:
+   * General bug fixes
+   * Backwards compatibility fixing
+
+---
+
 ## 2.0
 
 ### Introducing MultiGP Series:

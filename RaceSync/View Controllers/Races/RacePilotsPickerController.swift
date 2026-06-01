@@ -116,7 +116,7 @@ class RacePilotsPickerController: UIViewController, Shimmable {
     fileprivate func setupLayout() {
 
         title = "Add/Remove Pilots"
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .plain, target: self, action: #selector(didPressCloseButton))
 
         view.backgroundColor = Color.white
 
@@ -193,7 +193,7 @@ class RacePilotsPickerController: UIViewController, Shimmable {
         raceApi.forceJoin(race: race.id, pilotId: id) { (status, error) in
             completion(status ? .joined : .notJoined)
             if let error = error {
-                AlertUtil.presentAlertMessage("Couldn't add this user to the race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
+                AlertUtil.presentAlertMessage("Couldn't add this pilot to the race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
             }
         }
     }
@@ -203,7 +203,7 @@ class RacePilotsPickerController: UIViewController, Shimmable {
         raceApi.forceResign(race: race.id, pilotId: id) { (status, error) in
             completion(status ? .notJoined : .joined)
             if let error = error {
-                AlertUtil.presentAlertMessage("Couldn't remove this user from the race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
+                AlertUtil.presentAlertMessage("Couldn't remove this pilot from the race. Please try again later. \(error.localizedDescription)", title: "Error", delay: 0.5)
             }
         }
     }

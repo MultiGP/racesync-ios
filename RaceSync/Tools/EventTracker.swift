@@ -14,6 +14,10 @@ class EventTracker {
     static func configure() {
         configureRater()
     }
+    
+    static var isTestFlight: Bool {
+        Bundle.main.appStoreReceiptURL?.lastPathComponent == "sandboxReceipt"
+    }
 
     // MARK: - AppStore Rater
 

@@ -17,11 +17,17 @@ class ApplicationControl: NSObject {
 
     static let shared = ApplicationControl()
     var authApi = AuthApi()
+    
+    var isIOWindowEnable: Bool {
+        get {
+            // From June 1st to June 16th
+            return Date().isBetween(day: 1, month: 6, andDay: 16, month: 6)
+        }
+    }
 
     // MARK: - Private Variables
 
     fileprivate var deeplinkObserver: NSObjectProtocol?
-
 
     // MARK: - Initialization
 
@@ -48,6 +54,7 @@ class ApplicationControl: NSObject {
 
     static func initializeRaceSyncAPI() {
 
+        // This was moved to the main Bundle, but it will break whenever the API framework is used on another bundle
         let path = Bundle.main.path(forResource: "credentials", ofType: "plist")
         let dict = NSDictionary(contentsOfFile: path ?? "")
 

@@ -62,6 +62,9 @@ public enum JoinState: Equatable {
 extension ViewJoinable {
 
     func toggleJoinButton(_ button: JoinButton, forRace race: Race, raceApi: RaceApi, _ completion: @escaping JoinStateCompletionBlock) {
+        
+        // Trigger haptic feedback to emphasize the action
+        HapticEngine.shared.trigger()
 
         button.isLoading = true
         let state = button.joinState
@@ -90,6 +93,9 @@ extension ViewJoinable {
 
     func toggleJoinButton(_ button: JoinButton, forChapter chapter: Chapter, chapterApi: ChapterApi, _ completion: @escaping JoinStateCompletionBlock) {
 
+        // Trigger haptic feedback to emphasize the action
+        HapticEngine.shared.trigger()
+        
         button.isLoading = true
         let state = button.joinState
 

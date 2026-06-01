@@ -32,6 +32,7 @@ enum EmptyState {
     case noRacePayments
     case noChapters
     case noChapterMembers
+    case noEvents
 
     case noSeries
     case noJoinedSeries
@@ -87,6 +88,8 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "No Race Payments"
         case .noChapters, .noMyProfileChapters, .noProfileChapters:
             text = "No Chapters"
+        case .noEvents:
+            text = "No Events"
         case .noPushMessages:
             text = "No Messages"
         case .noPushAuthorized:
@@ -117,27 +120,29 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
         case .noJoinedRaces, .noMyProfileRaces:
             text = "You haven't joined any upcoming races yet."
         case .noSeriesRaces:
-            text = "There are no \(Date().thisYear()) GQ races available just yet."
+            text = "There are no \(Date().thisYear()) GQ races available yet."
         case .noNearbydRaces:
             text = "There are no races available in a \(settings.searchRadius)\(settings.lengthUnit.symbol) radius."
         case .noRacePilots:
             text = "There are no registered pilots yet."
         case .noRaceResults:
-            text = "There are no race results available just yet."
+            text = "There are no race results available yet."
         case .noSeries, .noJoinedSeries:
             text = "There are no series available yet under this category."
         case .noSeriesResults:
-            text = "There are no series results available just yet."
+            text = "There are no series results available yet."
         case .noRacePayments:
             text = "No payments found yet, or a network error occurred."
         case .noChapterMembers:
             text = "There are no registered members yet."
         case .noProfileRaces:
-            text = "This user hasn't joined any races yet."
+            text = "This pilot hasn't joined any races yet."
         case .noProfileChapters:
-            text = "This user hasn't joined any chapters yet."
+            text = "This pilot hasn't joined any chapters yet."
         case .noMyProfileChapters:
             text = "You haven't joined any chapters yet."
+        case .noEvents:
+            text = "You haven't favorited any events for this date yet."
         case .noPushMessages:
             text = "You don't have any messages yet."
         case .noPushAuthorized:

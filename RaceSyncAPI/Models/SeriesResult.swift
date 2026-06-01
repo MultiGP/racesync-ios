@@ -43,8 +43,8 @@ public class SeriesResult: Mappable, Descriptable {
     // MARK: - Mapping
     public func mapping(map: Map) {
         // Pilot or chapter id
-        pilotId   <- map[ParamKey.pilotId]
-        chapterId <- map[ParamKey.chapterId]
+        pilotId   <- (map[ParamKey.pilotId], MapperUtil.anyStringTransform)
+        chapterId <- (map[ParamKey.chapterId], MapperUtil.anyStringTransform)
         raceCount <- map[ParamKey.raceCount]
 
         // Determine type from what exists

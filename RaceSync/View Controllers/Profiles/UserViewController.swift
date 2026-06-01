@@ -22,14 +22,6 @@ class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
 
     // MARK: - Private Variables
 
-    fileprivate lazy var qrButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.addTarget(self, action: #selector(didPressQRButton), for: .touchUpInside)
-        button.setImage(ButtonImg.qrcode, for: .normal)
-        button.setBackgroundImage(nil, for: .normal)
-        return button
-    }()
-
     fileprivate var user: User
     fileprivate let raceApi = RaceApi()
     fileprivate let chapterApi = ChapterApi()
@@ -113,28 +105,27 @@ class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
         headerView.avatarView.isUserInteractionEnabled = isPhotoEditale
         headerView.delegate = self
     }
-
+    
     fileprivate func configureBarButtonItems() {
-        var buttons = [UIButton]()
-
+        // Build the action list
+        var actions: [BarButtonAction] = [
+            (ButtonImg.share, #selector(didPressShareButton), 0)
+        ]
         if user.isMe {
-            buttons += [qrButton]
+            actions.append((ButtonImg.qrcode, #selector(didPressQRButton), 0))
         }
 
-        let shareButton = CustomButton(type: .system)
-        shareButton.addTarget(self, action: #selector(didPressShareButton), for: .touchUpInside)
-        shareButton.setImage(ButtonImg.share, for: .normal)
-        buttons += [shareButton]
-
-        let rightStackView = UIStackView(arrangedSubviews: buttons)
-        rightStackView.axis = .horizontal
-        rightStackView.distribution = .fillEqually
-        rightStackView.alignment = .lastBaseline
-        rightStackView.spacing = Constants.buttonSpacing
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightStackView)
+        if #available(iOS 26, *) {
+            navigationItem.rightBarButtonItems = actions.map { action in
+                UIBarButtonItem(image: action.image, style: .plain, target: self, action: action.selector)
+            }.interspersed(with: UIBarButtonItem.spacer())
+        } else {
+            // Still needed for versions of iOS previous to iOS26
+            navigationItem.rightBarButtonItem = UIBarButtonItem.stackedBarButtonItem(for: actions, target: self)
+        }
 
         if navigationController?.viewControllers.count == 1 {
-            navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
+            navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .plain, target: self, action: #selector(didPressCloseButton))
         }
     }
 

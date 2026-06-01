@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RaceSyncAPI
 
 class PushMessagesStore {
 
@@ -89,9 +90,8 @@ class PushMessagesStore {
     fileprivate var messages: [PushMessage] = []
     fileprivate let syncQueue = DispatchQueue(label: "PushMessagesStore.syncQueue")
 
-    private var fileURL: URL {
-        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        return docs.appendingPathComponent("pushMessages.json")
+    private var fileURL: URL {        
+        return FileStore.url(for: "pushMessages.json")
     }
 
     fileprivate func saveMessages() {

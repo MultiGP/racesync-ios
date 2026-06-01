@@ -138,10 +138,22 @@ public extension Date {
         let year = calendar.component(.year, from: self)
 
         guard let startDate = calendar.date(from: DateComponents(year: year, month: startMonth, day: startDay)),
-              let endDate = calendar.date(from: DateComponents(year: year, month: endMonth, day: endDay)) else {
+              let endDate = calendar.date(from: DateComponents(year: year, month: endMonth, day: endDay)),
+              let endOfDay = calendar.date(bySettingHour: 23, minute: 59, second: 59, of: endDate) else {
             return false
         }
-
-        return self >= startDate && self <= endDate
+        return self >= startDate && self <= endOfDay
     }
+    
+    func isPast(day: Int, month: Int) -> Bool {
+            let calendar = Calendar.current
+            let year = calendar.component(.year, from: self)
+
+            guard let targetDate = calendar.date(from: DateComponents(year: year, month: month, day: day)),
+                  let endOfDay = calendar.date(bySettingHour: 23, minute: 59, second: 59, of: targetDate) else {
+                return false
+            }
+
+            return self > endOfDay
+        }
 }

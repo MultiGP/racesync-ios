@@ -44,9 +44,7 @@ fileprivate extension Appearance {
         if let mainWindow = UIApplication.shared.delegate?.window {
             mainWindow?.backgroundColor = Color.white
 
-            if #available(iOS 13.0, *) {
-                mainWindow?.overrideUserInterfaceStyle = .light
-            }
+            mainWindow?.overrideUserInterfaceStyle = .light
         }
     }
 
@@ -54,30 +52,35 @@ fileprivate extension Appearance {
         let foregroundColor = Color.blue
         let backgroundColor = Color.navigationBarColor
         let backIndicatorImage = ButtonImg.back
-        let backgroundImage = UIImage.image(withColor: backgroundColor, imageSize: CGSize(width: 44, height: 44))
-        let textAttributes = [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 18),
-                              NSAttributedString.Key.foregroundColor: Color.black]
+        let textAttributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.boldSystemFont(ofSize: 18),
+            .foregroundColor: Color.black
+        ]
 
-        let navigationBarAppearance = UINavigationBarAppearance()
-        navigationBarAppearance.configureWithTransparentBackground()
-        navigationBarAppearance.backgroundColor = backgroundColor
-        navigationBarAppearance.shadowColor = Color.gray100
-        navigationBarAppearance.titleTextAttributes = textAttributes
-        UINavigationBar.appearance().standardAppearance = navigationBarAppearance
-        UINavigationBar.appearance().compactAppearance = navigationBarAppearance
-        UINavigationBar.appearance().scrollEdgeAppearance = navigationBarAppearance
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = backgroundColor
+        appearance.shadowColor = Color.gray100
+        appearance.titleTextAttributes = textAttributes
+        appearance.setBackIndicatorImage(
+            backIndicatorImage?.withRenderingMode(.alwaysTemplate),
+            transitionMaskImage: backIndicatorImage
+        )
 
-        // set the color and font for the title
-        let barAppearance = UINavigationBar.appearance()
-        barAppearance.barTintColor = backgroundColor
-        barAppearance.tintColor = foregroundColor
-        barAppearance.barStyle = .default
-        barAppearance.setBackgroundImage(backgroundImage, for: .default)
-        barAppearance.isOpaque = false
-        barAppearance.isTranslucent = true
-        barAppearance.backIndicatorImage = backIndicatorImage?.withRenderingMode(.alwaysTemplate)
-        barAppearance.backIndicatorTransitionMaskImage = backIndicatorImage
-        barAppearance.titleTextAttributes = textAttributes
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().compactAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+        UINavigationBar.appearance().tintColor = foregroundColor
+        
+        let buttonAppearance = UIBarButtonItemAppearance()
+        buttonAppearance.normal.titleTextAttributes = [.foregroundColor: foregroundColor]
+
+        let doneButtonAppearance = UIBarButtonItemAppearance()
+        doneButtonAppearance.normal.titleTextAttributes = [.foregroundColor: foregroundColor]
+
+        appearance.buttonAppearance = buttonAppearance
+        appearance.doneButtonAppearance = doneButtonAppearance
+        appearance.backButtonAppearance = buttonAppearance
     }
 
     static func configureTabBarAppearance() {
@@ -90,12 +93,20 @@ fileprivate extension Appearance {
         tabBarAppearance.configureWithTransparentBackground()
         tabBarAppearance.backgroundColor = backgroundColor
         tabBarAppearance.shadowColor = Color.gray100
+        
+        // TODO: This isn't working on iOS26 but let's revisit at another time. The idea is to give more separation to each tab.
+        if #available(iOS 18.0, *) {
+            tabBarAppearance.stackedItemPositioning = .centered
+            tabBarAppearance.stackedItemSpacing = 80
+            tabBarAppearance.stackedItemWidth = 40
+        }
+        
         UITabBar.appearance().standardAppearance = tabBarAppearance
 
         if #available(iOS 15.0, *) {
             UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
         }
-
+        
         // set the color and font for the title
         let barAppearance = UITabBar.appearance()
         barAppearance.barTintColor = backgroundColor
@@ -105,6 +116,7 @@ fileprivate extension Appearance {
         barAppearance.backgroundImage = backgroundImage
         barAppearance.isOpaque = false
         barAppearance.isTranslucent = true
+        
     }
 
     static func configureToolBarAppearance() {

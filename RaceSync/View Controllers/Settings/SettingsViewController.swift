@@ -78,9 +78,7 @@ class SettingsViewController: UIViewController {
 
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(view.snp.bottom)
+            $0.edges.equalToSuperview()
         }
     }
 
@@ -88,8 +86,7 @@ class SettingsViewController: UIViewController {
         title = "Settings"
         tabBarItem = UITabBarItem(title: title, image: SystemImg.gearshape, selectedImage: SystemImg.gearshapeFill)
 
-        let leftBtnItem = UIBarButtonItem(image: ButtonImg.close, style: .done, target: self, action: #selector(didPressCloseButton))
-        navigationItem.leftBarButtonItem = leftBtnItem
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .plain, target: self, action: #selector(didPressCloseButton))        
     }
 
     // MARK: - Actions
@@ -97,7 +94,12 @@ class SettingsViewController: UIViewController {
     func loadSections() {
 
         sections = {
-            let resources: [Row] = [.buildGuide, .seasonRules, .visitSite]
+            var resources: [Row] = [.buildGuide, .seasonRules]
+            if ApplicationControl.shared.isIOWindowEnable {
+                resources += [.ioSite]
+            }
+            resources += [.visitSite]
+            
             var auth: [Row] = [.logout]
             if let user = APIServices.shared.myUser, user.isDevTeam, isDevModeEnabled {
                 auth += [.switchEnv]
@@ -221,6 +223,8 @@ extension SettingsViewController: UITableViewDelegate {
             WebViewController.open(AppWebConstants.github)
         case .visitSite:
             WebViewController.open(AppWebConstants.homepage)
+        case .ioSite:
+            WebViewController.open(AppWebConstants.io26RaceFormats)
         case .logout:
             logout()
         case .switchEnv:
@@ -312,6 +316,7 @@ fileprivate enum Row: Int, EnumTitle {
     case tracksGuide
     case buildGuide
     case seasonRules
+    case ioSite
     case visitSite
     case feedback
     case joinBeta
@@ -326,6 +331,7 @@ fileprivate enum Row: Int, EnumTitle {
         case .tracksGuide:          return "MultiGP Tracks"
         case .buildGuide:           return "Obstacles Build Guide"
         case .seasonRules:          return "Season Rule Books"
+        case .ioSite:               return "IO26 Race Formats"
         case .visitSite:            return "Visit MultiGP.com"
         case .feedback:             return "Share Feedback"
         case .joinBeta:             return "Join the Beta"
@@ -343,6 +349,7 @@ fileprivate enum Row: Int, EnumTitle {
         case .tracksGuide:          return "icn_settings_tracks"
         case .buildGuide:           return "icn_settings_buildguide"
         case .seasonRules:          return "icn_settings_handbook"
+        case .ioSite:               return "icn_settings_io"
         case .visitSite:            return "icn_settings_mgp"
         case .feedback:             return "icn_settings_feedback"
         case .joinBeta:             return "icn_settings_testflight"

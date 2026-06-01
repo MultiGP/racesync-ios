@@ -40,6 +40,13 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
     }()
 
     // MARK: - Private Variables
+    
+    fileprivate lazy var segmentedControl: UISegmentedControl = {
+        let control = UISegmentedControl(items: SeriesStandingsFilter.titles)
+        control.selectedSegmentIndex = SeriesStandingsFilter.pilots.index
+        control.addTarget(self, action: #selector(didChangeSegment), for: .valueChanged)
+        return control
+    }()
 
     fileprivate lazy var headerView: UIView = {
         let view = UIView()
@@ -60,13 +67,34 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
         return view
     }()
 
-    fileprivate lazy var segmentedControl: UISegmentedControl = {
-        let control = UISegmentedControl(items: SeriesStandingsFilter.titles)
-        control.selectedSegmentIndex = SeriesStandingsFilter.pilots.index
-        control.addTarget(self, action: #selector(didChangeSegment), for: .valueChanged)
-        return control
-    }()
+    fileprivate lazy var headerSectionView: UIView = {
 
+        let text = "\(series.name)\n\(series.scoreTypeString)"
+
+        let view = UIView()
+        view.backgroundColor = Color.clear
+        view.isUserInteractionEnabled = true
+        view.tintColor = Color.blue
+
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 2
+
+        let label = UILabel()
+        label.attributedText = NSAttributedString(string: text.uppercased(), attributes: [.paragraphStyle: paragraphStyle])
+        label.font = .systemFont(ofSize: 13)
+        label.textColor = Color.gray300
+        label.textAlignment = .left
+        label.numberOfLines = 2
+
+        view.addSubview(label)
+        label.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview().offset(20)
+        }
+
+        return view
+    }()
+    
     var pinnedView: UIView?
     var cachedPinnedIndexPath: IndexPath?
 
@@ -155,27 +183,19 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
         tableView.snp.makeConstraints {
             if showsSegmentedControl {
                 $0.top.equalTo(headerView.snp.bottom)
+                $0.bottom.leading.trailing.equalToSuperview()
             } else {
-                $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+                $0.edges.equalToSuperview()
             }
-
-            $0.width.equalTo(UIScreen.main.bounds.width)
-            $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
     }
 
     fileprivate func configureNavigationItems() {
 
-        if showsSegmentedControl {
-            title = "Leaderboards"
-        } else {
-            title = "Leaderboard"
-        }
-
+        title = "Rankings"
         tabBarItem = UITabBarItem(title: title, image: SystemImg.trophy, selectedImage: SystemImg.trophyFill)
 
-        navigationItem.rightBarButtonItem = seriesController.navigationItems()
+        navigationItem.rightBarButtonItems = seriesController.navigationItems()
     }
 
     // MARK: - Data Update
@@ -266,12 +286,21 @@ extension SeriesStandingsViewController: UITableViewDelegate {
             showUserProfile(forUserAt: indexPath, from: cell)
         }
     }
-
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if viewModels().count > 0 {
-            return series.scoreTypeString
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        guard viewModels().count > 0 else {
+            return nil
         }
-        return nil
+
+        return headerSectionView
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        guard viewModels().count > 0 else {
+            return 0
+        }
+        
+        return 60 // 2 lines
     }
 }
 
