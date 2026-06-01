@@ -305,7 +305,10 @@ class LoginViewController: UIViewController {
     }
 
     @objc func didPressLoginButton() {
-        shouldLogin()
+        // Trigger haptic feedback to emphasize the action
+        HapticEngine.shared.trigger()
+        
+        prepareForLogin()
     }
 
     @objc func didPressLegalButton() {
@@ -369,7 +372,7 @@ class LoginViewController: UIViewController {
 
     // MARK: - Events
 
-    func shouldLogin() {
+    func prepareForLogin() {
         guard let email = emailField.text else { shakeLoginButton(); return }
         guard Validator.isEmail().apply(email) else { shakeLoginButton(); return }
 

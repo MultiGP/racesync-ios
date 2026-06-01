@@ -106,7 +106,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
             let label = UILabel()
             label.attributedText = NSAttributedString(string: headerTitle.uppercased(), attributes: [.paragraphStyle: paragraphStyle])
             label.font = .systemFont(ofSize: 13)
-            label.textColor = UIColor(hex: "3D3D42").withAlphaComponent(0.6) //Color.gray20
+            label.textColor = Color.gray300
             label.textAlignment = .left
             label.numberOfLines = 2
 

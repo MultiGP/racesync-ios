@@ -20,8 +20,8 @@ class ApplicationControl: NSObject {
     
     var isIOWindowEnable: Bool {
         get {
-            // From May 22nd to June 16th
-            return Date().isBetween(day: 22, month: 5, andDay: 16, month: 6)
+            // From June 1st to June 16th
+            return Date().isBetween(day: 1, month: 6, andDay: 16, month: 6)
         }
     }
 
