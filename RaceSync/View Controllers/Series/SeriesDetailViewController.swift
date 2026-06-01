@@ -32,7 +32,6 @@ class SeriesDetailViewController: UIViewController {
         view.backgroundColor = Color.white
         view.alwaysBounceVertical = true
         view.showsHorizontalScrollIndicator = false
-        view.contentInsetAdjustmentBehavior = .never
         view.delegate = self
         return view
     }()
@@ -136,7 +135,8 @@ class SeriesDetailViewController: UIViewController {
         view.addSubview(scrollView)
         scrollView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            $0.bottom.leading.trailing.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.snp.bottom)
         }
     }
 
