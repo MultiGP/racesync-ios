@@ -209,6 +209,9 @@ class RaceListViewController: UIViewController, ViewJoinable {
     }
 
     func toggleApprovalButton(_ button: ApproveButton, race: Race, series: Series) {
+        
+        // Trigger haptic feedback to emphasize the action
+        HapticEngine.shared.trigger()
 
         button.isLoading = true
         let state = button.approveState
@@ -240,6 +243,9 @@ class RaceListViewController: UIViewController, ViewJoinable {
     }
 
     fileprivate func handleRemoving(race: Race, from series: Series, sender: ApproveButton) {
+        
+        // Trigger haptic feedback to emphasize the action
+        HapticEngine.shared.trigger()
 
         sender.isLoading = true
 

@@ -326,7 +326,16 @@ extension HomeTabBarController: ChapterPickerViewControllerDelegate {
 }
 
 extension HomeTabBarController: UITabBarControllerDelegate {
-
+    
+    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        return true
+    }
+    
+    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {        
+        // Trigger haptic gesture to emphasize the action
+        HapticEngine.shared.trigger()
+    }
+    
     func tabBarController(_ controller: UITabBarController, didSelect viewController: UIViewController) {
 
         if let vcs = viewControllers, vcs.contains(viewController) {

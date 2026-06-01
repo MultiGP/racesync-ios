@@ -36,6 +36,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         EventTracker.configure()
     #endif
         
+        // Let's warm up the Haptic Engine since it takes a bit of time and may block the main thread
+        HapticEngine.shared.prepare()
+        
         UNUserNotificationCenter.current().delegate = self
         UNUserNotificationCenter.current().getNotificationSettings { _ in }
         

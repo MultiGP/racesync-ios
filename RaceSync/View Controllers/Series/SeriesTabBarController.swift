@@ -217,6 +217,11 @@ extension SeriesTabBarController: UITabBarControllerDelegate {
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         return true
     }
+    
+    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+        // Trigger haptic gesture to emphasize the action
+        HapticEngine.shared.trigger()
+    }
 
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
 

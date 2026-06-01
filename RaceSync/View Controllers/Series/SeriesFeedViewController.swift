@@ -170,7 +170,7 @@ class SeriesFeedViewController: UIViewController, Shimmable {
     fileprivate func setupLayout() {
         
         configureNavigationItems()
-
+        
         view.addSubview(headerView)
         headerView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)

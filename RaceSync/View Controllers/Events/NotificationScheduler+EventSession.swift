@@ -2,7 +2,7 @@
 //  NotificationScheduler+EventSession.swift
 //  RaceSync
 //
-//  Created by Ignacio Romero Zurbubach on 2026-05-23.
+//  Created by Ignacio Romero Zurbuchen on 2026-05-23.
 //  Copyright © 2026 MultiGP Inc. All rights reserved.
 //
 

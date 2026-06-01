@@ -217,6 +217,7 @@
 		4FBADDF624D4E2DB00A7D291 /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FBADDF524D4E2DB00A7D291 /* Array+Extensions.swift */; };
 		4FBE7608259B348200312B66 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4F13424E2360B67D00A9DBDE /* Assets.xcassets */; };
 		4FBE760F259B387E00312B66 /* User+UIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FBE760E259B387E00312B66 /* User+UIExtensions.swift */; };
+		4FBFADEC2FCD69B70097AAC3 /* HapticEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FBFADEB2FCD69B70097AAC3 /* HapticEngine.swift */; };
 		4FC1797D24B0801900D2EA2D /* ImagePickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC1797C24B0801900D2EA2D /* ImagePickerController.swift */; };
 		4FC3F17725A7AB3B0039B94C /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC3F17625A7AB3B0039B94C /* String+Extensions.swift */; };
 		4FC4C59C24D8F3F2007D3B71 /* DimmableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC4C59B24D8F3F2007D3B71 /* DimmableView.swift */; };
@@ -558,6 +559,7 @@
 		4FBA7464298EF14D007A9E90 /* RELEASE-NOTES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "RELEASE-NOTES.md"; sourceTree = SOURCE_ROOT; };
 		4FBADDF524D4E2DB00A7D291 /* Array+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
 		4FBE760E259B387E00312B66 /* User+UIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+UIExtensions.swift"; sourceTree = "<group>"; };
+		4FBFADEB2FCD69B70097AAC3 /* HapticEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticEngine.swift; sourceTree = "<group>"; };
 		4FC05C142E64FFB700EB97A4 /* DeepLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLink.swift; sourceTree = "<group>"; };
 		4FC05C162E65004400EB97A4 /* DeepLinkURLHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkURLHandler.swift; sourceTree = "<group>"; };
 		4FC1797C24B0801900D2EA2D /* ImagePickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerController.swift; sourceTree = "<group>"; };
@@ -1035,6 +1037,7 @@
 			children = (
 				4FA1FC8A23D6D7C0006D4704 /* ApplicationControl.swift */,
 				4F6FA16D2E4C66940056E115 /* AppplicationPreferences.swift */,
+				4FBFADEB2FCD69B70097AAC3 /* HapticEngine.swift */,
 				4FE91EEE2FC2C6EE00460A74 /* Notificationscheduler.swift */,
 				4FEADB732416B3D400F82F0D /* EventTracker.swift */,
 				4F00E065242930B3001DCFC4 /* RateMe */,
@@ -1694,6 +1697,7 @@
 				4FD4E1CB237F98A0008816B3 /* RaceDetailViewController.swift in Sources */,
 				4F0F8F802EFB42FC004EB3D3 /* StandingsController.swift in Sources */,
 				4FD4E1C1237DDFB4008816B3 /* RaceFeedViewController.swift in Sources */,
+				4FBFADEC2FCD69B70097AAC3 /* HapticEngine.swift in Sources */,
 				4FE272362580A36D00EC121B /* SimpleTableViewCell.swift in Sources */,
 				4FCD99B62976242A0094C562 /* RaceFeedMenuViewController.swift in Sources */,
 				4F68BE692399CEB5009D44F7 /* AlertUtil.swift in Sources */,

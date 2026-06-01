@@ -163,7 +163,7 @@ class EventsViewController: UIViewController, Shimmable {
     }
 
     // MARK: - Actions
-    
+
     @objc fileprivate func didTapStarButton(_ sender: UIButton) {
         guard sender.tag < selectedSessions.count, let date = eventsController.selectedDate else { return }
         let bucketlist = eventsController.bucketlist
@@ -176,6 +176,9 @@ class EventsViewController: UIViewController, Shimmable {
             bucketlist.save(session, for: date)
             NotificationScheduler.shared.schedule(for: session)
         }
+        
+        // Trigger haptic feedback to emphasize the action
+        HapticEngine.shared.trigger()
         
         let delay = eventsController.selectedFilter == .mySchedule ? 0.3 : 0
 
