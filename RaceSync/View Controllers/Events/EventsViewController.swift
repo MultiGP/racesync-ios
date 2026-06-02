@@ -216,7 +216,6 @@ class EventsViewController: UIViewController, Shimmable {
     // MARK: - Error Handling
 
     fileprivate func handleError(_ error: NSError) {
-
         emptyStateError = EmptyStateViewModel(.error(error))
         tableView.reloadEmptyDataSet()
     }
@@ -227,12 +226,16 @@ extension EventsViewController: EventHeaderViewDelegate {
     func headerView(_ headerView: EventHeaderView, didSelectDate date: Date) {
         eventsController.selectedDate = date
         selectedSessions = eventsController.reloadSessions()
+        
+        tableView.setContentOffset(.zero, animated: false)
         tableView.reloadData()
     }
 
     func headerView(_ headerView: EventHeaderView, didSelectFilter title: String) {
         eventsController.selectedFilter = EventSessionFilter(title: title) ?? .all
         selectedSessions = eventsController.reloadSessions()
+        
+        tableView.setContentOffset(.zero, animated: false)
         tableView.reloadData()
         
         AppplicationPreferences.lastSelectedEventFilter = eventsController.selectedFilter
