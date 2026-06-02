@@ -14,17 +14,17 @@ public protocol EventApiInterface {
 
     /**
      */
-    func getIO26Event(_ completion: @escaping ObjectCompletionBlock<Event>)
+    func getIO26Event(forced: Bool, _ completion: @escaping ObjectCompletionBlock<Event>)
 }
 
 public class EventApi: EventApiInterface {
     
     public init() {}
     
-    public func getIO26Event(_ completion: @escaping ObjectCompletionBlock<Event>) {
+    public func getIO26Event(forced: Bool = false, _ completion: @escaping ObjectCompletionBlock<Event>) {
         
         // Return cache immediately if available
-        if let cached = EventStore.shared.load() {
+        if !forced, let cached = EventStore.shared.load() {
             completion(cached, nil)
             
 #if DEBUG

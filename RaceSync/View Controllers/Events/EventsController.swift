@@ -48,8 +48,9 @@ class EventsController {
         io26Event != nil
     }
 
-    func fetchIO26Event(_ completion: @escaping ObjectCompletionBlock<Event>) {
-        eventApi.getIO26Event { [weak self] event, error in
+    func fetchIO26Event(_ forced: Bool = false, _ completion: @escaping ObjectCompletionBlock<Event>) {
+        
+        eventApi.getIO26Event(forced: forced) { [weak self] event, error in
             if let event {
                 self?.io26Event = event
                 completion(event, nil)

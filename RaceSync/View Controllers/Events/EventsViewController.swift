@@ -138,12 +138,12 @@ class EventsViewController: UIViewController, Shimmable {
 
     // MARK: - Data
 
-    fileprivate func loadContent() {
+    fileprivate func loadContent(forced: Bool = false) {
         if !refreshControl.isRefreshing {
             isLoadingList(true)
         }
-
-        eventsController.fetchIO26Event { [weak self] event, error in
+        
+        eventsController.fetchIO26Event(forced) { [weak self] event, error in
             guard let self else { return }
             
             if let error {
@@ -210,7 +210,7 @@ class EventsViewController: UIViewController, Shimmable {
     }
 
     @objc fileprivate func didPullRefreshControl() {
-        loadContent()
+        loadContent(forced: true)
     }
     
     // MARK: - Error Handling
