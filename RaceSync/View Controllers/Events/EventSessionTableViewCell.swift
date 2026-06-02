@@ -23,7 +23,7 @@ class EventSessionTableViewCell: UITableViewCell {
 
     lazy var titleLabel: UppercasedLabel = {
         let label = UppercasedLabel()
-        label.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        label.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
         label.textColor = Color.gray500
         label.numberOfLines = 2
         return label
@@ -31,7 +31,7 @@ class EventSessionTableViewCell: UITableViewCell {
 
     lazy var subtitleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
+        label.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         label.textColor = Color.gray300
         label.numberOfLines = 1
         return label
@@ -131,6 +131,14 @@ class EventSessionTableViewCell: UITableViewCell {
             $0.width.equalTo(5)
         }
         
+        contentView.addSubview(starButton)
+        starButton.snp.makeConstraints {
+            $0.height.equalTo(28)
+            $0.width.equalTo(30)
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(Constants.padding*2)
+        }
+        
         contentView.addSubview(smallLabelStackView)
         smallLabelStackView.snp.makeConstraints {
             $0.centerY.equalToSuperview()
@@ -142,15 +150,7 @@ class EventSessionTableViewCell: UITableViewCell {
         labelStackView.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.leading.equalTo(smallLabelStackView.snp.trailing).offset(Constants.padding)
-            $0.trailing.equalToSuperview().inset(Constants.padding)
-        }
-        
-        contentView.addSubview(starButton)
-        starButton.snp.makeConstraints {
-            $0.height.equalTo(28)
-            $0.width.equalTo(30)
-            $0.centerY.equalToSuperview()
-            $0.trailing.equalToSuperview().inset(Constants.padding*2)
+            $0.trailing.equalTo(starButton.snp.leading).offset(-Constants.padding)
         }
     }
     
