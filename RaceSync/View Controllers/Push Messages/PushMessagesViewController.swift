@@ -24,12 +24,14 @@ class PushMessagesViewController: UIViewController {
         tableView.emptyDataSetSource = self
         tableView.emptyDataSetDelegate = self
         tableView.register(cellType: MessageViewCell.self)
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = MessageViewCell.estimatedHeight
         return tableView
     }()
 
     fileprivate var message: PushMessage?
     fileprivate var messageViewModels = [PushMessageViewModel]()
-
+    
     fileprivate var isLoading: Bool = false {
         didSet {
             tableView.reloadData()
@@ -204,24 +206,27 @@ class PushMessagesViewController: UIViewController {
         }
     }
 
-    @objc fileprivate func handleNewPushMessage(_ notification: Notification)  {
+    @objc fileprivate func handleNewPushMessage(_ notification: Notification) {
         guard let newMessage = notification.object as? PushMessage else { return }
 
         let viewModel = PushMessageViewModel(with: newMessage)
         messageViewModels.insert(viewModel, at: 0)
 
-        // messageViewModels may already have more messages, that haven't yet been displayed
-        let indexPaths = messageViewModels.indices.map { IndexPath(row: $0, section: 0) }
+        let renderedRows = tableView.numberOfRows(inSection: 0)
+        let expectedRows = messageViewModels.count
 
-        tableView.beginUpdates()
-        tableView.insertRows(at: indexPaths, with: .top)
-        tableView.endUpdates()
+        if renderedRows == expectedRows - 1 {
+            // Table is in sync, just insert the new row
+            tableView.beginUpdates()
+            tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
+            tableView.endUpdates()
+        } else {
+            // Table is out of sync (push not enabled, cold start, etc.) — reload everything
+            tableView.reloadData()
+        }
 
         updateClearButton()
-
-        if isLoading {
-            isLoading = false
-        }
+        if isLoading { isLoading = false }
     }
 }
 
@@ -275,9 +280,7 @@ extension PushMessagesViewController: UITableViewDelegate {
         return "Delete"
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return MessageViewCell.height
-    }
+
 }
 
 extension PushMessagesViewController: EmptyDataSetSource {

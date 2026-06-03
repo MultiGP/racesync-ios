@@ -52,7 +52,7 @@ class MessageViewCell: UITableViewCell {
         }
     }
 
-    static var height: CGFloat {
+    static var estimatedHeight: CGFloat {
         return Constants.cellHeight
     }
     
@@ -78,7 +78,7 @@ class MessageViewCell: UITableViewCell {
         static let padding: CGFloat = UniversalConstants.padding
         static let margin: CGFloat = 12
         static let vPadding: CGFloat = 20
-        static let cellHeight: CGFloat = 120
+        static let cellHeight: CGFloat = 80
     }
 
     // MARK: - Initialization
@@ -104,14 +104,15 @@ class MessageViewCell: UITableViewCell {
         addSubview(timeLabel)
         timeLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(Constants.padding)
-            $0.trailing.equalToSuperview().offset(-Constants.padding)
+            $0.trailing.equalToSuperview().inset(Constants.padding)
         }
 
         addSubview(labelStackView)
         labelStackView.snp.makeConstraints {
-            $0.centerY.equalToSuperview().offset(Constants.padding/2)
+            $0.top.equalToSuperview().offset(Constants.padding*2.5)
             $0.leading.equalToSuperview().offset(Constants.padding*2)
-            $0.trailing.equalToSuperview().offset(-Constants.padding*3)
+            $0.trailing.equalToSuperview().inset(Constants.padding*2)
+            $0.bottom.equalToSuperview().inset(Constants.padding*1.5)
         }
     }
 }
