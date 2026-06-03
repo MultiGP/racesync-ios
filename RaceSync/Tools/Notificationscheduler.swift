@@ -16,7 +16,13 @@ class NotificationScheduler {
 
     static let shared = NotificationScheduler()
 
-    let isDebugging: Bool = false
+    let isDebugging: Bool = {
+        #if targetEnvironment(simulator)
+        return true
+        #else
+        return false
+        #endif
+    }()
     
     // MARK: - Scheduling
 

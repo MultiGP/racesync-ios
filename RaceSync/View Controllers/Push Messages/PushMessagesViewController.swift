@@ -212,8 +212,11 @@ class PushMessagesViewController: UIViewController {
         let viewModel = PushMessageViewModel(with: newMessage)
         messageViewModels.insert(viewModel, at: 0)
 
+        // messageViewModels may already have more messages, that haven't yet been displayed
+        let indexPaths = messageViewModels.indices.map { IndexPath(row: $0, section: 0) }
+
         tableView.beginUpdates()
-        tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
+        tableView.insertRows(at: indexPaths, with: .top)
         tableView.endUpdates()
 
         updateClearButton()
