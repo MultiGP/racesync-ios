@@ -171,10 +171,13 @@ class EventsViewController: UIViewController, Shimmable {
         
         if bucketlist.contains(session, for: date) {
             bucketlist.delete(session, for: date)
+            
             NotificationScheduler.shared.cancel(for: session)
         } else {
             bucketlist.save(session, for: date)
-            NotificationScheduler.shared.schedule(for: session)
+            
+            let track = eventsController.track(for: session)
+            NotificationScheduler.shared.schedule(for: session, track: track)
         }
         
         // Trigger haptic feedback to emphasize the action

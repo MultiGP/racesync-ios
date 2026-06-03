@@ -133,12 +133,18 @@ class PushMessagesViewController: UIViewController {
 
     fileprivate func presentContent(from message: PushMessage, animated: Bool) {
 
+        // TODO: Use enum instead of loose string ids
         if message.type == "zippyq_next_round" {
             guard !message.raceId.isEmpty else { return }
             let vc = RaceTabBarController(with: message.raceId, selectedTab: .schedule)
             navigationController?.pushViewController(vc, animated: animated)
-            
-        } else if message.type == "app_store_review" {
+        }
+        else if message.type == "event_activity_scheduler" {
+            guard !message.raceId.isEmpty else { return }
+            let vc = RaceTabBarController(with: message.raceId, selectedTab: .details)
+            navigationController?.pushViewController(vc, animated: animated)
+        }
+        else if message.type == "app_store_review" {
             let storeUrl = StringConstants.appstoreReviewUrl
             if let url = URL(string: storeUrl), UIApplication.shared.canOpenURL(url) {
                 UIApplication.shared.open(url)
@@ -215,18 +221,6 @@ class PushMessagesViewController: UIViewController {
         if isLoading {
             isLoading = false
         }
-    }
-
-    fileprivate func populateDummySource() {
-//        messages += [
-//            PushMessage(title: "📣 Round 28 is up next", detail: "Get ready to race on round 28. Your channel is R1 LHCP.", timestamp: 1747793038),
-//            PushMessage(title: "📌 NERDs published a new race!", detail: "Save the date! July 22nd NERDs will host '2025 MultiGP Summer Global Qualifier'.", timestamp: 1747774078),
-//            PushMessage(title: "💸 Payment received!", detail: "HeadsupFPV paid $23.00 USD for '2025 MultiGP Spring GQ - Last Chance'. 6 pilots have paid so far.", timestamp: 1747772048),
-//            PushMessage(title: "✅ HeadsupFPV joing your race", detail: "HeadsupFPV joined '2025 MultiGP Spring GQ - Last Chance'. 12 pilots have joined so far!", timestamp: 1747773038)
-//        ]
-//
-//        messageViewModels = PushMessageViewModel.viewModels(with: messages)
-//        tableView.reloadData()
     }
 }
 

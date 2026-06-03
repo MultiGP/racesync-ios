@@ -116,11 +116,7 @@ class PushMessagesController: NSObject {
         } else if let message = store.parseNotification(userInfo) {
             // helps prevent displaying the notification if the UI is not yet ready for it (ie: cold start)
             guard isUserPushNotificationsEnabled() else { return }
-
-            let vc = PushMessagesViewController(with: message)
-            let nc = NavigationController(rootViewController: vc)
-            let animated = UIApplication.shared.applicationState == .active ? true : false
-            UIViewController.topMostViewController()?.present(nc, animated: animated)
+            present(message: message)
         }
     }
 
@@ -181,7 +177,37 @@ class PushMessagesController: NSObject {
 
     fileprivate let userApi = UserApi()
     fileprivate let notificationCenter = UNUserNotificationCenter.current()
+    
+    fileprivate func present(message: PushMessage) {
+        let vc = PushMessagesViewController(with: message)
+        let nc = NavigationController(rootViewController: vc)
+        let animated = UIApplication.shared.applicationState == .active ? true : false
+        
+        let presenter = UIViewController.topMostViewController()
+        if presenter is LoginViewController { return } // we can't present, since the main UI hasn't been built yet
+        
+        presenter?.present(nc, animated: animated)
+    }
 
+    @discardableResult
+    fileprivate func handleNotification(with notification: UNNotification) -> PushMessage? {
+        
+        let trigger = notification.request.trigger
+        let content = notification.request.content
+        
+        Clog.log("Did receive Notification : \(content.userInfo)")
+
+        // remote push
+        if trigger is UNPushNotificationTrigger {
+            store.parseNotification(content.userInfo, broadcast: isMessagesViewShowing)
+        }
+        // local notification
+        else if trigger is UNCalendarNotificationTrigger || trigger is UNTimeIntervalNotificationTrigger {
+            return store.parseLocalNotification(content.userInfo, broadcast: isMessagesViewShowing)
+        }
+        return nil
+    }
+    
     fileprivate func handleNotificationPresentation(completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
 
         if !isMessagesViewShowing {
@@ -194,35 +220,32 @@ class PushMessagesController: NSObject {
 
 extension PushMessagesController: UNUserNotificationCenterDelegate {
 
-    // Called when a notification is received while app is in the foreground
+    // Called when a notification is received while app is in the Foreground
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                     willPresent notification: UNNotification,
                                     withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
 
-        let content = notification.request.content
-        Clog.log("Push notification in foreground : \(content.userInfo)")
-        store.parseNotification(content.userInfo, broadcast: isMessagesViewShowing)
-
+        handleNotification(with: notification)
         handleNotificationPresentation(completionHandler: completionHandler)
     }
-
-    // Triggered whether the app is in background, foreground, or terminated
-    private func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                        didReceive response: UNNotificationResponse,
-                                        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-
-        let content = response.notification.request.content
-        Clog.log("Push notification tapped : \(content.userInfo)")
-        store.parseNotification(content.userInfo, broadcast: isMessagesViewShowing)
-
-        handleNotificationPresentation(completionHandler: completionHandler)
+    
+    // Called when a notification is received while app is on the Background
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                 didReceive response: UNNotificationResponse,
+                                 withCompletionHandler completionHandler: @escaping () -> Void) {
+  
+        if let message = handleNotification(with: response.notification) {
+            present(message: message)
+        }
+        
+        completionHandler()
     }
 
     // Called when the application is launched in response to the user's request to view in-app notification settings.
     func userNotificationCenter(_ center: UNUserNotificationCenter, openSettingsFor notification: UNNotification?) {
 
         Clog.log("Push notification in-app notification settings")
-    }
+    }    
 }
 
 extension Notification.Name {
