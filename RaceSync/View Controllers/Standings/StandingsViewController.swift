@@ -493,7 +493,7 @@ extension StandingsViewController: UITableViewDataSource {
 
         cell.rankView.rank = viewModel.rank
         cell.titleLabel.text = viewModel.titleLabel
-        cell.subtitleLabel.text = viewModel.subtitleLabel
+        cell.subtitleLabel.text = viewModel.scoreLabel
         cell.avatarImageView.isHidden = true
         cell.accessoryView = nil
 
