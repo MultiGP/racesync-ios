@@ -393,7 +393,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         presenter.dismissOnSwipe = false
         presenter.backgroundTap = .dismiss
         presenter.outsideContextTap = .passthrough
-
+        
         customPresentViewController(presenter, viewController: vc, animated: true)
         self.presenter = presenter
     }
@@ -467,6 +467,59 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     }
 }
 
+extension StandingsViewController: UITableViewDataSource {
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        guard !standingsController.isEmpty(for: season) else {
+            return 0
+        }
+
+        return currentDataSource().count
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as AvatarTableViewCell
+        configure(cell, forRowAt: indexPath)
+        return cell
+    }
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return Constants.cellHeight
+    }
+
+    func configure<T>(_ view: T, forRowAt indexPath: IndexPath) where T : UITableViewCell {
+        guard let cell = view as? AvatarTableViewCell,
+              let viewModel = standingViewModel(at: indexPath) else { return }
+
+        cell.rankView.rank = viewModel.rank
+        cell.titleLabel.text = viewModel.titleLabel
+        cell.subtitleLabel.text = viewModel.subtitleLabel
+        cell.avatarImageView.isHidden = true
+        cell.accessoryView = nil
+
+        if let userId = myUserId, viewModel.standing.pilotId == userId {
+            cell.titleLabel.textColor = Color.white
+            cell.subtitleLabel.textColor = Color.gray20
+            cell.rankView.titleLabel.textColor = Color.gray20
+            cell.backgroundView?.backgroundColor = Color.pinned
+            cell.selectedBackgroundView?.backgroundColor = Color.pinnedSelected
+            
+            if isRootTabBar {
+                let image = ButtonImg.share?.withTintColor(.white)
+                let imageView = UIImageView(image: image)
+                imageView.tintColor = .white
+                cell.accessoryView = imageView
+            }
+        } else {
+            cell.titleLabel.textColor = Color.black
+            cell.subtitleLabel.textColor = Color.gray300
+            cell.rankView.titleLabel.textColor = Color.gray300
+            cell.backgroundView?.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : Color.gray20
+            cell.selectedBackgroundView?.backgroundColor = Color.gray50
+        }
+    }
+}
+
 extension StandingsViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -513,59 +566,6 @@ extension StandingsViewController: UITableViewDelegate {
             return 60 // 2 lines
         } else {
             return 50
-        }
-    }
-}
-
-extension StandingsViewController: UITableViewDataSource {
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard !standingsController.isEmpty(for: season) else {
-            return 0
-        }
-
-        return currentDataSource().count
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as AvatarTableViewCell
-        configure(cell, forRowAt: indexPath)
-        return cell
-    }
-
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return Constants.cellHeight
-    }
-
-    func configure<T>(_ view: T, forRowAt indexPath: IndexPath) where T : UITableViewCell {
-        guard let cell = view as? AvatarTableViewCell,
-              let viewModel = standingViewModel(at: indexPath) else { return }
-
-        cell.rankView.rank = viewModel.rank
-        cell.titleLabel.text = viewModel.titleLabel
-        cell.subtitleLabel.text = viewModel.subtitleLabel
-        cell.avatarImageView.isHidden = true
-        cell.accessoryView = nil
-
-        if let userId = myUserId, viewModel.standing.pilotId == userId {
-            cell.titleLabel.textColor = Color.white
-            cell.subtitleLabel.textColor = Color.gray20
-            cell.rankView.titleLabel.textColor = Color.gray20
-            cell.backgroundColor = Color.gray200
-            cell.selectedBackgroundView?.backgroundColor = Color.gray300
-
-            if isRootTabBar {
-                let image = ButtonImg.share?.withTintColor(.white)
-                let imageView = UIImageView(image: image)
-                imageView.tintColor = .white
-                cell.accessoryView = imageView
-            }
-        } else {
-            cell.titleLabel.textColor = Color.black
-            cell.subtitleLabel.textColor = Color.gray300
-            cell.rankView.titleLabel.textColor = Color.gray300
-            cell.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : Color.gray20
-            cell.selectedBackgroundView?.backgroundColor = Color.gray50
         }
     }
 }

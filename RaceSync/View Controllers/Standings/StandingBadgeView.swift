@@ -36,7 +36,7 @@ class StandingBadgeView: UIView {
     fileprivate func commonInit() {
         let nib = UINib(nibName: String(describing: type(of: self)), bundle: .main)
         guard let loadedView = nib.instantiate(withOwner: self).first as? UIView else { return }
-
+        
         loadedView.frame = bounds
         loadedView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         addSubview(loadedView)
