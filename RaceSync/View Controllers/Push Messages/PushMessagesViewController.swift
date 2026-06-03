@@ -24,8 +24,6 @@ class PushMessagesViewController: UIViewController {
         tableView.emptyDataSetSource = self
         tableView.emptyDataSetDelegate = self
         tableView.register(cellType: MessageViewCell.self)
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = MessageViewCell.estimatedHeight
         return tableView
     }()
 
@@ -227,6 +225,24 @@ class PushMessagesViewController: UIViewController {
     }
 }
 
+extension PushMessagesViewController: UITableViewDataSource {
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        guard PushMessagesController.shared.isPushNotificationsEnabled() else { return 0 }
+        return messageViewModels.count
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let viewModel = messageViewModels[indexPath.row]
+
+        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as MessageViewCell
+        cell.titleLabel.text = viewModel.titleLabel
+        cell.detailLabel.text = viewModel.detailLabel
+        cell.timeLabel.text = viewModel.dateLabel
+        return cell
+    }
+}
+
 extension PushMessagesViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -258,23 +274,9 @@ extension PushMessagesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
         return "Delete"
     }
-}
-
-extension PushMessagesViewController: UITableViewDataSource {
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard PushMessagesController.shared.isPushNotificationsEnabled() else { return 0 }
-        return messageViewModels.count
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let viewModel = messageViewModels[indexPath.row]
-
-        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as MessageViewCell
-        cell.titleLabel.text = viewModel.titleLabel
-        cell.detailLabel.text = viewModel.detailLabel
-        cell.timeLabel.text = viewModel.dateLabel
-        return cell
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return MessageViewCell.height
     }
 }
 

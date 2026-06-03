@@ -52,11 +52,20 @@ class MessageViewCell: UITableViewCell {
         }
     }
 
-    static var estimatedHeight: CGFloat {
+    static var height: CGFloat {
         return Constants.cellHeight
     }
-
+    
     // MARK: - Private Variables
+    
+    lazy var labelStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [titleLabel, detailLabel])
+        stackView.axis = .vertical
+        stackView.distribution = .fill
+        stackView.alignment = .leading
+        stackView.spacing = Constants.padding/2
+        return stackView
+    }()
 
     fileprivate lazy var spinnerView: UIActivityIndicatorView = {
         let view = UIActivityIndicatorView(style: .medium)
@@ -69,7 +78,7 @@ class MessageViewCell: UITableViewCell {
         static let padding: CGFloat = UniversalConstants.padding
         static let margin: CGFloat = 12
         static let vPadding: CGFloat = 20
-        static let cellHeight: CGFloat = 100
+        static let cellHeight: CGFloat = 120
     }
 
     // MARK: - Initialization
@@ -94,23 +103,15 @@ class MessageViewCell: UITableViewCell {
 
         addSubview(timeLabel)
         timeLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(Constants.vPadding)
-            $0.trailing.equalToSuperview().offset(-Constants.padding*2)
+            $0.top.equalToSuperview().offset(Constants.padding)
+            $0.trailing.equalToSuperview().offset(-Constants.padding)
         }
 
-        addSubview(titleLabel)
-        titleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(Constants.vPadding)
-            $0.leading.equalToSuperview().offset(Constants.padding*2)
-            $0.trailing.equalToSuperview().offset(-Constants.padding*4)
-        }
-
-        addSubview(detailLabel)
-        detailLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(Constants.margin/2)
+        addSubview(labelStackView)
+        labelStackView.snp.makeConstraints {
+            $0.centerY.equalToSuperview().offset(Constants.padding/2)
             $0.leading.equalToSuperview().offset(Constants.padding*2)
             $0.trailing.equalToSuperview().offset(-Constants.padding*3)
-            $0.bottom.equalToSuperview().offset(-Constants.margin*2)
         }
     }
 }
