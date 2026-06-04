@@ -66,12 +66,20 @@ class SeriesResultViewModel: Descriptable {
         }
         else {
             var labels = [String]()
-            if result.raceCount > 0 {
-                labels += ["Races: \(result.raceCount)"]
-            }
+            
             if result.type == .pilot {
-                labels += ["Elo: \(result.eloScore)"]
+                if result.raceCount > 0 {
+                    labels += ["Races: \(result.raceCount)"]
+                }
+                if result.eloScore > 0 {
+                    labels += ["Elo: \(result.eloScore)"]
+                }
+            } else {
+                if result.raceCount > 0 {
+                    labels += ["Pilots: \(result.raceCount)"]
+                }
             }
+            
             self.subtitleLabel = labels.joined(separator: "  |  ")
 
             let unit = (result.score == 1) ? "pt" : "pts"

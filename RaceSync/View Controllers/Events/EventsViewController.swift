@@ -138,12 +138,12 @@ class EventsViewController: UIViewController, Shimmable {
 
     // MARK: - Data
 
-    fileprivate func loadContent() {
+    fileprivate func loadContent(forced: Bool = false) {
         if !refreshControl.isRefreshing {
             isLoadingList(true)
         }
-
-        eventsController.fetchIO26Event { [weak self] event, error in
+        
+        eventsController.fetchIO26Event(forced) { [weak self] event, error in
             guard let self else { return }
             
             if let error {
@@ -171,10 +171,13 @@ class EventsViewController: UIViewController, Shimmable {
         
         if bucketlist.contains(session, for: date) {
             bucketlist.delete(session, for: date)
+            
             NotificationScheduler.shared.cancel(for: session)
         } else {
             bucketlist.save(session, for: date)
-            NotificationScheduler.shared.schedule(for: session)
+            
+            let track = eventsController.track(for: session)
+            NotificationScheduler.shared.schedule(for: session, track: track)
         }
         
         // Trigger haptic feedback to emphasize the action
@@ -210,13 +213,12 @@ class EventsViewController: UIViewController, Shimmable {
     }
 
     @objc fileprivate func didPullRefreshControl() {
-        loadContent()
+        loadContent(forced: true)
     }
     
     // MARK: - Error Handling
 
     fileprivate func handleError(_ error: NSError) {
-
         emptyStateError = EmptyStateViewModel(.error(error))
         tableView.reloadEmptyDataSet()
     }
@@ -227,12 +229,16 @@ extension EventsViewController: EventHeaderViewDelegate {
     func headerView(_ headerView: EventHeaderView, didSelectDate date: Date) {
         eventsController.selectedDate = date
         selectedSessions = eventsController.reloadSessions()
+        
+        tableView.setContentOffset(.zero, animated: false)
         tableView.reloadData()
     }
 
     func headerView(_ headerView: EventHeaderView, didSelectFilter title: String) {
         eventsController.selectedFilter = EventSessionFilter(title: title) ?? .all
         selectedSessions = eventsController.reloadSessions()
+        
+        tableView.setContentOffset(.zero, animated: false)
         tableView.reloadData()
         
         AppplicationPreferences.lastSelectedEventFilter = eventsController.selectedFilter

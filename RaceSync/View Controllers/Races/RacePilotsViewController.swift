@@ -378,7 +378,7 @@ extension RacePilotsViewController: UITableViewDataSource {
         cell.titleLabel.textColor = Color.black
         cell.subtitleLabel.textColor = Color.gray300
         cell.rankView.titleLabel.textColor = Color.gray300
-        cell.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : Color.gray20
+        cell.backgroundView?.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : Color.gray20
         cell.selectedBackgroundView?.backgroundColor = Color.gray50
 
         if race.canShowResults {
@@ -412,9 +412,9 @@ extension RacePilotsViewController: UITableViewDataSource {
             if let userId = myUserId, viewModel.userId == userId {
                 cell.titleLabel.textColor = Color.white
                 cell.subtitleLabel.textColor = Color.gray20
-                cell.rankView.titleLabel.textColor = Color.gray20
-                cell.backgroundColor = Color.gray200
-                cell.selectedBackgroundView?.backgroundColor = Color.gray300
+                cell.rankView.titleLabel.textColor = Color.gray20                
+                cell.backgroundView?.backgroundColor = Color.pinned
+                cell.selectedBackgroundView?.backgroundColor = Color.pinnedSelected
             }
         }
 

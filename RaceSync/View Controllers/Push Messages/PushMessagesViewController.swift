@@ -31,7 +31,7 @@ class PushMessagesViewController: UIViewController {
 
     fileprivate var message: PushMessage?
     fileprivate var messageViewModels = [PushMessageViewModel]()
-
+    
     fileprivate var isLoading: Bool = false {
         didSet {
             tableView.reloadData()
@@ -133,12 +133,18 @@ class PushMessagesViewController: UIViewController {
 
     fileprivate func presentContent(from message: PushMessage, animated: Bool) {
 
+        // TODO: Use enum instead of loose string ids
         if message.type == "zippyq_next_round" {
             guard !message.raceId.isEmpty else { return }
             let vc = RaceTabBarController(with: message.raceId, selectedTab: .schedule)
             navigationController?.pushViewController(vc, animated: animated)
-            
-        } else if message.type == "app_store_review" {
+        }
+        else if message.type == "event_activity_scheduler" {
+            guard !message.raceId.isEmpty else { return }
+            let vc = RaceTabBarController(with: message.raceId, selectedTab: .details)
+            navigationController?.pushViewController(vc, animated: animated)
+        }
+        else if message.type == "app_store_review" {
             let storeUrl = StringConstants.appstoreReviewUrl
             if let url = URL(string: storeUrl), UIApplication.shared.canOpenURL(url) {
                 UIApplication.shared.open(url)
@@ -200,33 +206,45 @@ class PushMessagesViewController: UIViewController {
         }
     }
 
-    @objc fileprivate func handleNewPushMessage(_ notification: Notification)  {
+    @objc fileprivate func handleNewPushMessage(_ notification: Notification) {
         guard let newMessage = notification.object as? PushMessage else { return }
 
         let viewModel = PushMessageViewModel(with: newMessage)
         messageViewModels.insert(viewModel, at: 0)
 
-        tableView.beginUpdates()
-        tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
-        tableView.endUpdates()
+        let renderedRows = tableView.numberOfRows(inSection: 0)
+        let expectedRows = messageViewModels.count
+
+        if renderedRows == expectedRows - 1 {
+            // Table is in sync, just insert the new row
+            tableView.beginUpdates()
+            tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
+            tableView.endUpdates()
+        } else {
+            // Table is out of sync (push not enabled, cold start, etc.) — reload everything
+            tableView.reloadData()
+        }
 
         updateClearButton()
+        if isLoading { isLoading = false }
+    }
+}
 
-        if isLoading {
-            isLoading = false
-        }
+extension PushMessagesViewController: UITableViewDataSource {
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        guard PushMessagesController.shared.isPushNotificationsEnabled() else { return 0 }
+        return messageViewModels.count
     }
 
-    fileprivate func populateDummySource() {
-//        messages += [
-//            PushMessage(title: "📣 Round 28 is up next", detail: "Get ready to race on round 28. Your channel is R1 LHCP.", timestamp: 1747793038),
-//            PushMessage(title: "📌 NERDs published a new race!", detail: "Save the date! July 22nd NERDs will host '2025 MultiGP Summer Global Qualifier'.", timestamp: 1747774078),
-//            PushMessage(title: "💸 Payment received!", detail: "HeadsupFPV paid $23.00 USD for '2025 MultiGP Spring GQ - Last Chance'. 6 pilots have paid so far.", timestamp: 1747772048),
-//            PushMessage(title: "✅ HeadsupFPV joing your race", detail: "HeadsupFPV joined '2025 MultiGP Spring GQ - Last Chance'. 12 pilots have joined so far!", timestamp: 1747773038)
-//        ]
-//
-//        messageViewModels = PushMessageViewModel.viewModels(with: messages)
-//        tableView.reloadData()
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let viewModel = messageViewModels[indexPath.row]
+
+        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as MessageViewCell
+        cell.titleLabel.text = viewModel.titleLabel
+        cell.detailLabel.text = viewModel.detailLabel
+        cell.timeLabel.text = viewModel.dateLabel
+        return cell
     }
 }
 
@@ -261,24 +279,8 @@ extension PushMessagesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
         return "Delete"
     }
-}
+    
 
-extension PushMessagesViewController: UITableViewDataSource {
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard PushMessagesController.shared.isPushNotificationsEnabled() else { return 0 }
-        return messageViewModels.count
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let viewModel = messageViewModels[indexPath.row]
-
-        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as MessageViewCell
-        cell.titleLabel.text = viewModel.titleLabel
-        cell.detailLabel.text = viewModel.detailLabel
-        cell.timeLabel.text = viewModel.dateLabel
-        return cell
-    }
 }
 
 extension PushMessagesViewController: EmptyDataSetSource {

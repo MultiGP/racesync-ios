@@ -56,11 +56,13 @@ class PushMessagesStore {
         let body = alert["body"] as? String ?? ""
 
         let data = userInfo["customData"] as? [String: Any]
-        let timestamp = data?["timestamp"] as? Double ?? 0
+        let timestamp = data?["timestamp"] as? Double ?? Date().timeIntervalSince1970
         let raceId = data?["raceId"] as? String ?? ""
         let type = data?["type"] as? String ?? "" // ie: "zippyq_next_round"
+        let id = String(timestamp)
 
         let message = PushMessage(
+            id: id,
             title: title,
             detail: body,
             timestamp: timestamp,
@@ -68,8 +70,35 @@ class PushMessagesStore {
             type: type
         )
 
+        return handleMessage(message, broadcast: broadcast)
+    }
+    
+    @discardableResult
+    func parseLocalNotification(_ userInfo: [AnyHashable : Any], broadcast: Bool = false) -> PushMessage? {
+        
+        let id = userInfo["id"] as? String ?? ""
+        let title = userInfo["title"] as? String ?? ""
+        let body = userInfo["body"] as? String ?? ""
+        let raceId = userInfo["raceId"] as? String ?? ""
+        let type = userInfo["type"] as? String ?? "" // ie: "event_activity_scheduler"
+        let timestamp = userInfo["timestamp"] as? Double ?? 0
+
+        let message = PushMessage(
+            id: id,
+            title: title,
+            detail: body,
+            timestamp: timestamp,
+            raceId: raceId,
+            type: type
+        )
+                
+        return handleMessage(message, broadcast: broadcast)
+    }
+    
+    fileprivate func handleMessage(_ message: PushMessage, broadcast: Bool = false)  -> PushMessage? {
+        
         // Avoid dupes
-        if let existing = messages.first(where: { $0.timestamp == message.timestamp }) {
+        if let existing = messages.first(where: { $0.id == message.id }) { // apns use the server timestamp as unique identifier
             return existing
         }
 
@@ -81,9 +110,10 @@ class PushMessagesStore {
                 NotificationCenter.default.post(name: .newPushMessageReceived, object: message)
             }
         }
-
+        
         return message
     }
+
 
     // MARK: - Private
 

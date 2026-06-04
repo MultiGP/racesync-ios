@@ -13,8 +13,7 @@ import ObjectMapper
 // MARK: - EventSession Notification Keys
 
 enum SessionNotificationKey {
-    static let sessionJSON = "sessionJSON"
-    static let categoryIdentifier = "EventSession"
+    static let session = "session"
 }
 
 // MARK: - NotificationScheduler + EventSession
@@ -23,13 +22,13 @@ extension NotificationScheduler {
 
     /// Schedules a local notification 1 hour before the session's startTime.
     /// Silently skips if startTime is missing or already in the past.
-    func schedule(for session: EventSession, for hours: Double = 1) {
+    func schedule(for session: EventSession, track: EventTrack?, for hours: Double = 1) {
         let center = UNUserNotificationCenter.current()
 
         center.getNotificationSettings { [weak self] settings in
             switch settings.authorizationStatus {
             case .authorized, .provisional:
-                self?.scheduleNotification(for: session, for: hours)
+                self?.scheduleNotification(for: session, track: track, for: hours)
 
             case .notDetermined:
                 center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
@@ -38,7 +37,7 @@ extension NotificationScheduler {
                         return
                     }
                     if granted {
-                        self?.scheduleNotification(for: session, for: hours)
+                        self?.scheduleNotification(for: session, track: track, for: hours)
                     }
                 }
 
@@ -51,10 +50,10 @@ extension NotificationScheduler {
         }
     }
     
-    private func scheduleNotification(for session: EventSession, for hours: Double = 1) {
+    private func scheduleNotification(for session: EventSession, track: EventTrack?, for hours: Double = 1) {
                 
-        guard let startTime = session.startTime else {
-            print("Session \(session.id) has no startTime, skipping.")
+        guard let startTime = session.startTime, let track = track else {
+            print("Session \(session.id) has no startTime or track, skipping.")
             return
         }
 
@@ -65,13 +64,18 @@ extension NotificationScheduler {
             return
         }
         
-        let title = "🔔 IO16: Your next event is up!"
-        let body = sessionNotificationBody(for: session)
-
-        // Pack the full session as JSON into userInfo for use when the notification is tapped
+        let title = "🔔 \(session.activity)"
+        let body = sessionNotificationBody(for: session, track: track)
+        
+        // TODO: Convert into an object or struct
         let userInfo: [String: Any] = [
-            SessionNotificationKey.sessionJSON: session.toJSONString() ?? "",
-            SessionNotificationKey.categoryIdentifier: true
+            "id": session.id,
+            "title": title,
+            "body": body,
+            "raceId": session.raceId ?? "",
+            "type": "event_activity_scheduler",
+            "timestamp": triggerDate.timeIntervalSince1970, // used as the identifier to dedupe
+            "session": session.toJSON()
         ]
         
         schedule(identifier: session.id, title: title, body: body, triggerDate: triggerDate, userInfo: userInfo)
@@ -100,22 +104,21 @@ extension NotificationScheduler {
 
     /// Reconstructs an EventSession from a notification's userInfo, if present.
     func session(from userInfo: [AnyHashable: Any]) -> EventSession? {
-        guard let jsonString = userInfo[SessionNotificationKey.sessionJSON] as? String else { return nil }
+        guard let jsonString = userInfo[SessionNotificationKey.session] as? String else { return nil }
         return EventSession(JSONString: jsonString)
     }
 
     // MARK: - Private
 
-    private func sessionNotificationBody(for session: EventSession) -> String {
+    private func sessionNotificationBody(for session: EventSession, track: EventTrack) -> String {
         
         if let start = session.startTime {
             let formatter = DateFormatter()
             formatter.dateFormat = "h:mm a"
             formatter.timeZone = MGPEventTimeZone
-            
-            return "'\(session.activity)' starts at \(formatter.string(from: start))."
+            return "Starting at \(formatter.string(from: start)) at the \(track.name) track.\nTap to open the associated race."
         } else {
-            return "'\(session.activity)' starts in 1 hour." // in track.name
+            return "'\(session.activity)' starts in 1 hour at \(track.name)."
         }
     }
 }

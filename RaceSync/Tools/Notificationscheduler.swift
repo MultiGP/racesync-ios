@@ -16,6 +16,14 @@ class NotificationScheduler {
 
     static let shared = NotificationScheduler()
 
+    let isDebugging: Bool = {
+        #if targetEnvironment(simulator)
+        return true
+        #else
+        return false
+        #endif
+    }()
+    
     // MARK: - Scheduling
 
     /// Schedules a local notification at the given trigger date.
@@ -33,11 +41,19 @@ class NotificationScheduler {
         content.sound = .default
         content.userInfo = userInfo
 
-        let components = Calendar.current.dateComponents(
-            [.year, .month, .day, .hour, .minute, .second],
-            from: triggerDate
-        )
-        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+        var trigger: UNNotificationTrigger?
+        
+        if isDebugging {
+            let seconds: TimeInterval = 5
+            trigger = UNTimeIntervalNotificationTrigger(timeInterval: seconds, repeats: false)
+        } else {
+            let components = Calendar.current.dateComponents(
+                [.year, .month, .day, .hour, .minute, .second],
+                from: triggerDate
+            )
+            trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+        }
+        
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
         
         center.add(request) { error in

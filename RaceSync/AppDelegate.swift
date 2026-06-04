@@ -25,8 +25,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Appearance must be called before any UI element is created
         Appearance.configureUIAppearance()
 
-        // Push notifications config
+        // Push and local notifications config
         UNUserNotificationCenter.current().delegate = PushMessagesController.shared
+        UNUserNotificationCenter.current().getNotificationSettings { _ in }
 
         return true
     }
@@ -38,9 +39,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Let's warm up the Haptic Engine since it takes a bit of time and may block the main thread
         HapticEngine.shared.prepare()
-        
-        UNUserNotificationCenter.current().delegate = self
-        UNUserNotificationCenter.current().getNotificationSettings { _ in }
         
         return true
     }
@@ -86,16 +84,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         PushMessagesController.shared.didReceivePushNotification(with: userInfo)
         completionHandler(.newData)
-    }
-}
-
-extension AppDelegate: UNUserNotificationCenterDelegate {
-    
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        // app is foreground when notification fires
-    }
-    
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        // user tapped the notification
     }
 }

@@ -17,6 +17,7 @@ class StandingBadgeView: UIView {
 
     @IBOutlet var positionLabel: UILabel!
     @IBOutlet var titleLabel: UILabel!
+    @IBOutlet var subtitleLabel: UILabel!
     @IBOutlet var time1Label: UILabel!
     @IBOutlet var time2Label: UILabel!
     @IBOutlet var imageView: UIImageView!
@@ -36,7 +37,7 @@ class StandingBadgeView: UIView {
     fileprivate func commonInit() {
         let nib = UINib(nibName: String(describing: type(of: self)), bundle: .main)
         guard let loadedView = nib.instantiate(withOwner: self).first as? UIView else { return }
-
+        
         loadedView.frame = bounds
         loadedView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         addSubview(loadedView)
@@ -72,6 +73,7 @@ class StandingBadgeView: UIView {
         positionLabel.sizeToFit() //forcing the label to adjust size
 
         titleLabel.text = viewModel.titleLabel
+        subtitleLabel.text = viewModel.subtitleLabel
 
         let score1 = StandingViewModel.timeLabel(for: standing.season1Score)
         let score2 = StandingViewModel.timeLabel(for: standing.season2Score)

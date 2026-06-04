@@ -11,6 +11,8 @@ import RaceSyncAPI
 
 struct PushMessage: Codable, Descriptable {
 
+    let id: ObjectId
+
     let title: String
     let detail: String
     let timestamp: TimeInterval
