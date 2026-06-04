@@ -21,7 +21,7 @@
 Get ready to race with RaceSync, the official app of the MultiGP Drone Racing League.
 Find and join local drone races hosted by MultiGP chapters worldwide with a free account.
 
-[<img src="Documentation/Github/badge_github_appstore.png" width=30%>](https://apps.apple.com/us/app/racesync/id1491110680/)
+[<img src="Documentation/Github/badge_github_appstore.png" width=50%>](https://apps.apple.com/us/app/racesync/id1491110680/)
 
 ### Features for racers:
 * Discover local races and chapters
@@ -41,7 +41,7 @@ Start racing now with RaceSync!
 
 ## Public beta is open
 
-[<img src="Documentation/Github/badge_github_testflight.png" width=30%>](https://testflight.apple.com/join/BRXIQJLb/)
+[<img src="Documentation/Github/badge_github_testflight.png" width=50%>](https://testflight.apple.com/join/BRXIQJLb/)
 
 ## Community Contribution
 
