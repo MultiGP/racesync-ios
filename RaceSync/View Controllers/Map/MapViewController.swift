@@ -81,6 +81,11 @@ class MapViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationController?.setToolbarHidden(false, animated: animated)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -90,22 +95,19 @@ class MapViewController: UIViewController {
     // MARK: - Layout
 
     fileprivate func setupLayout() {
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .plain, target: self, action: #selector(didPressCloseButton))
+
+        // Adds a close button in case of being presented modally
+        if navigationController?.viewControllers.count == 1 {
+            navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .plain, target: self, action: #selector(didPressCloseButton))
+        }
         
         if showsDirection {
             navigationItem.rightBarButtonItem = navigationBarButtonItem
         }
 
-        navigationController?.isToolbarHidden = false
-
-        if let toolbar = navigationController?.toolbar {
-            toolbar.addSubview(segmentedControl)
-            segmentedControl.snp.makeConstraints {
-                $0.centerY.equalToSuperview()
-                $0.leading.equalToSuperview().offset(Constants.padding*2)
-                $0.trailing.equalToSuperview().offset(-Constants.padding*2)
-            }
-        }
+        let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let toolbarItem = UIBarButtonItem(customView: segmentedControl)
+        toolbarItems = [space, toolbarItem, space]
 
         view.addSubview(mapView)
         mapView.snp.makeConstraints {
