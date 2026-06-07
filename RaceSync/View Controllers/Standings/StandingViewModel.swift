@@ -15,7 +15,7 @@ class StandingViewModel: Descriptable {
     let standing: Standing
 
     let titleLabel: String
-    let subtitleLabel: String
+    let subtitleLabel: String?
     let rank: Int32
 
     let scoreLabel: String
@@ -29,7 +29,7 @@ class StandingViewModel: Descriptable {
 
         let flag = FlagEmojiGenerator.flag(country: standing.country)
         self.titleLabel = "\(flag) \(standing.firstName) ‘\(standing.userName)’ \(standing.lastName)"
-        self.subtitleLabel = "🏛️ \(standing.chapterName)"
+        self.subtitleLabel = !standing.chapterName.isEmpty ? "🏛️ \(standing.chapterName)" : nil        
 
         func score(for seasonKey: String) -> Double {
             return (seasonKey == standing.season1) ? standing.season1Score : standing.season2Score

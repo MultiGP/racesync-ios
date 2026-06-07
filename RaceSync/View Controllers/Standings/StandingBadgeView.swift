@@ -73,8 +73,13 @@ class StandingBadgeView: UIView {
         positionLabel.sizeToFit() //forcing the label to adjust size
 
         titleLabel.text = viewModel.titleLabel
-        subtitleLabel.text = viewModel.subtitleLabel
-
+        
+        if let text = viewModel.subtitleLabel {
+            subtitleLabel.text = text
+        } else {
+            subtitleLabel.isHidden = true
+        }
+        
         let score1 = StandingViewModel.timeLabel(for: standing.season1Score)
         let score2 = StandingViewModel.timeLabel(for: standing.season2Score)
 
