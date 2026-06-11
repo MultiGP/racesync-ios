@@ -698,9 +698,10 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     }
 
     func showMapView() {
-        guard let coordinate = raceCoordinate, let address = race.address else { return }
+        guard let coordinate = raceCoordinate, let name = race.address else { return }
 
-        let vc = MapViewController(with: coordinate, address: address)
+        let item = MapViewLocation(name: name, coordinate: coordinate, color: Color.blue)
+        let vc = MapViewController(with: [item])
         vc.title = "Race Location"
         vc.showsDirection = true
         let nc = NavigationController(rootViewController: vc)

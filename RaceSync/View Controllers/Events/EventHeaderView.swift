@@ -12,6 +12,7 @@ import SnapKit
 protocol EventHeaderViewDelegate: AnyObject {
     func headerView(_ headerView: EventHeaderView, didSelectDate date: Date)
     func headerView(_ headerView: EventHeaderView, didSelectFilter title: String)
+    func headerViewDidTapMapButton(_ headerView: EventHeaderView)
 }
 
 // ---------------------------------------------------------------------------
@@ -37,6 +38,20 @@ class EventHeaderView: UIView {
     func selectFilter(titled title: String) {
         guard let index = filters.firstIndex(where: { $0.0 == title }) else { return }
         selectFilter(at: index, notify: false)
+    }
+    
+    func selectNextDate() {
+        let nextIndex = selectedDateIndex + 1
+        guard nextIndex < dates.count, let button = dateButton(at: nextIndex) else { return }
+        animateButtonPress(button)
+        selectDate(at: nextIndex)
+    }
+
+    func selectPreviousDate() {
+        let prevIndex = selectedDateIndex - 1
+        guard prevIndex >= 0, let button = dateButton(at: prevIndex) else { return }
+        animateButtonPress(button)
+        selectDate(at: prevIndex)
     }
 
     var isEnabled: Bool = true {
@@ -78,6 +93,7 @@ class EventHeaderView: UIView {
     fileprivate let dates: [Date]
     fileprivate let filters: [(String, UIImage?)]
     fileprivate let timezone: TimeZone
+    fileprivate let showsMapButton: Bool
 
     fileprivate var selectedDateIndex: Int = 0
     fileprivate var selectedFilterIndex: Int? = nil
@@ -88,14 +104,22 @@ class EventHeaderView: UIView {
         sv.alwaysBounceHorizontal = true
         return sv
     }()
+    
+    fileprivate lazy var mapButton: UIButton = {
+        let button = makeFilterButton(title: "", image: SystemImg.map, index: 0)
+        button.removeTarget(self, action: #selector(didTapFilterButton(_:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(didTapMapButton(_:)), for: .touchUpInside)
+        button.tintColor = tintColor
+        return button
+    }()
 
     fileprivate lazy var dateStackView: UIStackView = {
         let sv = UIStackView()
         sv.axis = .horizontal
         sv.distribution = .fillEqually
-        sv.spacing = 12
+        sv.spacing = Constants.padding
         sv.isLayoutMarginsRelativeArrangement = true
-        sv.layoutMargins = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
+        sv.layoutMargins = UIEdgeInsets(top: Constants.margin/2, left: Constants.margin, bottom: Constants.margin/2, right: Constants.margin)
         sv.tintColor = tintColor
         return sv
     }()
@@ -103,30 +127,32 @@ class EventHeaderView: UIView {
     fileprivate lazy var filterStackView: UIStackView = {
         let sv = UIStackView()
         sv.axis = .horizontal
-        sv.spacing = 12
+        sv.spacing = Constants.padding
         sv.distribution = .fill
         sv.alignment = .center
         sv.isLayoutMarginsRelativeArrangement = true
-        sv.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 4, right: 16)
+        sv.layoutMargins = UIEdgeInsets(top: 0, left: Constants.margin, bottom: Constants.margin/4, right: Constants.margin)
 
         if #available(iOS 26, *) {
             sv.backgroundColor = UIColor(hex: "f9f9f9")
         }
-
         return sv
     }()
 
     fileprivate enum Constants {
+        static let padding: CGFloat = 12
+        static let margin: CGFloat = 16
         static let dateRowHeight: CGFloat = 60
         static let filterRowHeight: CGFloat = 50
     }
 
     // MARK: - Init
 
-    init(dates: [Date], timezone: TimeZone, filters: [(String, UIImage?)]? = nil) {
+    init(dates: [Date], filters: [(String, UIImage?)]? = nil, timezone: TimeZone, showsMapButton: Bool = false) {
         self.dates = dates
-        self.filters = filters ?? []
         self.timezone = timezone
+        self.filters = filters ?? []
+        self.showsMapButton = showsMapButton
         super.init(frame: .zero)
 
         setupLayout()
@@ -160,14 +186,33 @@ class EventHeaderView: UIView {
             $0.height.equalToSuperview()
             $0.width.greaterThanOrEqualTo(self.snp.width)
         }
+        
+        if showsMapButton {
+            addSubview(mapButton)
+            mapButton.snp.makeConstraints {
+                $0.top.equalTo(dateScrollView.snp.bottom)
+                $0.trailing.bottom.equalToSuperview()
+                $0.width.height.equalTo(Constants.filterRowHeight)
+            }
+        }
 
         if !filters.isEmpty {
             addSubview(filterStackView)
             filterStackView.snp.makeConstraints {
                 $0.top.equalTo(dateScrollView.snp.bottom)
-                $0.leading.trailing.bottom.equalToSuperview()
+                $0.leading.bottom.equalToSuperview()
                 $0.height.equalTo(Constants.filterRowHeight)
+                
+                if showsMapButton {
+                    $0.trailing.equalTo(mapButton.snp.leading).offset(Constants.margin/2)
+                } else {
+                    $0.trailing.equalToSuperview()
+                }
             }
+        }
+        
+        if showsMapButton {
+            bringSubviewToFront(mapButton)
         }
     }
 
@@ -298,6 +343,22 @@ class EventHeaderView: UIView {
             return button
         }
     }
+    
+    fileprivate func animateButtonPress(_ button: UIButton) {
+        UIView.animate(
+            withDuration: 0.12,
+            animations: { button.transform = CGAffineTransform(scaleX: 0.88, y: 0.88) }
+        ) { _ in
+            UIView.animate(
+                withDuration: 0.4,
+                delay: 0,
+                usingSpringWithDamping: 0.4,
+                initialSpringVelocity: 8,
+                options: .allowUserInteraction,
+                animations: { button.transform = .identity }
+            )
+        }
+    }
 
     // MARK: - Selection
 
@@ -396,6 +457,10 @@ class EventHeaderView: UIView {
     @objc fileprivate func didTapFilterButton(_ sender: UIButton) {
         guard sender.tag != selectedFilterIndex else { return }
         selectFilter(at: sender.tag)
+    }
+    
+    @objc fileprivate func didTapMapButton(_ sender: UIButton) {
+        delegate?.headerViewDidTapMapButton(self)
     }
 
     // MARK: - Attributed Title

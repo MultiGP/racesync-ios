@@ -29,6 +29,13 @@ class EventsViewController: UIViewController, Shimmable {
         tableView.contentInsetAdjustmentBehavior = .always
         tableView.register(cellType: EventSessionTableViewCell.self)
         tableView.refreshControl = refreshControl
+        
+        for direction in [UISwipeGestureRecognizer.Direction.left, UISwipeGestureRecognizer.Direction.right] {
+            let gesture = UISwipeGestureRecognizer(target: self, action: #selector(didSwipeHorizontally(_:)))
+            gesture.direction = direction
+            tableView.addGestureRecognizer(gesture)
+        }
+        
         return tableView
     }()
 
@@ -37,18 +44,18 @@ class EventsViewController: UIViewController, Shimmable {
     // MARK: - Private Variables
 
     fileprivate lazy var refreshControl: UIRefreshControl = {
-        let rc = UIRefreshControl()
-        rc.backgroundColor = Color.gray50
-        rc.tintColor = Color.blue
-        rc.addTarget(self, action: #selector(didPullRefreshControl), for: .valueChanged)
-        return rc
+        let control = UIRefreshControl()
+        control.backgroundColor = Color.gray50
+        control.tintColor = Color.blue
+        control.addTarget(self, action: #selector(didPullRefreshControl), for: .valueChanged)
+        return control
     }()
 
     fileprivate lazy var headerView: EventHeaderView = {
         let view = EventHeaderView(
             dates: eventsController.ios26Dates,
-            timezone: MGPEventTimeZone!,
-            filters: EventSessionFilter.allCases.map { ($0.title, $0.image) }
+            filters: EventSessionFilter.allCases.map { ($0.title, $0.image) },
+            timezone: MGPEventTimeZone!
         )
         view.delegate = self
         view.selectFilter(titled: eventsController.selectedFilter.title)
@@ -216,6 +223,16 @@ class EventsViewController: UIViewController, Shimmable {
         loadContent(forced: true)
     }
     
+    @objc fileprivate func didSwipeHorizontally(_ gesture: UIGestureRecognizer) {
+        guard let gesture = gesture as? UISwipeGestureRecognizer else { return }
+
+        if gesture.direction == .left {
+            headerView.selectNextDate()
+        } else if gesture.direction == .right {
+            headerView.selectPreviousDate()
+        }
+    }
+    
     // MARK: - Error Handling
 
     fileprivate func handleError(_ error: NSError) {
@@ -242,6 +259,28 @@ extension EventsViewController: EventHeaderViewDelegate {
         tableView.reloadData()
         
         AppplicationPreferences.lastSelectedEventFilter = eventsController.selectedFilter
+    }
+    
+    func headerViewDidTapMapButton(_ headerView: EventHeaderView) {
+        
+        let coordinates = eventsController.ios26Coordinates
+        let names = eventsController.ios26TrackNames
+        let colors = Array(eventsController.ios26TrackColors.values)
+        
+        var locations = [MapViewLocation]()
+        for (index, coordinate) in coordinates.enumerated() {
+            locations.append(MapViewLocation(name: names[index], coordinate: coordinate, color: colors[index]))
+        }
+
+        let vc = MapViewController(with: locations)
+        vc.title = "Map View"
+        vc.viewportCoordinate = eventsController.ios26Coordinate
+        vc.showsDirection = false
+        vc.showsCompass = true
+        vc.delegate = self
+        
+        let nc = NavigationController(rootViewController: vc)
+        present(nc, animated: true)
     }
 }
 
@@ -297,6 +336,15 @@ extension EventsViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         EventSessionTableViewCell.cellHeight
+    }
+}
+
+extension EventsViewController: MapViewControllerDelegate {
+    
+    func mapViewController(_ mapViewController: MapViewController, didSelectLocation location: MapViewLocation) {
+        guard let track = eventsController.io26Event?.tracks?.first(where: { $0.name == location.name }) else { return }
+        
+        // 
     }
 }
 

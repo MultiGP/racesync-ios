@@ -31,3 +31,9 @@ extension MKMapView {
         return log2(360 * ((width/256) / CGFloat(region.span.longitudeDelta))) + 1
     }
 }
+
+extension CLLocationCoordinate2D: @retroactive Equatable {
+    public static func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
+        lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
+    }
+}

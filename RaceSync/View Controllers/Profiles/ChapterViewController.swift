@@ -16,6 +16,7 @@ class ChapterViewController: ProfileViewController, ViewJoinable, RaceEditable {
     // MARK: - Public Variables
 
     var raceController: RaceController?
+    var showsChapterMap: Bool = false
 
     // MARK: - Private Variables
 
@@ -37,7 +38,7 @@ class ChapterViewController: ProfileViewController, ViewJoinable, RaceEditable {
     fileprivate var raceViewModels = [RaceViewModel]()
     fileprivate var userViewModels = [UserViewModel]()
     fileprivate let chapterViewModel: ChapterViewModel
-    fileprivate var chapterCoordinates: CLLocationCoordinate2D?
+    fileprivate var chapterCoordinate: CLLocationCoordinate2D?
 
     fileprivate let emptyStateRaces = EmptyStateViewModel(.noRaces)
     fileprivate let emptyStateUsers = EmptyStateViewModel(.noChapterMembers)
@@ -64,7 +65,7 @@ class ChapterViewController: ProfileViewController, ViewJoinable, RaceEditable {
         super.init(with: profileViewModel)
 
         if let latitude = CLLocationDegrees(chapter.latitude), let longitude = CLLocationDegrees(chapter.longitude) {
-            self.chapterCoordinates = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+            self.chapterCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
         }
     }
 
@@ -154,14 +155,7 @@ class ChapterViewController: ProfileViewController, ViewJoinable, RaceEditable {
     }
 
     override func didPressLocationButton() {
-        guard let coordinates = chapterCoordinates else { return }
-
-        let vc = MapViewController(with: coordinates, address: profileViewModel.secondaryTextLabel)
-        vc.title = "Chapter Location"
-        vc.showsDirection = false
-        let nc = NavigationController(rootViewController: vc)
-
-        present(nc, animated: true)
+        // Let's not display a chapter's location on a map
     }
 
     override func didSelectRow(at indexPath: IndexPath) {
