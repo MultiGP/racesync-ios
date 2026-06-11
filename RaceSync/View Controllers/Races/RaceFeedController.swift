@@ -78,12 +78,13 @@ fileprivate extension RaceFeedController {
             guard forceFetch else { return }
         }
 
-        let filters: [RaceListFilters] = [.joined, .upcoming]
+        let filters: [RaceListFilters] = [.joined]
         let sorting: RaceViewSorting = .descending
 
         api.getMyRaces(filters: filters) { [weak self] (races, error) in
             if let races = races {
-                let sortedViewModels = RaceViewModel.sortedViewModels(with: races, sorting: sorting)
+                let filtered = races.filter { !$0.hasEnded }
+                let sortedViewModels = RaceViewModel.sortedViewModels(with: filtered, sorting: sorting)
                 self?.collection[.joined] = sortedViewModels
                 completion?(sortedViewModels, false, nil)
             } else {

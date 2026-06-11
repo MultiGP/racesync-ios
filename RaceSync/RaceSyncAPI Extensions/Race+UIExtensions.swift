@@ -17,12 +17,9 @@ extension Race {
     }
 
     var hasEnded: Bool {
-        guard let startDate = startDate else { return false }
-
-        if let endDate = endDate, startDate.isPassed {
-            return endDate.isPassed(hours: 2)
-        }
-        return startDate.isPassed(hours: 8)
+        guard let referenceDate = endDate ?? startDate else { return false }
+        let calendar = Calendar.current
+        return calendar.startOfDay(for: Date()) > calendar.startOfDay(for: referenceDate)
     }
 
     var inProgress: Bool {
