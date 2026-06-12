@@ -15,12 +15,15 @@ extension Race {
         guard let startDate = startDate else { return false }
         return startDate.isPassed
     }
-
-    var hasEnded: Bool {
+    
+    func hasEnded(extendedByDays days: Int = 0) -> Bool {
         guard let referenceDate = endDate ?? startDate else { return false }
         let calendar = Calendar.current
-        return calendar.startOfDay(for: Date()) > calendar.startOfDay(for: referenceDate)
+        let extendedDate = calendar.date(byAdding: .day, value: days, to: calendar.startOfDay(for: referenceDate)) ?? referenceDate
+        return calendar.startOfDay(for: Date()) > extendedDate
     }
+
+    var hasEnded: Bool { hasEnded(extendedByDays: 0) }
 
     var inProgress: Bool {
         guard !isFinalized else { return false }

@@ -83,7 +83,7 @@ fileprivate extension RaceFeedController {
 
         api.getMyRaces(filters: filters) { [weak self] (races, error) in
             if let races = races {
-                let filtered = races.filter { !$0.hasEnded }
+                let filtered = races.filter { !$0.hasEnded(extendedByDays: 1) }
                 let sortedViewModels = RaceViewModel.sortedViewModels(with: filtered, sorting: sorting)
                 self?.collection[.joined] = sortedViewModels
                 completion?(sortedViewModels, false, nil)
