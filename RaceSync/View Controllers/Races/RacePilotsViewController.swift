@@ -231,8 +231,8 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
     }
 
     func resetTableView() {
+        didShowPinnedView = false   // ← reset this flag too, critical
         tableView.reloadData()
-        invalidatePinnedView()
 
         tableView.setContentOffset(CGPoint(x: 0, y: -tableView.adjustedContentInset.top), animated: false)
 
