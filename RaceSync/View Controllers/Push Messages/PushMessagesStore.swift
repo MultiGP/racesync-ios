@@ -69,7 +69,6 @@ class PushMessagesStore {
             raceId: raceId,
             type: type
         )
-
         return handleMessage(message, broadcast: broadcast)
     }
     
@@ -91,7 +90,6 @@ class PushMessagesStore {
             raceId: raceId,
             type: type
         )
-                
         return handleMessage(message, broadcast: broadcast)
     }
     
@@ -110,10 +108,8 @@ class PushMessagesStore {
                 NotificationCenter.default.post(name: .newPushMessageReceived, object: message)
             }
         }
-        
         return message
     }
-
 
     // MARK: - Private
 

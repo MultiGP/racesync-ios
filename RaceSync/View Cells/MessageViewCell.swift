@@ -78,7 +78,7 @@ class MessageViewCell: UITableViewCell {
         static let padding: CGFloat = UniversalConstants.padding
         static let margin: CGFloat = 12
         static let vPadding: CGFloat = 20
-        static let cellHeight: CGFloat = 80
+        static let cellHeight: CGFloat = 60
     }
 
     // MARK: - Initialization
@@ -109,7 +109,7 @@ class MessageViewCell: UITableViewCell {
 
         addSubview(labelStackView)
         labelStackView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(Constants.padding*2.5)
+            $0.top.equalToSuperview().offset(Constants.padding*1.5)
             $0.leading.equalToSuperview().offset(Constants.padding*2)
             $0.trailing.equalToSuperview().inset(Constants.padding*2)
             $0.bottom.equalToSuperview().inset(Constants.padding*1.5)
