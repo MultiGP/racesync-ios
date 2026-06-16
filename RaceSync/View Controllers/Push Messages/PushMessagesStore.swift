@@ -18,11 +18,12 @@ class PushMessagesStore {
     }
 
     func getAllMessages() -> [PushMessage] {
-        return messages.sorted { $0.timestamp > $1.timestamp }
+        return messages.sorted { $0.timestamp.normalized > $1.timestamp.normalized }
     }
 
     func remove(_ message: PushMessage) {
-        messages.removeAll { $0.timestamp == message.timestamp } // TODO: Make PushMessage Equatable
+        
+        messages.removeAll { $0.timestamp.normalized == message.timestamp.normalized } // TODO: Make PushMessage Equatable
         saveMessages()
     }
 

@@ -91,6 +91,12 @@ public extension DateUtil {
         formatter.dateFormat = "MMM d, yyyy"
         return formatter
     }()
+    
+    static let displayDateFormatter2: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM d"
+        return formatter
+    }()
 
     static let displayTimeFormatter: DateFormatter = {
         let formatter = DateFormatter()
