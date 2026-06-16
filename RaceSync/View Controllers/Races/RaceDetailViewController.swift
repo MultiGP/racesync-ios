@@ -245,7 +245,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         }
     }()
 
-    fileprivate var raceCoordinates: CLLocationCoordinate2D? {
+    fileprivate var raceCoordinate: CLLocationCoordinate2D? {
         if race.courseId != nil, let lat = CLLocationDegrees(race.latitude), let long = CLLocationDegrees(race.longitude) {
             return CLLocationCoordinate2D(latitude: lat, longitude: long)
         }
@@ -269,7 +269,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate var canDisplayMap: Bool {
         guard raceViewModel.race.raceClass != .esport else { return false }
-        return raceCoordinates != nil
+        return raceCoordinate != nil
     }
 
     fileprivate var canDisplayFee: Bool {
@@ -562,16 +562,17 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     }
 
     fileprivate func configureMap() {
-        guard canDisplayMap, let coordinates = raceCoordinates else { return }
+        guard canDisplayMap, let coordinate = raceCoordinate else { return }
 
         let distance = CLLocationDistance(1000)
-        let region = MKCoordinateRegion(center: coordinates, latitudinalMeters: distance, longitudinalMeters: distance)
+        let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: distance, longitudinalMeters: distance)
 
         let mapRect = MKCoordinateRegion.mapRectForCoordinateRegion(region)
         let paddedMapRect = mapRect.offsetBy(dx: 0, dy: -1500) // TODO: Convert Screen points to Map points instead of harcoded value
 
         let location = MKPointAnnotation()
-        location.coordinate = coordinates
+        location.coordinate = coordinate
+        location.title = raceViewModel.race.address
 
         DispatchQueue.main.async {
             self.mapView.addAnnotation(location)
@@ -697,9 +698,10 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     }
 
     func showMapView() {
-        guard let coordinates = raceCoordinates, let address = race.address else { return }
+        guard let coordinate = raceCoordinate, let name = race.address else { return }
 
-        let vc = MapViewController(with: coordinates, address: address)
+        let item = MapViewLocation(name: name, coordinate: coordinate, color: Color.blue)
+        let vc = MapViewController(with: [item])
         vc.title = "Race Location"
         vc.showsDirection = true
         let nc = NavigationController(rootViewController: vc)
@@ -802,7 +804,6 @@ extension RaceDetailViewController: UITableViewDelegate {
         } else if row == .results {
             openLiveFPV(cell)
         }
-
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }
@@ -852,7 +853,6 @@ extension RaceDetailViewController: UITableViewDataSource {
                 }
             }
         }
-
         return cell
     }
 }
@@ -889,17 +889,21 @@ extension RaceDetailViewController: MKMapViewDelegate {
         guard annotation is MKPointAnnotation else { return nil }
 
         let identifier = "Annotation"
-        var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
+        let annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKMarkerAnnotationView
+            ?? MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
 
-        if annotationView == nil {
-            annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-            annotationView?.image = ButtonImg.map_annotation
-            annotationView!.canShowCallout = true
-        } else {
-            annotationView!.annotation = annotation
-        }
-
+        annotationView.annotation = annotation
+        annotationView.canShowCallout = true
+        annotationView.titleVisibility = .visible
+        annotationView.markerTintColor = Color.blue
+        annotationView.glyphImage = UIImage(named: "icn_activity_mgp")
+        annotationView.glyphTintColor = Color.white
+        annotationView.isSelected = false
         return annotationView
+    }
+    
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        mapView.deselectAnnotation(view.annotation, animated: false)
     }
 }
 

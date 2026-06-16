@@ -279,8 +279,6 @@ extension PushMessagesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
         return "Delete"
     }
-    
-
 }
 
 extension PushMessagesViewController: EmptyDataSetSource {

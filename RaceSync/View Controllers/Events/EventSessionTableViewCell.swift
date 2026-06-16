@@ -23,7 +23,7 @@ class EventSessionTableViewCell: UITableViewCell {
 
     lazy var titleLabel: UppercasedLabel = {
         let label = UppercasedLabel()
-        label.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
+        label.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
         label.textColor = Color.gray500
         label.numberOfLines = 2
         return label
@@ -31,7 +31,7 @@ class EventSessionTableViewCell: UITableViewCell {
 
     lazy var subtitleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+        label.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
         label.textColor = Color.gray300
         label.numberOfLines = 1
         return label

@@ -8,6 +8,7 @@
 
 import UIKit
 import RaceSyncAPI
+import MapKit
 
 enum EventSessionFilter: EnumTitle, Hashable {
     case all, mySchedule, spec, openFly
@@ -37,8 +38,58 @@ class EventsController {
     let eventApi = EventApi()
     var io26Event: Event?
     var ios26Dates: [Date] = EventSession.io26Dates(from: "2026-06-10", to: "2026-06-14")
-    var bucketlist = EventSessionBucketlist(eventName: "mgp_io26", timezone: MGPEventTimeZone!)
 
+    var ios26Coordinate: CLLocationCoordinate2D? {
+        if let lat = CLLocationDegrees("40.166935"), let long = CLLocationDegrees("-85.321092") {
+            return CLLocationCoordinate2D(latitude: lat, longitude: long)
+        }
+        return nil
+    }
+    
+    var ios26Coordinates: [CLLocationCoordinate2D] = {
+        var list = [CLLocationCoordinate2D]()
+        
+        let coordinate = [
+            [40.177077, -85.326811], // Whoopville
+            [40.175445, -85.327610], // Tiny Trainer Track
+            [40.158690, -85.325958], // Spec Track
+            [40.163217, -85.317252], // All Skills Track
+            [40.166016, -85.315201], // Rookie track
+            [40.165886, -85.324152], // World Cup 1
+            [40.171651, -85.324610], // World Cup 2
+            [40.171301, -85.318524]  // Main Stage
+        ]
+        
+        for item in coordinate {
+            list.append(CLLocationCoordinate2D(latitude: item[0], longitude: item[1]))
+        }
+        
+        return list
+    }()
+    
+    let ios26TrackNames: [String] = [
+        "Whoopville",
+        "Tiny Trainer Track",
+        "Spec Track",
+        "All Skills Track",
+        "GQ/Rookie Track",
+        "World Cup 1",
+        "World Cup 2",
+        "Main Stage"
+    ]
+    
+    let ios26TrackColors: [String: UIColor] = [
+        "whoopville":    UIColor(hex: "9b59b6"),
+        "tiny_trainier": UIColor(hex: "2dd4bf"),
+        "spec":          UIColor(hex: "22c55e"),
+        "all_skills":    UIColor(hex: "ca8a04"),
+        "gq_rookie":     UIColor(hex: "06b6d4"),
+        "world_cup_1":   UIColor(hex: "e8384f"),
+        "world_cup_2":   UIColor(hex: "f06070"),
+        "main_stage":    UIColor(hex: "4a6cf7")
+    ]
+    
+    var bucketlist = EventSessionBucketlist(eventName: "mgp_io26", timezone: MGPEventTimeZone!)
     var selectedDate: Date?
     var selectedFilter: EventSessionFilter = AppplicationPreferences.lastSelectedEventFilter
 
@@ -75,21 +126,10 @@ class EventsController {
 
     func color(for track: EventTrack?) -> UIColor {
         guard let id = track?.id else { return Color.gray300 }
-        return trackColors[id] ?? Color.gray300
+        return ios26TrackColors[id] ?? Color.gray300
     }
 
     // MARK: - Private
-
-    private let trackColors: [String: UIColor] = [
-        "main_stage":    UIColor(hex: "4a6cf7"),
-        "world_cup_1":   UIColor(hex: "e8384f"),
-        "all_skills":    UIColor(hex: "ca8a04"),
-        "whoopville":    UIColor(hex: "9b59b6"),
-        "world_cup_2":   UIColor(hex: "f06070"),
-        "spec":          UIColor(hex: "22c55e"),
-        "gq_rookie":     UIColor(hex: "06b6d4"),
-        "tiny_trainier": UIColor(hex: "2dd4bf")
-    ]
 
     func sessions(for date: Date, with status: EventStatus? = nil, id trackId: ObjectId? = nil) -> [EventSession] {
         guard let sessions = io26Event?.sessions else { return [] }

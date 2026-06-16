@@ -55,9 +55,7 @@ enum ButtonImg {
     static let settings = UIImage(named: "icn_navbar_settings")
     static let notifications = UIImage(named: "icn_navbar_notifications")
     static let filter = UIImage(named: "icn_navbar_filter")
-    static let map = UIImage(named: "icn_navbar_map")
     static let safari = UIImage(named: "icn_navbar_safari")
-    static let empty = UIImage(named: "icn_navbar_empty")
     static let qrcode = UIImage(named: "icn_navbar_qrcode")
     static let directions = UIImage(named: "icn_navbar_directions")
     static let camera = UIImage(named: "icn_navbar_camera")
@@ -67,10 +65,8 @@ enum ButtonImg {
     static let join_cross = UIImage(named: "icn_join_cross")
 
     static let radius = UIImage(named: "icn_settings_radius")
-
     static let checkmark = UIImage(named: "icn_cell_checkmark")
 
-//    static let pin_small = UIImage(named: "icn_pin_small")
     static let cal_small = UIImage(named: "icn_calendar_small")
     static let race_small = UIImage(named: "icn_race_small")
     static let chapter_small = UIImage(named: "icn_chapter_small")
@@ -78,7 +74,6 @@ enum ButtonImg {
     static let badge_small = UIImage(named: "icn_badge_small")
     static let date_path2 = UIImage(named: "icn_date_path_progress")
     static let date_path1 = UIImage(named: "icn_date_path_continuous")
-    static let map_annotation = UIImage(named: "icn_map_annotation")
     static let trophy = UIImage(named: "icn_trophy_qualifier")
 }
 
@@ -102,7 +97,8 @@ enum SystemImg {
     static let trashFill = UIImage(systemName:"trash.fill") // iOS 13.0+
     static let star = UIImage(systemName:"star") // iOS 13.0+
     static let starFill = UIImage(systemName:"star.fill") // iOS 13.0+
-    
+    static let map = UIImage(systemName:"map") // iOS 13.0+
+
     static var globe: UIImage? {
         if #available(iOS 15.0, *) {
             return UIImage(systemName:"globe.americas") // iOS 15.0+

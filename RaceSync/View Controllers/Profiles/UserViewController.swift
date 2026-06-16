@@ -30,7 +30,7 @@ class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
     fileprivate var raceViewModels = [RaceViewModel]()
     fileprivate var chapterViewModels = [ChapterViewModel]()
     fileprivate var presenter: Presentr?
-    fileprivate var userCoordinates: CLLocationCoordinate2D?
+    fileprivate var userCoordinate: CLLocationCoordinate2D?
     fileprivate var isPhotoEditale = false
 
     fileprivate let emptyStateRaces = EmptyStateViewModel(.noProfileRaces)
@@ -54,7 +54,7 @@ class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
         super.init(with: profileViewModel)
 
         if let latitude = CLLocationDegrees(user.latitude), let longitude = CLLocationDegrees(user.longitude) {
-            self.userCoordinates = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+            self.userCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
         }
     }
 
