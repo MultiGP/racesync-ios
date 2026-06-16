@@ -11,7 +11,10 @@ import XCTest
 
 final class MGPWebTests: XCTestCase {
 
-    override func setUpWithError() throws { }
+    override func setUpWithError() throws {
+        let credential = APICredential(apiKey: "", email: "", password: "")
+        APIServices.configure(with: credential)
+    }
 
     override func tearDownWithError() throws { }
 
@@ -65,7 +68,7 @@ final class MGPWebTests: XCTestCase {
     }
 
     func testZipperSeasonResults() throws {
-        let expected = URL(string: "https://www.multigp.com/MultiGP/views/viewZipperSeasonResults.php?season1=2025Summer&season2=2025Spring&exportcsv=true")!
+        let expected = URL(string: "https://www.multigp.com/MultiGP/views/viewZipperSeasonResults.php?season1=2025Summer&season2=2025Spring&exportjson=true")!
         let result = StandingApi.getStandingsUrl(for: .y2025)!
 
         XCTAssertEqual(result, expected)

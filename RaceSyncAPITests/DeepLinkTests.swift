@@ -11,7 +11,10 @@ import XCTest
 
 final class DeepLinkTests: XCTestCase {
 
-    override func setUpWithError() throws { }
+    override func setUpWithError() throws {
+        let credential = APICredential(apiKey: "", email: "", password: "")
+        APIServices.configure(with: credential)
+    }
 
     override func tearDownWithError() throws { }
 
