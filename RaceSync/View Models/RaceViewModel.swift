@@ -290,21 +290,22 @@ extension RaceViewModel {
     }
     
     static func limitLabelString(for race: Race) -> String {
-        if race.pilotLimit > 0 {
-            return String(format: "Limited to %d pilots", race.pilotLimit)
+        guard race.pilotLimit > 0 else {
+            return ""
         }
-        return ""
+        return "Limited to \(race.pilotLimit) pilot\(race.pilotLimit == 1 ? "" : "s")"
     }
 
     static func feeLabelString(for race: Race) -> String {
-        if race.fee > 0 {
-            if race.amountPaid > 0 {
-                return String(format: "✓ Paid $%.2f", race.amountPaid)
-            } else if race.amountDue > 0 {
-                return String(format: "Fee: %.2f USD", race.fee)
-            }
+        guard race.fee > 0 else {
+            return ""
         }
-        return ""
+        
+        if race.amountPaid > 0 {
+            return String(format: "✓ Paid $%.2f", race.amountPaid)
+        } else {
+            return String(format: "Fee: %.2f USD", race.fee)
+        }
     }
 }
 
