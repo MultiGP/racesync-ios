@@ -99,10 +99,14 @@ class RaceScheduleViewController: UIViewController, RaceTabbable {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
+        startPolling()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+
+        stopPolling()
     }
 
     // MARK: - Layout
@@ -130,19 +134,20 @@ class RaceScheduleViewController: UIViewController, RaceTabbable {
 
         if let url = URL(string: zippyqUrl) {
             webView.load(URLRequest(url: url))
-
-            if reloadTimer != nil {
-                reloadTimer?.invalidate()
-                reloadTimer = nil
-            }
-
-            // Start reload timer
-            if isWebPollEnabled {
-                reloadTimer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { [weak self] _ in
-                    self?.webView.reload()
-                }
-            }
         }
+    }
+
+    fileprivate func startPolling() {
+        guard isWebPollEnabled, reloadTimer == nil else { return }
+
+        reloadTimer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { [weak self] _ in
+            self?.webView.reload()
+        }
+    }
+
+    fileprivate func stopPolling() {
+        reloadTimer?.invalidate()
+        reloadTimer = nil
     }
 
     // RaceTabbable
