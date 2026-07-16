@@ -78,7 +78,7 @@ public class APISessionManager {
 
     fileprivate static let valet = Valet.valet(with: Identifier(nonEmpty: "RaceSync")!, accessibility: .whenUnlocked)
 
-    fileprivate static let sessionIdKey = "com.multigp.RaceSync.session.id"
-    fileprivate static let sessionEmailKey = "com.multigp.RaceSync.session.email"
-    fileprivate static let sessionPwdKey = "com.multigp.RaceSync.session.pwd"
+    fileprivate static let sessionIdKey = "com.multigp.racesync.session.id"
+    fileprivate static let sessionEmailKey = "com.multigp.racesync.session.email"
+    fileprivate static let sessionPwdKey = "com.multigp.racesync.session.pwd"
 }

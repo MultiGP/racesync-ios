@@ -13,14 +13,14 @@ typealias AppPrefs = AppplicationPreferences
 class AppplicationPreferences {
 
     private enum LastSelected {
-        static let homeTab = "com.multigp.RaceSync.preferences.last_selected.home_tab"
-        static let raceFilter = "com.multigp.RaceSync.preferences.last_selected.races_filters"
-        static let seriesFilter = "com.multigp.RaceSync.preferences.last_selected.series_filters"
-        static let eventFilter = "com.multigp.RaceSync.preferences.last_selected.event_filters"
+        static let homeTab = "com.multigp.racesync.preferences.last_selected.home_tab"
+        static let raceFilter = "com.multigp.racesync.preferences.last_selected.races_filters"
+        static let seriesFilter = "com.multigp.racesync.preferences.last_selected.series_filters"
+        static let eventFilter = "com.multigp.racesync.preferences.last_selected.event_filters"
     }
     
     private enum Prefs {
-        static let schedulerAlerts = "com.multigp.RaceSync.preferences.hide_notification_scheduler_alerts"
+        static let schedulerAlerts = "com.multigp.racesync.preferences.hide_notification_scheduler_alerts"
     }
     
     static var lastSelectedHomeTab: HomeTabs {
