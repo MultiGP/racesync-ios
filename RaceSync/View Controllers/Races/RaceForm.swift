@@ -31,7 +31,7 @@ enum RaceFormSection: Int {
 }
 
 enum RaceFormRow: Int, EnumTitle {
-    case chapter, `class`, content, endDate, fee, feeRequired, format, location, name,
+    case chapter, `class`, content, endDate, limit, fee, feeRequired, format, location, name,
          notify, privacy, rounds, schedule, scoring, season, startDate, zDepth, zIterator, zNoKiosk
 
     public var title: String {
@@ -40,6 +40,7 @@ enum RaceFormRow: Int, EnumTitle {
         case .class:        return "Race Class"
         case .content:      return "Description"
         case .endDate:      return "End Date"
+        case .limit:        return "Pilot Limit"
         case .fee:          return "Race Fee"
         case .feeRequired:  return "Payment Required to Join"
         case .format:       return "Race Format"
@@ -64,6 +65,7 @@ enum RaceFormRow: Int, EnumTitle {
         case .class:        return nil
         case .content:      return "Enter the details of this event"
         case .endDate:      return nil
+        case .limit:        return "Leave blank for no limit"
         case .fee:          return "Race Fee (USD)"
         case .feeRequired:  return nil
         case .format:       return nil
@@ -109,6 +111,8 @@ extension RaceFormRow {
             return QualifyingType(rawValue: raceData.qualifying)?.title
         case .privacy:
             return EventType(rawValue: raceData.privacy)?.title
+        case .limit:
+            return (raceData.pilotLimit > 0) ? "\(raceData.pilotLimit)" : "No limit"
         case .fee:
             return String(format: "$%.2f USD", raceData.fee)
         case .feeRequired:
@@ -148,7 +152,7 @@ extension RaceFormRow {
 
     var formType: FormType {
         switch self {
-        case .name, .fee, .rounds, .zDepth, .zIterator:
+        case .name, .limit, .fee, .rounds, .zDepth, .zIterator:
             return .textfield
         case .startDate, .endDate:
             return .datePicker
@@ -163,7 +167,7 @@ extension RaceFormRow {
 
     var keyboardType: UIKeyboardType {
         switch self {
-        case .fee:
+        case .limit, .fee:
             return UIKeyboardType.decimalPad
         case .rounds, .zDepth, .zIterator:
             return UIKeyboardType.numberPad

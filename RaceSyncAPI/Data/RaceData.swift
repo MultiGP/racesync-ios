@@ -23,6 +23,7 @@ public struct RaceData: Descriptable {
     public var content: String? = nil
 
     // Default race values, useful for new race creation
+    public var pilotLimit: Int32 = 0
     public var fee: Float32 = 0.0
     public var feeRequired: Bool = false
     public var format: String = ScoringFormat.fastest3Laps.rawValue
@@ -68,6 +69,7 @@ public struct RaceData: Descriptable {
         self.qualifying = race.disableSlotAutoPopulation.rawValue
         self.privacy = race.type.rawValue
         self.status = race.status.rawValue
+        self.pilotLimit = race.pilotLimit
         self.fee = race.fee
         self.feeRequired = race.isPaymentRequiredToJoin
         self.funfly = race.scoringDisabled

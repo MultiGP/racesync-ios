@@ -67,6 +67,15 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         label.numberOfLines = 1
         return label
     }()
+    
+    fileprivate lazy var limitLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        label.textColor = Color.gray300
+        label.textAlignment = .right
+        label.numberOfLines = 1
+        return label
+    }()
 
     fileprivate lazy var rotatingIconView: RotatingIconView = {
         let view = RotatingIconView()
@@ -200,7 +209,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             $0.height.greaterThanOrEqualTo(JoinButton.minHeight)
         }
 
-        var subviews: [UIView] = [topStackView, feeLabel, memberBadgeView]
+        var subviews: [UIView] = [topStackView, feeLabel, limitLabel, memberBadgeView]
         let stackView = UIStackView(arrangedSubviews: subviews)
         stackView.axis = .vertical
         stackView.alignment = .trailing
@@ -274,6 +283,10 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     fileprivate var canDisplayFee: Bool {
         return raceViewModel.feeLabel.count > 0
+    }
+    
+    fileprivate var canDisplayLimit: Bool {
+        return raceViewModel.limitLabel.count > 0
     }
 
     fileprivate var tableViewRows = [Row]()
@@ -531,11 +544,11 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             locationButton.imageEdgeInsets = UIEdgeInsets(top: -Constants.padding, left: -Constants.padding, bottom: 0, right: 0)
         }
 
-        if canDisplayFee {
-            feeLabel.text = raceViewModel.feeLabel
-        }
-
+        limitLabel.text = raceViewModel.limitLabel
+        feeLabel.text = raceViewModel.feeLabel
+        
         locationButton.isHidden = !canDisplayAddress
+        limitLabel.isHidden = !canDisplayLimit
         feeLabel.isHidden = !canDisplayFee
     }
 

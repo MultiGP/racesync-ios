@@ -194,6 +194,7 @@ public enum ParamKey {
     static let isPublic = "isPublic"
     static let pushNotificationEnabled = "pushNotificationEnabled"
     static let query = "query"
+    static let pilotLimit = "pilotLimit"
     static let fee = "fee"
     static let paymentRequiredToJoin = "paymentRequiredToJoin"
     static let amountPaid = "amountpaid"

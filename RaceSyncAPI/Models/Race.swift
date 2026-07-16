@@ -73,6 +73,7 @@ public class Race: Mappable, Descriptable {
     public var batteryRestriction: String = ""
     public var propSizeRestriction: String = ""
 
+    public var pilotLimit: Int32 = 0
     public var fee: Float = 0
     public var isPaymentRequiredToJoin: Bool = false
     public var amountDue: Float = 0
@@ -168,7 +169,8 @@ public class Race: Mappable, Descriptable {
         sizeRestriction <- map[ParamKey.sizeRestriction]
         batteryRestriction <- map[ParamKey.batteryRestriction]
         propSizeRestriction <- map[ParamKey.propellerSizeRestriction]
-
+        
+        pilotLimit <- map[ParamKey.pilotLimit]
         fee <- (map[ParamKey.fee], FloatTransform())
         isPaymentRequiredToJoin <- (map[ParamKey.paymentRequiredToJoin], BooleanTransform())
         amountDue <- (map[ParamKey.amountDue], FloatTransform())
