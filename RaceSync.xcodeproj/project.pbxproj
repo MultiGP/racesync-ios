@@ -1523,15 +1523,19 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Scripts/copy-credentials.sh",
+				"${SRCROOT}/../credentials/credentials.plist",
+				"${SRCROOT}/../credentials/credentials-debug.plist",
 			);
 			name = "[MGP] Copy Credentials plist to framework bundle";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/credentials.plist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#!/bin/bash\nset -euo pipefail\n\nFILENAME=\"credentials.plist\"\nDEBUG_FILENAME=\"credentials-debug.plist\"\n\n# Pick source file by configuration\nif [[ \"${CONFIGURATION}\" == \"Debug\" ]]; then\n  SRC_NAME=\"${DEBUG_FILENAME}\"\nelse\n  SRC_NAME=\"${FILENAME}\"\nfi\n\n# Search upwards from SRCROOT for a credentials/ folder\nSEARCH_DIR=\"${SRCROOT}\"\nwhile [[ \"${SEARCH_DIR}\" != \"/\" ]]; do\n  if [[ -d \"${SEARCH_DIR}/credentials\" ]]; then\n    SRC_PATH=\"${SEARCH_DIR}/credentials/${SRC_NAME}\"\n    break\n  fi\n  SEARCH_DIR=\"$(dirname \"${SEARCH_DIR}\")\"\ndone\n\nif [[ -z \"${SRC_PATH:-}\" ]]; then\n  echo \"ERROR: Could not find credentials/ folder above SRCROOT=${SRCROOT}\" >&2\n  exit 1\nfi\n\nif [[ ! -f \"${SRC_PATH}\" ]]; then\n  echo \"ERROR: Source file not found: ${SRC_PATH}\" >&2\n  exit 1\nfi\n\n# Destination is always the app bundle — no framework hunting needed\nDEST_PATH=\"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/${FILENAME}\"\n\necho \"Copying: ${SRC_PATH} → ${DEST_PATH}\"\ncp -fv \"${SRC_PATH}\" \"${DEST_PATH}\"\necho \"Done.\"\n";
+			shellScript = "/bin/bash \"${SRCROOT}/Scripts/copy-credentials.sh\"\n";
 		};
 		7F2DC3FC3A2F8DECDD85A749 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

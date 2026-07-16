@@ -342,7 +342,7 @@ extension EventsViewController: UITableViewDelegate {
 extension EventsViewController: MapViewControllerDelegate {
     
     func mapViewController(_ mapViewController: MapViewController, didSelectLocation location: MapViewLocation) {
-        guard let track = eventsController.io26Event?.tracks?.first(where: { $0.name == location.name }) else { return }
+        guard let _ = eventsController.io26Event?.tracks?.first(where: { $0.name == location.name }) else { return }
         
         // 
     }

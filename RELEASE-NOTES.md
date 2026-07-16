@@ -9,6 +9,10 @@
    * Displaying the pilot limit of a race, if available, on the race detail view
    * Allowing to update the pilot limit from within the app (race organizers only)
 
+### Fixes and Enhancements:
+   * Optimized network calls to make the UI feel faster.
+   * General bug fixes.
+
 ---
 
 ## 2.1
