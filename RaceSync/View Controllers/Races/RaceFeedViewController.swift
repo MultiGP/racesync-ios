@@ -203,6 +203,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
 
     deinit {
         unregisterJoinable()
+        APIServices.shared.settings.remove(self)
     }
 
     // MARK: - Layout
