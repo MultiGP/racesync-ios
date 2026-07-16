@@ -3,6 +3,14 @@
 
 ---
 
+## 2.1.3
+
+### New Features:
+   * Displaying the pilot limit of a race, if available, on the race detail view
+   * Allowing to update the pilot limit from within the app (race organizers only)
+
+---
+
 ## 2.1
 
 ### 2026 International Open's interactive schedule:
