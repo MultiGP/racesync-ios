@@ -64,7 +64,7 @@ class AvatarImageView: UIView {
 
     func updateShadow() {
         if showShadow {
-            layer.shadowColor = Color.black.cgColor
+            layer.shadowColor = UIColor.black.cgColor
             layer.shadowOffset = CGSize(width: 0, height: 1.0)
             layer.shadowOpacity = 0.25
             layer.shadowRadius = 1.25
@@ -74,4 +74,3 @@ class AvatarImageView: UIView {
         }
     }
 }
-

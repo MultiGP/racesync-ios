@@ -7,8 +7,29 @@
 //
 
 import RaceSyncAPI
+import UIKit
 
 typealias AppPrefs = AppplicationPreferences
+
+enum AppAppearance: String, CaseIterable {
+    case system, light, dark
+
+    var title: String {
+        switch self {
+        case .system: return "System"
+        case .light: return "Light"
+        case .dark: return "Dark"
+        }
+    }
+
+    var userInterfaceStyle: UIUserInterfaceStyle {
+        switch self {
+        case .system: return .unspecified
+        case .light: return .light
+        case .dark: return .dark
+        }
+    }
+}
 
 class AppplicationPreferences {
 
@@ -21,6 +42,7 @@ class AppplicationPreferences {
     
     private enum Prefs {
         static let schedulerAlerts = "com.multigp.racesync.preferences.hide_notification_scheduler_alerts"
+        static let appearance = "com.multigp.racesync.preferences.appearance"
     }
     
     static var lastSelectedHomeTab: HomeTabs {
@@ -74,6 +96,16 @@ class AppplicationPreferences {
         set {
             UserDefaults.standard.set(newValue, forKey: Prefs.schedulerAlerts)
             UserDefaults.standard.synchronize()
+        }
+    }
+
+    static var appearance: AppAppearance {
+        get {
+            UserDefaults.standard.string(forKey: Prefs.appearance)
+                .flatMap(AppAppearance.init(rawValue:)) ?? .system
+        }
+        set {
+            UserDefaults.standard.set(newValue.rawValue, forKey: Prefs.appearance)
         }
     }
 }

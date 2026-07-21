@@ -19,7 +19,6 @@
 		4F00E072242932D7001DCFC4 /* RateMe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F00E071242932D7001DCFC4 /* RateMe.swift */; };
 		4F00E075242932F2001DCFC4 /* RateMeDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F00E073242932F2001DCFC4 /* RateMeDefaults.swift */; };
 		4F00E076242932F2001DCFC4 /* RateMeConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F00E074242932F2001DCFC4 /* RateMeConstants.swift */; };
-		4F00E078242963F1001DCFC4 /* Joinable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F00E077242963F1001DCFC4 /* Joinable.swift */; };
 		4F03693626D457CB00E30821 /* AppIconViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03693526D457CB00E30821 /* AppIconViewController.swift */; };
 		4F03693D26D457DE00E30821 /* AppIconManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03693C26D457DE00E30821 /* AppIconManager.swift */; };
 		4F0B613C238528C300930D91 /* PasteboardLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0B613B238528C300930D91 /* PasteboardLabel.swift */; };
@@ -356,7 +355,6 @@
 		4F00E071242932D7001DCFC4 /* RateMe.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RateMe.swift; sourceTree = "<group>"; };
 		4F00E073242932F2001DCFC4 /* RateMeDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RateMeDefaults.swift; sourceTree = "<group>"; };
 		4F00E074242932F2001DCFC4 /* RateMeConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RateMeConstants.swift; sourceTree = "<group>"; };
-		4F00E077242963F1001DCFC4 /* Joinable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Joinable.swift; sourceTree = "<group>"; };
 		4F03693526D457CB00E30821 /* AppIconViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconViewController.swift; sourceTree = "<group>"; };
 		4F03693C26D457DE00E30821 /* AppIconManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconManager.swift; sourceTree = "<group>"; };
 		4F0B613B238528C300930D91 /* PasteboardLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardLabel.swift; sourceTree = "<group>"; };
@@ -1094,7 +1092,6 @@
 				4FC05C142E64FFB700EB97A4 /* DeepLink.swift */,
 				4FC05C162E65004400EB97A4 /* DeepLinkURLHandler.swift */,
 				4F8B8664295C112B00EAF695 /* EnumTitle.swift */,
-				4F00E077242963F1001DCFC4 /* Joinable.swift */,
 				4F8668F723864389005E310A /* Descriptable.swift */,
 				4FEADB7124147D2D00F82F0D /* LocationManager.swift */,
 				4FA26829237A4CE9008970AC /* CompletionBlock.swift */,
@@ -1869,7 +1866,6 @@
 				4FE1DAD62DEAD225009143C4 /* Standing.swift in Sources */,
 				4F5C1E4D2390600400D756EB /* APISessionManager.swift in Sources */,
 				4FDD499623B0461D009DD2DB /* Season.swift in Sources */,
-				4F00E078242963F1001DCFC4 /* Joinable.swift in Sources */,
 				4FC3F17725A7AB3B0039B94C /* String+Extensions.swift in Sources */,
 				4FD4E1BC237DCAA3008816B3 /* UserApi.swift in Sources */,
 				4F8668FA23868359005E310A /* ChapterApi.swift in Sources */,

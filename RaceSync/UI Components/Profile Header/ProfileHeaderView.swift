@@ -71,7 +71,7 @@ class ProfileHeaderView: UIView {
         button.tintColor = Color.white
         button.hitTestEdgeInsets = UIEdgeInsets(proportionally: -20)
         button.addTarget(self, action: #selector(didTapCameraButton), for: .touchUpInside)
-        button.layer.shadowColor = Color.black.cgColor
+        button.layer.shadowColor = UIColor.black.cgColor
         button.layer.shadowOffset = CGSize(width: 0, height: 2.0)
         button.layer.shadowOpacity = 0.35
         button.layer.shadowRadius = 2.5
@@ -124,7 +124,7 @@ class ProfileHeaderView: UIView {
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.titleEdgeInsets = UIEdgeInsets(right: -Constants.padding/2)
         button.isUserInteractionEnabled = false
-        button.layer.shadowColor = Color.black.cgColor
+        button.layer.shadowColor = UIColor.black.cgColor
         button.layer.shadowOffset = CGSize(width: 0, height: 1.0)
         button.layer.shadowOpacity = 0.7
         button.layer.shadowRadius = 1.0

@@ -558,15 +558,15 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         let race = raceViewModel.race
 
         if race.description.stripHTML().count > 0 {
-            let description = race.description.replaceHTMLColorTag(with: Color.gray300).stripHTMLFontTag().stripHTMLEdges()
+            let description = race.description.replaceHTMLColorTag(with: "currentColor").stripHTMLFontTag().stripHTMLEdges()
             html += "<div id=\"description\">\(description)</div>"
         }
         if race.content.stripHTML().count > 0 {
-            let content = race.content.replaceHTMLColorTag(with: Color.black).stripHTMLFontTag().stripHTMLEdges()
-            html += "<div id=\"content\" style=\"color:\(Color.black.toHexString()); padding-top: \(spacing)px; padding-bottom: \(spacing)px;\">\(content)</div>"
+            let content = race.content.replaceHTMLColorTag(with: "currentColor").stripHTMLFontTag().stripHTMLEdges()
+            html += "<div id=\"content\" style=\"padding-top: \(spacing)px; padding-bottom: \(spacing)px;\">\(content)</div>"
         }
         if race.itinerary.stripHTML().count > 0 {
-            let itinerary = race.description.replaceHTMLColorTag(with: Color.gray100).stripHTMLFontTag().stripHTMLEdges()
+            let itinerary = race.itinerary.replaceHTMLColorTag(with: "currentColor").stripHTMLFontTag().stripHTMLEdges()
             html += "<hr style=\"border-top: 0.25px solid;\">"
             html += "<div id=\"itinerary\" style=\"padding-top: \(spacing)px;\">\(itinerary)</div>"
         }

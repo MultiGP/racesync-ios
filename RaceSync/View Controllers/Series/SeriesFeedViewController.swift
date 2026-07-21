@@ -20,7 +20,7 @@ class SeriesFeedViewController: UIViewController, Shimmable {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.backgroundView = UIView()
         tableView.backgroundView?.backgroundColor = Color.clear
-        tableView.backgroundColor = Color.gray50
+        tableView.backgroundColor = Color.gray20
         tableView.contentInsetAdjustmentBehavior = .always
         tableView.dataSource = self
         tableView.delegate = self
@@ -80,7 +80,7 @@ class SeriesFeedViewController: UIViewController, Shimmable {
 
     fileprivate lazy var refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
-        refreshControl.backgroundColor = Color.gray50
+        refreshControl.backgroundColor = Color.gray20
         refreshControl.tintColor = Color.blue
         refreshControl.addTarget(self, action: #selector(didPullRefreshControl), for: .valueChanged)
         return refreshControl
@@ -89,7 +89,7 @@ class SeriesFeedViewController: UIViewController, Shimmable {
     fileprivate lazy var sliderHeaderView: SliderTableViewHeaderView = {
         let view = SliderTableViewHeaderView()
         view.autoresizingMask = [.flexibleHeight, .flexibleWidth]
-        view.backgroundColor = Color.gray50
+        view.backgroundColor = Color.gray20
         view.autoScrollInterval = 5.0
         view.delegate = self
         return view

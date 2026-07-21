@@ -108,7 +108,7 @@ class SettingsViewController: UIViewController {
             var about: [Row] = [.feedback, .joinBeta, .viewProject]
             if UIApplication.shared.supportsAlternateIcons { about += [.appicon] }
 
-            return [.notifications: [Row.notifications], .resources: resources, .about: about, .auth: auth]
+            return [.notifications: [.notifications, .appearance], .resources: resources, .about: about, .auth: auth]
        }()
     }
 
@@ -172,6 +172,21 @@ class SettingsViewController: UIViewController {
         }, cancel: nil)
     }
 
+    fileprivate func selectAppearance() {
+        let appearances = AppAppearance.allCases
+        ActionSheetUtil.presentActionSheet(
+            withTitle: "Appearance Mode",
+            buttonTitles: appearances.map(\.title),
+            disabledButtonTitles: [AppPrefs.appearance.title]
+        ) { [weak self] action in
+            guard let title = action.title,
+                  let appearance = appearances.first(where: { $0.title == title }) else { return }
+            AppPrefs.appearance = appearance
+            Appearance.applyUserInterfaceStyle()
+            self?.tableView.reloadData()
+        }
+    }
+
     fileprivate func sendFeedback() {
         let subject = "RaceSync iOS Feedback"
         let email = StringConstants.supportEmail
@@ -204,6 +219,8 @@ extension SettingsViewController: UITableViewDelegate {
         guard let section = Section(rawValue: indexPath.section), let row = sections[section]?[indexPath.row] else { return }
 
         switch row {
+        case .appearance:
+            selectAppearance()
         case .notifications:
             togglePushNotifications()
             cell.isLoading = isTogglingPush
@@ -275,11 +292,14 @@ extension SettingsViewController: UITableViewDataSource {
         cell.textLabel?.text = row.title
         cell.textLabel?.textColor = Color.black
         cell.detailTextLabel?.text = nil
-        cell.imageView?.image = UIImage.init(named: row.imageName)
+        cell.imageView?.image = row.image
+        cell.imageView?.tintColor = Color.black
         cell.accessoryType = .disclosureIndicator
         cell.isLoading = false
 
-        if row == .notifications {
+        if row == .appearance {
+            cell.detailTextLabel?.text = AppPrefs.appearance.title
+        } else if row == .notifications {
             cell.detailTextLabel?.text = PushMessagesController.shared.isPushNotificationsEnabled() ? "Enabled" : "Disabled"
             cell.isLoading = isTogglingPush
         } else if row == .appicon {
@@ -312,6 +332,7 @@ fileprivate enum Section: Int, EnumTitle {
 }
 
 fileprivate enum Row: Int, EnumTitle {
+    case appearance
     case notifications
     case tracksGuide
     case buildGuide
@@ -327,6 +348,7 @@ fileprivate enum Row: Int, EnumTitle {
 
     var title: String {
         switch self {
+        case .appearance:           return "Appearance"
         case .notifications:        return "Push Notifications"
         case .tracksGuide:          return "MultiGP Tracks"
         case .buildGuide:           return "Obstacles Build Guide"
@@ -345,6 +367,7 @@ fileprivate enum Row: Int, EnumTitle {
     // For including icons to each row. Look for icons at https://thenounproject.com/
     var imageName: String {
         switch self {
+        case .appearance:           return "circle.lefthalf.filled"
         case .notifications:        return "icn_settings_apns"
         case .tracksGuide:          return "icn_settings_tracks"
         case .buildGuide:           return "icn_settings_buildguide"
@@ -358,5 +381,10 @@ fileprivate enum Row: Int, EnumTitle {
         case .logout:               return "icn_settings_logout"
         case .switchEnv:            return "icn_settings_logout"
         }
+    }
+
+    var image: UIImage? {
+        let image = UIImage(named: self.imageName) ?? UIImage(systemName: self.imageName)
+        return image?.withRenderingMode(.alwaysTemplate)
     }
 }

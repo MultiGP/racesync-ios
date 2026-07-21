@@ -110,14 +110,15 @@ extension AppIconViewController: UITableViewDataSource {
 
         cell.textLabel?.text = icon.title
         cell.imageView?.image = icon.preview?.rounded(with: 60 / 4)
-        cell.imageView?.layer.shadowColor = Color.black.cgColor
+        cell.imageView?.layer.shadowColor = UIColor.black.cgColor
         cell.imageView?.layer.shadowOffset = CGSize(width: 0, height: 2.0)
         cell.imageView?.layer.shadowOpacity = 0.2
         cell.imageView?.layer.shadowRadius = 3
         cell.accessoryType = .none
-
+        
         if icon.isSelected() {
-            let imageView = UIImageView(image: ButtonImg.checkmark)
+            let image = ButtonImg.checkmark?.withRenderingMode(.alwaysTemplate)
+            let imageView = UIImageView(image: image)
             imageView.tintColor = Color.blue
             cell.accessoryView = imageView
         } else {

@@ -256,7 +256,7 @@ extension JoinState {
     var titleColor: UIColor {
         switch self {
         case .notJoined:    return Color.green
-        case .joined:       return Color.white
+        case .joined:       return UIColor.white
         case .closed:       return Color.black
         case .notPaid(fee: _):
                             return Color.green

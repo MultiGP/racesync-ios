@@ -64,6 +64,9 @@ class RichEditorView: UIView, UIScrollViewDelegate, WKNavigationDelegate, UIGest
     /// The internal WKWebView that is used to display the text.
     fileprivate lazy var webView: RichEditorWebView = {
         let view = RichEditorWebView()
+        view.isOpaque = false
+        view.backgroundColor = .clear
+        view.scrollView.backgroundColor = .clear
         view.scrollView.alwaysBounceVertical = true
         view.scrollView.showsVerticalScrollIndicator = true
         view.scrollView.alwaysBounceHorizontal = false

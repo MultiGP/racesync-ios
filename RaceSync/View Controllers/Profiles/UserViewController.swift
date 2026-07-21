@@ -158,8 +158,8 @@ class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
     func getQRImage(with userId: String) -> UIImage? {
         var qrCode = QRCode(userId)
         qrCode?.size = CGSize(width: 270, height: 270)
-        qrCode?.color = CIColor(color: Color.black)
-        qrCode?.backgroundColor = CIColor(color: Color.white)
+        qrCode?.color = CIColor(color: UIColor.black)
+        qrCode?.backgroundColor = CIColor(color: UIColor.white)
         return qrCode?.image
     }
 
@@ -443,4 +443,3 @@ extension UserViewController: EmptyDataSetDelegate {
         return !shimmeringView.isShimmering
     }
 }
-

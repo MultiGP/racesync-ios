@@ -21,6 +21,16 @@ protocol EventHeaderViewDelegate: AnyObject {
 
 class EventHeaderView: UIView {
 
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) else { return }
+
+        for button in dateStackView.arrangedSubviews.compactMap({ $0 as? UIButton }) {
+            let color = button.isSelected ? tintColor : Color.gray50
+            button.layer.borderColor = color?.resolvedColor(with: traitCollection).cgColor
+        }
+    }
+
     // MARK: - Public
 
     weak var delegate: EventHeaderViewDelegate?

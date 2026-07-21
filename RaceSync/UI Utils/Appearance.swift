@@ -12,6 +12,7 @@ import Presentr
 
 class Appearance {
     static func configureUIAppearance() {
+        applyUserInterfaceStyle()
         configureViewAppearance()
         configureNavigationBarAppearance()
         configureTabBarAppearance()
@@ -33,6 +34,14 @@ class Appearance {
         presenter.cornerRadius = 10
         return presenter
     }
+
+    static func applyUserInterfaceStyle() {
+        guard let window = UIApplication.shared.delegate?.window else { return }
+
+        window?.overrideUserInterfaceStyle = AppPrefs.appearance.userInterfaceStyle
+        window?.rootViewController?.view.setNeedsLayout()
+        window?.rootViewController?.view.setNeedsDisplay()
+    }
 }
 
 fileprivate extension Appearance {
@@ -43,8 +52,6 @@ fileprivate extension Appearance {
 
         if let mainWindow = UIApplication.shared.delegate?.window {
             mainWindow?.backgroundColor = Color.white
-
-            mainWindow?.overrideUserInterfaceStyle = .light
         }
     }
 
