@@ -11,6 +11,9 @@ import AlamofireImage
 import Presentr
 
 class Appearance {
+    
+    static let isDarkModeEnabled = false
+
     static func configureUIAppearance() {
         applyUserInterfaceStyle()
         configureViewAppearance()
@@ -38,7 +41,9 @@ class Appearance {
     static func applyUserInterfaceStyle() {
         guard let window = UIApplication.shared.delegate?.window else { return }
 
-        window?.overrideUserInterfaceStyle = AppPrefs.appearance.userInterfaceStyle
+        window?.overrideUserInterfaceStyle = isDarkModeEnabled
+            ? AppPrefs.appearance.userInterfaceStyle
+            : .light
         window?.rootViewController?.view.setNeedsLayout()
         window?.rootViewController?.view.setNeedsDisplay()
     }

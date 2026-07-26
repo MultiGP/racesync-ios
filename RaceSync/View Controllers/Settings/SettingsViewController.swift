@@ -108,7 +108,12 @@ class SettingsViewController: UIViewController {
             var about: [Row] = [.feedback, .joinBeta, .viewProject]
             if UIApplication.shared.supportsAlternateIcons { about += [.appicon] }
 
-            return [.notifications: [.notifications, .appearance], .resources: resources, .about: about, .auth: auth]
+            var settings: [Row] = [.notifications]
+            if Appearance.isDarkModeEnabled {
+                settings.append(.appearance)
+            }
+
+            return [.settings: settings, .resources: resources, .about: about, .auth: auth]
        }()
     }
 
@@ -319,11 +324,11 @@ extension SettingsViewController: UITableViewDataSource {
 }
 
 fileprivate enum Section: Int, EnumTitle {
-    case notifications, resources, about, auth
+    case settings, resources, about, auth
 
     var title: String {
         switch self {
-        case .notifications:    return ""
+        case .settings:         return ""
         case .resources:        return "Resources"
         case .about:            return "RaceSync iOS \(Bundle.main.releaseDescriptionPretty)"
         case .auth:             return ""
