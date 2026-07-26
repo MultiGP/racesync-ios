@@ -80,7 +80,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     fileprivate lazy var rotatingIconView: RotatingIconView = {
         let view = RotatingIconView()
         view.tintColor = Color.yellow
-        view.imageView.image = ButtonImg.trophy?.withRenderingMode(.alwaysTemplate)
+        view.imageView.image = ButtonImg.trophy
         view.imageView.tintColor = Color.yellow
         return view
     }()
@@ -138,6 +138,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         let view = UIImageView()
         view.contentMode = .scaleAspectFit
         view.backgroundColor = Color.clear
+        view.tintColor = Color.black
         return view
     }()
 

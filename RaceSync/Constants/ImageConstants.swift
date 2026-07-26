@@ -67,14 +67,14 @@ enum ButtonImg {
     static let radius = UIImage(named: "icn_settings_radius")
     static let checkmark = UIImage(named: "icn_cell_checkmark")
 
-    static let cal_small = UIImage(named: "icn_calendar_small")
+    static let cal_small = UIImage(named: "icn_calendar_small")?.withRenderingMode(.alwaysTemplate)
     static let race_small = UIImage(named: "icn_race_small")
     static let chapter_small = UIImage(named: "icn_chapter_small")
     static let member_small = UIImage(named: "icn_member_small")
     static let badge_small = UIImage(named: "icn_badge_small")
-    static let date_path2 = UIImage(named: "icn_date_path_progress")
-    static let date_path1 = UIImage(named: "icn_date_path_continuous")
-    static let trophy = UIImage(named: "icn_trophy_qualifier")
+    static let date_path2 = UIImage(named: "icn_date_path_progress")?.withRenderingMode(.alwaysTemplate)
+    static let date_path1 = UIImage(named: "icn_date_path_continuous")?.withRenderingMode(.alwaysTemplate)
+    static let trophy = UIImage(named: "icn_trophy_qualifier")?.withRenderingMode(.alwaysTemplate)
 }
 
 enum SystemImg {

@@ -180,7 +180,7 @@ class EventHeaderView: UIView {
     // MARK: - Layout
 
     fileprivate func setupLayout() {
-        backgroundColor = Color.navigationBarColor
+        backgroundColor = Color.viewTint
         addSeparatorLine(.bottom)
 
         addSubview(dateScrollView)

@@ -16,7 +16,7 @@ protocol RaceEditable: UIViewController {
 
     func didLongPress(_ gesture: UIGestureRecognizer)
     func loadContent(forced: Bool)
-    func raceViewModel(for index: Int) -> RaceViewModel?
+    func raceViewModel(at index: Int) -> RaceViewModel?
 
     // Default implementation
     func handleLongPress(_ gesture: UIGestureRecognizer)
@@ -35,7 +35,7 @@ extension RaceEditable {
             return
         }
 
-        guard let viewModel = raceViewModel(for: indexPath.row), viewModel.race.canBeEdited else { return }
+        guard let viewModel = raceViewModel(at: indexPath.row), viewModel.race.canBeEdited else { return }
 
         raceController = RaceController(with: viewModel.race)
         raceController?.showContextualMenu(.edit, completion: { [weak self] status in

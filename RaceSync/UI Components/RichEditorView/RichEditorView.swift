@@ -114,6 +114,13 @@ class RichEditorView: UIView, UIScrollViewDelegate, WKNavigationDelegate, UIGest
     
     /// Whether or not the editor has finished loading or not yet.
     fileprivate var isEditorLoaded = false
+
+    /// The color used for links in the editor's HTML content.
+    var linkColor: UIColor = Color.link {
+        didSet {
+            updateLinkColor()
+        }
+    }
     
     /// Value that stores whether or not the content should be editable when the editor is loaded.
     /// Is basically `isEditingEnabled` before the editor is loaded.
@@ -174,6 +181,18 @@ class RichEditorView: UIView, UIScrollViewDelegate, WKNavigationDelegate, UIGest
         tapRecognizer.addTarget(self, action: #selector(viewWasTapped))
         tapRecognizer.delegate = self
         addGestureRecognizer(tapRecognizer)
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) else { return }
+        updateLinkColor()
+    }
+
+    fileprivate func updateLinkColor() {
+        guard isEditorLoaded else { return }
+        let color = linkColor.resolvedColor(with: traitCollection).toHexString()
+        runJS("document.documentElement.style.setProperty('--editor-link', '\(color)')")
     }
     
     // MARK: - Rich Text Editing
@@ -605,6 +624,7 @@ class RichEditorView: UIView, UIScrollViewDelegate, WKNavigationDelegate, UIGest
                 contentEditable = editingEnabledVar
                 placeholder = placeholderText
                 lineHeight = DefaultInnerLineHeight
+                updateLinkColor()
                 delegate?.richEditorDidLoad?(self)
             }
             updateHeight()

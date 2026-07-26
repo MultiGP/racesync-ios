@@ -48,7 +48,7 @@ fileprivate extension Appearance {
 
     static func configureViewAppearance() {
         let windowAppearance = UIWindow.appearance()
-        windowAppearance.tintColor = Color.blue
+        windowAppearance.tintColor = Color.buttonTint
 
         if let mainWindow = UIApplication.shared.delegate?.window {
             mainWindow?.backgroundColor = Color.white
@@ -56,8 +56,8 @@ fileprivate extension Appearance {
     }
 
     static func configureNavigationBarAppearance() {
-        let foregroundColor = Color.blue
-        let backgroundColor = Color.navigationBarColor
+        let foregroundColor = Color.buttonTint
+        let backgroundColor = Color.barBackground
         let backIndicatorImage = ButtonImg.back
         let textAttributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.boldSystemFont(ofSize: 18),
@@ -91,8 +91,8 @@ fileprivate extension Appearance {
     }
 
     static func configureTabBarAppearance() {
-        let foregroundColor = Color.blue
-        let backgroundColor = Color.navigationBarColor
+        let foregroundColor = Color.tabBarForeground
+        let backgroundColor = Color.barBackground
         let unselectedItemTintColor = Color.gray300
         let backgroundImage = UIImage.image(withColor: backgroundColor, imageSize: CGSize(width: 44, height: 44))
 
@@ -127,8 +127,8 @@ fileprivate extension Appearance {
     }
 
     static func configureToolBarAppearance() {
-        let foregroundColor = Color.blue
-        let backgroundColor = Color.navigationBarColor
+        let foregroundColor = Color.buttonTint
+        let backgroundColor = Color.barBackground
 
         // set the color and font for the title
         let toolBarAppearance = UIToolbar.appearance()

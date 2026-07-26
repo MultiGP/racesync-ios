@@ -68,7 +68,7 @@ class UniversalSearchViewController: UIViewController, Shimmable {
 
     fileprivate lazy var headerView: UIView = {
         let view = UIView()
-        view.backgroundColor = Color.navigationBarColor
+        view.backgroundColor = Color.barBackground
         view.tintColor = Color.blue
 
         let spacing = 10
@@ -286,15 +286,15 @@ class UniversalSearchViewController: UIViewController, Shimmable {
         return objects.count
     }
 
-    fileprivate func raceViewModel(for index: Int) -> RaceViewModel? {
+    fileprivate func raceViewModel(at index: Int) -> RaceViewModel? {
         return viewModel(for: .races, at: index) as RaceViewModel?
     }
 
-    fileprivate func userViewModel(for index: Int) -> UserViewModel? {
+    fileprivate func userViewModel(at index: Int) -> UserViewModel? {
         return viewModel(for: .users, at: index) as UserViewModel?
     }
 
-    fileprivate func chapterViewModel(for index: Int) -> ChapterViewModel? {
+    fileprivate func chapterViewModel(at index: Int) -> ChapterViewModel? {
         return viewModel(for: .chapters, at: index) as ChapterViewModel?
     }
 
@@ -381,7 +381,7 @@ extension UniversalSearchViewController: UITableViewDataSource {
 
     func raceTableViewCell(for indexPath: IndexPath) -> RaceTableViewCell {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as RaceTableViewCell
-        guard let viewModel = raceViewModel(for: indexPath.row) else { return cell }
+        guard let viewModel = raceViewModel(at: indexPath.row) else { return cell }
 
         cell.dateLabel.text = viewModel.startDateLabel //"Saturday Sept 14 @ 9:00 AM"
         cell.titleLabel.text = viewModel.titleLabel
@@ -395,7 +395,7 @@ extension UniversalSearchViewController: UITableViewDataSource {
 
     func userTableViewCell(for indexPath: IndexPath) -> AvatarTableViewCell {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as AvatarTableViewCell
-        guard let viewModel = userViewModel(for: indexPath.row) else { return cell }
+        guard let viewModel = userViewModel(at: indexPath.row) else { return cell }
 
         cell.titleLabel.text = viewModel.displayName
         cell.avatarImageView.imageView.setImage(with: viewModel.pictureUrl, placeholderImage: PlaceholderImg.medium, size: Constants.avatarImageSize)
@@ -406,7 +406,7 @@ extension UniversalSearchViewController: UITableViewDataSource {
 
     func chapterTableViewCell(for indexPath: IndexPath) -> ChapterTableViewCell {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as ChapterTableViewCell
-        guard let viewModel = chapterViewModel(for: indexPath.row) else { return cell }
+        guard let viewModel = chapterViewModel(at: indexPath.row) else { return cell }
 
         cell.titleLabel.text = viewModel.titleLabel
         cell.subtitleLabel.text = viewModel.locationLabel
@@ -429,15 +429,15 @@ extension UniversalSearchViewController: UITableViewDelegate {
 
         switch selectedSection {
         case .races:
-            guard let vm = raceViewModel(for: indexPath.row) else { return }
+            guard let vm = raceViewModel(at: indexPath.row) else { return }
             vc = RaceTabBarController(with: vm.race)
         case .users:
-            guard let vm = userViewModel(for: indexPath.row) else { return }
+            guard let vm = userViewModel(at: indexPath.row) else { return }
             if let user = vm.user {
                 vc = UserViewController(with: user)
             }
         case .chapters:
-            guard let vm = chapterViewModel(for: indexPath.row) else { return }
+            guard let vm = chapterViewModel(at: indexPath.row) else { return }
             vc = ChapterViewController(with: vm.chapter)
         }
 

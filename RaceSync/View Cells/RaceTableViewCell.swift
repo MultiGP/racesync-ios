@@ -116,7 +116,8 @@ class RaceTableViewCell: UITableViewCell {
         let selectedBackgroundView = UIView()
         selectedBackgroundView.backgroundColor = Color.gray20
         self.selectedBackgroundView = selectedBackgroundView
-
+        self.backgroundView = UIView()
+        
         contentView.addSubview(avatarImageView)
         avatarImageView.snp.makeConstraints {
             $0.height.width.equalTo(Constants.imageHeight)

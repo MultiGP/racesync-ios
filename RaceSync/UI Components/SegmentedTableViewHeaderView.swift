@@ -46,7 +46,7 @@ class SegmentedTableViewHeaderView: UITableViewHeaderFooterView {
 
     fileprivate func setupLayout() {
         backgroundView = UIView()
-        backgroundView?.backgroundColor = Color.navigationBarColor
+        backgroundView?.backgroundColor = Color.barBackground
 
         addSubview(segmentedControl)
         segmentedControl.snp.makeConstraints {

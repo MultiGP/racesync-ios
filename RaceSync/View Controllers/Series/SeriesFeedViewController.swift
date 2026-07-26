@@ -38,7 +38,7 @@ class SeriesFeedViewController: UIViewController, Shimmable {
 
     fileprivate lazy var headerView: UIView = {
         let view = UIView()
-        view.backgroundColor = Color.navigationBarColor
+        view.backgroundColor = Color.barBackground
         view.tintColor = Color.blue
 
         let spacing: CGFloat = 10

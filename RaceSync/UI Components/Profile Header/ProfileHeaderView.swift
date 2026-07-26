@@ -120,7 +120,7 @@ class ProfileHeaderView: UIView {
 
     fileprivate lazy var topBadgeButton: UIButton = {
         let button = UIButton(type: .system)
-        button.tintColor = Color.white
+        button.tintColor = UIColor.white
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.titleEdgeInsets = UIEdgeInsets(right: -Constants.padding/2)
         button.isUserInteractionEnabled = false
