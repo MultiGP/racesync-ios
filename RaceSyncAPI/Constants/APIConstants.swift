@@ -42,6 +42,11 @@ enum EndPoint {
     static let raceFinalize = "race/finalize"
     static let racePayments = "race/getRacePayments"
 
+    static let zippyQList = "zippyq/list"
+    static let zippyQRevision = "zippyq/revision"
+    static let zippyQAddPilot = "zippyq/addPilot"
+    static let zippyQRemovePilot = "zippyq/removePilot"
+
     static let seriesList = "series/list"
     static let seriesView = "series/view"
     static let seriesApprove = "series/approve"
@@ -177,6 +182,9 @@ public enum ParamKey {
     static let batteryRestriction = "batteryRestriction"
     static let propellerSizeRestriction = "propellerSizeRestriction"
     static let frequency = "frequency"
+    static let cycle = "cycle"
+    static let heat = "heat"
+    static let slot = "slot"
     static let group = "group"
     static let groupSlot = "groupSlot"
     static let band = "band"

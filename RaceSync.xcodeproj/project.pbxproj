@@ -126,6 +126,7 @@
 		4F791C9823A6105700F15FD7 /* TextPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F791C9723A6105700F15FD7 /* TextPill.swift */; };
 		4F791C9A23A66BA900F15FD7 /* NSAttributedString+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F791C9923A66BA900F15FD7 /* NSAttributedString+Extensions.swift */; };
 		4F7974B524A4A4D4003D623A /* ImageEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7974B424A4A4D4003D623A /* ImageEnums.swift */; };
+		4F7B9A012F2E4C0A00ABCDEF /* ZippyqApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7B9A022F2E4C0A00ABCDEF /* ZippyqApi.swift */; };
 		4F7BE2672722354F00592297 /* UIViewController+Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7BE2662722354F00592297 /* UIViewController+Navigation.swift */; };
 		4F7C8E3724D8AE16008FE125 /* ProfileAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7C8E3624D8AE15008FE125 /* ProfileAvatarView.swift */; };
 		4F80A655296F9951008B19AF /* RichEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F80A646296F9950008B19AF /* RichEditorView.swift */; };
@@ -268,6 +269,7 @@
 		4FE1DADF2DEB9EEF009143C4 /* StandingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE1DADE2DEB9EEF009143C4 /* StandingViewModel.swift */; };
 		4FE272362580A36D00EC121B /* SimpleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE272352580A36D00EC121B /* SimpleTableViewCell.swift */; };
 		4FE4C0A22945E0EF00F47F0A /* RaceListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE4C0A12945E0EF00F47F0A /* RaceListViewController.swift */; };
+		4FE645133018072F008CBD26 /* ZippyQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE645123018072D008CBD26 /* ZippyQueue.swift */; };
 		4FE91EE12FB670F000460A74 /* UIBarButtonItem+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EE02FB670F000460A74 /* UIBarButtonItem+Extensions.swift */; };
 		4FE91EE32FBC098900460A74 /* EventApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EE22FBC098900460A74 /* EventApi.swift */; };
 		4FE91EE52FBC09C800460A74 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EE42FBC09C800460A74 /* Event.swift */; };
@@ -465,6 +467,7 @@
 		4F791C9723A6105700F15FD7 /* TextPill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPill.swift; sourceTree = "<group>"; };
 		4F791C9923A66BA900F15FD7 /* NSAttributedString+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+Extensions.swift"; sourceTree = "<group>"; };
 		4F7974B424A4A4D4003D623A /* ImageEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageEnums.swift; sourceTree = "<group>"; };
+		4F7B9A022F2E4C0A00ABCDEF /* ZippyqApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqApi.swift; sourceTree = "<group>"; };
 		4F7BE2662722354F00592297 /* UIViewController+Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Navigation.swift"; sourceTree = "<group>"; };
 		4F7C8E3624D8AE15008FE125 /* ProfileAvatarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileAvatarView.swift; sourceTree = "<group>"; };
 		4F80A646296F9950008B19AF /* RichEditorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RichEditorView.swift; sourceTree = "<group>"; };
@@ -611,6 +614,7 @@
 		4FE1DADE2DEB9EEF009143C4 /* StandingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandingViewModel.swift; sourceTree = "<group>"; };
 		4FE272352580A36D00EC121B /* SimpleTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleTableViewCell.swift; sourceTree = "<group>"; };
 		4FE4C0A12945E0EF00F47F0A /* RaceListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceListViewController.swift; sourceTree = "<group>"; };
+		4FE645123018072D008CBD26 /* ZippyQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyQueue.swift; sourceTree = "<group>"; };
 		4FE91EE02FB670F000460A74 /* UIBarButtonItem+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem+Extensions.swift"; sourceTree = "<group>"; };
 		4FE91EE22FBC098900460A74 /* EventApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventApi.swift; sourceTree = "<group>"; };
 		4FE91EE42FBC09C800460A74 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
@@ -1067,6 +1071,7 @@
 				4F004E9D295A3066009C46AA /* CourseApi.swift */,
 				4FE1DAD72DEAD443009143C4 /* StandingApi.swift */,
 				4FE91EE22FBC098900460A74 /* EventApi.swift */,
+				4F7B9A022F2E4C0A00ABCDEF /* ZippyqApi.swift */,
 				4F5C1E3F238A7BAF00D756EB /* RepositoryAdapter.swift */,
 				4FA268232378F9DD008970AC /* NetworkAdapter.swift */,
 				4F87E4342727976E0061425B /* NetworkProxy.swift */,
@@ -1130,6 +1135,7 @@
 				4FDD499523B0461D009DD2DB /* Season.swift */,
 				4F004E99295A2CA1009C46AA /* Course.swift */,
 				4FE1DAD52DEAD225009143C4 /* Standing.swift */,
+				4FE645123018072D008CBD26 /* ZippyQueue.swift */,
 				4FE91EE42FBC09C800460A74 /* Event.swift */,
 				4FA26830237A58E1008970AC /* ApiError.swift */,
 				4F77D21A29940E5D009DEB41 /* Extensions */,
@@ -1825,6 +1831,7 @@
 				4F6FA16C2E4C12550056E115 /* Bool+Extensions.swift in Sources */,
 				4F004E9C295A3027009C46AA /* SeasonApi.swift in Sources */,
 				4F6A28E52D15005D00FF692D /* RaceSchedule.swift in Sources */,
+				4F7B9A012F2E4C0A00ABCDEF /* ZippyqApi.swift in Sources */,
 				4F81759C241192AF00685F83 /* Clog.swift in Sources */,
 				4FEBB27823A2023A007514B4 /* RaceEntry.swift in Sources */,
 				4F87E4352727976E0061425B /* NetworkProxy.swift in Sources */,
@@ -1848,6 +1855,7 @@
 				4FC51B232409EEB400D654D0 /* Race+Extensions.swift in Sources */,
 				4F9DB7AE23D614CF00570483 /* APISettings.swift in Sources */,
 				4F0F2F442E87525D006788A7 /* DeepLink.swift in Sources */,
+				4FE645133018072F008CBD26 /* ZippyQueue.swift in Sources */,
 				4FA213FC29582D1B00C8E45A /* IntegerTransform.swift in Sources */,
 				4F7974B524A4A4D4003D623A /* ImageEnums.swift in Sources */,
 				4F9A886B297473AF00B52092 /* Parameters+Extensions.swift in Sources */,

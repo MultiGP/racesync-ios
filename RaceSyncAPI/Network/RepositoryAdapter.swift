@@ -16,7 +16,7 @@ class RepositoryAdapter {
     let networkAdapter = NetworkAdapter(serverUri: MGPWeb.getUrl(for: .apiBase))
     private static let responseQueue = DispatchQueue(label: "com.multigp.racesync.repository.response", qos: .userInitiated, attributes: .concurrent)
 
-    func getObject<Element: Mappable>(_ endPoint: String, parameters: Params? = nil, type: Element.Type, keyPath: String = ParamKey.data, _ completion: @escaping ObjectCompletionBlock<Element>) {
+    func getObject<Element: Mappable>(_ endPoint: String, parameters: Params? = nil, type: Element.Type, keyPath: String? = ParamKey.data, _ completion: @escaping ObjectCompletionBlock<Element>) {
         
         networkAdapter.httpRequest(endPoint, method: .post, parameters: parameters) { (request) in
             Clog.log("Starting request \(String(describing: request.request?.url)) with parameters \(String(describing: parameters))")
