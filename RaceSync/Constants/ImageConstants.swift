@@ -166,4 +166,21 @@ enum SystemImg {
             return UIImage(systemName:"")
         }
     }
+    
+    static var bulletList: UIImage? {
+        if #available(iOS 16.0, *) {
+            return UIImage(systemName:"list.bullet.clipboard") // iOS 16.0+
+        } else {
+            return UIImage(systemName:"list.bullet") // iOS 13.0+
+        }
+    }
+    
+    static var bulletListFill: UIImage? {
+        if #available(iOS 16.0, *) {
+            return UIImage(systemName:"list.bullet.clipboard.fill") // iOS 16.0+
+        } else {
+            return UIImage(systemName:"list.bullet") // iOS 13.0+
+        }
+    }
+    
 }

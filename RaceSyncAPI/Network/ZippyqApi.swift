@@ -16,7 +16,7 @@ public protocol ZippyqApiInterface {
     func getQueues(for raceId: ObjectId, completion: @escaping ObjectCompletionBlock<ZippyqResponse>)
     
     func getRevision(for raceId: ObjectId,
-                     revision: ZippyqRevisionHash,
+                     revision: ZippyqRevisionHash?,
                      completion: @escaping ObjectCompletionBlock<ZippyqRevision>)
     
     func addPilot(to raceId: ObjectId,
@@ -46,7 +46,7 @@ public class ZippyqApi: ZippyqApiInterface {
     }
 
     public func getRevision(for raceId: ObjectId,
-                            revision: ZippyqRevisionHash,
+                            revision: ZippyqRevisionHash?,
                             completion: @escaping ObjectCompletionBlock<ZippyqRevision>) {
         let endpoint = "\(EndPoint.zippyQRevision)?\(ParamKey.raceId)=\(raceId)"
         repositoryAdapter.getObject(endpoint, type: ZippyqRevision.self, completion)

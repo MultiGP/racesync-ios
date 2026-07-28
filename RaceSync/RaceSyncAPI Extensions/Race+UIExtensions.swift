@@ -39,8 +39,8 @@ extension Race {
         }
     }
 
-    var canShowSchedule: Bool {
-        guard hasStarted && !hasEnded else { return false }
+    var canShowZippyQ: Bool {
+//        guard hasStarted && !hasEnded else { return false }
         return isZippyQEnabled
     }
 
