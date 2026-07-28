@@ -271,7 +271,7 @@ class RaceController {
                 let item = option.makeButton(target: self, action: #selector(raceActionTapped(_:)))
                 item.tag = option.rawValue
                 return item
-            }.interspersed(with: UIBarButtonItem.spacer())
+            }
         } else {
             // Still needed for versions of iOS previous to iOS26
             let actions = filtered.map { (image: $0.image, selector: #selector(raceActionTapped(_:)), tag: $0.rawValue) }
