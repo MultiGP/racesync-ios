@@ -168,7 +168,7 @@
 		4F90F0D22E8DD56D00D9F5AF /* SeriesStandingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F90F0D12E8DD56D00D9F5AF /* SeriesStandingsViewController.swift */; };
 		4F90F0D42E8DD60700D9F5AF /* SeriesTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F90F0D32E8DD60700D9F5AF /* SeriesTabBarController.swift */; };
 		4F91BC8A2398FBCE00539E95 /* ViewJoinable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F91BC892398FBCE00539E95 /* ViewJoinable.swift */; };
-		4F95A3282F7E1FA9004AE24F /* StandingSeasonEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F95A3272F7E1FA9004AE24F /* StandingSeasonEnum.swift */; };
+		4F95A3282F7E1FA9004AE24F /* StandingSeasonEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F95A3272F7E1FA9004AE24F /* StandingSeasonEnums.swift */; };
 		4F9979BE26D57CFF00496451 /* AppIcon-KRU@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F9979BA26D57CFF00496451 /* AppIcon-KRU@2x.png */; };
 		4F9979BF26D57CFF00496451 /* AppIcon-KRU@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F9979BB26D57CFF00496451 /* AppIcon-KRU@3x.png */; };
 		4F9A886B297473AF00B52092 /* Parameters+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9A886A297473AF00B52092 /* Parameters+Extensions.swift */; };
@@ -271,6 +271,8 @@
 		4FE4C0A22945E0EF00F47F0A /* RaceListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE4C0A12945E0EF00F47F0A /* RaceListViewController.swift */; };
 		4FE645133018072F008CBD26 /* ZippyQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE645123018072D008CBD26 /* ZippyQueue.swift */; };
 		4FE64516301820B7008CBD26 /* ZippyqViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE64515301820B7008CBD26 /* ZippyqViewController.swift */; };
+		4FE645183019CCEA008CBD26 /* ZippyqEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE645173019CCEA008CBD26 /* ZippyqEnums.swift */; };
+		4FE6451B3019F001008CBD26 /* Frequency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE6451A3019F001008CBD26 /* Frequency.swift */; };
 		4FE91EE12FB670F000460A74 /* UIBarButtonItem+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EE02FB670F000460A74 /* UIBarButtonItem+Extensions.swift */; };
 		4FE91EE32FBC098900460A74 /* EventApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EE22FBC098900460A74 /* EventApi.swift */; };
 		4FE91EE52FBC09C800460A74 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EE42FBC09C800460A74 /* Event.swift */; };
@@ -511,7 +513,7 @@
 		4F90F0D12E8DD56D00D9F5AF /* SeriesStandingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesStandingsViewController.swift; sourceTree = "<group>"; };
 		4F90F0D32E8DD60700D9F5AF /* SeriesTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesTabBarController.swift; sourceTree = "<group>"; };
 		4F91BC892398FBCE00539E95 /* ViewJoinable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewJoinable.swift; sourceTree = "<group>"; };
-		4F95A3272F7E1FA9004AE24F /* StandingSeasonEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandingSeasonEnum.swift; sourceTree = "<group>"; };
+		4F95A3272F7E1FA9004AE24F /* StandingSeasonEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandingSeasonEnums.swift; sourceTree = "<group>"; };
 		4F9979BA26D57CFF00496451 /* AppIcon-KRU@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-KRU@2x.png"; sourceTree = "<group>"; };
 		4F9979BB26D57CFF00496451 /* AppIcon-KRU@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-KRU@3x.png"; sourceTree = "<group>"; };
 		4F9A886A297473AF00B52092 /* Parameters+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Parameters+Extensions.swift"; sourceTree = "<group>"; };
@@ -617,6 +619,8 @@
 		4FE4C0A12945E0EF00F47F0A /* RaceListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceListViewController.swift; sourceTree = "<group>"; };
 		4FE645123018072D008CBD26 /* ZippyQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyQueue.swift; sourceTree = "<group>"; };
 		4FE64515301820B7008CBD26 /* ZippyqViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqViewController.swift; sourceTree = "<group>"; };
+		4FE645173019CCEA008CBD26 /* ZippyqEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqEnums.swift; sourceTree = "<group>"; };
+		4FE6451A3019F001008CBD26 /* Frequency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Frequency.swift; sourceTree = "<group>"; };
 		4FE91EE02FB670F000460A74 /* UIBarButtonItem+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem+Extensions.swift"; sourceTree = "<group>"; };
 		4FE91EE22FBC098900460A74 /* EventApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventApi.swift; sourceTree = "<group>"; };
 		4FE91EE42FBC09C800460A74 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
@@ -964,7 +968,8 @@
 				4FDD499723B0470E009DD2DB /* ChapterEnums.swift */,
 				4F7974B424A4A4D4003D623A /* ImageEnums.swift */,
 				4F5614A32DDC4C2800EAD42A /* MessageEnums.swift */,
-				4F95A3272F7E1FA9004AE24F /* StandingSeasonEnum.swift */,
+				4F95A3272F7E1FA9004AE24F /* StandingSeasonEnums.swift */,
+				4FE645173019CCEA008CBD26 /* ZippyqEnums.swift */,
 			);
 			path = Enums;
 			sourceTree = "<group>";
@@ -1138,6 +1143,7 @@
 				4F004E99295A2CA1009C46AA /* Course.swift */,
 				4FE1DAD52DEAD225009143C4 /* Standing.swift */,
 				4FE645123018072D008CBD26 /* ZippyQueue.swift */,
+				4FE6451A3019F001008CBD26 /* Frequency.swift */,
 				4FE91EE42FBC09C800460A74 /* Event.swift */,
 				4FA26830237A58E1008970AC /* ApiError.swift */,
 				4F77D21A29940E5D009DEB41 /* Extensions */,
@@ -1846,6 +1852,7 @@
 				4F7B9A012F2E4C0A00ABCDEF /* ZippyqApi.swift in Sources */,
 				4F81759C241192AF00685F83 /* Clog.swift in Sources */,
 				4FEBB27823A2023A007514B4 /* RaceEntry.swift in Sources */,
+				4FE645183019CCEA008CBD26 /* ZippyqEnums.swift in Sources */,
 				4F87E4352727976E0061425B /* NetworkProxy.swift in Sources */,
 				4F0F2F412E871E23006788A7 /* HTMLLinkTransform.swift in Sources */,
 				4FD4E1E32381E175008816B3 /* Random.swift in Sources */,
@@ -1868,12 +1875,13 @@
 				4F9DB7AE23D614CF00570483 /* APISettings.swift in Sources */,
 				4F0F2F442E87525D006788A7 /* DeepLink.swift in Sources */,
 				4FE645133018072F008CBD26 /* ZippyQueue.swift in Sources */,
+				4FE6451B3019F001008CBD26 /* Frequency.swift in Sources */,
 				4FA213FC29582D1B00C8E45A /* IntegerTransform.swift in Sources */,
 				4F7974B524A4A4D4003D623A /* ImageEnums.swift in Sources */,
 				4F9A886B297473AF00B52092 /* Parameters+Extensions.swift in Sources */,
 				4FC51B1D2409B3A700D654D0 /* APIUnitSystem.swift in Sources */,
 				4FA2682A237A4CE9008970AC /* CompletionBlock.swift in Sources */,
-				4F95A3282F7E1FA9004AE24F /* StandingSeasonEnum.swift in Sources */,
+				4F95A3282F7E1FA9004AE24F /* StandingSeasonEnums.swift in Sources */,
 				4FD4E1BE237DCB24008816B3 /* User.swift in Sources */,
 				4FE91EE32FBC098900460A74 /* EventApi.swift in Sources */,
 				4FA1FC9123D7B571006D4704 /* APIEnvironment.swift in Sources */,

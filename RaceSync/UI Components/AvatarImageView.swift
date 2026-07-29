@@ -62,6 +62,12 @@ class AvatarImageView: UIView {
         return CGSize(width: height, height: height)
     }
 
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        imageView.layer.cornerRadius = bounds.height / 2
+    }
+
     func updateShadow() {
         if showShadow {
             layer.shadowColor = UIColor.black.cgColor
