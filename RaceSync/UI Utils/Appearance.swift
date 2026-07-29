@@ -66,18 +66,23 @@ class Appearance {
         guard #available(iOS 26, *) else { return }
                 
         let appearance = navigationBarOpaqueAppearance(opaque: false, shadow: false)
+        appearance.backgroundEffect = nil
+        appearance.backgroundImage = UIImage()
+        appearance.shadowImage = UIImage()
         navigationItem.standardAppearance = appearance
         navigationItem.scrollEdgeAppearance = appearance
         navigationItem.compactAppearance = appearance
+        navigationItem.compactScrollEdgeAppearance = appearance
     }
     
-    static func applyOpaqueStyle(to navigationItem: UINavigationItem) {
+    static func applyOpaqueStyle(to navigationItem: UINavigationItem, shadow: Bool = true) {
         guard #available(iOS 26, *) else { return }
 
-        let appearance = navigationBarOpaqueAppearance(opaque: true, shadow: false)
+        let appearance = navigationBarOpaqueAppearance(opaque: true, shadow: shadow)
         navigationItem.standardAppearance = appearance
         navigationItem.scrollEdgeAppearance = appearance
         navigationItem.compactAppearance = appearance
+        navigationItem.compactScrollEdgeAppearance = appearance
     }
 }
 

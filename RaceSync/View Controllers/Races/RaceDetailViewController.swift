@@ -282,6 +282,11 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         return raceCoordinate != nil
     }
 
+    var shouldUseTransparentNavigationBar: Bool {
+        guard #available(iOS 26, *) else { return false }
+        return canDisplayMap
+    }
+
     fileprivate var canDisplayFee: Bool {
         return raceViewModel.feeLabel.count > 0
     }
@@ -299,6 +304,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     fileprivate var seriesApi = SeriesApi()
 
     fileprivate var htmlViewHeightConstraint: Constraint?
+    fileprivate var mapTopConstraint: Constraint?
 //    fileprivate let ignoreFinalizingError: Bool = true // The API finalize(id) still returns 500 error. Reported https://github.com/MultiGP/multigp-com/issues/93
 
     fileprivate enum Constants {
@@ -340,6 +346,11 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         super.viewDidAppear(animated)
     }
 
+    override func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+        mapTopConstraint?.update(offset: -view.safeAreaInsets.top)
+    }
+
     deinit {
         unregisterJoinable()
     }
@@ -358,7 +369,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         if canDisplayMap {
             contentView.addSubview(mapView)
             mapView.snp.makeConstraints {
-                $0.top.equalToSuperview().offset(-topOffset)
+                mapTopConstraint = $0.top.equalToSuperview().offset(-view.safeAreaInsets.top).constraint
                 $0.leading.trailing.equalToSuperview()
                 $0.height.equalTo(Constants.mapHeight)
             }
@@ -892,6 +903,20 @@ extension RaceDetailViewController: RichEditorDelegate {
             WebViewController.open(url)
         }
         return false
+    }
+}
+
+// MARK: - UIScrollView Delegate
+
+extension RaceDetailViewController: UIScrollViewDelegate {
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard canDisplayMap, mapView.bounds.height > 0 else { return }
+
+        let overscroll = max(0, -scrollView.contentOffset.y - scrollView.adjustedContentInset.top)
+        let scale = 1 + overscroll / mapView.bounds.height
+
+        mapView.transform = CGAffineTransform(a: scale, b: 0, c: 0, d: scale, tx: 0, ty: -overscroll / 2)
     }
 }
 

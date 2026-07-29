@@ -24,6 +24,11 @@ class SeriesDetailViewController: UIViewController {
     var seriesApi: SeriesApi {
         get { return seriesController.seriesApi }
     }
+    
+    var shouldUseTransparentNavigationBar: Bool {
+        guard #available(iOS 26, *) else { return false }
+        return series.mainImageUrl != nil
+    }
 
     // MARK: - Private Variables
 

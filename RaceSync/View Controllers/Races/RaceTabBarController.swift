@@ -170,6 +170,13 @@ class RaceTabBarController: UITabBarController {
 
         title = vc.title
         navigationItem.rightBarButtonItems = vc.navigationItem.rightBarButtonItems
+
+        if let detailVC = vc as? RaceDetailViewController,
+           detailVC.shouldUseTransparentNavigationBar {
+            Appearance.applyTransparentStyle(to: navigationItem)
+        } else {
+            Appearance.applyOpaqueStyle(to: navigationItem, shadow: true)
+        }
     }
 
     @objc fileprivate func didPressTitleButton() {
