@@ -88,7 +88,7 @@ class ZippyqFrequencyTableViewCell: UITableViewCell {
         static let spacing: CGFloat = 12
         static let separatorHeight: CGFloat = 0.5
         static let currentUserBackgroundColor = Color.dynamic(
-            light: UIColor(hex: "f3f2fc"), dark: UIColor(hex: "263238")
+            light: UIColor(hex: "f8f7fc"), dark: UIColor(hex: "263238")
         )
     }
 

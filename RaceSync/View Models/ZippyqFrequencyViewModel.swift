@@ -54,7 +54,7 @@ class ZippyqFrequencyViewModel {
             let userViewModel = UserViewModel(with: user)
             titleLabel = userViewModel.username
             isAssigned = true
-            subtitleLabel = "Pack \(stats.usedCount) of \(maximumPackCount)"
+            subtitleLabel = "Pack \(stats.queuedCount) of \(maximumPackCount)"
             imageUrl = userViewModel.pictureUrl
         } else {
             titleLabel = "Empty"

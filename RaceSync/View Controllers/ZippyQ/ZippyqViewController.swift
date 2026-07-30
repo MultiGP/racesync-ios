@@ -147,7 +147,7 @@ class ZippyqViewController: UIViewController, RaceTabbable {
                 with: queue,
                 frequencies: response.frequencies,
                 pilotStats: response.pilotStats,
-                maximumPackCount: race.maxZippyqDepth,
+                maximumPackCount: race.cycleCount,
                 isUpNext: index == nextQueuedIndex
             )
         }
@@ -194,17 +194,17 @@ private extension ZippyqViewController {
     func toggleQueue(at section: Int) {
 
         let key = roundViewModels[section].id
-        var scroll: Bool = false
+        var scrollToSection: Bool = false
 
         if expandedQueueKeys.contains(key) {
             expandedQueueKeys.remove(key)
         } else {
             expandedQueueKeys.insert(key)
-            scroll = true
+            scrollToSection = true
         }
 
         tableView.reloadSections(IndexSet(integer: section), with: .automatic)
-        if scroll { tableView.scrollToRow(at: IndexPath(row: 0, section: section), at: .top, animated: true) }
+        if scrollToSection { tableView.scrollToRow(at: IndexPath(row: 0, section: section), at: .top, animated: true) }
     }
 }
 
