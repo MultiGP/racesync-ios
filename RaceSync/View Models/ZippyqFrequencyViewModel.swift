@@ -9,9 +9,18 @@
 import UIKit
 import RaceSyncAPI
 
+enum ZippyqFrequencyAction {
+    case addMe
+    case `switch`
+    case remove
+}
+
 class ZippyqFrequencyViewModel {
 
     let frequency: Frequency
+    let slot: Int
+    let cycle: Int
+    let heat: Int
     let channelLabel: String
     let frequencyColor: UIColor
     let user: User?
@@ -28,15 +37,18 @@ class ZippyqFrequencyViewModel {
          queue: ZippyQueue,
          pilotStats: ZippyqPilotCollection,
          maximumPackCount: Int32) {
+        
         self.frequency = frequency
+        slot = Int(frequency.slot)
+        cycle = Int(queue.cycle)
+        heat = Int(queue.heat)
         channelLabel = frequency.channelLabel
         frequencyColor = FrequencyColor.color(for: frequency.frequency)
 
         let entry = queue.entries.first { $0.frequency?.frequency == frequency.frequency }
         user = entry?.user
         resultLabel = queue.status == .running ? entry?.fastest3Laps : nil
-        let currentUserId = APIServices.shared.myUser?.id
-        isCurrentUser = currentUserId.map { entry?.user?.id == $0 } ?? false
+        isCurrentUser = APIServices.shared.isCurrentUser(entry?.user)
 
         if let user = entry?.user, let stats = pilotStats[user.id] {
             let userViewModel = UserViewModel(with: user)
@@ -76,13 +88,5 @@ class ZippyqFrequencyViewModel {
             action = nil
             isActionEnabled = false
         }
-
     }
-
-}
-
-enum ZippyqFrequencyAction {
-    case addMe
-    case `switch`
-    case remove
 }

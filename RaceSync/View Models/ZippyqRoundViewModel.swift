@@ -25,7 +25,7 @@ class ZippyqRoundViewModel {
         id = "\(queue.cycle):\(queue.heat)"
         titleLabel = "Round \(queue.cycle)"
         
-        frequencyViewModels = frequencies.map {
+        let viewModels = frequencies.map {
             ZippyqFrequencyViewModel(
                 with: $0,
                 queue: queue,
@@ -33,6 +33,7 @@ class ZippyqRoundViewModel {
                 maximumPackCount: maximumPackCount
             )
         }
+        frequencyViewModels = queue.status == .queued ? viewModels : viewModels.filter { $0.isAssigned }
 
         let pilotCount = queue.entries.count
         switch queue.status {

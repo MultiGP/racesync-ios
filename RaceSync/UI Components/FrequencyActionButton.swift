@@ -124,6 +124,14 @@ class FrequencyActionButton: CustomButton {
 
 extension ZippyqFrequencyAction {
 
+    var failureTitle: String {
+        switch self {
+        case .addMe:            return "Can't be added!"
+        case .`switch`:         return "Can't switch!"
+        case .remove:           return "Can't be removed!"
+        }
+    }
+
     fileprivate var title: String {
         switch self {
         case .addMe:            return "Add Me"

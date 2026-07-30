@@ -31,8 +31,8 @@ class RepositoryAdapter {
 
                 switch response.result {
                 case .success(let value):
-                    let json = JSON(value)
-                    if let errors = ErrorUtil.errors(fromJSON: json) {
+                    if let data = response.data,
+                       let errors = ErrorUtil.errors(fromJSON: JSON(data)) {
                         Self.completeOnMain(completion, object: nil, error: errors.first)
                     } else {
                         Self.completeOnMain(completion, object: value, error: nil)

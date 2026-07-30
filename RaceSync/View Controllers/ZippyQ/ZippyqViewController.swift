@@ -114,8 +114,8 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     fileprivate func loadRevision() {
         
         zippyqAPI.getRevision(for: race.id, revision: revisionHash) { [weak self] hash, error in
-            if error != nil {
-                // Handle error
+            if let error {
+                Clog.log("ZippyQ getRevision failed: \(error.localizedDescription)")
             } else {
                 self?.loadContent(with: hash?.value)
             }
@@ -132,23 +132,27 @@ class ZippyqViewController: UIViewController, RaceTabbable {
         revisionHash = hash // saving for later use
         
         zippyqAPI.getQueues(for: race.id) { [weak self] response, error in
-            if let queues = response?.queues, let stats = response?.pilotStats, let frequencies = response?.frequencies {
-                let nextQueuedIndex = queues.firstIndex(where: { $0.status == .queued })
-                self?.roundViewModels = queues.enumerated().map { index, queue in
-                    ZippyqRoundViewModel(
-                        with: queue,
-                        frequencies: frequencies,
-                        pilotStats: stats,
-                        maximumPackCount: self?.race.maxZippyqDepth ?? 0,
-                        isUpNext: index == nextQueuedIndex
-                    )
-                }
-                self?.initializeExpandedQueuesIfNeeded()
-                self?.tableView.reloadData()
-            } else if error != nil {
-                // Handle error
+            if let response {
+                self?.updateContent(with: response)
+            } else if let error {
+                Clog.log("ZippyQ getQueues failed: \(error.localizedDescription)")
             }
         }
+    }
+
+    fileprivate func updateContent(with response: ZippyqResponse) {
+        let nextQueuedIndex = response.queues.firstIndex(where: { $0.status == .queued })
+        roundViewModels = response.queues.enumerated().map { index, queue in
+            ZippyqRoundViewModel(
+                with: queue,
+                frequencies: response.frequencies,
+                pilotStats: response.pilotStats,
+                maximumPackCount: race.maxZippyqDepth,
+                isUpNext: index == nextQueuedIndex
+            )
+        }
+        initializeExpandedQueuesIfNeeded()
+        tableView.reloadData()
     }
     
     fileprivate func startPolling() {
@@ -177,8 +181,8 @@ private extension ZippyqViewController {
     func initializeExpandedQueuesIfNeeded() {
         guard !hasInitializedExpandedQueues else { return }
 
-        if let nextRound = roundViewModels.first(where: { $0.badge == .upNext }) {
-            expandedQueueKeys.insert(nextRound.id)
+        for round in roundViewModels where round.badge == .live /*|| round.badge == .upNext */ {
+            expandedQueueKeys.insert(round.id)
         }
         hasInitializedExpandedQueues = true
     }
@@ -254,18 +258,61 @@ extension ZippyqViewController: UITableViewDataSource {
     }
 
     @objc fileprivate func didTapAddMe(_ sender: FrequencyActionButton) {
-        guard let viewModel = frequencyViewModel(for: sender) else { return }
-        Clog.log("Add me to \(viewModel.channelLabel)")
+        guard let viewModel = frequencyViewModel(for: sender),
+              let user = APIServices.shared.myUser else {
+            sender.isLoading = false
+            return
+        }
+
+        zippyqAPI.addPilot(to: race.id, pilotId: user.id,
+                            slot: viewModel.slot, cycle: viewModel.cycle,
+                           heat: viewModel.heat) { [weak self, weak sender] response, error in
+            self?.completeAction(sender, with: response, error: error)
+        }
     }
 
     @objc fileprivate func didTapSwitch(_ sender: FrequencyActionButton) {
-        guard let viewModel = frequencyViewModel(for: sender) else { return }
-        Clog.log("Switch to \(viewModel.channelLabel)")
+        guard let viewModel = frequencyViewModel(for: sender),
+              let user = APIServices.shared.myUser else {
+            sender.isLoading = false
+            return
+        }
+
+        zippyqAPI.addPilot(to: race.id, pilotId: user.id,
+                            slot: viewModel.slot, cycle: viewModel.cycle,
+                           heat: viewModel.heat) { [weak self, weak sender] response, error in
+            self?.completeAction(sender, with: response, error: error)
+        }
     }
 
     @objc fileprivate func didTapRemove(_ sender: FrequencyActionButton) {
-        guard let viewModel = frequencyViewModel(for: sender) else { return }
-        Clog.log("Remove me from \(viewModel.channelLabel)")
+        guard let viewModel = frequencyViewModel(for: sender),
+              let user = viewModel.user,
+              APIServices.shared.isCurrentUser(user) else {
+            sender.isLoading = false
+            return
+        }
+
+        zippyqAPI.removePilot(from: race.id, pilotId: user.id,
+                               slot: viewModel.slot, cycle: viewModel.cycle,
+                              heat: viewModel.heat) { [weak self, weak sender] response, error in
+            self?.completeAction(sender, with: response, error: error)
+        }
+    }
+
+    fileprivate func completeAction(_ actionButton: FrequencyActionButton?,
+                                    with response: ZippyqResponse?,
+                                    error: NSError?) {
+        actionButton?.isLoading = false
+
+        if let response {
+            updateContent(with: response)
+        } else if let error {
+            let title = actionButton?.action?.failureTitle ?? "Error"
+            AlertUtil.presentAlertMessage(error.localizedDescription, title: title, delay: 0.25)
+
+            Clog.log("ZippyQ action failed: \(error.localizedDescription)")
+        }
     }
 
     fileprivate func showUserProfile(_ user: User) {
