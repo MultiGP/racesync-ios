@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SnapKit
 
 class FrequencyActionButton: CustomButton {
 
@@ -16,9 +17,18 @@ class FrequencyActionButton: CustomButton {
         }
     }
 
+    var isLoading = false {
+        didSet {
+            updateLoadingState()
+        }
+    }
+
     override var isEnabled: Bool {
         didSet {
             alpha = isEnabled ? 1 : 0.4
+            if !isLoading {
+                isUserInteractionEnabled = isEnabled
+            }
         }
     }
 
@@ -26,6 +36,15 @@ class FrequencyActionButton: CustomButton {
         static let height: CGFloat = 32
         static let horizontalPadding: CGFloat = 12
     }
+
+    private lazy var spinnerView: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView(style: .medium)
+        addSubview(view)
+        view.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
+        return view
+    }()
 
     init() {
         super.init(frame: .zero)
@@ -56,10 +75,28 @@ class FrequencyActionButton: CustomButton {
         }
 
         isHidden = false
-        setTitle(action.title, for: .normal)
         setTitleColor(action.titleColor, for: .normal)
         titleLabel?.font = action.font
         backgroundColor = action.backgroundColor
+        updateLoadingState()
+    }
+
+    private func updateLoadingState() {
+        guard let action else {
+            spinnerView.stopAnimating()
+            return
+        }
+
+        setTitle(action.title, for: .normal)
+        titleLabel?.alpha = isLoading ? 0 : 1
+        isUserInteractionEnabled = !isLoading && isEnabled
+
+        if isLoading {
+            spinnerView.color = action.titleColor
+            spinnerView.startAnimating()
+        } else {
+            spinnerView.stopAnimating()
+        }
     }
 
     override var intrinsicContentSize: CGSize {
@@ -75,6 +112,13 @@ class FrequencyActionButton: CustomButton {
         } else {
             layer.cornerRadius = 6
         }
+    }
+
+    override func sendAction(_ action: Selector, to target: Any?, for event: UIEvent?) {
+        guard !isLoading else { return }
+
+        isLoading = true
+        super.sendAction(action, to: target, for: event)
     }
 }
 
@@ -107,7 +151,7 @@ extension ZippyqFrequencyAction {
     fileprivate var font: UIFont {
         switch self {
         case .addMe, .`switch`:
-                            return UIFont.systemFont(ofSize: 14, weight: .bold)
+                            return UIFont.systemFont(ofSize: 14, weight: .semibold)
         default:            return UIFont.systemFont(ofSize: 14, weight: .regular)
 
         }

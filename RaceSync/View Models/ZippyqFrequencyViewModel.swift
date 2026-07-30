@@ -14,8 +14,10 @@ class ZippyqFrequencyViewModel {
     let frequency: Frequency
     let channelLabel: String
     let frequencyColor: UIColor
+    let user: User?
     let titleLabel: String?
     let isAssigned: Bool
+    let isCurrentUser: Bool
     let subtitleLabel: String?
     let imageUrl: String?
     let resultLabel: String?
@@ -31,7 +33,10 @@ class ZippyqFrequencyViewModel {
         frequencyColor = FrequencyColor.color(for: frequency.frequency)
 
         let entry = queue.entries.first { $0.frequency?.frequency == frequency.frequency }
+        user = entry?.user
         resultLabel = queue.status == .running ? entry?.fastest3Laps : nil
+        let currentUserId = APIServices.shared.myUser?.id
+        isCurrentUser = currentUserId.map { entry?.user?.id == $0 } ?? false
 
         if let user = entry?.user, let stats = pilotStats[user.id] {
             let userViewModel = UserViewModel(with: user)
@@ -46,7 +51,7 @@ class ZippyqFrequencyViewModel {
             imageUrl = nil
         }
 
-        guard queue.status != .running, let myUserId = APIServices.shared.myUser?.id else {
+        guard queue.status == .queued, let myUserId = APIServices.shared.myUser?.id else {
             action = nil
             isActionEnabled = false
             return

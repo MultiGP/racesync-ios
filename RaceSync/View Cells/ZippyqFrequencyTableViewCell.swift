@@ -87,6 +87,9 @@ class ZippyqFrequencyTableViewCell: UITableViewCell {
         static let avatarHeight: CGFloat = 36
         static let spacing: CGFloat = 12
         static let separatorHeight: CGFloat = 0.5
+        static let currentUserBackgroundColor = Color.dynamic(
+            light: UIColor(hex: "f3f2fc"), dark: UIColor(hex: "263238")
+        )
     }
 
     // MARK: - Initialization
@@ -162,9 +165,22 @@ class ZippyqFrequencyTableViewCell: UITableViewCell {
     // MARK: - Configuration
 
     func configure(with viewModel: ZippyqFrequencyViewModel, showsTopSeparator: Bool) {
-        
+        let backgroundColor = viewModel.isCurrentUser ? Constants.currentUserBackgroundColor : Color.white
+        self.backgroundColor = backgroundColor
+        backgroundView?.backgroundColor = backgroundColor
+
+        titleLabel.text = viewModel.titleLabel
+        titleLabel.textColor = viewModel.isAssigned ? Color.black : Color.gray200
+        subtitleLabel.text = viewModel.subtitleLabel
+        resultLabel.text = viewModel.resultLabel
+        resultLabel.isHidden = viewModel.resultLabel == nil
+        actionButton.action = viewModel.action
+        actionButton.isEnabled = viewModel.isActionEnabled
+        separatorView.isHidden = !showsTopSeparator
+
         frequencyIndicatorView.backgroundColor = viewModel.frequencyColor
         channelLabel.text = viewModel.channelLabel
+
         if viewModel.isAssigned {
             avatarImageView.imageView.backgroundColor = Color.white
             avatarImageView.imageView.setImage(with: viewModel.imageUrl,
@@ -175,14 +191,6 @@ class ZippyqFrequencyTableViewCell: UITableViewCell {
             avatarImageView.imageView.image = nil
             avatarImageView.imageView.backgroundColor = Color.gray100
         }
-        titleLabel.text = viewModel.titleLabel
-        titleLabel.textColor = viewModel.isAssigned ? Color.black : Color.gray200
-        subtitleLabel.text = viewModel.subtitleLabel
-        resultLabel.text = viewModel.resultLabel
-        resultLabel.isHidden = viewModel.resultLabel == nil
-        actionButton.action = viewModel.action
-        actionButton.isEnabled = viewModel.isActionEnabled
-        separatorView.isHidden = !showsTopSeparator
     }
 
     override func prepareForReuse() {
@@ -196,6 +204,7 @@ class ZippyqFrequencyTableViewCell: UITableViewCell {
         resultLabel.isHidden = true
         actionButton.action = nil
         actionButton.isEnabled = false
+        actionButton.isLoading = false
         separatorView.isHidden = true
     }
 }

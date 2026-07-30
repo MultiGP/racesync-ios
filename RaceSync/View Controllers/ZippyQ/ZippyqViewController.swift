@@ -267,6 +267,11 @@ extension ZippyqViewController: UITableViewDataSource {
         guard let viewModel = frequencyViewModel(for: sender) else { return }
         Clog.log("Remove me from \(viewModel.channelLabel)")
     }
+
+    fileprivate func showUserProfile(_ user: User) {
+        let viewController = UserViewController(with: user)
+        navigationController?.pushViewController(viewController, animated: true)
+    }
 }
 
 // MARK: - UITableView Delegate
@@ -275,8 +280,11 @@ extension ZippyqViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        
-        
+
+        let viewModel = roundViewModels[indexPath.section].frequencyViewModels[indexPath.row]
+        guard let user = viewModel.user else { return }
+
+        showUserProfile(user)
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
