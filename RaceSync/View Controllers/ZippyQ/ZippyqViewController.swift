@@ -11,7 +11,7 @@ import SnapKit
 import RaceSyncAPI
 
 class ZippyqViewController: UIViewController, RaceTabbable {
-    
+
     // MARK: - Public Variables
     
     var raceController: RaceController
@@ -24,7 +24,9 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     
     fileprivate lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
-        tableView.register(cellType: AvatarTableViewCell.self)
+        tableView.register(cellType: ZippyqFrequencyTableViewCell.self)
+        tableView.register(CollapsableHeaderView.self, forHeaderFooterViewReuseIdentifier: CollapsableHeaderView.identifier)
+        tableView.separatorStyle = .none
         tableView.dataSource = self
         tableView.delegate = self
         tableView.tableFooterView = UIView()
@@ -32,19 +34,17 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     }()
     
     fileprivate let zippyqAPI = ZippyqApi()
-    fileprivate var queues = [ZippyQueue]()
-    fileprivate var stats = ZippyqPilotCollection()
-    fileprivate var frequencies = [Frequency]()
+    fileprivate var roundViewModels = [ZippyqRoundViewModel]()
     fileprivate var revisionHash: ZippyqRevisionHash?
+    fileprivate var expandedQueueKeys = Set<String>()
+    fileprivate var hasInitializedExpandedQueues = false
     
     fileprivate let refreshInterval: TimeInterval = 10.0
     fileprivate var refreshTimer: Timer?
     fileprivate let isPollEnabled: Bool = true
     
     fileprivate enum Constants {
-        static let padding: CGFloat = UniversalConstants.padding
         static let cellHeight: CGFloat = 60
-        static let avatarSize: CGFloat = 38
     }
     
     // MARK: - Initialization
@@ -66,7 +66,7 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setupLayout()
         configureNavigationItems()
         loadContent()
@@ -133,9 +133,17 @@ class ZippyqViewController: UIViewController, RaceTabbable {
         
         zippyqAPI.getQueues(for: race.id) { [weak self] response, error in
             if let queues = response?.queues, let stats = response?.pilotStats, let frequencies = response?.frequencies {
-                self?.queues = queues
-                self?.stats = stats
-                self?.frequencies = frequencies
+                let nextQueuedIndex = queues.firstIndex(where: { $0.status == .queued })
+                self?.roundViewModels = queues.enumerated().map { index, queue in
+                    ZippyqRoundViewModel(
+                        with: queue,
+                        frequencies: frequencies,
+                        pilotStats: stats,
+                        maximumPackCount: self?.race.maxZippyqDepth ?? 0,
+                        isUpNext: index == nextQueuedIndex
+                    )
+                }
+                self?.initializeExpandedQueuesIfNeeded()
                 self?.tableView.reloadData()
             } else if error != nil {
                 // Handle error
@@ -162,63 +170,102 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     }
 }
 
+// MARK: - Queue State
+
+private extension ZippyqViewController {
+
+    func initializeExpandedQueuesIfNeeded() {
+        guard !hasInitializedExpandedQueues else { return }
+
+        if let nextRound = roundViewModels.first(where: { $0.badge == .upNext }) {
+            expandedQueueKeys.insert(nextRound.id)
+        }
+        hasInitializedExpandedQueues = true
+    }
+
+    func isQueueExpanded(at section: Int) -> Bool {
+        return expandedQueueKeys.contains(roundViewModels[section].id)
+    }
+
+    func toggleQueue(at section: Int) {
+
+        let key = roundViewModels[section].id
+        var scroll: Bool = false
+
+        if expandedQueueKeys.contains(key) {
+            expandedQueueKeys.remove(key)
+        } else {
+            expandedQueueKeys.insert(key)
+            scroll = true
+        }
+
+        tableView.reloadSections(IndexSet(integer: section), with: .automatic)
+        if scroll { tableView.scrollToRow(at: IndexPath(row: 0, section: section), at: .top, animated: true) }
+    }
+}
+
 // MARK: - UITableView DataSource
 
 extension ZippyqViewController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return queues.count
+        return roundViewModels.count
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return frequencies.count
+        return isQueueExpanded(at: section) ? roundViewModels[section].frequencyViewModels.count : 0
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return avatarTableViewCell(for: indexPath)
+        return frequencyTableViewCell(for: indexPath)
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return Constants.cellHeight
     }
 
-    func avatarTableViewCell(for indexPath: IndexPath) -> AvatarTableViewCell {
-        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as AvatarTableViewCell
-        configure(cell, forRowAt: indexPath)
+    fileprivate func frequencyTableViewCell(for indexPath: IndexPath) -> ZippyqFrequencyTableViewCell {
+        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as ZippyqFrequencyTableViewCell
+        let viewModel = roundViewModels[indexPath.section].frequencyViewModels[indexPath.row]
+        cell.configure(with: viewModel, showsTopSeparator: indexPath.row > 0)
+        configureActionButton(for: cell)
         return cell
     }
-    
-    func configure<T>(_ view: T, forRowAt indexPath: IndexPath) where T : UITableViewCell {
-        guard let cell = view as? AvatarTableViewCell else { return }
-        
-        let queue = queues[indexPath.section]
-        let frequency = frequencies[indexPath.row]
-        let entry = queue.entries.first { $0.frequency?.frequency == frequency.frequency }
-        
-        cell.titleLabel.textColor = Color.black
-        cell.subtitleLabel.textColor = Color.gray300
-        cell.rankView.titleLabel.textColor = Color.blue
-        cell.rankView.titleLabel.text = frequency.channelLabel
-        cell.rankView.isHidden = false
-        //cell.avatarSize = Constants.avatarSize
-        cell.backgroundView?.backgroundColor = Color.white
-        cell.selectedBackgroundView?.backgroundColor = Color.gray50
-        cell.accessoryType = .none
-        cell.textPill.text = entry?.fastest3Laps
-        cell.textPill.style = .text
-        
-        if let entry, let user = entry.user, let stat = stats[user.id] {
-            let viewModel = UserViewModel(with: user)
-            
-            cell.avatarImageView.imageView.setImage(with: viewModel.pictureUrl, placeholderImage: PlaceholderImg.medium)
-            cell.titleLabel.text = viewModel.username
-            cell.subtitleLabel.text = "Pack \(stat.usedCount) of \(race.maxZippyqDepth)"
-            
-        } else {
-            cell.avatarImageView.imageView.setImage(with: nil, placeholderImage: PlaceholderImg.medium)
-            cell.titleLabel.text = nil
-            cell.subtitleLabel.text = "Unassigned"
+
+    fileprivate func configureActionButton(for cell: ZippyqFrequencyTableViewCell) {
+        cell.actionButton.removeTarget(nil, action: nil, for: .touchUpInside)
+
+        switch cell.actionButton.action {
+        case .addMe:
+            cell.actionButton.addTarget(self, action: #selector(didTapAddMe(_:)), for: .touchUpInside)
+        case .switch:
+            cell.actionButton.addTarget(self, action: #selector(didTapSwitch(_:)), for: .touchUpInside)
+        case .remove:
+            cell.actionButton.addTarget(self, action: #selector(didTapRemove(_:)), for: .touchUpInside)
+        case nil:
+            break
         }
+    }
+
+    fileprivate func frequencyViewModel(for actionButton: FrequencyActionButton) -> ZippyqFrequencyViewModel? {
+        let location = actionButton.convert(CGPoint(x: actionButton.bounds.midX, y: actionButton.bounds.midY), to: tableView)
+        guard let indexPath = tableView.indexPathForRow(at: location) else { return nil }
+        return roundViewModels[indexPath.section].frequencyViewModels[indexPath.row]
+    }
+
+    @objc fileprivate func didTapAddMe(_ sender: FrequencyActionButton) {
+        guard let viewModel = frequencyViewModel(for: sender) else { return }
+        Clog.log("Add me to \(viewModel.channelLabel)")
+    }
+
+    @objc fileprivate func didTapSwitch(_ sender: FrequencyActionButton) {
+        guard let viewModel = frequencyViewModel(for: sender) else { return }
+        Clog.log("Switch to \(viewModel.channelLabel)")
+    }
+
+    @objc fileprivate func didTapRemove(_ sender: FrequencyActionButton) {
+        guard let viewModel = frequencyViewModel(for: sender) else { return }
+        Clog.log("Remove me from \(viewModel.channelLabel)")
     }
 }
 
@@ -226,24 +273,29 @@ extension ZippyqViewController: UITableViewDataSource {
 
 extension ZippyqViewController: UITableViewDelegate {
     
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        let queue = queues[section]
-        var text = "Round \(queue.cycle)"
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
         
-        if queue.status == .running {
-            text += " (Live)".uppercased()
-        }
-        else if queue.status == .queued && section == 1 {
-            text += " (Up Next)".uppercased()
-        }
         
-        if queue.status == .running {
-            text += " \(queue.entries.count) Racing"
+    }
+
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let viewModel = roundViewModels[section]
+        guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: CollapsableHeaderView.identifier) as? CollapsableHeaderView else { return nil }
+
+        header.title = viewModel.titleLabel
+        header.contextualText = viewModel.contextualLabel
+        header.isExpanded = isQueueExpanded(at: section)
+        header.textPill.text = viewModel.badge.title
+        header.textPill.titleLabel.textColor = viewModel.badge == .live ? Color.light : Color.blue
+        header.textPill.backgroundColor = viewModel.badge == .live ? Color.green : Color.yellow
+        header.didTapView = { [weak self] in
+            self?.toggleQueue(at: section)
         }
-        else if queue.status == .queued {
-            text += " \(queue.entries.count) Waiting"
-        }
-        
-        return text
+        return header
+    }
+
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return CollapsableHeaderView.headerHeight
     }
 }
