@@ -15,6 +15,7 @@ class ZippyqRoundViewModel {
     let contextualLabel: String
     let badge: ZippyqRoundBadge
     let frequencyViewModels: [ZippyqFrequencyViewModel]
+    let avatarImageUrls: [String?]
 
     init(with queue: ZippyQueue,
          frequencies: [Frequency],
@@ -34,6 +35,7 @@ class ZippyqRoundViewModel {
             )
         }
         frequencyViewModels = queue.status == .queued ? viewModels : viewModels.filter { $0.isAssigned }
+        avatarImageUrls = viewModels.filter { $0.isAssigned }.map { $0.imageUrl }
 
         let pilotCount = queue.entries.count
         switch queue.status {

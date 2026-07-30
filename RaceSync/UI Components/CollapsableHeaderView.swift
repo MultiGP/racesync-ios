@@ -8,6 +8,7 @@
 
 import UIKit
 import SnapKit
+import AlamofireImage
 
 class CollapsableHeaderView: UITableViewHeaderFooterView {
 
@@ -28,6 +29,14 @@ class CollapsableHeaderView: UITableViewHeaderFooterView {
         didSet {
             chevronImageView.image = UIImage(systemName: isExpanded ? "chevron.up" : "chevron.down")
             separatorView.isHidden = isExpanded
+            updateContextualContent()
+        }
+    }
+
+    var avatarImageUrls = [String?]() {
+        didSet {
+            updateAvatars()
+            updateContextualContent()
         }
     }
 
@@ -77,6 +86,14 @@ class CollapsableHeaderView: UITableViewHeaderFooterView {
         return imageView
     }()
 
+    fileprivate lazy var avatarStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        stackView.spacing = -Constants.avatarOverlap
+        return stackView
+    }()
+
     fileprivate lazy var leadingStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [titleLabel, textPill])
         stackView.axis = .horizontal
@@ -86,7 +103,7 @@ class CollapsableHeaderView: UITableViewHeaderFooterView {
     }()
 
     fileprivate lazy var trailingStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [contextualLabel, chevronImageView])
+        let stackView = UIStackView(arrangedSubviews: [contextualLabel, avatarStackView, chevronImageView])
         stackView.axis = .horizontal
         stackView.alignment = .center
         stackView.spacing = Constants.padding/2
@@ -105,6 +122,9 @@ class CollapsableHeaderView: UITableViewHeaderFooterView {
         static let padding: CGFloat = UniversalConstants.padding
         static let badgeSpacing: CGFloat = 10
         static let chevronSize: CGFloat = 16
+        static let avatarSize: CGFloat = headerHeight / 2
+        static let avatarOverlap: CGFloat = avatarSize / 4
+        static let avatarBorderWidth: CGFloat = 2
         static let separatorHeight: CGFloat = 0.5
     }
 
@@ -121,6 +141,7 @@ class CollapsableHeaderView: UITableViewHeaderFooterView {
         super.prepareForReuse()
 
         didTapView = nil
+        avatarImageUrls = []
         setHighlighted(false)
     }
 
@@ -194,5 +215,31 @@ private extension CollapsableHeaderView {
 
     func setHighlighted(_ highlighted: Bool) {
         contentView.backgroundColor = highlighted ? selectedBackgroundColor : Color.tableBackground
+    }
+
+    func updateAvatars() {
+        for view in avatarStackView.arrangedSubviews {
+            avatarStackView.removeArrangedSubview(view)
+            view.removeFromSuperview()
+        }
+
+        for imageUrl in avatarImageUrls {
+            let avatarImageView = AvatarImageView(withHeight: Constants.avatarSize, showShadow: false)
+            avatarImageView.imageView.layer.borderColor = Color.tableBackground.cgColor
+            avatarImageView.imageView.layer.borderWidth = Constants.avatarBorderWidth
+            avatarImageView.imageView.setImage(with: imageUrl,
+                                               placeholderImage: PlaceholderImg.medium,
+                                               size: CGSize(width: Constants.avatarSize, height: Constants.avatarSize))
+            avatarStackView.addArrangedSubview(avatarImageView)
+            avatarImageView.snp.makeConstraints {
+                $0.size.equalTo(Constants.avatarSize)
+            }
+        }
+    }
+
+    func updateContextualContent() {
+        let displaysAvatars = !isExpanded && !avatarImageUrls.isEmpty
+        avatarStackView.isHidden = !displaysAvatars
+        contextualLabel.isHidden = displaysAvatars
     }
 }

@@ -341,6 +341,7 @@ extension ZippyqViewController: UITableViewDelegate {
         header.title = viewModel.titleLabel
         header.contextualText = viewModel.contextualLabel
         header.isExpanded = isQueueExpanded(at: section)
+        header.avatarImageUrls = viewModel.avatarImageUrls
         header.textPill.text = viewModel.badge.title
         header.textPill.titleLabel.textColor = viewModel.badge == .live ? Color.light : Color.blue
         header.textPill.backgroundColor = viewModel.badge == .live ? Color.green : Color.yellow
