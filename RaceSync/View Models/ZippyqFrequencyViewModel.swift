@@ -15,7 +15,7 @@ enum ZippyqFrequencyAction {
     case remove
 }
 
-class ZippyqFrequencyViewModel {
+class ZippyqFrequencyViewModel: Descriptable {
 
     let frequency: Frequency
     let slot: Int
@@ -36,7 +36,8 @@ class ZippyqFrequencyViewModel {
     init(with frequency: Frequency,
          queue: ZippyQueue,
          pilotStats: ZippyqPilotCollection,
-         maximumPackCount: Int32) {
+         maximumPackCount: Int32,
+         scoringFormat: ScoringFormat) {
         
         self.frequency = frequency
         slot = Int(frequency.slot)
@@ -47,7 +48,14 @@ class ZippyqFrequencyViewModel {
 
         let entry = queue.entries.first { $0.frequency?.frequency == frequency.frequency }
         user = entry?.user
-        resultLabel = queue.status == .running ? entry?.fastest3Laps : nil
+        resultLabel = queue.status != .queued ? ResultEntryViewModel.formattedResult(
+            for: scoringFormat,
+            totalLaps: entry?.totalLaps,
+            fastestLap: entry?.fastestLap,
+            fastest2Laps: entry?.fastest2Laps,
+            fastest3Laps: entry?.fastest3Laps
+        ) : nil
+        
         isCurrentUser = APIServices.shared.isCurrentUser(entry?.user)
 
         if let user = entry?.user, let stats = pilotStats[user.id] {
@@ -72,8 +80,6 @@ class ZippyqFrequencyViewModel {
         let myEntry = queue.entries.first { $0.user?.id == myUserId }
         let isMyFrequency = entry?.user?.id == myUserId
         let isEmpty = entry == nil
-        let queuedCount = pilotStats[myUserId]?.queuedCount ?? 0
-        let canQueueAnotherPack = queuedCount < maximumPackCount
 
         if isMyFrequency {
             action = .remove
@@ -83,7 +89,7 @@ class ZippyqFrequencyViewModel {
             isActionEnabled = true
         } else if myEntry == nil, isEmpty {
             action = .addMe
-            isActionEnabled = canQueueAnotherPack
+            isActionEnabled = true
         } else {
             action = nil
             isActionEnabled = false

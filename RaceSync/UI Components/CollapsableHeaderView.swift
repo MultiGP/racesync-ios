@@ -240,6 +240,6 @@ private extension CollapsableHeaderView {
     func updateContextualContent() {
         let displaysAvatars = !isExpanded && !avatarImageUrls.isEmpty
         avatarStackView.isHidden = !displaysAvatars
-        contextualLabel.isHidden = displaysAvatars
+        contextualLabel.isHidden = !isExpanded
     }
 }

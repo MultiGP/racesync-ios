@@ -148,6 +148,7 @@ class ZippyqViewController: UIViewController, RaceTabbable {
                 frequencies: response.frequencies,
                 pilotStats: response.pilotStats,
                 maximumPackCount: race.cycleCount,
+                scoringFormat: race.trueScoringFormat,
                 isUpNext: index == nextQueuedIndex
             )
         }
@@ -343,8 +344,8 @@ extension ZippyqViewController: UITableViewDelegate {
         header.isExpanded = isQueueExpanded(at: section)
         header.avatarImageUrls = viewModel.avatarImageUrls
         header.textPill.text = viewModel.badge.title
-        header.textPill.titleLabel.textColor = viewModel.badge == .live ? Color.light : Color.blue
-        header.textPill.backgroundColor = viewModel.badge == .live ? Color.green : Color.yellow
+        header.textPill.titleLabel.textColor = viewModel.badge.titleColor
+        header.textPill.backgroundColor = viewModel.badge.backgroundColor
         header.didTapView = { [weak self] in
             self?.toggleQueue(at: section)
         }

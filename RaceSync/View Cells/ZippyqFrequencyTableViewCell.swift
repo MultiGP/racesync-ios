@@ -53,7 +53,7 @@ class ZippyqFrequencyTableViewCell: UITableViewCell {
 
     lazy var resultLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.monospacedDigitSystemFont(ofSize: 17, weight: .semibold)
+        label.font = UIFont.monospacedDigitSystemFont(ofSize: 15, weight: .regular)
         label.textColor = Color.blue
         label.textAlignment = .right
         return label

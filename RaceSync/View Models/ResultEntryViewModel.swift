@@ -72,28 +72,14 @@ fileprivate extension ResultEntryViewModel {
 
     static func resultLabel(for entry: ResultEntry, for race: Race) -> String? {
 
-        let format = race.trueScoringFormat
         var resultLabel: String = ""
 
-        // Needs at least 1 lap
-        let laps = resultLapCount(for: entry)
-
-        if format == .aggregateLap, laps > 0 {
-            resultLabel += " \(laps) Laps"
-        } else {
-            var time: String?
-
-            if format == .fastestLap {
-                time = entry.fastestLap
-            } else if format == .fastest2Laps {
-                time = entry.fastest2Laps
-            } else if format == .fastest3Laps {
-                time = entry.fastest3Laps
-            }
-
-            if let time = time {
-                resultLabel += TimeUtil.lapTimeFormat(seconds: time)
-            }
+        if let formattedResult = formattedResult(for: race.trueScoringFormat,
+                                                 totalLaps: entry.totalLaps,
+                                                 fastestLap: entry.fastestLap,
+                                                 fastest2Laps: entry.fastest2Laps,
+                                                 fastest3Laps: entry.fastest3Laps) {
+            resultLabel += formattedResult
         }
 
         if resultLabel.count > 0, let roundLabel = Self.roundLabel(for: entry, for: race) {
@@ -105,6 +91,7 @@ fileprivate extension ResultEntryViewModel {
 
     static func roundLabel(for raceEntry: ResultEntry, for race: Race) -> String? {
         guard let schedule = race.schedule else { return "" }
+        
         for round in schedule.rounds {
             for heat in round.heats {
                 if heat.entries.contains(where: { $0.id == raceEntry.id }) {
@@ -118,7 +105,41 @@ fileprivate extension ResultEntryViewModel {
     }
 
     static func resultLapCount(for raceEntry: ResultEntry) -> Int {
-        guard let laps = Int(raceEntry.totalLaps ?? "0") else { return 0 }
+        return resultLapCount(for: raceEntry.totalLaps)
+    }
+
+    static func resultLapCount(for totalLaps: String?) -> Int {
+        guard let laps = Int(totalLaps ?? "0") else { return 0 }
         return laps
+    }
+}
+
+extension ResultEntryViewModel {
+
+    static func formattedResult(for scoringFormat: ScoringFormat,
+                                totalLaps: String?,
+                                fastestLap: String?,
+                                fastest2Laps: String?,
+        fastest3Laps: String?) -> String? {
+        if scoringFormat == .aggregateLap {
+            let laps = resultLapCount(for: totalLaps)
+            guard laps > 0 else { return "No Laps" }
+            return "\(laps) Laps"
+        }
+
+        let time: String?
+        switch scoringFormat {
+        case .fastestLap:
+            time = fastestLap
+        case .fastest2Laps:
+            time = fastest2Laps
+        case .fastest3Laps:
+            time = fastest3Laps
+        case .aggregateLap:
+            time = nil // returned earlier
+        }
+
+        guard let time else { return "DNF" }
+        return TimeUtil.lapTimeFormat(seconds: time)
     }
 }
