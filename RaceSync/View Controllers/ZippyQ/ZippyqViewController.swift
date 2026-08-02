@@ -39,9 +39,7 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     fileprivate var expandedQueueKeys = Set<String>()
     fileprivate var hasInitializedExpandedQueues = false
     
-    fileprivate let refreshInterval: TimeInterval = 10.0
-    fileprivate var refreshTimer: Timer?
-    fileprivate let isPollEnabled: Bool = true
+    fileprivate let pollingController = PollingController(refreshInterval: 10.0)
     
     fileprivate enum Constants {
         static let cellHeight: CGFloat = 60
@@ -52,14 +50,12 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     init(with controller: RaceController) {
         self.raceController = controller
         super.init(nibName: nil, bundle: nil)
+
+        pollingController.delegate = self
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    deinit {
-        refreshTimer?.invalidate()
     }
     
     // MARK: - Lifecycle Methods
@@ -83,13 +79,13 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        startPolling()
+        pollingController.start()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        stopPolling()
+        pollingController.stop()
     }
     
     // MARK: - Layout
@@ -156,22 +152,93 @@ class ZippyqViewController: UIViewController, RaceTabbable {
         tableView.reloadData()
     }
     
-    fileprivate func startPolling() {
-        guard isPollEnabled, refreshTimer == nil else { return }
-
-        refreshTimer = Timer.scheduledTimer(withTimeInterval: refreshInterval, repeats: true) { [weak self] _ in
-            self?.loadRevision()
-        }
-    }
-
-    fileprivate func stopPolling() {
-        refreshTimer?.invalidate()
-        refreshTimer = nil
-    }
-
     // RaceTabbable
     func reloadContent() {
         loadContent()
+    }
+    
+    // MARK: - Actions
+
+    @objc fileprivate func didTapAddMe(_ sender: FrequencyActionButton) {
+        guard let viewModel = frequencyViewModel(for: sender),
+              let user = APIServices.shared.myUser else {
+            sender.isLoading = false
+            return
+        }
+
+        pollingController.forward()
+        zippyqAPI.addPilot(to: race.id, pilotId: user.id,
+                            slot: viewModel.slot, cycle: viewModel.cycle,
+                           heat: viewModel.heat) { [weak self, weak sender] response, error in
+            self?.completeAction(sender, with: response, error: error)
+        }
+    }
+
+    @objc fileprivate func didTapSwitch(_ sender: FrequencyActionButton) {
+        guard let viewModel = frequencyViewModel(for: sender),
+              let user = APIServices.shared.myUser else {
+            sender.isLoading = false
+            return
+        }
+
+        pollingController.forward()
+        zippyqAPI.addPilot(to: race.id, pilotId: user.id,
+                            slot: viewModel.slot, cycle: viewModel.cycle,
+                           heat: viewModel.heat) { [weak self, weak sender] response, error in
+            self?.completeAction(sender, with: response, error: error)
+        }
+    }
+
+    @objc fileprivate func didTapRemove(_ sender: FrequencyActionButton) {
+        guard let viewModel = frequencyViewModel(for: sender),
+              let user = viewModel.user,
+              APIServices.shared.isCurrentUser(user) else {
+            sender.isLoading = false
+            return
+        }
+
+        pollingController.forward()
+        zippyqAPI.removePilot(from: race.id, pilotId: user.id,
+                               slot: viewModel.slot, cycle: viewModel.cycle,
+                              heat: viewModel.heat) { [weak self, weak sender] response, error in
+            self?.completeAction(sender, with: response, error: error)
+        }
+    }
+
+    fileprivate func completeAction(_ actionButton: FrequencyActionButton?,
+                                    with response: ZippyqResponse?,
+                                    error: NSError?) {
+        actionButton?.isLoading = false
+        pollingController.forward()
+
+        if let response {
+            updateContent(with: response)
+        } else if let error {
+            pollingController.resume()
+
+            let title = actionButton?.action?.failureTitle ?? "Error"
+            AlertUtil.presentAlertMessage(error.localizedDescription, title: title, delay: 0.25)
+
+            Clog.log("ZippyQ action failed: \(error.localizedDescription)")
+        }
+    }
+
+    fileprivate func showUserProfile(_ user: User) {
+        let viewController = UserViewController(with: user)
+        navigationController?.pushViewController(viewController, animated: true)
+    }
+}
+
+// MARK: - PollingControllerDelegate
+
+extension ZippyqViewController: PollingControllerDelegate {
+
+    func isPollEnabled() -> Bool {
+        return !race.isFinalized
+    }
+
+    func polling() {
+        loadRevision()
     }
 }
 
@@ -256,69 +323,6 @@ extension ZippyqViewController: UITableViewDataSource {
         let location = actionButton.convert(CGPoint(x: actionButton.bounds.midX, y: actionButton.bounds.midY), to: tableView)
         guard let indexPath = tableView.indexPathForRow(at: location) else { return nil }
         return roundViewModels[indexPath.section].frequencyViewModels[indexPath.row]
-    }
-
-    @objc fileprivate func didTapAddMe(_ sender: FrequencyActionButton) {
-        guard let viewModel = frequencyViewModel(for: sender),
-              let user = APIServices.shared.myUser else {
-            sender.isLoading = false
-            return
-        }
-
-        zippyqAPI.addPilot(to: race.id, pilotId: user.id,
-                            slot: viewModel.slot, cycle: viewModel.cycle,
-                           heat: viewModel.heat) { [weak self, weak sender] response, error in
-            self?.completeAction(sender, with: response, error: error)
-        }
-    }
-
-    @objc fileprivate func didTapSwitch(_ sender: FrequencyActionButton) {
-        guard let viewModel = frequencyViewModel(for: sender),
-              let user = APIServices.shared.myUser else {
-            sender.isLoading = false
-            return
-        }
-
-        zippyqAPI.addPilot(to: race.id, pilotId: user.id,
-                            slot: viewModel.slot, cycle: viewModel.cycle,
-                           heat: viewModel.heat) { [weak self, weak sender] response, error in
-            self?.completeAction(sender, with: response, error: error)
-        }
-    }
-
-    @objc fileprivate func didTapRemove(_ sender: FrequencyActionButton) {
-        guard let viewModel = frequencyViewModel(for: sender),
-              let user = viewModel.user,
-              APIServices.shared.isCurrentUser(user) else {
-            sender.isLoading = false
-            return
-        }
-
-        zippyqAPI.removePilot(from: race.id, pilotId: user.id,
-                               slot: viewModel.slot, cycle: viewModel.cycle,
-                              heat: viewModel.heat) { [weak self, weak sender] response, error in
-            self?.completeAction(sender, with: response, error: error)
-        }
-    }
-
-    fileprivate func completeAction(_ actionButton: FrequencyActionButton?,
-                                    with response: ZippyqResponse?,
-                                    error: NSError?) {
-        actionButton?.isLoading = false
-
-        if let response {
-            updateContent(with: response)
-        } else if let error {
-            let title = actionButton?.action?.failureTitle ?? "Error"
-            AlertUtil.presentAlertMessage(error.localizedDescription, title: title, delay: 0.25)
-
-            Clog.log("ZippyQ action failed: \(error.localizedDescription)")
-        }
-    }
-
-    fileprivate func showUserProfile(_ user: User) {
-        let viewController = UserViewController(with: user)
-        navigationController?.pushViewController(viewController, animated: true)
     }
 }
 

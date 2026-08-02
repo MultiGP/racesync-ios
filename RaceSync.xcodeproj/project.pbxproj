@@ -279,6 +279,7 @@
 		4FE64523301C1001008CBD26 /* ZippyqFrequencyTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE64522301C1001008CBD26 /* ZippyqFrequencyTableViewCell.swift */; };
 		4FE64525301C2001008CBD26 /* FrequencyColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE64524301C2001008CBD26 /* FrequencyColor.swift */; };
 		4FE64527301C3001008CBD26 /* FrequencyActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE64526301C3001008CBD26 /* FrequencyActionButton.swift */; };
+		4FE64529301D0001008CBD26 /* PollingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE64528301D0001008CBD26 /* PollingController.swift */; };
 		4FE91EE12FB670F000460A74 /* UIBarButtonItem+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EE02FB670F000460A74 /* UIBarButtonItem+Extensions.swift */; };
 		4FE91EE32FBC098900460A74 /* EventApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EE22FBC098900460A74 /* EventApi.swift */; };
 		4FE91EE52FBC09C800460A74 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EE42FBC09C800460A74 /* Event.swift */; };
@@ -633,6 +634,7 @@
 		4FE64522301C1001008CBD26 /* ZippyqFrequencyTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqFrequencyTableViewCell.swift; sourceTree = "<group>"; };
 		4FE64524301C2001008CBD26 /* FrequencyColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrequencyColor.swift; sourceTree = "<group>"; };
 		4FE64526301C3001008CBD26 /* FrequencyActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrequencyActionButton.swift; sourceTree = "<group>"; };
+		4FE64528301D0001008CBD26 /* PollingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PollingController.swift; path = "RaceSync/UI Utils/PollingController.swift"; sourceTree = SOURCE_ROOT; };
 		4FE91EE02FB670F000460A74 /* UIBarButtonItem+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem+Extensions.swift"; sourceTree = "<group>"; };
 		4FE91EE22FBC098900460A74 /* EventApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventApi.swift; sourceTree = "<group>"; };
 		4FE91EE42FBC09C800460A74 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
@@ -941,6 +943,7 @@
 				4F91BC892398FBCE00539E95 /* ViewJoinable.swift */,
 				4FF16CBF2E70EC9300B4FC51 /* ViewJoinableRegistry.swift */,
 				4F536ECE2F8AD826006FF620 /* ViewApprovable.swift */,
+				4FE64528301D0001008CBD26 /* PollingController.swift */,
 				4F4129DA2DC0AE32006A2763 /* NotificationsController.swift */,
 				4F5001E423823C940025A593 /* FlagEmojiGenerator.swift */,
 				4F5C1E4E2390B01700D756EB /* ImageNetworking.swift */,
@@ -1775,6 +1778,7 @@
 				4F004EA7295B83F6009C46AA /* RaceForm.swift in Sources */,
 				4F8B4A0A2DDC7AEF00B735DA /* PushMessagesViewController.swift in Sources */,
 				4FC57C33258E1362006E210F /* AppUtil.swift in Sources */,
+				4FE64529301D0001008CBD26 /* PollingController.swift in Sources */,
 				4F80A660296F9951008B19AF /* RichEditorToolbar.swift in Sources */,
 				4F7BE2672722354F00592297 /* UIViewController+Navigation.swift in Sources */,
 				4F60562A258D59EC008AF93F /* GalleryViewController.swift in Sources */,
