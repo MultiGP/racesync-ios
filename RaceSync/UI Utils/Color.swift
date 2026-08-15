@@ -15,13 +15,14 @@ public struct Color {
     public static let light =                   #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1) // Always white regardless of color mode
     public static let dark =                    #colorLiteral(red: 0.057, green: 0.057, blue: 0.06, alpha: 1) // Always black regardless of color mode
     public static let green: UIColor =          #colorLiteral(red: 0.2196078431, green: 0.4941176471, blue: 0.1607843137, alpha: 1) // #387e29
-    public static let yellow: UIColor =         #colorLiteral(red: 0.9764705882, green: 0.8431372549, blue: 0.2862745098, alpha: 1) // #f9d749          // Special elements (GQ Trophee)
     public static let red =                     dynamic(light: #colorLiteral(red: 0.5529411765, green: 0.09411764706, blue: 0.1058823529, alpha: 1), dark: #colorLiteral(red: 0.768627451, green: 0.1254901961, blue: 0.2, alpha: 1)) // #8d181b       // Links and text action items
     public static let blue =                    dynamic(light: #colorLiteral(red: 0.1333333333, green: 0.168627451, blue: 0.3568627451, alpha: 1), dark: #colorLiteral(red: 0.3256023209, green: 0.6782188073, blue: 0.8992619779, alpha: 1)) // #222b5b       // UI buttons and interactive elements
 
     // Secondary Colors
-    public static let lightRed: UIColor =       #colorLiteral(red: 0.9764705882, green: 0.2705882353, blue: 0.231372549, alpha: 1) // #f9453b          // badges
+    public static let lightRed: UIColor =       #colorLiteral(red: 0.9764705882, green: 0.2705882353, blue: 0.231372549, alpha: 1) // #F9453B          // badges
     public static let lightBlue: UIColor =      #colorLiteral(red: 0.4588235294, green: 0.7450980392, blue: 0.8588235294, alpha: 1) // #75bedb
+    public static let orange: UIColor =         #colorLiteral(red: 1, green: 0.5843137255, blue: 0.1960784314, alpha: 1) // #FF9532
+    public static let yellow: UIColor =         #colorLiteral(red: 0.9764705882, green: 0.8431372549, blue: 0.2862745098, alpha: 1) // #F9D749          // Special elements (GQ Trophee)
 
     // Grayscales
     public static let white =                   dynamic(light: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), dark: #colorLiteral(red: 0.057, green: 0.057, blue: 0.06, alpha: 1))

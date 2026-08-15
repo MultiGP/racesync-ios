@@ -16,6 +16,7 @@ class CollapsableHeaderView: UITableViewHeaderFooterView {
 
     static let identifier = "CollapsableHeaderView"
     static let headerHeight: CGFloat = 58
+    static let headerHeightWithSubtitle: CGFloat = 76
 
     var title: String? {
         didSet { titleLabel.text = title }
@@ -25,11 +26,26 @@ class CollapsableHeaderView: UITableViewHeaderFooterView {
         didSet { contextualLabel.text = contextualText }
     }
 
+    var subtitle: String? {
+        didSet {
+            subtitleLabel.text = subtitle
+            updateMetadataVisibility()
+        }
+    }
+
+    var subtitleContext: String? {
+        didSet {
+            subtitleContextLabel.text = subtitleContext
+            updateMetadataVisibility()
+        }
+    }
+
     var isExpanded: Bool = false {
         didSet {
             chevronImageView.image = UIImage(systemName: isExpanded ? "chevron.up" : "chevron.down")
             separatorView.isHidden = isExpanded
             updateContextualContent()
+            updateMetadataVisibility()
         }
     }
 
@@ -70,12 +86,34 @@ class CollapsableHeaderView: UITableViewHeaderFooterView {
     fileprivate lazy var contextualLabel: UILabel = {
         let label = UILabel()
         if #available(iOS 16.0, *) {
-            label.font = UIFont.systemFont(ofSize: 16, weight: .medium, width: .condensed)
+            label.font = UIFont.systemFont(ofSize: 17, weight: .medium, width: .condensed)
         } else {
-            label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+            label.font = UIFont.systemFont(ofSize: 15, weight: .medium)
+        }
+        label.textColor = Color.gray300
+        label.textAlignment = .right
+        return label
+    }()
+
+    fileprivate lazy var subtitleLabel: UILabel = {
+        let label = UILabel()
+        if #available(iOS 16.0, *) {
+            label.font = UIFont.systemFont(ofSize: 15, weight: .medium, width: .condensed)
+        } else {
+            label.font = UIFont.systemFont(ofSize: 13, weight: .medium)
         }
         label.textColor = Color.gray200
+        label.isHidden = true
+        return label
+    }()
+
+    fileprivate lazy var subtitleContextLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+        label.textColor = Color.blue
         label.textAlignment = .right
+        label.lineBreakMode = .byTruncatingTail
+        label.isHidden = true
         return label
     }()
 
@@ -99,6 +137,33 @@ class CollapsableHeaderView: UITableViewHeaderFooterView {
         stackView.axis = .horizontal
         stackView.alignment = .center
         stackView.spacing = Constants.badgeSpacing
+        return stackView
+    }()
+
+    fileprivate lazy var metadataStackView: UIStackView = {
+        let spacerView = UIView()
+        let stackView = UIStackView(arrangedSubviews: [subtitleLabel, spacerView, subtitleContextLabel])
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        stackView.spacing = Constants.padding
+        stackView.isHidden = true
+        return stackView
+    }()
+
+    fileprivate lazy var topLineStackView: UIStackView = {
+        let spacerView = UIView()
+        let stackView = UIStackView(arrangedSubviews: [leadingStackView, spacerView, trailingStackView])
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        stackView.spacing = Constants.padding
+        return stackView
+    }()
+
+    fileprivate lazy var contentStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [topLineStackView, metadataStackView])
+        stackView.axis = .vertical
+        stackView.alignment = .fill
+        stackView.spacing = 0
         return stackView
     }()
 
@@ -142,6 +207,8 @@ class CollapsableHeaderView: UITableViewHeaderFooterView {
 
         didTapView = nil
         avatarImageUrls = []
+        subtitle = nil
+        subtitleContext = nil
         setHighlighted(false)
     }
 
@@ -186,18 +253,10 @@ private extension CollapsableHeaderView {
         backgroundView = UIView()
         backgroundView?.backgroundColor = Color.tableBackground
         contentView.backgroundColor = Color.tableBackground
-        isAccessibilityElement = true
-        accessibilityTraits = .button
 
-        contentView.addSubview(leadingStackView)
-        leadingStackView.snp.makeConstraints {
+        contentView.addSubview(contentStackView)
+        contentStackView.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(Constants.padding)
-            $0.centerY.equalToSuperview()
-        }
-
-        contentView.addSubview(trailingStackView)
-        trailingStackView.snp.makeConstraints {
-            $0.leading.greaterThanOrEqualTo(leadingStackView.snp.trailing).offset(Constants.padding).priority(.high)
             $0.trailing.equalToSuperview().offset(-Constants.padding)
             $0.centerY.equalToSuperview()
         }
@@ -241,5 +300,13 @@ private extension CollapsableHeaderView {
         let displaysAvatars = !isExpanded && !avatarImageUrls.isEmpty
         avatarStackView.isHidden = !displaysAvatars
         contextualLabel.isHidden = !isExpanded
+    }
+
+    func updateMetadataVisibility() {
+        let displaysSubtitle = isExpanded && subtitle?.isEmpty == false
+        let displaysContext = isExpanded && subtitleContext?.isEmpty == false
+        subtitleLabel.isHidden = !displaysSubtitle
+        subtitleContextLabel.isHidden = !displaysContext
+        metadataStackView.isHidden = !displaysSubtitle && !displaysContext
     }
 }

@@ -50,6 +50,7 @@
 		4F21086E2F9041C9007C7716 /* AppIcon-SDC@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F21086D2F9041C9007C7716 /* AppIcon-SDC@3x.png */; };
 		4F21086F2F9041C9007C7716 /* AppIcon-SDC@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F21086C2F9041C9007C7716 /* AppIcon-SDC@2x.png */; };
 		4F2724362515D88A000C7408 /* Chapter+UIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2724352515D88A000C7408 /* Chapter+UIExtensions.swift */; };
+		4FABC002301D100000000001 /* RaceEntry+UIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FABC001301D100000000001 /* RaceEntry+UIExtensions.swift */; };
 		4F27243B2517DB1C000C7408 /* CopyLinkActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F27243A2517DB1C000C7408 /* CopyLinkActivity.swift */; };
 		4F2724402517DC5B000C7408 /* UIActivityViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F27243F2517DC5B000C7408 /* UIActivityViewController+Extensions.swift */; };
 		4F2726E12EE8C59E00001C86 /* UniversalSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2726E02EE8C59E00001C86 /* UniversalSearchViewController.swift */; };
@@ -401,6 +402,7 @@
 		4F21086C2F9041C9007C7716 /* AppIcon-SDC@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-SDC@2x.png"; sourceTree = "<group>"; };
 		4F21086D2F9041C9007C7716 /* AppIcon-SDC@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-SDC@3x.png"; sourceTree = "<group>"; };
 		4F2724352515D88A000C7408 /* Chapter+UIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Chapter+UIExtensions.swift"; sourceTree = "<group>"; };
+		4FABC001301D100000000001 /* RaceEntry+UIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RaceEntry+UIExtensions.swift"; sourceTree = "<group>"; };
 		4F27243A2517DB1C000C7408 /* CopyLinkActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyLinkActivity.swift; sourceTree = "<group>"; };
 		4F27243F2517DC5B000C7408 /* UIActivityViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIActivityViewController+Extensions.swift"; sourceTree = "<group>"; };
 		4F2726E02EE8C59E00001C86 /* UniversalSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalSearchViewController.swift; sourceTree = "<group>"; };
@@ -860,6 +862,7 @@
 				4F2724352515D88A000C7408 /* Chapter+UIExtensions.swift */,
 				4FBE760E259B387E00312B66 /* User+UIExtensions.swift */,
 				4F9A888E2975E6D600B52092 /* Race+UIExtensions.swift */,
+				4FABC001301D100000000001 /* RaceEntry+UIExtensions.swift */,
 				4F9A88902975F30C00B52092 /* Season+UIExtensions.swift */,
 			);
 			path = "RaceSyncAPI Extensions";
@@ -1788,6 +1791,7 @@
 				4F0B61452385F66300930D91 /* ProfileHeaderView.swift in Sources */,
 				4FD4E1C9237F987C008816B3 /* RacePilotsViewController.swift in Sources */,
 				4F9A888F2975E6D700B52092 /* Race+UIExtensions.swift in Sources */,
+				4FABC002301D100000000001 /* RaceEntry+UIExtensions.swift in Sources */,
 				4F8668FC23870E1E005E310A /* SegmentedTableViewHeaderView.swift in Sources */,
 				4FBE760F259B387E00312B66 /* User+UIExtensions.swift in Sources */,
 				4F8175A12411C35A00685F83 /* StandingsViewController.swift in Sources */,

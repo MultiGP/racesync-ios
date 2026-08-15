@@ -13,6 +13,8 @@ class ZippyqRoundViewModel: Descriptable {
 
     let id: String
     let titleLabel: String
+    let heatLabel: String?
+    let scoringFormatLabel: String?
     let contextualLabel: String
     let badge: ZippyqRoundBadge
     let frequencyViewModels: [ZippyqFrequencyViewModel]
@@ -27,6 +29,10 @@ class ZippyqRoundViewModel: Descriptable {
         
         id = "\(queue.cycle):\(queue.heat)"
         titleLabel = "Round \(queue.cycle)"
+        heatLabel = queue.heat > 1 ? "Heat \(queue.heat)" : nil
+
+        let hasResults = queue.entries.contains { $0.hasResults }
+        scoringFormatLabel = queue.status != .queued && hasResults ? scoringFormat.title : nil
         
         let viewModels = frequencies.map {
             ZippyqFrequencyViewModel(
@@ -88,22 +94,23 @@ enum ZippyqRoundBadge: Equatable {
 
     var backgroundColor: UIColor {
         switch self {
+        case .none:                 return Color.clear
         case .live:                 return Color.green
         case .upNext:               return Color.yellow
-        case .past:                 return Color.gray100
-        case .full:                 return Color.lightRed
+        case .past:                 return Color.gray50
+        case .full:                 return Color.orange.withAlphaComponent(0.8)
         case .spotsLeft:            return Color.gray50
-        case .none:                 return Color.clear
         }
     }
 
     var titleColor: UIColor {
         switch self {
-        case .live, .full:          return Color.light
-        case .past:                 return Color.dynamic(light: Color.black, dark: Color.gray400)
-        case .upNext:               return Color.blue
-        case .spotsLeft:            return Color.gray300
         case .none:                 return Color.clear
+        case .live:                 return Color.light
+        case .upNext:               return Color.blue
+        case .past:                 return Color.dynamic(light: Color.black, dark: Color.gray400)
+        case .full:                 return Color.blue
+        case .spotsLeft:            return Color.gray300
         }
     }
 }

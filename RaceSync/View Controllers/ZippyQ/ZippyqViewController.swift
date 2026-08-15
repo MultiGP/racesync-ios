@@ -344,6 +344,8 @@ extension ZippyqViewController: UITableViewDelegate {
         guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: CollapsableHeaderView.identifier) as? CollapsableHeaderView else { return nil }
 
         header.title = viewModel.titleLabel
+        header.subtitle = viewModel.heatLabel
+        header.subtitleContext = viewModel.scoringFormatLabel
         header.contextualText = viewModel.contextualLabel
         header.isExpanded = isQueueExpanded(at: section)
         header.avatarImageUrls = viewModel.avatarImageUrls
@@ -357,6 +359,9 @@ extension ZippyqViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return CollapsableHeaderView.headerHeight
+        let viewModel = roundViewModels[section]
+        let displaysMetadata = isQueueExpanded(at: section)
+            && (viewModel.heatLabel != nil || viewModel.scoringFormatLabel != nil)
+        return displaysMetadata ? CollapsableHeaderView.headerHeightWithSubtitle : CollapsableHeaderView.headerHeight
     }
 }
