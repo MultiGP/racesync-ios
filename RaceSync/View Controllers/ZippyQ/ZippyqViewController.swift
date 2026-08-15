@@ -15,9 +15,9 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     // MARK: - Public Variables
     
     var raceController: RaceController
-    
+
     var race: Race {
-        get { return raceController.race! }
+        return raceController.race!
     }
     
     // MARK: - Private Variables
@@ -33,13 +33,13 @@ class ZippyqViewController: UIViewController, RaceTabbable {
         return tableView
     }()
     
-    fileprivate let zippyqAPI = ZippyqApi()
-    fileprivate var roundViewModels = [ZippyqRoundViewModel]()
-    fileprivate var revisionHash: ZippyqRevisionHash?
+    fileprivate let zippyqController: ZippyqController
     fileprivate var expandedQueueKeys = Set<String>()
     fileprivate var hasInitializedExpandedQueues = false
-    
-    fileprivate let pollingController = PollingController(refreshInterval: 10.0)
+
+    fileprivate var roundViewModels: [ZippyqRoundViewModel] {
+        return zippyqController.roundViewModels
+    }
     
     fileprivate enum Constants {
         static let cellHeight: CGFloat = 60
@@ -49,9 +49,10 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     
     init(with controller: RaceController) {
         self.raceController = controller
+        self.zippyqController = ZippyqController(raceController: controller)
         super.init(nibName: nil, bundle: nil)
 
-        pollingController.delegate = self
+        zippyqController.delegate = self
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -65,27 +66,25 @@ class ZippyqViewController: UIViewController, RaceTabbable {
 
         setupLayout()
         configureNavigationItems()
-        loadContent()
+        zippyqController.loadContent()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        if revisionHash == nil {
-            loadContent()
-        }
+        zippyqController.loadContent()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        pollingController.start()
+        zippyqController.startPolling()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        pollingController.stop()
+        zippyqController.stopPolling()
     }
     
     // MARK: - Layout
@@ -106,120 +105,61 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     }
     
     // MARK: - Data Update
-    
-    fileprivate func loadRevision() {
-        
-        zippyqAPI.getRevision(for: race.id, revision: revisionHash) { [weak self] hash, error in
-            if let error {
-                Clog.log("ZippyQ getRevision failed: \(error.localizedDescription)")
-            } else {
-                self?.loadContent(with: hash?.value)
-            }
-        }
-    }
-    
-    fileprivate func loadContent(with hash: ZippyqRevisionHash? = nil) {
-        
-        if let hash = hash, hash == revisionHash {
-            Clog.log("NO need to fetch ZippyQ content")
-            return // no need to reload
-        }
-        
-        revisionHash = hash // saving for later use
-        
-        zippyqAPI.getQueues(for: race.id) { [weak self] response, error in
-            if let response {
-                self?.updateContent(with: response)
-            } else if let error {
-                Clog.log("ZippyQ getQueues failed: \(error.localizedDescription)")
-            }
-        }
-    }
 
-    fileprivate func updateContent(with response: ZippyqResponse) {
-        let nextQueuedIndex = response.queues.firstIndex(where: { $0.status == .queued })
-        roundViewModels = response.queues.enumerated().map { index, queue in
-            ZippyqRoundViewModel(
-                with: queue,
-                frequencies: response.frequencies,
-                pilotStats: response.pilotStats,
-                maximumPackCount: race.cycleCount,
-                scoringFormat: race.trueScoringFormat,
-                isUpNext: index == nextQueuedIndex
-            )
-        }
+    fileprivate func updateContent() {
         initializeExpandedQueuesIfNeeded()
         tableView.reloadData()
     }
     
     // RaceTabbable
     func reloadContent() {
-        loadContent()
+        zippyqController.loadContent(force: true)
     }
     
     // MARK: - Actions
 
     @objc fileprivate func didTapAddMe(_ sender: FrequencyActionButton) {
-        guard let viewModel = frequencyViewModel(for: sender),
-              let user = APIServices.shared.myUser else {
+        guard let viewModel = frequencyViewModel(for: sender) else {
             sender.isLoading = false
             return
         }
 
-        pollingController.forward()
-        zippyqAPI.addPilot(to: race.id, pilotId: user.id,
-                            slot: viewModel.slot, cycle: viewModel.cycle,
-                           heat: viewModel.heat) { [weak self, weak sender] response, error in
-            self?.completeAction(sender, with: response, error: error)
+        zippyqController.addPilot(slot: viewModel.slot, cycle: viewModel.cycle,
+                                 heat: viewModel.heat) { [weak self, weak sender] error in
+            self?.completeAction(sender, error: error)
         }
     }
 
     @objc fileprivate func didTapSwitch(_ sender: FrequencyActionButton) {
-        guard let viewModel = frequencyViewModel(for: sender),
-              let user = APIServices.shared.myUser else {
+        guard let viewModel = frequencyViewModel(for: sender) else {
             sender.isLoading = false
             return
         }
 
-        pollingController.forward()
-        zippyqAPI.addPilot(to: race.id, pilotId: user.id,
-                            slot: viewModel.slot, cycle: viewModel.cycle,
-                           heat: viewModel.heat) { [weak self, weak sender] response, error in
-            self?.completeAction(sender, with: response, error: error)
+        zippyqController.addPilot(slot: viewModel.slot, cycle: viewModel.cycle,
+                                 heat: viewModel.heat) { [weak self, weak sender] error in
+            self?.completeAction(sender, error: error)
         }
     }
 
     @objc fileprivate func didTapRemove(_ sender: FrequencyActionButton) {
-        guard let viewModel = frequencyViewModel(for: sender),
-              let user = viewModel.user,
-              APIServices.shared.isCurrentUser(user) else {
+        guard let viewModel = frequencyViewModel(for: sender) else {
             sender.isLoading = false
             return
         }
 
-        pollingController.forward()
-        zippyqAPI.removePilot(from: race.id, pilotId: user.id,
-                               slot: viewModel.slot, cycle: viewModel.cycle,
-                              heat: viewModel.heat) { [weak self, weak sender] response, error in
-            self?.completeAction(sender, with: response, error: error)
+        zippyqController.removePilot(slot: viewModel.slot, cycle: viewModel.cycle,
+                                    heat: viewModel.heat) { [weak self, weak sender] error in
+            self?.completeAction(sender, error: error)
         }
     }
 
-    fileprivate func completeAction(_ actionButton: FrequencyActionButton?,
-                                    with response: ZippyqResponse?,
-                                    error: NSError?) {
+    fileprivate func completeAction(_ actionButton: FrequencyActionButton?, error: NSError?) {
         actionButton?.isLoading = false
-        pollingController.forward()
 
-        if let response {
-            updateContent(with: response)
-        } else if let error {
-            pollingController.resume()
-
+        if let error {
             let title = actionButton?.action?.failureTitle ?? "Error"
             AlertUtil.presentAlertMessage(error.localizedDescription, title: title, delay: 0.25)
-
-            Clog.log("ZippyQ action failed: \(error.localizedDescription)")
         }
     }
 
@@ -229,16 +169,12 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     }
 }
 
-// MARK: - PollingControllerDelegate
+// MARK: - ZippyqControllerDelegate
 
-extension ZippyqViewController: PollingControllerDelegate {
+extension ZippyqViewController: ZippyqControllerDelegate {
 
-    func isPollEnabled() -> Bool {
-        return !race.isFinalized
-    }
-
-    func polling() {
-        loadRevision()
+    func zippyqControllerDidUpdateContent(_ controller: ZippyqController) {
+        updateContent()
     }
 }
 

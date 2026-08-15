@@ -212,6 +212,7 @@
 		4FABC002301D100000000001 /* RaceEntry+UIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FABC001301D100000000001 /* RaceEntry+UIExtensions.swift */; };
 		4FABC004301D200000000001 /* ZippyqSmartJoiner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FABC003301D200000000001 /* ZippyqSmartJoiner.swift */; };
 		4FABC006301D200000000001 /* ZippyqSmartJoinable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FABC005301D200000000001 /* ZippyqSmartJoinable.swift */; };
+		4FABC008301D300000000001 /* ZippyqController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FABC007301D300000000001 /* ZippyqController.swift */; };
 		4FAC24A823DC3E06009AD585 /* UILabel+LinesCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAC24A723DC3E06009AD585 /* UILabel+LinesCount.swift */; };
 		4FB06AB3296B521000F14E59 /* AppIcon-MGP1@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4FB06AAF296B521000F14E59 /* AppIcon-MGP1@3x.png */; };
 		4FB06AB4296B521000F14E59 /* AppIcon-MGP2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4FB06AB0296B521000F14E59 /* AppIcon-MGP2@2x.png */; };
@@ -569,6 +570,7 @@
 		4FABC001301D100000000001 /* RaceEntry+UIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RaceEntry+UIExtensions.swift"; sourceTree = "<group>"; };
 		4FABC003301D200000000001 /* ZippyqSmartJoiner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqSmartJoiner.swift; sourceTree = "<group>"; };
 		4FABC005301D200000000001 /* ZippyqSmartJoinable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqSmartJoinable.swift; sourceTree = "<group>"; };
+		4FABC007301D300000000001 /* ZippyqController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqController.swift; sourceTree = "<group>"; };
 		4FAC24A723DC3E06009AD585 /* UILabel+LinesCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+LinesCount.swift"; sourceTree = "<group>"; };
 		4FB06AAF296B521000F14E59 /* AppIcon-MGP1@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-MGP1@3x.png"; sourceTree = "<group>"; };
 		4FB06AB0296B521000F14E59 /* AppIcon-MGP2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-MGP2@2x.png"; sourceTree = "<group>"; };
@@ -1327,6 +1329,7 @@
 			isa = PBXGroup;
 			children = (
 				4FE64515301820B7008CBD26 /* ZippyqViewController.swift */,
+				4FABC007301D300000000001 /* ZippyqController.swift */,
 				4FABC003301D200000000001 /* ZippyqSmartJoiner.swift */,
 				4FABC005301D200000000001 /* ZippyqSmartJoinable.swift */,
 			);
@@ -1790,6 +1793,7 @@
 				4FE64529301D0001008CBD26 /* PollingController.swift in Sources */,
 				4FABC004301D200000000001 /* ZippyqSmartJoiner.swift in Sources */,
 				4FABC006301D200000000001 /* ZippyqSmartJoinable.swift in Sources */,
+				4FABC008301D300000000001 /* ZippyqController.swift in Sources */,
 				4F80A660296F9951008B19AF /* RichEditorToolbar.swift in Sources */,
 				4F7BE2672722354F00592297 /* UIViewController+Navigation.swift in Sources */,
 				4F60562A258D59EC008AF93F /* GalleryViewController.swift in Sources */,
