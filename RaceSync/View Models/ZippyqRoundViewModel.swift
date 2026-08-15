@@ -46,7 +46,7 @@ class ZippyqRoundViewModel: Descriptable {
         
         if !frequencies.isEmpty, availableSpotCount == 0 {
             availabilityBadge = .full
-        } else if availableSpotCount <= frequencies.count/2 {
+        } else if availableSpotCount > 0 {
             availabilityBadge = .spotsLeft(availableSpotCount)
         } else {
             availabilityBadge = .none
@@ -82,25 +82,28 @@ enum ZippyqRoundBadge: Equatable {
         case .past:                return "Past".uppercased()
         case .full:                return "Full".uppercased()
         case .spotsLeft(let count):
-            return count == 1 ? "1 Spot Left".uppercased() : "\(count) Spots".uppercased()
+            return "\(count) Spot\(count == 1 ? "" : "s")".uppercased()
         }
     }
 
     var backgroundColor: UIColor {
         switch self {
-        case .live:                         return Color.green
-        case .upNext, .spotsLeft:           return Color.yellow
-        case .past:                         return Color.gray100
-        case .full:                         return Color.lightRed
-        case .none:                         return Color.clear
+        case .live:                 return Color.green
+        case .upNext:               return Color.yellow
+        case .past:                 return Color.gray100
+        case .full:                 return Color.lightRed
+        case .spotsLeft:            return Color.gray50
+        case .none:                 return Color.clear
         }
     }
 
     var titleColor: UIColor {
         switch self {
-        case .live, .full:                  return Color.light
-        case .past:                         return Color.dynamic(light: Color.black, dark: Color.gray400)
-        case .upNext, .spotsLeft, .none:    return Color.blue
+        case .live, .full:          return Color.light
+        case .past:                 return Color.dynamic(light: Color.black, dark: Color.gray400)
+        case .upNext:               return Color.blue
+        case .spotsLeft:            return Color.gray300
+        case .none:                 return Color.clear
         }
     }
 }

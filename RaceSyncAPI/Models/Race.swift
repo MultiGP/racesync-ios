@@ -129,7 +129,7 @@ public class Race: Mappable, Descriptable {
         cycleCount <- (map[ParamKey.cycleCount], IntegerTransform())
         disableSlotAutoPopulation <- (map[ParamKey.disableSlotAutoPopulation], EnumTransform<QualifyingType>())
         maxZippyqDepth <- (map[ParamKey.maxZippyqDepth], IntegerTransform())
-        zippyqIterator <- map[ParamKey.zippyqIterator]
+        zippyqIterator <- (map[ParamKey.zippyqIterator], IntegerTransform())
         zippyNoKiosk <- map[ParamKey.zippyNoKiosk]
         maxBatteriesForQualifying <- (map[ParamKey.maxBatteriesForQualifying], IntegerTransform())
 

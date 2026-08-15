@@ -69,7 +69,7 @@ public extension Race {
     }
 
     var isZippyQEnabled: Bool {
-        return (maxZippyqDepth > 0 && disableSlotAutoPopulation == .open)
+        return disableSlotAutoPopulation == .open
     }
 }
 

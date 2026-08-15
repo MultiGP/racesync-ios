@@ -157,11 +157,6 @@ extension ZippyqFrequencyAction {
     }
     
     fileprivate var font: UIFont {
-        switch self {
-        case .addMe, .`switch`:
-                            return UIFont.systemFont(ofSize: 14, weight: .semibold)
-        default:            return UIFont.systemFont(ofSize: 14, weight: .regular)
-
-        }
+        return UIFont.systemFont(ofSize: 14, weight: .semibold)
     }
 }

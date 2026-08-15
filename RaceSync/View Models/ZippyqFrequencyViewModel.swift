@@ -17,16 +17,17 @@ enum ZippyqFrequencyAction {
 
 class ZippyqFrequencyViewModel: Descriptable {
 
+    let user: User?
+    let isCurrentUser: Bool
+
     let frequency: Frequency
     let slot: Int
     let cycle: Int
     let heat: Int
     let channelLabel: String
     let frequencyColor: UIColor
-    let user: User?
     let titleLabel: String?
     let isAssigned: Bool
-    let isCurrentUser: Bool
     let subtitleLabel: String?
     let imageUrl: String?
     let resultLabel: String?
@@ -39,6 +40,10 @@ class ZippyqFrequencyViewModel: Descriptable {
          maximumPackCount: Int32,
          scoringFormat: ScoringFormat) {
         
+        let entry = queue.entries.first { $0.frequency?.frequency == frequency.frequency }
+        user = entry?.user
+        isCurrentUser = APIServices.shared.isCurrentUser(entry?.user)
+
         self.frequency = frequency
         slot = Int(frequency.slot)
         cycle = Int(queue.cycle)
@@ -46,8 +51,6 @@ class ZippyqFrequencyViewModel: Descriptable {
         channelLabel = frequency.channelLabel
         frequencyColor = FrequencyColor.color(for: frequency.frequency)
 
-        let entry = queue.entries.first { $0.frequency?.frequency == frequency.frequency }
-        user = entry?.user
         resultLabel = queue.status != .queued ? ResultEntryViewModel.formattedResult(
             for: scoringFormat,
             totalLaps: entry?.totalLaps,
@@ -56,13 +59,12 @@ class ZippyqFrequencyViewModel: Descriptable {
             fastest3Laps: entry?.fastest3Laps
         ) : nil
         
-        isCurrentUser = APIServices.shared.isCurrentUser(entry?.user)
 
         if let user = entry?.user, let stats = pilotStats[user.id] {
             let userViewModel = UserViewModel(with: user)
             titleLabel = userViewModel.username
             isAssigned = true
-            subtitleLabel = "Pack \(stats.queuedCount) of \(maximumPackCount)"
+            subtitleLabel = maximumPackCount > 0 ? "Pack \(stats.queuedCount) of \(maximumPackCount)" : "Pack \(stats.queuedCount)"
             imageUrl = userViewModel.pictureUrl
         } else {
             titleLabel = "Empty"
