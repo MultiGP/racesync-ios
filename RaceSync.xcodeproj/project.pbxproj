@@ -50,7 +50,6 @@
 		4F21086E2F9041C9007C7716 /* AppIcon-SDC@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F21086D2F9041C9007C7716 /* AppIcon-SDC@3x.png */; };
 		4F21086F2F9041C9007C7716 /* AppIcon-SDC@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4F21086C2F9041C9007C7716 /* AppIcon-SDC@2x.png */; };
 		4F2724362515D88A000C7408 /* Chapter+UIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2724352515D88A000C7408 /* Chapter+UIExtensions.swift */; };
-		4FABC002301D100000000001 /* RaceEntry+UIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FABC001301D100000000001 /* RaceEntry+UIExtensions.swift */; };
 		4F27243B2517DB1C000C7408 /* CopyLinkActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F27243A2517DB1C000C7408 /* CopyLinkActivity.swift */; };
 		4F2724402517DC5B000C7408 /* UIActivityViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F27243F2517DC5B000C7408 /* UIActivityViewController+Extensions.swift */; };
 		4F2726E12EE8C59E00001C86 /* UniversalSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2726E02EE8C59E00001C86 /* UniversalSearchViewController.swift */; };
@@ -210,6 +209,9 @@
 		4FA706072EC33873006EAE70 /* RaceSyncAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F13426F2360DA4B00A9DBDE /* RaceSyncAPI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4FAAA88523AA15EA00A004DC /* MapKit+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAAA88423AA15EA00A004DC /* MapKit+Extensions.swift */; };
 		4FAAF8242E80FFF5002CF62E /* Series.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAAF8232E80FFF5002CF62E /* Series.swift */; };
+		4FABC002301D100000000001 /* RaceEntry+UIExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FABC001301D100000000001 /* RaceEntry+UIExtensions.swift */; };
+		4FABC004301D200000000001 /* ZippyqSmartJoiner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FABC003301D200000000001 /* ZippyqSmartJoiner.swift */; };
+		4FABC006301D200000000001 /* ZippyqSmartJoinable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FABC005301D200000000001 /* ZippyqSmartJoinable.swift */; };
 		4FAC24A823DC3E06009AD585 /* UILabel+LinesCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAC24A723DC3E06009AD585 /* UILabel+LinesCount.swift */; };
 		4FB06AB3296B521000F14E59 /* AppIcon-MGP1@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4FB06AAF296B521000F14E59 /* AppIcon-MGP1@3x.png */; };
 		4FB06AB4296B521000F14E59 /* AppIcon-MGP2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4FB06AB0296B521000F14E59 /* AppIcon-MGP2@2x.png */; };
@@ -402,7 +404,6 @@
 		4F21086C2F9041C9007C7716 /* AppIcon-SDC@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-SDC@2x.png"; sourceTree = "<group>"; };
 		4F21086D2F9041C9007C7716 /* AppIcon-SDC@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-SDC@3x.png"; sourceTree = "<group>"; };
 		4F2724352515D88A000C7408 /* Chapter+UIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Chapter+UIExtensions.swift"; sourceTree = "<group>"; };
-		4FABC001301D100000000001 /* RaceEntry+UIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RaceEntry+UIExtensions.swift"; sourceTree = "<group>"; };
 		4F27243A2517DB1C000C7408 /* CopyLinkActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyLinkActivity.swift; sourceTree = "<group>"; };
 		4F27243F2517DC5B000C7408 /* UIActivityViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIActivityViewController+Extensions.swift"; sourceTree = "<group>"; };
 		4F2726E02EE8C59E00001C86 /* UniversalSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalSearchViewController.swift; sourceTree = "<group>"; };
@@ -565,6 +566,9 @@
 		4FA26834237A80B9008970AC /* ActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButton.swift; sourceTree = "<group>"; };
 		4FAAA88423AA15EA00A004DC /* MapKit+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MapKit+Extensions.swift"; sourceTree = "<group>"; };
 		4FAAF8232E80FFF5002CF62E /* Series.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Series.swift; sourceTree = "<group>"; };
+		4FABC001301D100000000001 /* RaceEntry+UIExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RaceEntry+UIExtensions.swift"; sourceTree = "<group>"; };
+		4FABC003301D200000000001 /* ZippyqSmartJoiner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqSmartJoiner.swift; sourceTree = "<group>"; };
+		4FABC005301D200000000001 /* ZippyqSmartJoinable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqSmartJoinable.swift; sourceTree = "<group>"; };
 		4FAC24A723DC3E06009AD585 /* UILabel+LinesCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+LinesCount.swift"; sourceTree = "<group>"; };
 		4FB06AAF296B521000F14E59 /* AppIcon-MGP1@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-MGP1@3x.png"; sourceTree = "<group>"; };
 		4FB06AB0296B521000F14E59 /* AppIcon-MGP2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-MGP2@2x.png"; sourceTree = "<group>"; };
@@ -1323,6 +1327,8 @@
 			isa = PBXGroup;
 			children = (
 				4FE64515301820B7008CBD26 /* ZippyqViewController.swift */,
+				4FABC003301D200000000001 /* ZippyqSmartJoiner.swift */,
+				4FABC005301D200000000001 /* ZippyqSmartJoinable.swift */,
 			);
 			path = ZippyQ;
 			sourceTree = "<group>";
@@ -1782,6 +1788,8 @@
 				4F8B4A0A2DDC7AEF00B735DA /* PushMessagesViewController.swift in Sources */,
 				4FC57C33258E1362006E210F /* AppUtil.swift in Sources */,
 				4FE64529301D0001008CBD26 /* PollingController.swift in Sources */,
+				4FABC004301D200000000001 /* ZippyqSmartJoiner.swift in Sources */,
+				4FABC006301D200000000001 /* ZippyqSmartJoinable.swift in Sources */,
 				4F80A660296F9951008B19AF /* RichEditorToolbar.swift in Sources */,
 				4F7BE2672722354F00592297 /* UIViewController+Navigation.swift in Sources */,
 				4F60562A258D59EC008AF93F /* GalleryViewController.swift in Sources */,
