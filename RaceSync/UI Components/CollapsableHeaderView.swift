@@ -42,7 +42,10 @@ class CollapsableHeaderView: UITableViewHeaderFooterView {
 
     var isExpanded: Bool = false {
         didSet {
-            chevronImageView.image = UIImage(systemName: isExpanded ? "chevron.up" : "chevron.down")
+            chevronImageView.image = UIImage(
+                systemName: isExpanded ? "chevron.up" : "chevron.down",
+                withConfiguration: UIImage.SymbolConfiguration(pointSize: 19, weight: .medium)
+            )
             separatorView.isHidden = isExpanded
             updateContextualContent()
             updateMetadataVisibility()
@@ -119,7 +122,7 @@ class CollapsableHeaderView: UITableViewHeaderFooterView {
 
     fileprivate lazy var chevronImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.tintColor = Color.gray400
+        imageView.tintColor = .tertiaryLabel
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
@@ -186,12 +189,14 @@ class CollapsableHeaderView: UITableViewHeaderFooterView {
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
         static let badgeSpacing: CGFloat = 10
-        static let chevronSize: CGFloat = 16
+        static let chevronSize: CGFloat = 20
         static let avatarSize: CGFloat = headerHeight / 2
         static let avatarOverlap: CGFloat = avatarSize / 4
         static let avatarBorderWidth: CGFloat = 2
         static let separatorHeight: CGFloat = 0.5
     }
+    
+    // MARK: - Initialization
 
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
@@ -201,6 +206,8 @@ class CollapsableHeaderView: UITableViewHeaderFooterView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: - Overrides
 
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -256,8 +263,12 @@ private extension CollapsableHeaderView {
 
         contentView.addSubview(contentStackView)
         contentStackView.snp.makeConstraints {
-            $0.leading.equalToSuperview().offset(Constants.padding)
-            $0.trailing.equalToSuperview().offset(-Constants.padding)
+            // UITableView briefly measures header/footer views with an encapsulated
+            // width of zero. Keep the intended insets for real layouts, but allow
+            // that transient sizing pass without forcing the stack's contents to
+            // break their own constraints.
+            $0.leading.equalToSuperview().offset(Constants.padding).priority(999)
+            $0.trailing.equalToSuperview().offset(-Constants.padding).priority(999)
             $0.centerY.equalToSuperview()
         }
 

@@ -45,6 +45,30 @@ final class ZippyqController {
         return smartJoiner.recommendation(for: smartJoinInput(from: response, userId: userId))
     }
 
+    var headerViewModel: ZippyqHeaderViewModel {
+        let configuredViewModels = frequencies.prefix(8).map {
+            ZippyqHeaderFrequencyViewModel(
+                frequency: $0.frequency,
+                channelLabel: $0.channelLabel,
+                queuedPilotCount: queuedPilotCount(for: $0.frequency),
+                color: FrequencyColor.color(for: $0.frequency),
+                isSelected: selectedFrequencies.contains($0.frequency),
+                isEnabled: true
+            )
+        }
+        var frequencyViewModels = Array(configuredViewModels)
+        while frequencyViewModels.count < 4 {
+            frequencyViewModels.append(ZippyqHeaderFrequencyViewModel())
+        }
+
+        return ZippyqHeaderViewModel(
+            frequencyViewModels: frequencyViewModels,
+            preferenceLabel: selectedFrequencies.isEmpty ? "Select at least one channel" : "Select your preference",
+            statsLabel: currentUserStatsLabel,
+            isJoinEnabled: smartJoinRecommendation != nil
+        )
+    }
+
     fileprivate weak var raceController: RaceController?
     fileprivate let raceId: ObjectId
     fileprivate let api: ZippyqApiInterface = ZippyqApi()
@@ -99,8 +123,22 @@ final class ZippyqController {
         userDefaults.set(Array(selectedFrequencies).sorted(), forKey: preferencesKey)
     }
 
+    func toggleSelectedFrequency(_ frequency: String) {
+        var frequencies = selectedFrequencies
+        if frequencies.contains(frequency) {
+            frequencies.remove(frequency)
+        } else {
+            frequencies.insert(frequency)
+        }
+        setSelectedFrequencies(frequencies)
+    }
+
     func queuedPilotCount(for frequency: String) -> Int {
         return frequencyQueueCounts[frequency, default: 0]
+    }
+
+    func channelLabel(for frequency: String) -> String? {
+        return frequencies.first { $0.frequency == frequency }?.channelLabel
     }
 
     func addPilot(slot: Int, cycle: Int, heat: Int, completion: @escaping CompletionBlock) {
@@ -161,6 +199,56 @@ extension ZippyqController: PollingControllerDelegate {
 }
 
 private extension ZippyqController {
+
+    var currentUserStatsLabel: String {
+        let usedCount = currentUserStats?.usedCount ?? 0
+        let queuedCount = currentUserStats?.queuedCount ?? 0
+        let maximumPackCount = race?.cycleCount ?? 0
+
+        let packText: String
+        if maximumPackCount > 0 {
+            packText = usedCount == 0 ? "No packs flown" : "\(usedCount)/\(maximumPackCount) packs used"
+        } else {
+            packText = usedCount == 0
+                ? "No packs flown"
+                : "\(usedCount) pack\(usedCount == 1 ? "" : "s") flown"
+        }
+
+        if queuedCount == 0 {
+            let queueText = maximumPackCount > 0 && usedCount >= maximumPackCount
+                ? "No more queues"
+                : "Not queued"
+            return "\(packText) • \(queueText)"
+        }
+
+        let queueText = "\(queuedCount) queued"
+        if isCurrentUserUpNext {
+            return "\(packText) • \(queueText) • Up next"
+        }
+
+        let rounds = currentUserStats?.nextRounds
+            .compactMap { $0.components(separatedBy: ":").first }
+            .reduce(into: [String]()) { values, round in
+                if !values.contains(round) { values.append(round) }
+            } ?? []
+        guard !rounds.isEmpty else { return "\(packText) • \(queueText)" }
+
+        let roundLabel = rounds.count == 1 ? "Round" : "Rounds"
+        return "\(packText) • \(queueText) • Next \(roundLabel): \(formattedList(rounds))"
+    }
+
+    var isCurrentUserUpNext: Bool {
+        guard let userId = currentUser?.id,
+              let nextQueue = response?.queues.first(where: { $0.status == .queued }) else {
+            return false
+        }
+        return nextQueue.entries.contains { $0.user?.id == userId }
+    }
+
+    func formattedList(_ values: [String]) -> String {
+        guard values.count > 1, let lastValue = values.last else { return values.first ?? "" }
+        return "\(values.dropLast().joined(separator: ", ")) & \(lastValue)"
+    }
 
     var missingCurrentUserError: NSError {
         return NSError(

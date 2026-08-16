@@ -18,7 +18,6 @@ enum ZippyqFrequencyAction {
 class ZippyqFrequencyViewModel: Descriptable {
 
     let user: User?
-    let isCurrentUser: Bool
 
     let frequency: Frequency
     let slot: Int
@@ -28,6 +27,7 @@ class ZippyqFrequencyViewModel: Descriptable {
     let frequencyColor: UIColor
     let titleLabel: String?
     let isAssigned: Bool
+    let isCurrentUser: Bool
     let subtitleLabel: String?
     let imageUrl: String?
     let resultLabel: String?

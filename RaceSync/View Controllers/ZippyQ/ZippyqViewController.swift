@@ -32,6 +32,8 @@ class ZippyqViewController: UIViewController, RaceTabbable {
         tableView.tableFooterView = UIView()
         return tableView
     }()
+
+    fileprivate lazy var headerView = ZippyqHeaderView()
     
     fileprivate let zippyqController: ZippyqController
     fileprivate var expandedQueueKeys = Set<String>()
@@ -65,7 +67,9 @@ class ZippyqViewController: UIViewController, RaceTabbable {
         super.viewDidLoad()
 
         setupLayout()
+        configureHeaderInteractions()
         configureNavigationItems()
+        configureHeaderView()
         zippyqController.loadContent()
     }
     
@@ -90,10 +94,25 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     // MARK: - Layout
     
     fileprivate func setupLayout() {
-        
+
+        headerView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: ZippyqHeaderView.headerHeight)
+        headerView.autoresizingMask = [.flexibleWidth]
+        tableView.tableHeaderView = headerView
+
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
-            $0.top.leading.trailing.bottom.equalToSuperview()
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.leading.trailing.bottom.equalToSuperview()
+        }
+    }
+
+    fileprivate func configureHeaderInteractions() {
+        headerView.didSelectFrequency = { [weak self] frequency in
+            self?.zippyqController.toggleSelectedFrequency(frequency)
+            self?.configureHeaderView()
+        }
+        headerView.didTapJoinNextRound = { [weak self] in
+            self?.joinNextRound()
         }
     }
     
@@ -108,7 +127,12 @@ class ZippyqViewController: UIViewController, RaceTabbable {
 
     fileprivate func updateContent() {
         initializeExpandedQueuesIfNeeded()
+        configureHeaderView()
         tableView.reloadData()
+    }
+
+    fileprivate func configureHeaderView() {
+        headerView.configure(with: zippyqController.headerViewModel)
     }
     
     // RaceTabbable
@@ -117,6 +141,29 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     }
     
     // MARK: - Actions
+
+    fileprivate func joinNextRound() {
+        guard !headerView.isLoading else { return }
+
+        headerView.isLoading = true
+        zippyqController.joinNextRound { [weak self] recommendation, error in
+            guard let self else { return }
+
+            headerView.isLoading = false
+            if let error {
+                AlertUtil.presentAlertMessage(error.localizedDescription, title: "Unable to Join", delay: 0.25)
+            } else if let recommendation {
+                presentJoinConfirmation(for: recommendation)
+            }
+        }
+    }
+
+    fileprivate func presentJoinConfirmation(for recommendation: ZippyqSmartJoinRecommendation) {
+        let channel = zippyqController.channelLabel(for: recommendation.frequency) ?? recommendation.frequency
+        let heat = recommendation.heat > 1 ? ", Heat \(recommendation.heat)" : ""
+        let message = "Joined Round \(recommendation.cycle)\(heat) on \(channel)"
+        AlertUtil.presentAlertMessage(message, title: "Joined", delay: 0.25)
+    }
 
     @objc fileprivate func didTapAddMe(_ sender: FrequencyActionButton) {
         guard let viewModel = frequencyViewModel(for: sender) else {

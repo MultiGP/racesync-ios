@@ -213,6 +213,8 @@
 		4FABC004301D200000000001 /* ZippyqSmartJoiner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FABC003301D200000000001 /* ZippyqSmartJoiner.swift */; };
 		4FABC006301D200000000001 /* ZippyqSmartJoinable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FABC005301D200000000001 /* ZippyqSmartJoinable.swift */; };
 		4FABC008301D300000000001 /* ZippyqController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FABC007301D300000000001 /* ZippyqController.swift */; };
+		4FABC00A301D400000000001 /* ZippyqHeaderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FABC009301D400000000001 /* ZippyqHeaderViewModel.swift */; };
+		4FABC00C301D400000000001 /* ZippyqHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FABC00B301D400000000001 /* ZippyqHeaderView.swift */; };
 		4FAC24A823DC3E06009AD585 /* UILabel+LinesCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAC24A723DC3E06009AD585 /* UILabel+LinesCount.swift */; };
 		4FB06AB3296B521000F14E59 /* AppIcon-MGP1@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4FB06AAF296B521000F14E59 /* AppIcon-MGP1@3x.png */; };
 		4FB06AB4296B521000F14E59 /* AppIcon-MGP2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4FB06AB0296B521000F14E59 /* AppIcon-MGP2@2x.png */; };
@@ -571,6 +573,8 @@
 		4FABC003301D200000000001 /* ZippyqSmartJoiner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqSmartJoiner.swift; sourceTree = "<group>"; };
 		4FABC005301D200000000001 /* ZippyqSmartJoinable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqSmartJoinable.swift; sourceTree = "<group>"; };
 		4FABC007301D300000000001 /* ZippyqController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqController.swift; sourceTree = "<group>"; };
+		4FABC009301D400000000001 /* ZippyqHeaderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqHeaderViewModel.swift; sourceTree = "<group>"; };
+		4FABC00B301D400000000001 /* ZippyqHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqHeaderView.swift; sourceTree = "<group>"; };
 		4FAC24A723DC3E06009AD585 /* UILabel+LinesCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+LinesCount.swift"; sourceTree = "<group>"; };
 		4FB06AAF296B521000F14E59 /* AppIcon-MGP1@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-MGP1@3x.png"; sourceTree = "<group>"; };
 		4FB06AB0296B521000F14E59 /* AppIcon-MGP2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-MGP2@2x.png"; sourceTree = "<group>"; };
@@ -1065,6 +1069,7 @@
 				4F21086A2F90142B007C7716 /* SeriesResultViewModel.swift */,
 				4FE6451E301B9001008CBD26 /* ZippyqRoundViewModel.swift */,
 				4FE64520301B9001008CBD26 /* ZippyqFrequencyViewModel.swift */,
+				4FABC009301D400000000001 /* ZippyqHeaderViewModel.swift */,
 				4F9DB7AB23D5A1DE00570483 /* EmptyStateViewModel.swift */,
 				4F0B61422385EEFF00930D91 /* ViewModelHelper.swift */,
 			);
@@ -1272,6 +1277,7 @@
 				4F64F67F257B97E000574F4D /* WebViewController.swift */,
 				4FD53FB223A0E9B700158206 /* AvatarImageView.swift */,
 				4FE6451C301B1001008CBD26 /* CollapsableHeaderView.swift */,
+				4FABC00B301D400000000001 /* ZippyqHeaderView.swift */,
 				4F8668FB23870E1E005E310A /* SegmentedTableViewHeaderView.swift */,
 				4F65033D2E467EFB00FA8AED /* ColumnTableViewHeaderView.swift */,
 				4F0F2F482E888100006788A7 /* SliderTableViewHeaderView.swift */,
@@ -1794,6 +1800,8 @@
 				4FABC004301D200000000001 /* ZippyqSmartJoiner.swift in Sources */,
 				4FABC006301D200000000001 /* ZippyqSmartJoinable.swift in Sources */,
 				4FABC008301D300000000001 /* ZippyqController.swift in Sources */,
+				4FABC00A301D400000000001 /* ZippyqHeaderViewModel.swift in Sources */,
+				4FABC00C301D400000000001 /* ZippyqHeaderView.swift in Sources */,
 				4F80A660296F9951008B19AF /* RichEditorToolbar.swift in Sources */,
 				4F7BE2672722354F00592297 /* UIViewController+Navigation.swift in Sources */,
 				4F60562A258D59EC008AF93F /* GalleryViewController.swift in Sources */,
