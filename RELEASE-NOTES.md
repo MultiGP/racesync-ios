@@ -1,15 +1,21 @@
 
 # App Store Release Notes
 
----
+## 2.2
 
-## 2.1.3
-
-### New Features:
-   * Displaying the pilot limit of a race, if available, on the race detail view
-   * Allowing to update the pilot limit from within the app (race organizers only)
+### Introducing Native ZippyQ (dev only):
+   * View live, upcoming, and completed rounds in one place.
+   * See assigned pilots, channels, pack counts, and race results.
+   * Select preferred channels and check how many pilots are waiting on each.
+   * Join the next eligible round based on channel preferences and availability.
+   * Minimize channel changes using previous and upcoming assignments.
+   * View pack usage, queued packs, and predicted start times at a glance.
 
 ### Fixes and Enhancements:
+   * Expanded profile views to the top edges on newer OS.
+   * Displaying the pilot limit of a race, if available, on the race detail view
+   * Allowing to update the pilot limit from within the app (race organizers only)
+   * Allowing to update the pilot limit from within the app (race organizers only)
    * Optimized network calls to make the UI feel faster.
    * General bug fixes.
 
