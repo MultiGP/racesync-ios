@@ -101,14 +101,14 @@ class RaceFormViewController: UIViewController {
                 general += [.fee, .feeRequired]
             }
 
-            var specific: [RaceFormRow] = [.scoring, .class, .format, .schedule]
+            var specific: [RaceFormRow] = [.content, .scoring, .class, .format, .schedule]
 
             // Only applicable for ZippyQ
             if data.qualifying == QualifyingType.open.rawValue {
-                specific += [.rounds, .zDepth, .zIterator, .zNoKiosk]
+                specific += [.rounds, .zDepth, .zIterator, .zNoKiosk, .zPrediction]
             }
 
-            specific += [.content, .notify]
+            specific += [.notify]
 
             return [.general: general, .specific: specific]
         }
@@ -231,6 +231,8 @@ class RaceFormViewController: UIViewController {
             data.funfly = sender.isOn
         } else if row == .zNoKiosk {
             data.zippyqNoKiosk = sender.isOn
+        } else if row == .zPrediction {
+            data.zippyqPredictTimes = sender.isOn
         } else if row == .notify {
             data.sendNotification = sender.isOn
         }
@@ -674,6 +676,8 @@ extension RaceFormViewController: FormBaseViewControllerDelegate {
             data.zippyqIterator = (item as NSString).intValue
         case .zNoKiosk:
             data.zippyqNoKiosk = (item == true.localizedString)
+        case .zPrediction:
+            data.zippyqPredictTimes = (item == true.localizedString)
         case .season:
             if let season = seasons?.filter ({ return $0.name == item }).first {
                 data.seasonId = season.id

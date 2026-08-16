@@ -24,7 +24,7 @@ protocol ZippyqControllerDelegate: AnyObject {
 /// - Exposes the current user's pack usage, queued packs, and upcoming rounds.
 /// - Persists selected frequency preferences per race, selecting all configured frequencies by default.
 /// - Removes persisted preferences for frequencies that are no longer configured for the race.
-/// - Builds smart-join input from available queued slots and the current user's LIVE and PAST history.
+/// - Builds smart-join input from available queued slots, all current assignments, and flown history.
 /// - Enforces pack-limit eligibility and delegates frequency selection to `ZippyqSmartJoinable`.
 /// - Joins the recommended round and frequency with a single API attempt.
 ///
@@ -64,7 +64,9 @@ final class ZippyqController {
         return ZippyqHeaderViewModel(
             frequencyViewModels: frequencyViewModels,
             preferenceLabel: selectedFrequencies.isEmpty ? "Select at least one channel" : "Select your preference",
-            statsLabel: currentUserStatsLabel,
+            currentUserStats: currentUserStats,
+            maximumPackCount: race?.cycleCount ?? 0,
+            isCurrentUserUpNext: isCurrentUserUpNext,
             isJoinEnabled: smartJoinRecommendation != nil
         )
     }
@@ -141,6 +143,21 @@ final class ZippyqController {
         return frequencies.first { $0.frequency == frequency }?.channelLabel
     }
 
+    func joinConfirmationViewModel(for recommendation: ZippyqSmartJoinRecommendation) -> ZippyqJoinConfirmationViewModel {
+        let channel = channelLabel(for: recommendation.frequency) ?? recommendation.frequency
+        let previousFrequency = mostRecentlyAssignedFrequency(excluding: recommendation)
+        let queue = response?.queues.first {
+            $0.cycle == recommendation.cycle && $0.heat == recommendation.heat
+        }
+        let projectedStartTime = queue?.projected == true ? queue?.startTime : nil
+        return ZippyqJoinConfirmationViewModel(
+            recommendation: recommendation,
+            channel: channel,
+            previousFrequency: previousFrequency,
+            projectedStartTime: projectedStartTime
+        )
+    }
+
     func addPilot(slot: Int, cycle: Int, heat: Int, completion: @escaping CompletionBlock) {
         guard let user = currentUser else {
             completion(missingCurrentUserError)
@@ -166,7 +183,16 @@ final class ZippyqController {
     }
 
     func joinNextRound(completion: @escaping (ZippyqSmartJoinRecommendation?, NSError?) -> Void) {
-        guard let recommendation = smartJoinRecommendation else {
+        guard let response, let userId = currentUser?.id else {
+            completion(nil, nil)
+            return
+        }
+
+        let input = smartJoinInput(from: response, userId: userId)
+        let recommendation = smartJoiner.recommendation(for: input)
+        logSmartJoin(input: input, recommendation: recommendation)
+
+        guard let recommendation else {
             completion(nil, nil)
             return
         }
@@ -200,41 +226,24 @@ extension ZippyqController: PollingControllerDelegate {
 
 private extension ZippyqController {
 
-    var currentUserStatsLabel: String {
-        let usedCount = currentUserStats?.usedCount ?? 0
-        let queuedCount = currentUserStats?.queuedCount ?? 0
-        let maximumPackCount = race?.cycleCount ?? 0
+    func mostRecentlyAssignedFrequency(excluding recommendation: ZippyqSmartJoinRecommendation) -> String? {
+        guard let userId = currentUser?.id else { return nil }
 
-        let packText: String
-        if maximumPackCount > 0 {
-            packText = usedCount == 0 ? "No packs flown" : "\(usedCount)/\(maximumPackCount) packs used"
-        } else {
-            packText = usedCount == 0
-                ? "No packs flown"
-                : "\(usedCount) pack\(usedCount == 1 ? "" : "s") flown"
-        }
-
-        if queuedCount == 0 {
-            let queueText = maximumPackCount > 0 && usedCount >= maximumPackCount
-                ? "No more queues"
-                : "Not queued"
-            return "\(packText) • \(queueText)"
-        }
-
-        let queueText = "\(queuedCount) queued"
-        if isCurrentUserUpNext {
-            return "\(packText) • \(queueText) • Up next"
-        }
-
-        let rounds = currentUserStats?.nextRounds
-            .compactMap { $0.components(separatedBy: ":").first }
-            .reduce(into: [String]()) { values, round in
-                if !values.contains(round) { values.append(round) }
-            } ?? []
-        guard !rounds.isEmpty else { return "\(packText) • \(queueText)" }
-
-        let roundLabel = rounds.count == 1 ? "Round" : "Rounds"
-        return "\(packText) • \(queueText) • Next \(roundLabel): \(formattedList(rounds))"
+        return response?.queues
+            .filter {
+                $0.cycle != recommendation.cycle || $0.heat != recommendation.heat
+            }
+            .flatMap { queue in
+                queue.entries.compactMap { entry -> (queue: ZippyQueue, frequency: String)? in
+                    guard entry.user?.id == userId,
+                          let frequency = entry.frequency?.frequency else { return nil }
+                    return (queue, frequency)
+                }
+            }
+            .max {
+                if $0.queue.cycle == $1.queue.cycle { return $0.queue.heat < $1.queue.heat }
+                return $0.queue.cycle < $1.queue.cycle
+            }?.frequency
     }
 
     var isCurrentUserUpNext: Bool {
@@ -243,11 +252,6 @@ private extension ZippyqController {
             return false
         }
         return nextQueue.entries.contains { $0.user?.id == userId }
-    }
-
-    func formattedList(_ values: [String]) -> String {
-        guard values.count > 1, let lastValue = values.last else { return values.first ?? "" }
-        return "\(values.dropLast().joined(separator: ", ")) & \(lastValue)"
     }
 
     var missingCurrentUserError: NSError {
@@ -320,8 +324,22 @@ private extension ZippyqController {
     func updateRoundViewModels() {
         guard let response, let race else { return }
 
-        let nextQueuedIndex = response.queues.firstIndex { $0.status == .queued }
-        roundViewModels = response.queues.enumerated().map { index, queue in
+        var queueGroups = [(cycle: Int32, status: ZippyqStatus, queues: [ZippyQueue])]()
+        for queue in response.queues {
+            if let index = queueGroups.firstIndex(where: {
+                $0.cycle == queue.cycle && $0.status == queue.status
+            }) {
+                queueGroups[index].queues.append(queue)
+            } else {
+                queueGroups.append((queue.cycle, queue.status, [queue]))
+            }
+        }
+
+        let orderedQueues = queueGroups.flatMap {
+            $0.queues.sorted { $0.heat < $1.heat }
+        }
+        let nextQueuedIndex = orderedQueues.firstIndex { $0.status == .queued }
+        roundViewModels = orderedQueues.enumerated().map { index, queue in
             ZippyqRoundViewModel(
                 with: queue,
                 frequencies: frequencies,
@@ -334,6 +352,28 @@ private extension ZippyqController {
     }
 
     func smartJoinInput(from response: ZippyqResponse, userId: ObjectId) -> ZippyqSmartJoinInput {
+        let roundSequence = response.queues
+            .map { ZippyqSmartJoinRoundPosition(cycle: $0.cycle, heat: $0.heat) }
+            .reduce(into: [ZippyqSmartJoinRoundPosition]()) { positions, position in
+                if !positions.contains(position) { positions.append(position) }
+            }
+            .sorted {
+                if $0.cycle == $1.cycle { return $0.heat < $1.heat }
+                return $0.cycle < $1.cycle
+            }
+
+        let assignedEntries = response.queues.flatMap { queue in
+            queue.entries.compactMap { entry -> (queue: ZippyQueue, entry: ZippyqEntry)? in
+                guard entry.user?.id == userId else { return nil }
+                return (queue, entry)
+            }
+        }
+
+        let currentUserRounds = response.queues.compactMap { queue -> ZippyqSmartJoinRoundPosition? in
+            guard queue.entries.contains(where: { $0.user?.id == userId }) else { return nil }
+            return ZippyqSmartJoinRoundPosition(cycle: queue.cycle, heat: queue.heat)
+        }
+
         let flownEntries = response.queues
             .filter { $0.status == .running || $0.status == .previous }
             .flatMap { queue in
@@ -343,7 +383,7 @@ private extension ZippyqController {
                 }
             }
 
-        let mostRecentFrequency = flownEntries.max {
+        let mostRecentAssignedFrequency = assignedEntries.max {
             if $0.queue.cycle == $1.queue.cycle { return $0.queue.heat < $1.queue.heat }
             return $0.queue.cycle < $1.queue.cycle
         }?.entry.frequency?.frequency
@@ -378,11 +418,40 @@ private extension ZippyqController {
 
         return ZippyqSmartJoinInput(
             queuedRounds: rounds,
+            roundSequence: roundSequence,
+            currentUserRounds: currentUserRounds,
             selectedFrequencies: selectedFrequencies,
-            mostRecentlyFlownFrequency: mostRecentFrequency,
+            mostRecentlyAssignedFrequency: mostRecentAssignedFrequency,
             flownFrequencyCounts: frequencyCounts,
-            canJoinAnotherRound: canJoinAnotherRound
+            canJoinAnotherRound: canJoinAnotherRound,
+            maximumQueueDepth: race?.maxZippyqDepth ?? 0,
+            requiredRestRounds: race?.zippyqIterator ?? 0
         )
+    }
+
+    func logSmartJoin(input: ZippyqSmartJoinInput,
+                      recommendation: ZippyqSmartJoinRecommendation?) {
+        let selected = input.selectedFrequencies
+            .map { channelLabel(for: $0) ?? $0 }
+            .sorted()
+            .joined(separator: ", ")
+        let recent = input.mostRecentlyAssignedFrequency
+            .map { channelLabel(for: $0) ?? $0 } ?? "none"
+        let usage = input.flownFrequencyCounts
+            .map { "\(channelLabel(for: $0.key) ?? $0.key):\($0.value)" }
+            .sorted()
+            .joined(separator: ", ")
+        let queuedCount = input.queuedRounds.filter(\.containsCurrentUser).count
+
+        Clog.log("ZippyQ Smart Join choice: selected [\(selected)], recent \(recent), usage [\(usage)], depth \(queuedCount)/\(input.maximumQueueDepth), rest \(input.requiredRestRounds), pack eligible \(input.canJoinAnotherRound)")
+
+        guard let recommendation else {
+            Clog.log("ZippyQ Smart Join result: none")
+            return
+        }
+
+        let channel = channelLabel(for: recommendation.frequency) ?? recommendation.frequency
+        Clog.log("ZippyQ Smart Join result: round \(recommendation.cycle), heat \(recommendation.heat), channel \(channel), slot \(recommendation.slot), reason \(recommendation.reason)")
     }
 
     func performAction(_ action: (@escaping ObjectCompletionBlock<ZippyqResponse>) -> Void,

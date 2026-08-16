@@ -11,7 +11,7 @@ import ObjectMapper
 
 public typealias ZippyqPilotCollection = [ObjectId: ZippyqPilotStats]
 
-public class ZippyqResponse: Mappable {
+public class ZippyqResponse: Mappable, Descriptable {
     public var queues: [ZippyQueue] = []
     public var pilotStats: ZippyqPilotCollection = [:]
     public var frequencies: [Frequency] = []
@@ -25,10 +25,12 @@ public class ZippyqResponse: Mappable {
     }
 }
 
-public class ZippyQueue: Mappable {
+public class ZippyQueue: Mappable, Descriptable {
     public var cycle: Int32 = 0
     public var heat: Int32 = 0
     public var status: ZippyqStatus = .previous
+    public var projected: Bool = false
+    public var startTime: Date?
     public var entries: [ZippyqEntry] = []
 
     public required init?(map: Map) {}
@@ -37,11 +39,13 @@ public class ZippyQueue: Mappable {
         cycle <- (map[ParamKey.cycle], IntegerTransform())
         heat <- (map[ParamKey.heat], IntegerTransform())
         status <- (map[ParamKey.status], EnumTransform<ZippyqStatus>())
+        projected <- map[ParamKey.projected]
+        startTime <- (map[ParamKey.startTime], MapperUtil.utcDateTransform)
         entries <- map[ParamKey.entries]
     }
 }
 
-public class ZippyqEntry: Mappable {
+public class ZippyqEntry: Mappable, Descriptable {
     
     public var id: ObjectId = ""
     public var raceEntryId: ObjectId = ""
@@ -76,7 +80,7 @@ public class ZippyqEntry: Mappable {
     }
 }
 
-public class ZippyqPilotStats: Mappable {
+public class ZippyqPilotStats: Mappable, Descriptable {
     public var usedCount: Int32 = 0
     public var queuedCount: Int32 = 0
     public var nextRounds: [String] = []
@@ -90,7 +94,7 @@ public class ZippyqPilotStats: Mappable {
     }
 }
 
-public class ZippyqRevision: Mappable {
+public class ZippyqRevision: Mappable, Descriptable {
     public var value: String = ""
 
     public required init?(map: Map) {}

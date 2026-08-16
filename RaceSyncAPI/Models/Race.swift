@@ -34,6 +34,7 @@ public class Race: Mappable, Descriptable {
     public var maxZippyqDepth: Int32 = 0
     public var zippyqIterator: Int32 = 0
     public var zippyNoKiosk: Bool = true
+    public var predictZippyqTimes: Bool = false
     public var maxBatteriesForQualifying: Int32 = 0
 
     public var urlName: String = ""
@@ -131,6 +132,7 @@ public class Race: Mappable, Descriptable {
         maxZippyqDepth <- (map[ParamKey.maxZippyqDepth], IntegerTransform())
         zippyqIterator <- (map[ParamKey.zippyqIterator], IntegerTransform())
         zippyNoKiosk <- map[ParamKey.zippyNoKiosk]
+        predictZippyqTimes <- map[ParamKey.predictZippyqTimes]
         maxBatteriesForQualifying <- (map[ParamKey.maxBatteriesForQualifying], IntegerTransform())
 
         urlName <- map[ParamKey.urlName]

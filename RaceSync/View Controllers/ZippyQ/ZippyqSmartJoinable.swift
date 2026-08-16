@@ -14,10 +14,19 @@ protocol ZippyqSmartJoinable {
 
 struct ZippyqSmartJoinInput {
     let queuedRounds: [ZippyqSmartJoinRound]
+    let roundSequence: [ZippyqSmartJoinRoundPosition]
+    let currentUserRounds: [ZippyqSmartJoinRoundPosition]
     let selectedFrequencies: Set<String>
-    let mostRecentlyFlownFrequency: String?
+    let mostRecentlyAssignedFrequency: String?
     let flownFrequencyCounts: [String: Int]
     let canJoinAnotherRound: Bool
+    let maximumQueueDepth: Int32
+    let requiredRestRounds: Int32
+}
+
+struct ZippyqSmartJoinRoundPosition: Equatable {
+    let cycle: Int32
+    let heat: Int32
 }
 
 struct ZippyqSmartJoinRound {

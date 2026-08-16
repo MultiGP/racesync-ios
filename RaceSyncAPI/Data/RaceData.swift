@@ -35,9 +35,10 @@ public struct RaceData: Descriptable {
     public var status: String = RaceStatus.open.rawValue
     public var timing: Bool = true
     public var zippyqDepth: Int32 = 5
-    public var zippyqIterator: Int32 = 1
+    public var zippyqIterator: Int32 = 0
     public var zippyqNoKiosk: Bool = true
-
+    public var zippyqPredictTimes: Bool = false
+    
     // To be used to broadcast email and/or APNS after saving
     // See php code base that needs to be implemented on the API side
     // https://github.com/MultiGP/multigp-com/blob/09841623ae274fa8f62a3a4df1393cf1cf986b74/public_html/mgp/protected/modules/multigp/models/Race.php#L311
@@ -83,6 +84,7 @@ public struct RaceData: Descriptable {
         self.zippyqDepth = race.maxZippyqDepth
         self.zippyqIterator = race.zippyqIterator
         self.zippyqNoKiosk = race.zippyNoKiosk
+        self.zippyqPredictTimes = race.predictZippyqTimes
     }
 
     public func toParams() -> Params {
@@ -116,6 +118,7 @@ public struct RaceData: Descriptable {
         params[ParamKey.maxZippyqDepth] = zippyqDepth
         params[ParamKey.zippyqIterator] = zippyqIterator
         params[ParamKey.zippyNoKiosk] = zippyqNoKiosk.intValue
+        params[ParamKey.predictZippyqTimes] = zippyqPredictTimes.intValue
 
         return params
     }

@@ -159,10 +159,18 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     }
 
     fileprivate func presentJoinConfirmation(for recommendation: ZippyqSmartJoinRecommendation) {
-        let channel = zippyqController.channelLabel(for: recommendation.frequency) ?? recommendation.frequency
-        let heat = recommendation.heat > 1 ? ", Heat \(recommendation.heat)" : ""
-        let message = "Joined Round \(recommendation.cycle)\(heat) on \(channel)"
-        AlertUtil.presentAlertMessage(message, title: "Joined", delay: 0.25)
+        
+        let viewModel = zippyqController.joinConfirmationViewModel(for: recommendation)
+
+        AlertUtil.presentAlertMessage(
+            viewModel.message,
+            title: viewModel.title,
+            okTitle: "View Round",
+            cancelTitle: "OK",
+            delay: 0.25
+        ) { [weak self] _ in
+            self?.expandAndScrollToRound(cycle: recommendation.cycle, heat: recommendation.heat)
+        }
     }
 
     @objc fileprivate func didTapAddMe(_ sender: FrequencyActionButton) {
@@ -229,7 +237,29 @@ extension ZippyqViewController: ZippyqControllerDelegate {
 
 private extension ZippyqViewController {
 
+    func expandAndScrollToRound(cycle: Int32, heat: Int32) {
+        
+        let key = "\(cycle):\(heat)"
+        guard let section = roundViewModels.firstIndex(where: { $0.id == key }) else { return }
+
+        if expandedQueueKeys.insert(key).inserted {
+            tableView.reloadSections(IndexSet(integer: section), with: .automatic)
+        }
+
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            tableView.layoutIfNeeded()
+
+            if tableView.numberOfRows(inSection: section) > 0 {
+                tableView.scrollToRow(at: IndexPath(row: 0, section: section), at: .top, animated: true)
+            } else {
+                tableView.scrollRectToVisible(tableView.rectForHeader(inSection: section), animated: true)
+            }
+        }
+    }
+
     func initializeExpandedQueuesIfNeeded() {
+        
         guard !hasInitializedExpandedQueues else { return }
 
         for round in roundViewModels where round.badge == .live /*|| round.badge == .upNext */ {
