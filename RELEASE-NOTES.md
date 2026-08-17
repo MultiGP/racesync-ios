@@ -6,10 +6,8 @@
 ### Introducing Native ZippyQ (dev only):
    * View live, upcoming, and completed rounds in one place.
    * See assigned pilots, channels, pack counts, and race results.
-   * Select preferred channels and check how many pilots are waiting on each.
-   * Join the next eligible round based on channel preferences and availability.
-   * Minimize channel changes using previous and upcoming assignments.
-   * View pack usage, queued packs, and predicted start times at a glance.
+   * Select your preferred channels and easily join the next eligible rounds with simple button.
+   * View your pack usage, queued packs, next rounds and predicted start times at a glance.
 
 ### Fixes and Enhancements:
    * Expanded profile views to the top edges on newer OS.
