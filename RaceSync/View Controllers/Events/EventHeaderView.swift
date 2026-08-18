@@ -53,14 +53,14 @@ class EventHeaderView: UIView {
     func selectNextDate() {
         let nextIndex = selectedDateIndex + 1
         guard nextIndex < dates.count, let button = dateButton(at: nextIndex) else { return }
-        animateButtonPress(button)
+        button.animatePress()
         selectDate(at: nextIndex)
     }
 
     func selectPreviousDate() {
         let prevIndex = selectedDateIndex - 1
         guard prevIndex >= 0, let button = dateButton(at: prevIndex) else { return }
-        animateButtonPress(button)
+        button.animatePress()
         selectDate(at: prevIndex)
     }
 
@@ -351,22 +351,6 @@ class EventHeaderView: UIView {
             }
             
             return button
-        }
-    }
-    
-    fileprivate func animateButtonPress(_ button: UIButton) {
-        UIView.animate(
-            withDuration: 0.12,
-            animations: { button.transform = CGAffineTransform(scaleX: 0.88, y: 0.88) }
-        ) { _ in
-            UIView.animate(
-                withDuration: 0.4,
-                delay: 0,
-                usingSpringWithDamping: 0.4,
-                initialSpringVelocity: 8,
-                options: .allowUserInteraction,
-                animations: { button.transform = .identity }
-            )
         }
     }
 

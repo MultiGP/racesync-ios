@@ -17,7 +17,7 @@ enum ZippyqFrequencyAction {
 
 enum ZippyqRoundBadge: Equatable {
     case none
-    case live
+    case running
     case upNext
     case past
     case full
@@ -26,7 +26,7 @@ enum ZippyqRoundBadge: Equatable {
     var title: String? {
         switch self {
         case .none:                return nil
-        case .live:                return "Live".uppercased()
+        case .running:             return "Running".uppercased()
         case .upNext:              return "Up Next".uppercased()
         case .past:                return "Past".uppercased()
         case .full:                return "Full".uppercased()
@@ -38,7 +38,7 @@ enum ZippyqRoundBadge: Equatable {
     var backgroundColor: UIColor {
         switch self {
         case .none:                 return Color.clear
-        case .live:                 return Color.green
+        case .running:              return Color.green
         case .upNext:               return Color.yellow
         case .past:                 return Color.gray50
         case .full:                 return Color.orange.withAlphaComponent(0.8)
@@ -49,9 +49,9 @@ enum ZippyqRoundBadge: Equatable {
     var titleColor: UIColor {
         switch self {
         case .none:                 return Color.clear
-        case .live:                 return Color.light.withAlphaComponent(0.9)
+        case .running:              return Color.light.withAlphaComponent(0.9)
         case .upNext:               return Color.blue.withAlphaComponent(0.8)
-        case .past:                 return Color.dynamic(light: Color.black, dark: Color.gray400)
+        case .past:                 return Color.blue.withAlphaComponent(0.8)
         case .full:                 return Color.blue.withAlphaComponent(0.8)
         case .spotsLeft:            return Color.gray300
         }
@@ -249,14 +249,16 @@ class ZippyqRoundViewModel: Descriptable {
     let badge: ZippyqRoundBadge
     let frequencyViewModels: [ZippyqFrequencyViewModel]
     let avatarImageUrls: [String?]
+    
+    static let showsSpotsLeft: Bool = false
+    static let showsSpotsFull: Bool = false
 
     init(with queue: ZippyQueue,
          frequencies: [Frequency],
          pilotStats: ZippyqPilotCollection,
          maximumPackCount: Int32,
          scoringFormat: ScoringFormat,
-         isUpNext: Bool,
-         showsSpotsLeft: Bool = false) {
+         isUpNext: Bool) {
 
         id = "\(queue.cycle):\(queue.heat)"
         titleLabel = "Round \(queue.cycle)"
@@ -282,9 +284,9 @@ class ZippyqRoundViewModel: Descriptable {
         let availableSpotCount = frequencies.count - pilotCount
         let availabilityBadge: ZippyqRoundBadge
 
-        if !frequencies.isEmpty, availableSpotCount == 0 {
+        if Self.showsSpotsFull, !frequencies.isEmpty, availableSpotCount == 0 {
             availabilityBadge = .full
-        } else if showsSpotsLeft, availableSpotCount > 0 {
+        } else if Self.showsSpotsLeft, availableSpotCount > 0 {
             availabilityBadge = .spotsLeft(availableSpotCount)
         } else {
             availabilityBadge = .none
@@ -292,7 +294,7 @@ class ZippyqRoundViewModel: Descriptable {
 
         switch queue.status {
         case .running:
-            badge = .live
+            badge = .running
             contextualLabel = "\(pilotCount) Racing"
         case .queued:
             badge = isUpNext ? .upNext : availabilityBadge

@@ -40,8 +40,12 @@ final class ZippyqController {
     private(set) var currentUserStats: ZippyqPilotStats?
     private(set) var selectedFrequencies = Set<String>()
 
+    var canJoinQueues: Bool {
+        return currentUser != nil && race?.isJoined == true
+    }
+
     var smartJoinRecommendation: ZippyqSmartJoinRecommendation? {
-        guard race != nil, let response, let userId = currentUser?.id else { return nil }
+        guard canJoinQueues, let response, let userId = currentUser?.id else { return nil }
         return smartJoiner.recommendation(for: smartJoinInput(from: response, userId: userId))
     }
 

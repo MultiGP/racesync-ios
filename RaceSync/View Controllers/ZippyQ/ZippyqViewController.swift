@@ -67,16 +67,12 @@ class ZippyqViewController: UIViewController, RaceTabbable {
         super.viewDidLoad()
 
         setupLayout()
-        configureHeaderInteractions()
-        configureNavigationItems()
-        configureHeaderView()
-        zippyqController.loadContent()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        zippyqController.loadContent()
+
+        refreshView()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -94,16 +90,17 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     // MARK: - Layout
     
     fileprivate func setupLayout() {
-
-        headerView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: ZippyqHeaderView.headerHeight)
-        headerView.autoresizingMask = [.flexibleWidth]
-        tableView.tableHeaderView = headerView
+        
+        configureNavigationItems()
+        configureHeaderInteractions()
 
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             $0.leading.trailing.bottom.equalToSuperview()
         }
+
+        configureHeaderView()
     }
 
     fileprivate func configureHeaderInteractions() {
@@ -132,7 +129,26 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     }
 
     fileprivate func configureHeaderView() {
+        guard zippyqController.canJoinQueues else {
+            tableView.tableHeaderView = nil
+            return
+        }
+
+        if tableView.tableHeaderView !== headerView {
+            tableView.tableHeaderView = headerView
+            headerView.snp.makeConstraints {
+                $0.width.equalTo(tableView)
+                $0.height.equalTo(ZippyqHeaderView.headerHeight)
+            }
+        }
+
         headerView.configure(with: zippyqController.headerViewModel)
+    }
+
+    fileprivate func refreshView() {
+        configureHeaderView()
+        tableView.reloadData()
+        zippyqController.loadContent()
     }
     
     // RaceTabbable
@@ -262,7 +278,7 @@ private extension ZippyqViewController {
         
         guard !hasInitializedExpandedQueues else { return }
 
-        for round in roundViewModels where round.badge == .live /*|| round.badge == .upNext */ {
+        for round in roundViewModels where round.badge == .running /*|| round.badge == .upNext */ {
             expandedQueueKeys.insert(round.id)
         }
         hasInitializedExpandedQueues = true
@@ -319,6 +335,11 @@ extension ZippyqViewController: UITableViewDataSource {
 
     fileprivate func configureActionButton(for cell: ZippyqFrequencyTableViewCell) {
         cell.actionButton.removeTarget(nil, action: nil, for: .touchUpInside)
+
+        guard zippyqController.canJoinQueues else {
+            cell.actionButton.action = nil
+            return
+        }
 
         switch cell.actionButton.action {
         case .addMe:
