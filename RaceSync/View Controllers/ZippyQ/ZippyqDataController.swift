@@ -115,12 +115,7 @@ final class ZippyqDataController {
     // MARK: - Data Load
 
     func startPolling() {
-        guard race?.hasEnded == false else {
-            Clog.log("Skipping polling, race has ended")
-            return
-        }
-        
-        pollingController.start()
+        pollingController.start() // won't start if isPollEnabled() returns false
     }
 
     func stopPolling() {
@@ -225,7 +220,8 @@ final class ZippyqDataController {
 extension ZippyqDataController: PollingControllerDelegate {
 
     func isPollEnabled() -> Bool {
-        return race?.isFinalized == false
+        guard let race else { return false }
+        return !race.isFinalized && !race.hasEnded
     }
 
     func polling() {

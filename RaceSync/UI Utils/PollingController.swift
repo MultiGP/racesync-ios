@@ -22,6 +22,7 @@ public class PollingController {
 
     // MARK: - Public Variables
 
+    /// The web app does every 15 seconds but the mobile apps expectation is different
     public static let refreshInterval: TimeInterval = 12
     
     /// The object that supplies the polling state and handles refreshes.
