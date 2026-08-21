@@ -313,7 +313,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         static let mapHeight: CGFloat = UIScreen.main.bounds.height/3 // 1/3 of the screen
         static let cellHeight: CGFloat = 50
         static let maxButtonSize: CGFloat = 100
-        static let buttonSpacing: CGFloat = 12
         static let htmlpadding: CGFloat = 12
     }
 

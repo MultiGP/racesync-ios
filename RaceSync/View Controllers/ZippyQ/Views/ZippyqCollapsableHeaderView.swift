@@ -18,39 +18,7 @@ class ZippyqCollapsableHeaderView: UICollectionReusableView {
     static let headerHeight: CGFloat = 58
     static let headerHeightWithSubtitle: CGFloat = 76
 
-    var title: String? {
-        didSet { titleLabel.text = title }
-    }
-
-    var contextualText: String? {
-        didSet {
-            contextualLabel.text = contextualText
-            updateAccessoryWidth()
-        }
-    }
-
-    var subtitle: String? {
-        didSet {
-            subtitleLabel.text = subtitle
-            updateMetadataVisibility()
-        }
-    }
-
-    var subtitleContext: String? {
-        didSet {
-            subtitleContextLabel.text = subtitleContext
-            updateMetadataVisibility()
-        }
-    }
-
     private(set) var isExpanded = false
-
-    var avatarImageUrls = [String?]() {
-        didSet {
-            updateAvatars()
-            updateContextualContent()
-        }
-    }
 
     var selectedBackgroundColor: UIColor? = Color.gray50
     var didTapView: (() -> Void)?
@@ -183,6 +151,7 @@ class ZippyqCollapsableHeaderView: UICollectionReusableView {
 
     fileprivate var isTouching = false
     fileprivate var accessoryWidthConstraint: Constraint?
+    fileprivate var avatarImageUrls = [String?]()
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -211,9 +180,13 @@ class ZippyqCollapsableHeaderView: UICollectionReusableView {
         super.prepareForReuse()
 
         didTapView = nil
+        titleLabel.text = nil
+        contextualLabel.text = nil
+        subtitleLabel.text = nil
+        subtitleContextLabel.text = nil
+        textPill.isHidden = true
         avatarImageUrls = []
-        subtitle = nil
-        subtitleContext = nil
+        updateAvatars()
         setHighlighted(false)
         setExpanded(false, animated: false)
     }
@@ -251,7 +224,24 @@ class ZippyqCollapsableHeaderView: UICollectionReusableView {
         isTouching = false
         setHighlighted(false)
     }
+    
+    // MARK: - Configuration
 
+    func configure(with viewModel: ZippyqRoundViewModel, isExpanded: Bool) {
+        titleLabel.text = viewModel.titleLabel
+        contextualLabel.text = viewModel.contextualLabel
+        subtitleLabel.text = viewModel.heatLabel
+        subtitleContextLabel.text = viewModel.scoringFormatLabel
+        textPill.text = viewModel.badge.title
+        textPill.titleLabel.textColor = viewModel.badge.titleColor
+        textPill.backgroundColor = viewModel.badge.backgroundColor
+        avatarImageUrls = viewModel.avatarImageUrls
+        updateAvatars()
+
+        self.isExpanded = isExpanded
+        updateExpansionState(animated: false)
+    }
+    
     func setExpanded(_ expanded: Bool, animated: Bool) {
         guard expanded != isExpanded else { return }
 
@@ -340,32 +330,13 @@ private extension ZippyqCollapsableHeaderView {
         accessoryWidthConstraint?.update(offset: width)
     }
 
-    func updateContextualContent() {
-        let displaysAvatars = !isExpanded && !avatarImageUrls.isEmpty
-        avatarStackView.isHidden = !displaysAvatars
-        avatarStackView.alpha = displaysAvatars ? 1 : 0
-        contextualLabel.isHidden = !isExpanded
-        contextualLabel.alpha = isExpanded ? 1 : 0
-    }
-
-    func updateMetadataVisibility() {
-        let displaysSubtitle = isExpanded && subtitle?.isEmpty == false
-        let displaysContext = isExpanded && subtitleContext?.isEmpty == false
-        subtitleLabel.isHidden = !displaysSubtitle
-        subtitleLabel.alpha = displaysSubtitle ? 1 : 0
-        subtitleContextLabel.isHidden = !displaysContext
-        subtitleContextLabel.alpha = displaysContext ? 1 : 0
-        metadataStackView.isHidden = !displaysSubtitle && !displaysContext
-        metadataStackView.alpha = displaysSubtitle || displaysContext ? 1 : 0
-    }
-
     func updateExpansionState(animated: Bool) {
         separatorView.isHidden = isExpanded
 
         let displaysAvatars = !isExpanded && !avatarImageUrls.isEmpty
         let displaysContext = isExpanded
-        let displaysSubtitle = isExpanded && subtitle?.isEmpty == false
-        let displaysSubtitleContext = isExpanded && subtitleContext?.isEmpty == false
+        let displaysSubtitle = isExpanded && subtitleLabel.text?.isEmpty == false
+        let displaysSubtitleContext = isExpanded && subtitleContextLabel.text?.isEmpty == false
         let displaysMetadata = displaysSubtitle || displaysSubtitleContext
         let expectedExpandedState = isExpanded
 

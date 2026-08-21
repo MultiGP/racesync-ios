@@ -31,12 +31,12 @@ class ZippyqViewController: UIViewController, RaceTabbable {
         collectionView.register(cellType: ZippyqFrequencyCollectionViewCell.self)
         collectionView.register(
             ZippyqCollapsableHeaderView.self,
-            forSupplementaryViewOfKind: Constants.roundHeaderKind,
+            forSupplementaryViewOfKind: ZippyqCollectionViewLayout.roundHeaderElementKind,
             withReuseIdentifier: ZippyqCollapsableHeaderView.identifier
         )
         collectionView.register(
             ZippyqHeaderView.self,
-            forSupplementaryViewOfKind: Constants.headerKind,
+            forSupplementaryViewOfKind: ZippyqCollectionViewLayout.headerElementKind,
             withReuseIdentifier: ZippyqHeaderView.identifier
         )
         collectionView.backgroundColor = .systemGroupedBackground
@@ -60,12 +60,7 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     fileprivate var isJoiningNextRound = false
 
     fileprivate enum Constants {
-        static let cellHeight: CGFloat = 60
-        static let sectionSpacing: CGFloat = 18
-        static let roundAnimationDuration: TimeInterval = 0.4
         static let fastUpwardScrollVelocity: CGFloat = -0.8
-        static let headerKind = "ZippyqHeader"
-        static let roundHeaderKind = "ZippyqRoundHeader"
     }
 
     // MARK: - Initialization
@@ -141,85 +136,39 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     }
 
     fileprivate func makeCollectionViewLayout() -> UICollectionViewLayout {
-        
-        let sectionProvider: UICollectionViewCompositionalLayoutSectionProvider = { [weak self] sectionIndex, _ in
-            guard let self else { return nil }
-            let sections = dataSource.snapshot().sectionIdentifiers
-            guard sections.indices.contains(sectionIndex) else { return nil }
-
-            let itemSize = NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(1),
-                heightDimension: .absolute(Constants.cellHeight)
-            )
-            let item = NSCollectionLayoutItem(layoutSize: itemSize)
-            let group = NSCollectionLayoutGroup.vertical(layoutSize: itemSize, subitems: [item])
-            let section = NSCollectionLayoutSection(group: group)
-
-            guard let viewModel = snapshotController.roundViewModel(for: sections[sectionIndex]) else {
-                return section
-            }
-            section.contentInsets.bottom = Constants.sectionSpacing
-
-            let displaysMetadata = snapshotController.isRoundExpanded(withId: viewModel.id)
-                && (viewModel.heatLabel != nil || viewModel.scoringFormatLabel != nil)
-            let headerHeight = displaysMetadata
-                ? ZippyqCollapsableHeaderView.headerHeightWithSubtitle
-                : ZippyqCollapsableHeaderView.headerHeight
-            let headerSize = NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(1),
-                heightDimension: .absolute(headerHeight)
-            )
-            section.boundarySupplementaryItems = [
-                NSCollectionLayoutBoundarySupplementaryItem(
-                    layoutSize: headerSize,
-                    elementKind: Constants.roundHeaderKind,
-                    alignment: .top
-                )
-            ]
-            return section
-        }
-
         let displaysHeader = dataController.canJoinQueues
         let expandedHeaderHeight = headerLayoutMetrics?.expandedHeight ?? ZippyqHeaderView.initialLayoutHeight
         let compactHeaderHeight = headerLayoutMetrics?.compactHeight ?? expandedHeaderHeight
-        let headerSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1),
-            heightDimension: .absolute(displaysHeader ? expandedHeaderHeight : 0.01)
-        )
-        let header = NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: headerSize,
-            elementKind: Constants.headerKind,
-            alignment: .top
-        )
-        header.pinToVisibleBounds = true
-
-        let configuration = UICollectionViewCompositionalLayoutConfiguration()
-        configuration.boundarySupplementaryItems = [header]
-        let layout = ZippyqCollectionViewLayout(
-            headerElementKind: Constants.headerKind,
+        return ZippyqCollectionViewLayout(
             displaysHeader: displaysHeader,
             expandedHeaderHeight: expandedHeaderHeight,
             compactHeaderHeight: compactHeaderHeight,
-            sectionProvider: sectionProvider,
-            configuration: configuration
-        )
-        layout.headerCollapseProgress = headerCollapseProgress
-        return layout
+            headerCollapseProgress: headerCollapseProgress
+        ) { [weak self] sectionIndex in
+            guard let self else { return nil }
+            let sections = dataSource.snapshot().sectionIdentifiers
+            guard sections.indices.contains(sectionIndex),
+                  let viewModel = snapshotController.roundViewModel(for: sections[sectionIndex]) else {
+                return nil
+            }
+            return ZippyqCollectionViewLayout.RoundSectionConfiguration(
+                viewModel: viewModel,
+                isExpanded: snapshotController.isRoundExpanded(withId: viewModel.id)
+            )
+        }
     }
 
     // MARK: - Data Update
 
-    fileprivate func updateContent() {
-        snapshotController.update(with: dataController.roundViewModels)
-        configureHeaderView()
-        applySnapshot(animatingDifferences: false, reloadingExistingItems: true)
+    fileprivate func refreshView() {
+        displayContent()
+        dataController.loadContent()
     }
 
-    fileprivate func refreshView() {
+    fileprivate func displayContent() {
         snapshotController.update(with: dataController.roundViewModels)
         configureHeaderView()
         applySnapshot(animatingDifferences: false, reloadingExistingItems: true)
-        dataController.loadContent()
     }
 
     fileprivate func configureHeaderView() {
@@ -232,7 +181,6 @@ class ZippyqViewController: UIViewController, RaceTabbable {
         if let headerView, displaysHeader {
             configure(headerView)
         }
-        collectionView.collectionViewLayout.invalidateLayout()
     }
 
     fileprivate func applySnapshot(animatingDifferences: Bool,
@@ -245,22 +193,9 @@ class ZippyqViewController: UIViewController, RaceTabbable {
         }
 
         collectionView.collectionViewLayout.invalidateLayout()
-        let apply = { [weak self] in
-            guard let self else { return }
-            dataSource.apply(snapshot, animatingDifferences: animatingDifferences) {
-                self.configureVisibleRoundHeaders()
-                completion?()
-            }
-        }
-        if animatingDifferences {
-            UIView.animate(
-                withDuration: Constants.roundAnimationDuration,
-                delay: 0,
-                options: [.beginFromCurrentState, .allowUserInteraction, .curveEaseInOut],
-                animations: apply
-            )
-        } else {
-            apply()
+        dataSource.apply(snapshot, animatingDifferences: animatingDifferences) { [weak self] in
+            self?.configureVisibleRoundHeaders()
+            completion?()
         }
     }
 
@@ -303,39 +238,28 @@ class ZippyqViewController: UIViewController, RaceTabbable {
         }
     }
 
-    @objc fileprivate func didTapAddMe(_ sender: FrequencyActionButton) {
-        guard let viewModel = frequencyViewModel(for: sender) else {
-            sender.isLoading = false
-            return
+    fileprivate func performQueueAction(_ actionButton: FrequencyActionButton,
+                                        viewModel: ZippyqFrequencyViewModel) {
+        let completion: (NSError?) -> Void = { [weak self, weak actionButton] error in
+            self?.completeAction(actionButton, error: error)
         }
-
-        dataController.addPilot(slot: viewModel.slot, cycle: viewModel.cycle,
-                                 heat: viewModel.heat) { [weak self, weak sender] error in
-            self?.completeAction(sender, error: error)
-        }
-    }
-
-    @objc fileprivate func didTapSwitch(_ sender: FrequencyActionButton) {
-        guard let viewModel = frequencyViewModel(for: sender) else {
-            sender.isLoading = false
-            return
-        }
-
-        dataController.addPilot(slot: viewModel.slot, cycle: viewModel.cycle,
-                                 heat: viewModel.heat) { [weak self, weak sender] error in
-            self?.completeAction(sender, error: error)
-        }
-    }
-
-    @objc fileprivate func didTapRemove(_ sender: FrequencyActionButton) {
-        guard let viewModel = frequencyViewModel(for: sender) else {
-            sender.isLoading = false
-            return
-        }
-
-        dataController.removePilot(slot: viewModel.slot, cycle: viewModel.cycle,
-                                    heat: viewModel.heat) { [weak self, weak sender] error in
-            self?.completeAction(sender, error: error)
+        switch viewModel.action {
+        case .addMe, .switch:
+            dataController.addPilot(
+                slot: viewModel.slot,
+                cycle: viewModel.cycle,
+                heat: viewModel.heat,
+                completion: completion
+            )
+        case .remove:
+            dataController.removePilot(
+                slot: viewModel.slot,
+                cycle: viewModel.cycle,
+                heat: viewModel.heat,
+                completion: completion
+            )
+        case nil:
+            actionButton.isLoading = false
         }
     }
 
@@ -359,7 +283,7 @@ class ZippyqViewController: UIViewController, RaceTabbable {
 extension ZippyqViewController: ZippyqDataControllerDelegate {
 
     func zippyqDataControllerDidUpdateContent(_ controller: ZippyqDataController) {
-        updateContent()
+        displayContent()
     }
 }
 
@@ -375,15 +299,26 @@ private extension ZippyqViewController {
             }
 
             let cell: ZippyqFrequencyCollectionViewCell = collectionView.dequeueReusableCell(forIndexPath: indexPath)
-            cell.configure(with: viewModel, showsTopSeparator: indexPath.item > 0)
-            configureActionButton(for: cell)
+            let allowsQueueActions = dataController.canJoinQueues
+            cell.configure(
+                with: viewModel,
+                showsTopSeparator: indexPath.item > 0,
+                allowsQueueActions: allowsQueueActions
+            )
+            if allowsQueueActions {
+                cell.didTapAction = { [weak self] actionButton in
+                    self?.performQueueAction(actionButton, viewModel: viewModel)
+                }
+            } else {
+                cell.didTapAction = nil
+            }
             return cell
         }
 
         dataSource.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath in
             guard let self else { return nil }
 
-            if kind == Constants.headerKind {
+            if kind == ZippyqCollectionViewLayout.headerElementKind {
                 let header = collectionView.dequeueReusableSupplementaryView(
                     ofKind: kind,
                     withReuseIdentifier: ZippyqHeaderView.identifier,
@@ -396,7 +331,7 @@ private extension ZippyqViewController {
                 return header
             }
 
-            guard kind == Constants.roundHeaderKind else { return nil }
+            guard kind == ZippyqCollectionViewLayout.roundHeaderElementKind else { return nil }
             let sections = dataSource.snapshot().sectionIdentifiers
             guard sections.indices.contains(indexPath.section),
                   let viewModel = snapshotController.roundViewModel(for: sections[indexPath.section]) else {
@@ -430,26 +365,23 @@ private extension ZippyqViewController {
 
     func configure(_ header: ZippyqCollapsableHeaderView?, with viewModel: ZippyqRoundViewModel) {
         guard let header else { return }
-        header.title = viewModel.titleLabel
-        header.subtitle = viewModel.heatLabel
-        header.subtitleContext = viewModel.scoringFormatLabel
-        header.contextualText = viewModel.contextualLabel
-        header.setExpanded(snapshotController.isRoundExpanded(withId: viewModel.id), animated: false)
-        header.avatarImageUrls = viewModel.avatarImageUrls
-        header.textPill.text = viewModel.badge.title
-        header.textPill.titleLabel.textColor = viewModel.badge.titleColor
-        header.textPill.backgroundColor = viewModel.badge.backgroundColor
+        header.configure(
+            with: viewModel,
+            isExpanded: snapshotController.isRoundExpanded(withId: viewModel.id)
+        )
         header.didTapView = { [weak self] in
             self?.toggleRound(withId: viewModel.id)
         }
     }
 
     func configureVisibleRoundHeaders() {
-        let indexPaths = collectionView.indexPathsForVisibleSupplementaryElements(ofKind: Constants.roundHeaderKind)
+        let indexPaths = collectionView.indexPathsForVisibleSupplementaryElements(
+            ofKind: ZippyqCollectionViewLayout.roundHeaderElementKind
+        )
         let sections = dataSource.snapshot().sectionIdentifiers
         for indexPath in indexPaths where sections.indices.contains(indexPath.section) {
             let header = collectionView.supplementaryView(
-                forElementKind: Constants.roundHeaderKind,
+                forElementKind: ZippyqCollectionViewLayout.roundHeaderElementKind,
                 at: indexPath
             ) as? ZippyqCollapsableHeaderView
             if let viewModel = snapshotController.roundViewModel(for: sections[indexPath.section]) {
@@ -458,37 +390,6 @@ private extension ZippyqViewController {
         }
     }
 
-    func configureActionButton(for cell: ZippyqFrequencyCollectionViewCell) {
-        cell.actionButton.removeTarget(nil, action: nil, for: .touchUpInside)
-
-        guard dataController.canJoinQueues else {
-            cell.actionButton.action = nil
-            return
-        }
-
-        switch cell.actionButton.action {
-        case .addMe:
-            cell.actionButton.addTarget(self, action: #selector(didTapAddMe(_:)), for: .touchUpInside)
-        case .switch:
-            cell.actionButton.addTarget(self, action: #selector(didTapSwitch(_:)), for: .touchUpInside)
-        case .remove:
-            cell.actionButton.addTarget(self, action: #selector(didTapRemove(_:)), for: .touchUpInside)
-        case nil:
-            break
-        }
-    }
-
-    func frequencyViewModel(for actionButton: FrequencyActionButton) -> ZippyqFrequencyViewModel? {
-        let point = actionButton.convert(
-            CGPoint(x: actionButton.bounds.midX, y: actionButton.bounds.midY),
-            to: collectionView
-        )
-        guard let indexPath = collectionView.indexPathForItem(at: point),
-              let identifier = dataSource.itemIdentifier(for: indexPath) else {
-            return nil
-        }
-        return snapshotController.frequencyViewModel(for: identifier)
-    }
 }
 
 // MARK: - Round State
@@ -516,7 +417,7 @@ private extension ZippyqViewController {
         let sectionIdentifier = SectionIdentifier.round(roundId)
         guard let section = dataSource.snapshot().indexOfSection(sectionIdentifier) else { return }
         let header = collectionView.supplementaryView(
-            forElementKind: Constants.roundHeaderKind,
+            forElementKind: ZippyqCollectionViewLayout.roundHeaderElementKind,
             at: IndexPath(item: 0, section: section)
         ) as? ZippyqCollapsableHeaderView
         header?.setExpanded(expanded, animated: true)
@@ -529,26 +430,13 @@ private extension ZippyqViewController {
         collectionView.layoutIfNeeded()
         let headerIndexPath = IndexPath(item: 0, section: section)
         guard let headerAttributes = collectionView.layoutAttributesForSupplementaryElement(
-            ofKind: Constants.roundHeaderKind,
+            ofKind: ZippyqCollectionViewLayout.roundHeaderElementKind,
             at: headerIndexPath
-        ) else { return }
-
-        let topInset = collectionView.adjustedContentInset.top
-        var normalizedOffset = headerAttributes.frame.minY
-            - compactHeaderHeight
-        if normalizedOffset < headerCollapseRange {
-            normalizedOffset = 0
+        ), let layout = collectionView.collectionViewLayout as? ZippyqCollectionViewLayout,
+           let targetOffset = layout.targetContentOffset(forRoundHeaderAt: headerAttributes.frame.minY) else {
+            return
         }
-        var targetOffset = normalizedOffset - topInset
-        let minimumOffset = -collectionView.adjustedContentInset.top
-        let maximumOffset = max(
-            minimumOffset,
-            collectionView.contentSize.height
-                - collectionView.bounds.height
-                + collectionView.adjustedContentInset.bottom
-        )
-        targetOffset = min(max(targetOffset, minimumOffset), maximumOffset)
-        collectionView.setContentOffset(CGPoint(x: 0, y: targetOffset), animated: true)
+        collectionView.setContentOffset(targetOffset, animated: true)
     }
 }
 
@@ -631,10 +519,6 @@ private extension ZippyqViewController {
 
     var expandedHeaderHeight: CGFloat {
         return headerLayoutMetrics?.expandedHeight ?? ZippyqHeaderView.initialLayoutHeight
-    }
-
-    var compactHeaderHeight: CGFloat {
-        return headerLayoutMetrics?.compactHeight ?? expandedHeaderHeight
     }
 
     func setHeaderCollapseProgress(_ progress: CGFloat) {

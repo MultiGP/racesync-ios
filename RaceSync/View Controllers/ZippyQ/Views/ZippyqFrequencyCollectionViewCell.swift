@@ -12,6 +12,7 @@ import SnapKit
 class ZippyqFrequencyCollectionViewCell: UICollectionViewCell {
 
     let frequencyView = ZippyqFrequencyContentView()
+    var didTapAction: ((FrequencyActionButton) -> Void)?
 
     var actionButton: FrequencyActionButton {
         return frequencyView.actionButton
@@ -24,18 +25,25 @@ class ZippyqFrequencyCollectionViewCell: UICollectionViewCell {
         frequencyView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+        actionButton.addTarget(self, action: #selector(didTapActionButton), for: .touchUpInside)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configure(with viewModel: ZippyqFrequencyViewModel, showsTopSeparator: Bool) {
+    func configure(with viewModel: ZippyqFrequencyViewModel,
+                   showsTopSeparator: Bool,
+                   allowsQueueActions: Bool) {
         frequencyView.configure(with: viewModel, showsTopSeparator: showsTopSeparator)
+        if !allowsQueueActions {
+            actionButton.action = nil
+        }
     }
 
     override func prepareForReuse() {
         super.prepareForReuse()
+        didTapAction = nil
         frequencyView.prepareForReuse()
     }
 
@@ -43,5 +51,9 @@ class ZippyqFrequencyCollectionViewCell: UICollectionViewCell {
         didSet {
             frequencyView.isHighlighted = isHighlighted
         }
+    }
+
+    @objc private func didTapActionButton() {
+        didTapAction?(actionButton)
     }
 }

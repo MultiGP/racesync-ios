@@ -11,6 +11,18 @@ import UIKit
 /// Pins and clips the ZippyQ header without changing the collection view's content geometry.
 final class ZippyqCollectionViewLayout: UICollectionViewCompositionalLayout {
 
+    struct RoundSectionConfiguration {
+        let displaysMetadata: Bool
+
+        init(viewModel: ZippyqRoundViewModel, isExpanded: Bool) {
+            displaysMetadata = isExpanded
+                && (viewModel.heatLabel != nil || viewModel.scoringFormatLabel != nil)
+        }
+    }
+
+    static let headerElementKind = "ZippyqHeader"
+    static let roundHeaderElementKind = "ZippyqRoundHeader"
+
     // MARK: - Public Variables
 
     var headerCollapseProgress: CGFloat = 0 {
@@ -23,22 +35,67 @@ final class ZippyqCollectionViewLayout: UICollectionViewCompositionalLayout {
 
     let displaysHeader: Bool
 
-    private let headerElementKind: String
     private let expandedHeaderHeight: CGFloat
     private let compactHeaderHeight: CGFloat
 
+    private enum Constants {
+        static let cellHeight: CGFloat = 60
+        static let sectionSpacing: CGFloat = 18
+    }
+
     // MARK: - Initialization
 
-    init(headerElementKind: String,
-         displaysHeader: Bool,
+    init(displaysHeader: Bool,
          expandedHeaderHeight: CGFloat,
          compactHeaderHeight: CGFloat,
-         sectionProvider: @escaping UICollectionViewCompositionalLayoutSectionProvider,
-         configuration: UICollectionViewCompositionalLayoutConfiguration) {
-        self.headerElementKind = headerElementKind
+         headerCollapseProgress: CGFloat,
+         roundSectionProvider: @escaping (Int) -> RoundSectionConfiguration?) {
         self.displaysHeader = displaysHeader
         self.expandedHeaderHeight = expandedHeaderHeight
         self.compactHeaderHeight = compactHeaderHeight
+        self.headerCollapseProgress = headerCollapseProgress
+
+        let sectionProvider: UICollectionViewCompositionalLayoutSectionProvider = { sectionIndex, _ in
+            let itemSize = NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1),
+                heightDimension: .absolute(Constants.cellHeight)
+            )
+            let item = NSCollectionLayoutItem(layoutSize: itemSize)
+            let group = NSCollectionLayoutGroup.vertical(layoutSize: itemSize, subitems: [item])
+            let section = NSCollectionLayoutSection(group: group)
+
+            guard let round = roundSectionProvider(sectionIndex) else { return section }
+            section.contentInsets.bottom = Constants.sectionSpacing
+            let headerHeight = round.displaysMetadata
+                ? ZippyqCollapsableHeaderView.headerHeightWithSubtitle
+                : ZippyqCollapsableHeaderView.headerHeight
+            let headerSize = NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1),
+                heightDimension: .absolute(headerHeight)
+            )
+            section.boundarySupplementaryItems = [
+                NSCollectionLayoutBoundarySupplementaryItem(
+                    layoutSize: headerSize,
+                    elementKind: ZippyqCollectionViewLayout.roundHeaderElementKind,
+                    alignment: .top
+                )
+            ]
+            return section
+        }
+
+        let headerSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1),
+            heightDimension: .absolute(displaysHeader ? expandedHeaderHeight : 0.01)
+        )
+        let header = NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: headerSize,
+            elementKind: ZippyqCollectionViewLayout.headerElementKind,
+            alignment: .top
+        )
+        header.pinToVisibleBounds = true
+
+        let configuration = UICollectionViewCompositionalLayoutConfiguration()
+        configuration.boundarySupplementaryItems = [header]
         super.init(sectionProvider: sectionProvider, configuration: configuration)
     }
 
@@ -71,12 +128,33 @@ final class ZippyqCollectionViewLayout: UICollectionViewCompositionalLayout {
         updateHeaderAttributes(attributes)
         return attributes
     }
+
+    func targetContentOffset(forRoundHeaderAt minY: CGFloat) -> CGPoint? {
+        guard let collectionView else { return nil }
+
+        let topInset = collectionView.adjustedContentInset.top
+        let collapseRange = expandedHeaderHeight - compactHeaderHeight
+        var normalizedOffset = minY - compactHeaderHeight
+        if normalizedOffset < collapseRange {
+            normalizedOffset = 0
+        }
+
+        let minimumOffset = -topInset
+        let maximumOffset = max(
+            minimumOffset,
+            collectionView.contentSize.height
+                - collectionView.bounds.height
+                + collectionView.adjustedContentInset.bottom
+        )
+        let offset = min(max(normalizedOffset - topInset, minimumOffset), maximumOffset)
+        return CGPoint(x: collectionView.contentOffset.x, y: offset)
+    }
 }
 
 private extension ZippyqCollectionViewLayout {
 
     func updateHeaderAttributes(_ attributes: UICollectionViewLayoutAttributes) {
-        guard attributes.representedElementKind == headerElementKind else { return }
+        guard attributes.representedElementKind == Self.headerElementKind else { return }
 
         var frame = attributes.frame
         if displaysHeader {
