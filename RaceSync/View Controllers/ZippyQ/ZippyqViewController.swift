@@ -53,12 +53,7 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     }()
 
     fileprivate lazy var dataSource: DataSource = makeDataSource()
-    fileprivate lazy var activityIndicatorView: ActivityLoadingView = {
-        let view = ActivityLoadingView(style: .medium)
-        view.title = "Loading ZippyQ..."
-        view.hidesWhenStopped = true
-        return view
-    }()
+
     fileprivate weak var headerView: ZippyqHeaderView?
     fileprivate let dataController: ZippyqDataController
     fileprivate let snapshotController = ZippyqSnapshotController()
@@ -68,6 +63,13 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     fileprivate var lastHeaderScrollOffset: CGFloat = 0
     fileprivate var isJoiningNextRound = false
     fileprivate var emptyStateError: EmptyStateViewModel?
+
+    fileprivate lazy var activityIndicatorView: ActivityLoadingView = {
+        let view = ActivityLoadingView(style: .medium)
+        view.title = "Loading ZippyQ..."
+        view.hidesWhenStopped = true
+        return view
+    }()
 
     fileprivate enum HeaderCollapseTracking {
         case contentOffset
@@ -366,8 +368,12 @@ extension ZippyqViewController: EmptyDataSetSource {
 
 extension ZippyqViewController: EmptyDataSetDelegate {
 
+    func emptyDataSetShouldDisplay(_ scrollView: UIScrollView) -> Bool {
+        return emptyStateError != nil
+    }
+
     func emptyDataSetShouldAllowScroll(_ scrollView: UIScrollView) -> Bool {
-        return false
+        return dataController.hasLoadedContent
     }
 }
 
@@ -511,7 +517,7 @@ private extension ZippyqViewController {
         UIView.animate(
             withDuration: 0.25,
             delay: 0,
-            options: [.beginFromCurrentState, .curveEaseInOut]
+            options: [.allowUserInteraction, .beginFromCurrentState, .curveEaseInOut]
         ) { [weak self] in
             guard let self else { return }
             if shouldExpandHeader {
@@ -542,11 +548,20 @@ private extension ZippyqViewController {
     func setVisibleRoundHeader(withId roundId: String, expanded: Bool) {
         let sectionIdentifier = SectionIdentifier.round(roundId)
         guard let section = dataSource.snapshot().indexOfSection(sectionIdentifier) else { return }
+        let headerIndexPath = IndexPath(item: 0, section: section)
+        guard collectionView.indexPathsForVisibleSupplementaryElements(
+            ofKind: ZippyqCollectionViewLayout.roundHeaderElementKind
+        ).contains(headerIndexPath) else { return }
+
         let header = collectionView.supplementaryView(
             forElementKind: ZippyqCollectionViewLayout.roundHeaderElementKind,
-            at: IndexPath(item: 0, section: section)
+            at: headerIndexPath
         ) as? ZippyqCollapsableHeaderView
-        header?.setExpanded(expanded, animated: true)
+        guard let header else { return }
+
+        (collectionView.collectionViewLayout as? ZippyqCollectionViewLayout)?
+            .prepareAccordionTransition(forSection: section)
+        header.setExpanded(expanded, animated: true)
     }
 
     func scrollRoundToTop(withId roundId: String) {
@@ -632,6 +647,8 @@ extension ZippyqViewController: UICollectionViewDelegate {
         }
 
         if headerCollapseTracking == .relativeOffset {
+            guard headerCollapseProgress > 0, headerCollapseProgress < 1 else { return }
+
             let projectedProgress = headerCollapseProgress
                 + (projectedOffset - currentOffset) / headerCollapseRange
             let targetProgress: CGFloat = projectedProgress >= 0.5 ? 1 : 0

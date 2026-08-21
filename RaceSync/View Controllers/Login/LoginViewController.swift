@@ -94,21 +94,20 @@ class LoginViewController: UIViewController {
         let titleColor = Color.dynamic(light: Color.blue, dark: Color.black)
         
         let button = ActionButton(type: .system)
+        button.addTarget(self, action:#selector(didPressLoginButton), for: .touchUpInside)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 21, weight: .regular)
         button.setTitleColor(titleColor, for: .normal)
         button.setTitle("Login", for: .normal)
         button.backgroundColor = Color.white.withAlphaComponent(0.7)
-        button.layer.cornerRadius = Constants.padding/2
+        button.layer.cornerCurve = .continuous
         button.layer.borderColor = Color.gray100.cgColor
         button.layer.borderWidth = 0.5
-        button.addTarget(self, action:#selector(didPressLoginButton), for: .touchUpInside)
         
         if #available(iOS 26.0, *) {
             button.layer.cornerRadius = Constants.actionButtonHeight/2
         } else {
             button.layer.cornerRadius = Constants.padding/2
         }
-                
         return button
     }()
 
@@ -128,7 +127,6 @@ class LoginViewController: UIViewController {
         let attributedString = NSMutableAttributedString(string: label, attributes: attributes)
         attributedString.setAttributes(linkAttributes, range: NSString(string: label).range(of: link))
         button.setAttributedTitle(attributedString, for: .normal)
-
         return button
     }()
 

@@ -107,6 +107,8 @@ class ZippyqHeaderView: UICollectionReusableView {
 
     fileprivate lazy var joinButton: ActionButton = {
         let button = ActionButton(type: .system)
+        button.addTarget(self, action: #selector(didTapJoinButton), for: .touchUpInside)
+
         button.setTitle("Join Next Available", for: .normal)
         button.setTitleColor(Color.light, for: .normal)
         button.setImage(joinButtonImage?.withTintColor(Color.light, renderingMode: .alwaysOriginal), for: .normal)
@@ -117,10 +119,16 @@ class ZippyqHeaderView: UICollectionReusableView {
                                                bottom: Constants.padding/2, right: Constants.padding)
         button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -6, bottom: 0, right: 6)
         button.layer.cornerCurve = .continuous
-        button.layer.cornerRadius = 14
-        button.bouncesOnPress = true
+        button.layer.borderColor = Color.gray100.cgColor
+        button.layer.borderWidth = 0.5
         button.spinnerView.color = Color.light
-        button.addTarget(self, action: #selector(didTapJoinButton), for: .touchUpInside)
+        button.bouncesOnPress = true
+
+        if #available(iOS 26.0, *) {
+            button.layer.cornerRadius = Constants.joinButtonHeight/2
+        } else {
+            button.layer.cornerRadius = 14
+        }
         return button
     }()
 
@@ -158,7 +166,7 @@ class ZippyqHeaderView: UICollectionReusableView {
     fileprivate enum Constants {
         static let padding = UniversalConstants.padding
         static let contentSpacing: CGFloat = 12
-        static let joinButtonHeight: CGFloat = 48
+        static let joinButtonHeight: CGFloat = 50
         static let sectionSpacing: CGFloat = 18
         static let availabilityTitleFont = UIFont.systemFont(ofSize: 13, weight: .semibold)
         static let statsFont = UIFont.systemFont(ofSize: 14, weight: .medium)

@@ -37,10 +37,11 @@ final class ZippyqCollectionViewLayout: UICollectionViewCompositionalLayout {
 
     private let expandedHeaderHeight: CGFloat
     private let compactHeaderHeight: CGFloat
+    private var accordionTransitionSection: Int?
 
     private enum Constants {
         static let cellHeight: CGFloat = 60
-        static let sectionSpacing: CGFloat = 18
+        static let sectionSpacing: CGFloat = 18 // native spacing between section views in UITableView.grouped
     }
 
     // MARK: - Initialization
@@ -85,7 +86,7 @@ final class ZippyqCollectionViewLayout: UICollectionViewCompositionalLayout {
 
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .absolute(displaysHeader ? expandedHeaderHeight : 0.01)
+            heightDimension: .absolute(displaysHeader ? expandedHeaderHeight : 0)
         )
         let header = NSCollectionLayoutBoundarySupplementaryItem(
             layoutSize: headerSize,
@@ -136,7 +137,9 @@ final class ZippyqCollectionViewLayout: UICollectionViewCompositionalLayout {
             .copy() as? UICollectionViewLayoutAttributes else {
             return nil
         }
-        applyAccordionTransition(to: attributes, at: itemIndexPath)
+        if itemIndexPath.section == accordionTransitionSection {
+            applyAccordionTransition(to: attributes, at: itemIndexPath)
+        }
         return attributes
     }
 
@@ -147,8 +150,19 @@ final class ZippyqCollectionViewLayout: UICollectionViewCompositionalLayout {
             .copy() as? UICollectionViewLayoutAttributes else {
             return nil
         }
-        applyAccordionTransition(to: attributes, at: itemIndexPath)
+        if itemIndexPath.section == accordionTransitionSection {
+            applyAccordionTransition(to: attributes, at: itemIndexPath)
+        }
         return attributes
+    }
+
+    override func finalizeCollectionViewUpdates() {
+        super.finalizeCollectionViewUpdates()
+        accordionTransitionSection = nil
+    }
+
+    func prepareAccordionTransition(forSection section: Int) {
+        accordionTransitionSection = section
     }
 
     func targetContentOffset(forRoundHeaderAt minY: CGFloat) -> CGPoint? {

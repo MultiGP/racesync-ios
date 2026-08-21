@@ -131,8 +131,8 @@ public class Race: Mappable, Descriptable {
         disableSlotAutoPopulation <- (map[ParamKey.disableSlotAutoPopulation], EnumTransform<QualifyingType>())
         maxZippyqDepth <- (map[ParamKey.maxZippyqDepth], IntegerTransform())
         zippyqIterator <- (map[ParamKey.zippyqIterator], IntegerTransform())
-        zippyNoKiosk <- map[ParamKey.zippyNoKiosk]
-        predictZippyqTimes <- map[ParamKey.predictZippyqTimes]
+        zippyNoKiosk <- (map[ParamKey.zippyNoKiosk], BooleanTransform())
+        predictZippyqTimes <- (map[ParamKey.predictZippyqTimes], BooleanTransform())
         maxBatteriesForQualifying <- (map[ParamKey.maxBatteriesForQualifying], IntegerTransform())
 
         urlName <- map[ParamKey.urlName]

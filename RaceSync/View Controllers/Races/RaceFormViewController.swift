@@ -105,7 +105,7 @@ class RaceFormViewController: UIViewController {
 
             // Only applicable for ZippyQ
             if data.qualifying == QualifyingType.open.rawValue {
-                specific += [.rounds, .zDepth, .zIterator, .zNoKiosk, .zPrediction]
+                specific += [.rounds, .zDepth, .zIterator, .zNoKiosk]
             }
 
             specific += [.notify]

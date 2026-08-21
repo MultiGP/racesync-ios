@@ -38,7 +38,7 @@ final class ZippyqDataController {
     weak var delegate: ZippyqDataControllerDelegate?
 
     var canJoinQueues: Bool {
-        return currentUser != nil && race?.isJoined == true
+        return currentUser != nil && race?.isJoined == true && race?.zippyNoKiosk == true
     }
 
     var smartJoinRecommendation: ZippyqSmartJoinRecommendation? {
@@ -116,7 +116,7 @@ final class ZippyqDataController {
 
     func startPolling() {
         guard race?.inProgress == true else {
-            Clog.log("Skipping polling, race is not in progress anymore")
+            Clog.log("Skipping polling, race is not in progress")
             return
         }
         

@@ -119,7 +119,6 @@ public struct RaceData: Descriptable {
         params[ParamKey.zippyqIterator] = zippyqIterator
         params[ParamKey.zippyNoKiosk] = zippyqNoKiosk.intValue
         params[ParamKey.predictZippyqTimes] = zippyqPredictTimes.intValue
-
         return params
     }
 
