@@ -1,5 +1,5 @@
 //
-//  ZippyqController.swift
+//  ZippyqDataController.swift
 //  RaceSync
 //
 //  Created by Ignacio Romero on 2026-08-15.
@@ -9,8 +9,8 @@
 import Foundation
 import RaceSyncAPI
 
-protocol ZippyqControllerDelegate: AnyObject {
-    func zippyqControllerDidUpdateContent(_ controller: ZippyqController)
+protocol ZippyqDataControllerDelegate: AnyObject {
+    func zippyqDataControllerDidUpdateContent(_ controller: ZippyqDataController)
 }
 
 /// Coordinates ZippyQ data and user actions independently from its view controller.
@@ -30,15 +30,11 @@ protocol ZippyqControllerDelegate: AnyObject {
 ///
 /// This controller does not own view layout, expansion state, loading indicators, navigation,
 /// alert presentation, or retry behavior.
-final class ZippyqController {
+final class ZippyqDataController {
 
-    weak var delegate: ZippyqControllerDelegate?
+    // MARK: - Public Variables
 
-    private(set) var roundViewModels = [ZippyqRoundViewModel]()
-    private(set) var frequencies = [Frequency]()
-    private(set) var frequencyQueueCounts = [String: Int]()
-    private(set) var currentUserStats: ZippyqPilotStats?
-    private(set) var selectedFrequencies = Set<String>()
+    weak var delegate: ZippyqDataControllerDelegate?
 
     var canJoinQueues: Bool {
         return currentUser != nil && race?.isJoined == true
@@ -75,9 +71,11 @@ final class ZippyqController {
         )
     }
 
+    // MARK: - Private Variables
+
     fileprivate weak var raceController: RaceController?
     fileprivate let raceId: ObjectId
-    fileprivate let api: ZippyqApiInterface = ZippyqApi()
+    fileprivate let zippyqApi: ZippyqApiInterface = ZippyqApi()
     fileprivate let smartJoiner: ZippyqSmartJoinable = ZippyqSmartJoiner()
     fileprivate let userDefaults = UserDefaults.standard
     fileprivate let pollingController = PollingController(refreshInterval: 10.0)
@@ -86,6 +84,12 @@ final class ZippyqController {
     fileprivate var revisionHash: ZippyqRevisionHash?
     fileprivate var hasLoadedContent = false
     fileprivate var isLoadingContent = false
+    
+    private(set) var roundViewModels = [ZippyqRoundViewModel]()
+    private(set) var frequencies = [Frequency]()
+    private(set) var frequencyQueueCounts = [String: Int]()
+    private(set) var currentUserStats: ZippyqPilotStats?
+    private(set) var selectedFrequencies = Set<String>()
 
     fileprivate var race: Race? {
         return raceController?.race
@@ -99,11 +103,15 @@ final class ZippyqController {
         return "com.multigp.racesync.preferences.zippyq.frequencies.\(raceId)"
     }
 
+    // MARK: - Initialization
+
     init(raceController: RaceController) {
         self.raceController = raceController
         self.raceId = raceController.raceId
         pollingController.delegate = self
     }
+
+    // MARK: - Data Load
 
     func startPolling() {
         guard race?.inProgress == true else {
@@ -162,6 +170,8 @@ final class ZippyqController {
         )
     }
 
+    // MARK: - Actions
+
     func addPilot(slot: Int, cycle: Int, heat: Int, completion: @escaping CompletionBlock) {
         guard let user = currentUser else {
             completion(missingCurrentUserError)
@@ -169,7 +179,7 @@ final class ZippyqController {
         }
 
         performAction({ completionBlock in
-            api.addPilot(to: raceId, pilotId: user.id, slot: slot,
+            zippyqApi.addPilot(to: raceId, pilotId: user.id, slot: slot,
                          cycle: cycle, heat: heat, completion: completionBlock)
         }, completion: completion)
     }
@@ -181,7 +191,7 @@ final class ZippyqController {
         }
 
         performAction({ completionBlock in
-            api.removePilot(from: raceId, pilotId: user.id, slot: slot,
+            zippyqApi.removePilot(from: raceId, pilotId: user.id, slot: slot,
                             cycle: cycle, heat: heat, completion: completionBlock)
         }, completion: completion)
     }
@@ -209,14 +219,16 @@ final class ZippyqController {
     }
 }
 
-extension ZippyqController: PollingControllerDelegate {
+// MARK: - PollingControllerDelegate
+
+extension ZippyqDataController: PollingControllerDelegate {
 
     func isPollEnabled() -> Bool {
         return race?.isFinalized == false
     }
 
     func polling() {
-        api.getRevision(for: raceId, revision: revisionHash) { [weak self] revision, error in
+        zippyqApi.getRevision(for: raceId, revision: revisionHash) { [weak self] revision, error in
             guard let self else { return }
 
             if let error {
@@ -228,7 +240,7 @@ extension ZippyqController: PollingControllerDelegate {
     }
 }
 
-private extension ZippyqController {
+private extension ZippyqDataController {
 
     func mostRecentlyAssignedFrequency(excluding recommendation: ZippyqSmartJoinRecommendation) -> String? {
         guard let userId = currentUser?.id else { return nil }
@@ -270,7 +282,7 @@ private extension ZippyqController {
         guard !isLoadingContent else { return }
         isLoadingContent = true
 
-        api.getQueues(for: raceId) { [weak self] response, error in
+        zippyqApi.getQueues(for: raceId) { [weak self] response, error in
             guard let self else { return }
             isLoadingContent = false
 
@@ -291,7 +303,7 @@ private extension ZippyqController {
         updateQueueCounts()
         updateCurrentUserStats()
         updateRoundViewModels()
-        delegate?.zippyqControllerDidUpdateContent(self)
+        delegate?.zippyqDataControllerDidUpdateContent(self)
     }
 
     func updateSelectedFrequencies() {

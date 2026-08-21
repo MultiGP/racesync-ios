@@ -1,5 +1,5 @@
 //
-//  ZippyqFrequencyTableViewCell.swift
+//  ZippyqFrequencyContentView.swift
 //  RaceSync
 //
 //  Created by Ignacio Romero on 2026-07-29.
@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import AlamofireImage
 
-class ZippyqFrequencyTableViewCell: UITableViewCell {
+class ZippyqFrequencyContentView: UIView {
 
     // MARK: - Public Variables
 
@@ -71,6 +71,13 @@ class ZippyqFrequencyTableViewCell: UITableViewCell {
         return view
     }()
 
+    fileprivate lazy var highlightedBackgroundView: UIView = {
+        let view = UIView()
+        view.backgroundColor = Color.gray50
+        view.isHidden = true
+        return view
+    }()
+
     fileprivate lazy var textStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
         stackView.axis = .vertical
@@ -94,8 +101,8 @@ class ZippyqFrequencyTableViewCell: UITableViewCell {
 
     // MARK: - Initialization
 
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         setupLayout()
     }
 
@@ -107,19 +114,20 @@ class ZippyqFrequencyTableViewCell: UITableViewCell {
 
     fileprivate func setupLayout() {
         backgroundColor = Color.white
-        backgroundView = UIView()
-        backgroundView?.backgroundColor = Color.white
-        selectedBackgroundView = UIView()
-        selectedBackgroundView?.backgroundColor = Color.gray50
 
-        contentView.addSubview(separatorView)
+        addSubview(highlightedBackgroundView)
+        highlightedBackgroundView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+
+        addSubview(separatorView)
         separatorView.snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.leading.trailing.equalToSuperview().inset(Constants.padding)
             $0.height.equalTo(Constants.separatorHeight)
         }
 
-        contentView.addSubview(frequencyIndicatorView)
+        addSubview(frequencyIndicatorView)
         frequencyIndicatorView.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(Constants.padding)
             $0.centerY.equalToSuperview()
@@ -127,33 +135,33 @@ class ZippyqFrequencyTableViewCell: UITableViewCell {
             $0.height.equalTo(Constants.indicatorHeight)
         }
 
-        contentView.addSubview(channelLabel)
+        addSubview(channelLabel)
         channelLabel.snp.makeConstraints {
             $0.leading.equalTo(frequencyIndicatorView.snp.trailing)
             $0.centerY.equalToSuperview()
             $0.width.equalTo(Constants.channelWidth)
         }
 
-        contentView.addSubview(avatarImageView)
+        addSubview(avatarImageView)
         avatarImageView.snp.makeConstraints {
             $0.leading.equalTo(channelLabel.snp.trailing).offset(Constants.padding/2)
             $0.centerY.equalToSuperview()
             $0.size.equalTo(Constants.avatarHeight)
         }
 
-        contentView.addSubview(resultLabel)
+        addSubview(resultLabel)
         resultLabel.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(Constants.padding)
             $0.centerY.equalToSuperview()
         }
 
-        contentView.addSubview(actionButton)
+        addSubview(actionButton)
         actionButton.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(Constants.padding)
             $0.centerY.equalToSuperview()
         }
 
-        contentView.addSubview(textStackView)
+        addSubview(textStackView)
         textStackView.snp.makeConstraints {
             $0.leading.equalTo(avatarImageView.snp.trailing).offset(Constants.padding)
             $0.trailing.lessThanOrEqualTo(resultLabel.snp.leading).inset(Constants.spacing)
@@ -167,7 +175,6 @@ class ZippyqFrequencyTableViewCell: UITableViewCell {
     func configure(with viewModel: ZippyqFrequencyViewModel, showsTopSeparator: Bool) {
         let backgroundColor = viewModel.isCurrentUser ? Constants.currentUserBackgroundColor : Color.white
         self.backgroundColor = backgroundColor
-        backgroundView?.backgroundColor = backgroundColor
 
         titleLabel.text = viewModel.titleLabel
         titleLabel.textColor = viewModel.isAssigned ? Color.black : Color.gray200
@@ -193,9 +200,7 @@ class ZippyqFrequencyTableViewCell: UITableViewCell {
         }
     }
 
-    override func prepareForReuse() {
-        super.prepareForReuse()
-
+    func prepareForReuse() {
         channelLabel.text = nil
         avatarImageView.imageView.image = nil
         titleLabel.text = nil
@@ -206,5 +211,11 @@ class ZippyqFrequencyTableViewCell: UITableViewCell {
         actionButton.isEnabled = false
         actionButton.isLoading = false
         separatorView.isHidden = true
+    }
+
+    var isHighlighted = false {
+        didSet {
+            highlightedBackgroundView.isHidden = !isHighlighted
+        }
     }
 }

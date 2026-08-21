@@ -1,5 +1,5 @@
 //
-//  CollapsableHeaderView.swift
+//  ZippyqCollapsableHeaderView.swift
 //  RaceSync
 //
 //  Created by Ignacio Romero on 2026-07-29.
@@ -10,11 +10,11 @@ import UIKit
 import SnapKit
 import AlamofireImage
 
-class CollapsableHeaderView: UITableViewHeaderFooterView {
+class ZippyqCollapsableHeaderView: UICollectionReusableView {
 
     // MARK: - Public Variables
 
-    static let identifier = "CollapsableHeaderView"
+    static let identifier = "ZippyqCollapsableHeaderView"
     static let headerHeight: CGFloat = 58
     static let headerHeightWithSubtitle: CGFloat = 76
 
@@ -23,7 +23,10 @@ class CollapsableHeaderView: UITableViewHeaderFooterView {
     }
 
     var contextualText: String? {
-        didSet { contextualLabel.text = contextualText }
+        didSet {
+            contextualLabel.text = contextualText
+            updateAccessoryWidth()
+        }
     }
 
     var subtitle: String? {
@@ -40,17 +43,7 @@ class CollapsableHeaderView: UITableViewHeaderFooterView {
         }
     }
 
-    var isExpanded: Bool = false {
-        didSet {
-            chevronImageView.image = UIImage(
-                systemName: isExpanded ? "chevron.up" : "chevron.down",
-                withConfiguration: UIImage.SymbolConfiguration(pointSize: 19, weight: .medium)
-            )
-            separatorView.isHidden = isExpanded
-            updateContextualContent()
-            updateMetadataVisibility()
-        }
-    }
+    private(set) var isExpanded = false
 
     var avatarImageUrls = [String?]() {
         didSet {
@@ -135,6 +128,8 @@ class CollapsableHeaderView: UITableViewHeaderFooterView {
         return stackView
     }()
 
+    fileprivate lazy var accessoryContainerView = UIView()
+
     fileprivate lazy var leadingStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [titleLabel, textPill])
         stackView.axis = .horizontal
@@ -171,7 +166,7 @@ class CollapsableHeaderView: UITableViewHeaderFooterView {
     }()
 
     fileprivate lazy var trailingStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [contextualLabel, avatarStackView, chevronImageView])
+        let stackView = UIStackView(arrangedSubviews: [accessoryContainerView, chevronImageView])
         stackView.axis = .horizontal
         stackView.alignment = .center
         stackView.spacing = Constants.padding/2
@@ -184,7 +179,10 @@ class CollapsableHeaderView: UITableViewHeaderFooterView {
         return view
     }()
 
+    fileprivate lazy var contentView = UIView()
+
     fileprivate var isTouching = false
+    fileprivate var accessoryWidthConstraint: Constraint?
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -198,8 +196,8 @@ class CollapsableHeaderView: UITableViewHeaderFooterView {
     
     // MARK: - Initialization
 
-    override init(reuseIdentifier: String?) {
-        super.init(reuseIdentifier: reuseIdentifier)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         setupLayout()
     }
 
@@ -217,6 +215,7 @@ class CollapsableHeaderView: UITableViewHeaderFooterView {
         subtitle = nil
         subtitleContext = nil
         setHighlighted(false)
+        setExpanded(false, animated: false)
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -252,29 +251,53 @@ class CollapsableHeaderView: UITableViewHeaderFooterView {
         isTouching = false
         setHighlighted(false)
     }
+
+    func setExpanded(_ expanded: Bool, animated: Bool) {
+        guard expanded != isExpanded else { return }
+
+        isExpanded = expanded
+        updateExpansionState(animated: animated)
+    }
 }
 
-private extension CollapsableHeaderView {
+private extension ZippyqCollapsableHeaderView {
 
     func setupLayout() {
-        backgroundView = UIView()
-        backgroundView?.backgroundColor = Color.tableBackground
+        backgroundColor = Color.tableBackground
+
+        addSubview(contentView)
         contentView.backgroundColor = Color.tableBackground
+        contentView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
 
         contentView.addSubview(contentStackView)
         contentStackView.snp.makeConstraints {
-            // UITableView briefly measures header/footer views with an encapsulated
-            // width of zero. Keep the intended insets for real layouts, but allow
-            // that transient sizing pass without forcing the stack's contents to
-            // break their own constraints.
-            $0.leading.equalToSuperview().offset(Constants.padding).priority(999)
-            $0.trailing.equalToSuperview().offset(-Constants.padding).priority(999)
-            $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview().offset(Constants.padding)
+            $0.trailing.equalToSuperview().offset(-Constants.padding)
+            $0.top.equalToSuperview().offset(12)
+        }
+
+        accessoryContainerView.addSubview(contextualLabel)
+        accessoryContainerView.addSubview(avatarStackView)
+        accessoryContainerView.snp.makeConstraints {
+            accessoryWidthConstraint = $0.width.equalTo(0).constraint
+            $0.height.equalTo(Constants.avatarSize)
+        }
+        contextualLabel.snp.makeConstraints {
+            $0.trailing.centerY.equalToSuperview()
+        }
+        avatarStackView.snp.makeConstraints {
+            $0.trailing.centerY.equalToSuperview()
         }
 
         chevronImageView.snp.makeConstraints {
             $0.width.height.equalTo(Constants.chevronSize)
         }
+        chevronImageView.image = UIImage(
+            systemName: "chevron.down",
+            withConfiguration: UIImage.SymbolConfiguration(pointSize: 19, weight: .medium)
+        )
 
         contentView.addSubview(separatorView)
         separatorView.snp.makeConstraints {
@@ -305,19 +328,106 @@ private extension CollapsableHeaderView {
                 $0.size.equalTo(Constants.avatarSize)
             }
         }
+        updateAccessoryWidth()
+    }
+
+    func updateAccessoryWidth() {
+        let avatarCount = CGFloat(avatarImageUrls.count)
+        let avatarsWidth = avatarCount > 0
+            ? avatarCount * Constants.avatarSize - (avatarCount - 1) * Constants.avatarOverlap
+            : 0
+        let width = max(avatarsWidth, contextualLabel.intrinsicContentSize.width)
+        accessoryWidthConstraint?.update(offset: width)
     }
 
     func updateContextualContent() {
         let displaysAvatars = !isExpanded && !avatarImageUrls.isEmpty
         avatarStackView.isHidden = !displaysAvatars
+        avatarStackView.alpha = displaysAvatars ? 1 : 0
         contextualLabel.isHidden = !isExpanded
+        contextualLabel.alpha = isExpanded ? 1 : 0
     }
 
     func updateMetadataVisibility() {
         let displaysSubtitle = isExpanded && subtitle?.isEmpty == false
         let displaysContext = isExpanded && subtitleContext?.isEmpty == false
         subtitleLabel.isHidden = !displaysSubtitle
+        subtitleLabel.alpha = displaysSubtitle ? 1 : 0
         subtitleContextLabel.isHidden = !displaysContext
+        subtitleContextLabel.alpha = displaysContext ? 1 : 0
         metadataStackView.isHidden = !displaysSubtitle && !displaysContext
+        metadataStackView.alpha = displaysSubtitle || displaysContext ? 1 : 0
+    }
+
+    func updateExpansionState(animated: Bool) {
+        separatorView.isHidden = isExpanded
+
+        let displaysAvatars = !isExpanded && !avatarImageUrls.isEmpty
+        let displaysContext = isExpanded
+        let displaysSubtitle = isExpanded && subtitle?.isEmpty == false
+        let displaysSubtitleContext = isExpanded && subtitleContext?.isEmpty == false
+        let displaysMetadata = displaysSubtitle || displaysSubtitleContext
+        let expectedExpandedState = isExpanded
+
+        [avatarStackView, contextualLabel, metadataStackView, subtitleLabel, subtitleContextLabel].forEach {
+            $0.layer.removeAllAnimations()
+        }
+
+        avatarStackView.isHidden = false
+        contextualLabel.isHidden = false
+        metadataStackView.isHidden = false
+        subtitleLabel.isHidden = false
+        subtitleContextLabel.isHidden = false
+
+        let updates = {
+            self.avatarStackView.alpha = displaysAvatars ? 1 : 0
+            self.contextualLabel.alpha = displaysContext ? 1 : 0
+            self.metadataStackView.alpha = displaysMetadata ? 1 : 0
+            self.subtitleLabel.alpha = displaysSubtitle ? 1 : 0
+            self.subtitleContextLabel.alpha = displaysSubtitleContext ? 1 : 0
+        }
+        let completion: (Bool) -> Void = { _ in
+            guard self.isExpanded == expectedExpandedState else { return }
+            self.avatarStackView.isHidden = !displaysAvatars
+            self.contextualLabel.isHidden = !displaysContext
+            self.metadataStackView.isHidden = !displaysMetadata
+            self.subtitleLabel.isHidden = !displaysSubtitle
+            self.subtitleContextLabel.isHidden = !displaysSubtitleContext
+        }
+
+        guard animated else {
+            updateChevron(animated: false)
+            updates()
+            completion(true)
+            return
+        }
+        updateChevron(animated: true)
+        UIView.animate(
+            withDuration: 0.25,
+            delay: 0,
+            options: [.beginFromCurrentState, .allowUserInteraction, .curveEaseInOut],
+            animations: updates,
+            completion: completion
+        )
+    }
+
+    func updateChevron(animated: Bool) {
+        let targetRotation: CGFloat = isExpanded ? .pi : 0
+        guard animated else {
+            chevronImageView.layer.transform = CATransform3DMakeRotation(targetRotation, 0, 0, 1)
+            return
+        }
+
+        let currentRotation = chevronImageView.layer.presentation()?
+            .value(forKeyPath: "transform.rotation.z") as? CGFloat
+            ?? (isExpanded ? 0 : .pi)
+        chevronImageView.layer.transform = CATransform3DMakeRotation(targetRotation, 0, 0, 1)
+
+        let animation = CABasicAnimation(keyPath: "transform.rotation.z")
+        animation.fromValue = currentRotation
+        animation.toValue = targetRotation
+        animation.duration = 0.25
+        animation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+        chevronImageView.layer.add(animation, forKey: "rotation")
     }
 }

@@ -9,14 +9,33 @@
 import UIKit
 import SnapKit
 
-class ZippyqHeaderView: UIView {
+class ZippyqHeaderView: UICollectionReusableView {
+
+    struct LayoutMetrics: Equatable {
+        let expandedHeight: CGFloat
+        let compactHeight: CGFloat
+
+        var collapseRange: CGFloat {
+            return expandedHeight - compactHeight
+        }
+    }
 
     // MARK: - Public Variables
 
-    static let headerHeight: CGFloat = Constants.headerHeight + Constants.padding
+    /// Used only for the first collection layout pass and replaced by measured Auto Layout metrics.
+    static let initialLayoutHeight: CGFloat = 241
+    static let identifier = "ZippyqHeaderView"
 
     var didSelectFrequency: ((String) -> Void)?
     var didTapJoinNextRound: (() -> Void)?
+    var didResolveLayoutMetrics: ((LayoutMetrics) -> Void)?
+    private(set) var layoutMetrics: LayoutMetrics?
+
+    var collapseProgress: CGFloat = 0 {
+        didSet {
+            updateCollapseTransform()
+        }
+    }
 
     var isLoading: Bool {
         get { return joinButton.isLoading }
@@ -30,11 +49,12 @@ class ZippyqHeaderView: UIView {
 
     fileprivate let joinButtonImage = (UIImage(systemName: "person.fill.badge.plus") ?? SystemImg.personFill)?
         .withConfiguration(UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold))
+    fileprivate var isConfigured = false
 
     fileprivate lazy var availabilityTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "My Preferred Channels".uppercased()
-        label.font = UIFont.systemFont(ofSize: 13, weight: .semibold)
+        label.font = Constants.availabilityTitleFont
         label.textColor = Color.gray400
         return label
     }()
@@ -106,13 +126,21 @@ class ZippyqHeaderView: UIView {
 
     fileprivate lazy var statsLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+        label.font = Constants.statsFont
         label.textColor = Color.blue
         label.textAlignment = .center
         label.adjustsFontSizeToFitWidth = true
         label.minimumScaleFactor = 0.75
         label.numberOfLines = 1
         return label
+    }()
+
+    fileprivate lazy var contentStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [availabilityView, joinButton, statsLabel])
+        stackView.axis = .vertical
+        stackView.alignment = .fill
+        stackView.spacing = Constants.contentSpacing
+        return stackView
     }()
 
     fileprivate lazy var backgroundView: UIView = {
@@ -129,7 +157,11 @@ class ZippyqHeaderView: UIView {
 
     fileprivate enum Constants {
         static let padding = UniversalConstants.padding
-        static let headerHeight: CGFloat = 225
+        static let contentSpacing: CGFloat = 12
+        static let joinButtonHeight: CGFloat = 48
+        static let sectionSpacing: CGFloat = 18
+        static let availabilityTitleFont = UIFont.systemFont(ofSize: 13, weight: .semibold)
+        static let statsFont = UIFont.systemFont(ofSize: 14, weight: .medium)
         static let toggleWidthMax: CGFloat = 62
         static let toggleWidthMin: CGFloat = 60
         static let toggleHeight: CGFloat = 72
@@ -148,18 +180,40 @@ class ZippyqHeaderView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        guard isConfigured, layoutMetrics == nil, bounds.width > 0,
+              contentStackView.frame.height > 0, availabilityView.frame.height > 0 else {
+            return
+        }
+
+        let expandedHeight = contentStackView.frame.maxY + Constants.padding + Constants.sectionSpacing
+        let collapsedContentOffset = contentStackView.frame.minY + availabilityView.frame.maxY
+        let metrics = LayoutMetrics(
+            expandedHeight: expandedHeight,
+            compactHeight: expandedHeight - collapsedContentOffset
+        )
+        layoutMetrics = metrics
+        updateCollapseTransform()
+
+        DispatchQueue.main.async { [weak self] in
+            self?.didResolveLayoutMetrics?(metrics)
+        }
+    }
+
     // MARK: - Configuration
 
     func configure(with viewModel: ZippyqHeaderViewModel) {
+        
         preferenceLabel.text = viewModel.preferenceLabel
-        preferenceLabel.textColor = viewModel.frequencyViewModels.contains(where: { $0.isSelected })
-            ? Color.gray300
-            : Color.red
+        preferenceLabel.textColor = viewModel.frequencyViewModels.contains(where: { $0.isSelected }) ? Color.gray300 : Color.red
         statsLabel.text = viewModel.statsLabel
         joinButton.isEnabled = viewModel.isJoinEnabled
         updateFrequencies(with: viewModel.frequencyViewModels)
+        isConfigured = true
+        setNeedsLayout()
     }
-
 }
 
 private extension ZippyqHeaderView {
@@ -169,29 +223,21 @@ private extension ZippyqHeaderView {
     func setupLayout() {
 
         backgroundColor = Color.clear
+        clipsToBounds = true
 
         addSubview(backgroundView)
         backgroundView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
-            $0.bottom.equalToSuperview().offset(-18) // the native section gap size
+            $0.bottom.equalToSuperview().offset(-Constants.sectionSpacing)
         }
 
-        addSubview(availabilityView)
-        availabilityView.snp.makeConstraints {
+        addSubview(contentStackView)
+        contentStackView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview().inset(Constants.padding)
         }
-        
-        addSubview(joinButton)
+
         joinButton.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview().inset(Constants.padding)
-            $0.top.equalTo(availabilityView.snp.bottom).offset(Constants.padding)
-            $0.height.equalTo(48)
-        }
-        
-        addSubview(statsLabel)
-        statsLabel.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview().inset(Constants.padding)
-            $0.top.equalTo(joinButton.snp.bottom).offset(Constants.padding)
+            $0.height.equalTo(Constants.joinButtonHeight)
         }
 
         addSubview(separatorView)
@@ -200,6 +246,12 @@ private extension ZippyqHeaderView {
             $0.bottom.equalTo(backgroundView.snp.bottom)
             $0.height.equalTo(0.5)
         }
+    }
+
+    func updateCollapseTransform() {
+        let progress = min(max(collapseProgress, 0), 1)
+        let collapseRange = layoutMetrics?.collapseRange ?? 0
+        contentStackView.transform = CGAffineTransform(translationX: 0, y: -collapseRange * progress)
     }
 
     func updateFrequencies(with viewModels: [ZippyqHeaderFrequencyViewModel]) {

@@ -207,7 +207,7 @@ class ZippyqFrequencyViewModel: Descriptable {
             subtitleLabel = maximumPackCount > 0 ? "Pack \(stats.queuedCount) of \(maximumPackCount)" : "Pack \(stats.queuedCount)"
             imageUrl = userViewModel.pictureUrl
         } else {
-            titleLabel = "Empty"
+            titleLabel = "[Empty]"
             isAssigned = false
             subtitleLabel = nil
             imageUrl = nil
