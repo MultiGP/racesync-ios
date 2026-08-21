@@ -11,6 +11,7 @@ import RaceSyncAPI
 
 protocol ZippyqDataControllerDelegate: AnyObject {
     func zippyqDataControllerDidUpdateContent(_ controller: ZippyqDataController)
+    func zippyqDataController(_ controller: ZippyqDataController, didFailToLoadContent error: NSError)
 }
 
 /// Coordinates ZippyQ data and user actions independently from its view controller.
@@ -82,9 +83,9 @@ final class ZippyqDataController {
 
     fileprivate var response: ZippyqResponse?
     fileprivate var revisionHash: ZippyqRevisionHash?
-    fileprivate var hasLoadedContent = false
     fileprivate var isLoadingContent = false
     
+    private(set) var hasLoadedContent = false
     private(set) var roundViewModels = [ZippyqRoundViewModel]()
     private(set) var frequencies = [Frequency]()
     private(set) var frequencyQueueCounts = [String: Int]()
@@ -292,6 +293,7 @@ private extension ZippyqDataController {
                 updateContent(with: response)
             } else if let error {
                 Clog.log("ZippyQ getQueues failed: \(error.localizedDescription)")
+                delegate?.zippyqDataController(self, didFailToLoadContent: error)
             }
         }
     }

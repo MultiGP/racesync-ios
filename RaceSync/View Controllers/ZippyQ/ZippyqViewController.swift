@@ -8,6 +8,7 @@
 
 import UIKit
 import SnapKit
+import EmptyDataSet_Swift
 import RaceSyncAPI
 
 class ZippyqViewController: UIViewController, RaceTabbable {
@@ -46,10 +47,18 @@ class ZippyqViewController: UIViewController, RaceTabbable {
             collectionView.topEdgeEffect.isHidden = true
         }
         collectionView.delegate = self
+        collectionView.emptyDataSetDelegate = self
+        collectionView.emptyDataSetSource = self
         return collectionView
     }()
 
     fileprivate lazy var dataSource: DataSource = makeDataSource()
+    fileprivate lazy var activityIndicatorView: ActivityLoadingView = {
+        let view = ActivityLoadingView(style: .medium)
+        view.title = "Loading ZippyQ..."
+        view.hidesWhenStopped = true
+        return view
+    }()
     fileprivate weak var headerView: ZippyqHeaderView?
     fileprivate let dataController: ZippyqDataController
     fileprivate let snapshotController = ZippyqSnapshotController()
@@ -58,6 +67,7 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     fileprivate var headerCollapseTracking: HeaderCollapseTracking = .contentOffset
     fileprivate var lastHeaderScrollOffset: CGFloat = 0
     fileprivate var isJoiningNextRound = false
+    fileprivate var emptyStateError: EmptyStateViewModel?
 
     fileprivate enum HeaderCollapseTracking {
         case contentOffset
@@ -121,6 +131,11 @@ class ZippyqViewController: UIViewController, RaceTabbable {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.leading.trailing.bottom.equalToSuperview()
         }
+
+        view.addSubview(activityIndicatorView)
+        activityIndicatorView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
     }
 
     fileprivate func configureNavigationItems() {
@@ -167,8 +182,17 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     // MARK: - Data Update
 
     fileprivate func refreshView() {
-        displayContent()
+        if dataController.hasLoadedContent {
+            displayContent()
+        } else {
+            setInitialLoading(true)
+        }
         dataController.loadContent()
+    }
+
+    fileprivate func setInitialLoading(_ loading: Bool) {
+        activityIndicatorView.isLoading = loading
+        collectionView.isHidden = loading
     }
 
     fileprivate func displayContent() {
@@ -178,9 +202,10 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     }
 
     fileprivate func configureHeaderView() {
-        let displaysHeader = dataController.canJoinQueues
+        let displaysHeader = dataController.hasLoadedContent && dataController.canJoinQueues
+        let layoutDisplaysHeader = dataController.canJoinQueues
         if let layout = collectionView.collectionViewLayout as? ZippyqCollectionViewLayout,
-           layout.displaysHeader != displaysHeader {
+           layout.displaysHeader != layoutDisplaysHeader {
             collectionView.setCollectionViewLayout(makeCollectionViewLayout(), animated: false)
         }
         headerView?.isHidden = !displaysHeader
@@ -190,8 +215,7 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     }
 
     fileprivate func applySnapshot(animatingDifferences: Bool,
-                                   reloadingExistingItems: Bool = false,
-                                   completion: (() -> Void)? = nil) {
+                                   reloadingExistingItems: Bool = false) {
         var snapshot = snapshotController.makeSnapshot()
         if reloadingExistingItems {
             let currentItems = Set(dataSource.snapshot().itemIdentifiers)
@@ -201,12 +225,16 @@ class ZippyqViewController: UIViewController, RaceTabbable {
         collectionView.collectionViewLayout.invalidateLayout()
         dataSource.apply(snapshot, animatingDifferences: animatingDifferences) { [weak self] in
             self?.configureVisibleRoundHeaders()
-            completion?()
         }
     }
 
     // RaceTabbable
     func reloadContent() {
+        if !dataController.hasLoadedContent {
+            emptyStateError = nil
+            collectionView.reloadEmptyDataSet()
+            setInitialLoading(true)
+        }
         dataController.loadContent(force: true)
     }
 
@@ -289,7 +317,57 @@ class ZippyqViewController: UIViewController, RaceTabbable {
 extension ZippyqViewController: ZippyqDataControllerDelegate {
 
     func zippyqDataControllerDidUpdateContent(_ controller: ZippyqDataController) {
+        let isInitialLoad = activityIndicatorView.isLoading
+        emptyStateError = nil
         displayContent()
+
+        if isInitialLoad {
+            collectionView.layoutIfNeeded()
+            if let metrics = headerView?.layoutMetrics {
+                applyHeaderLayoutMetrics(metrics)
+                collectionView.layoutIfNeeded()
+            }
+            collectionView.setContentOffset(.zero, animated: false)
+        }
+
+        setInitialLoading(false)
+        collectionView.reloadEmptyDataSet()
+    }
+
+    func zippyqDataController(_ controller: ZippyqDataController,
+                              didFailToLoadContent error: NSError) {
+        guard !controller.hasLoadedContent else { return }
+
+        emptyStateError = EmptyStateViewModel(.error(error))
+        setInitialLoading(false)
+        collectionView.reloadEmptyDataSet()
+    }
+}
+
+// MARK: - EmptyDataSetSource
+
+extension ZippyqViewController: EmptyDataSetSource {
+
+    func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        return emptyStateError?.title
+    }
+
+    func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        return emptyStateError?.description
+    }
+
+    func buttonTitle(forEmptyDataSet scrollView: UIScrollView,
+                     for state: UIControl.State) -> NSAttributedString? {
+        return emptyStateError?.buttonTitle(state)
+    }
+}
+
+// MARK: - EmptyDataSetDelegate
+
+extension ZippyqViewController: EmptyDataSetDelegate {
+
+    func emptyDataSetShouldAllowScroll(_ scrollView: UIScrollView) -> Bool {
+        return false
     }
 }
 
@@ -356,7 +434,7 @@ private extension ZippyqViewController {
     }
 
     func configure(_ header: ZippyqHeaderView) {
-        let displaysHeader = dataController.canJoinQueues
+        let displaysHeader = dataController.hasLoadedContent && dataController.canJoinQueues
         header.isHidden = !displaysHeader
         header.collapseProgress = headerCollapseProgress
         header.didResolveLayoutMetrics = { [weak self] metrics in
@@ -511,7 +589,7 @@ extension ZippyqViewController: UICollectionViewDelegate {
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard dataController.canJoinQueues, headerCollapseRange > 0,
+        guard !collectionView.isHidden, dataController.canJoinQueues, headerCollapseRange > 0,
               headerCollapseTracking != .suspended else { return }
 
         let offset = scrollView.contentOffset.y + scrollView.adjustedContentInset.top
