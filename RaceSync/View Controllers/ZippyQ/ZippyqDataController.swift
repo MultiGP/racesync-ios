@@ -79,7 +79,7 @@ final class ZippyqDataController {
     fileprivate let zippyqApi: ZippyqApiInterface = ZippyqApi()
     fileprivate let smartJoiner: ZippyqSmartJoinable = ZippyqSmartJoiner()
     fileprivate let userDefaults = UserDefaults.standard
-    fileprivate let pollingController = PollingController(refreshInterval: 10.0)
+    fileprivate let pollingController = PollingController()
 
     fileprivate var response: ZippyqResponse?
     fileprivate var revisionHash: ZippyqRevisionHash?
@@ -115,8 +115,8 @@ final class ZippyqDataController {
     // MARK: - Data Load
 
     func startPolling() {
-        guard race?.inProgress == true else {
-            Clog.log("Skipping polling, race is not in progress")
+        guard race?.hasEnded == false else {
+            Clog.log("Skipping polling, race has ended")
             return
         }
         
@@ -365,7 +365,7 @@ private extension ZippyqDataController {
                 pilotStats: response.pilotStats,
                 maximumPackCount: race.cycleCount,
                 scoringFormat: race.trueScoringFormat,
-                isUpNext: index == nextQueuedIndex
+                isUpNext: (race.inProgress && index == nextQueuedIndex)
             )
         }
     }

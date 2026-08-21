@@ -86,14 +86,14 @@ final class ZippyqCollectionViewLayout: UICollectionViewCompositionalLayout {
 
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .absolute(displaysHeader ? expandedHeaderHeight : 0)
+            heightDimension: .absolute(displaysHeader ? expandedHeaderHeight : Constants.sectionSpacing)
         )
         let header = NSCollectionLayoutBoundarySupplementaryItem(
             layoutSize: headerSize,
             elementKind: ZippyqCollectionViewLayout.headerElementKind,
             alignment: .top
         )
-        header.pinToVisibleBounds = true
+        header.pinToVisibleBounds = displaysHeader
 
         let configuration = UICollectionViewCompositionalLayoutConfiguration()
         configuration.boundarySupplementaryItems = [header]
@@ -218,7 +218,7 @@ private extension ZippyqCollectionViewLayout {
                 )
             }
         } else {
-            frame.size.height = 0.01
+            frame.size.height = Constants.sectionSpacing
         }
         attributes.frame = frame
         attributes.zIndex = 1000

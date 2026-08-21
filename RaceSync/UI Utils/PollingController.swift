@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RaceSyncAPI
 
 /// Receives polling events and determines whether polling is currently allowed.
 public protocol PollingControllerDelegate: AnyObject {
@@ -20,28 +21,29 @@ public protocol PollingControllerDelegate: AnyObject {
 public class PollingController {
 
     // MARK: - Public Variables
+
+    public static let refreshInterval: TimeInterval = 12
     
     /// The object that supplies the polling state and handles refreshes.
     weak var delegate: PollingControllerDelegate?
-
-    /// Creates a polling controller with the given refresh interval.
-    init(refreshInterval: TimeInterval) {
-        self.refreshInterval = refreshInterval
-    }
 
     /// Starts interval-based polling when the delegate allows it.
     func start() {
         guard delegate?.isPollEnabled() == true, refreshTimer == nil else { return }
 
-        refreshTimer = Timer.scheduledTimer(withTimeInterval: refreshInterval, repeats: true) { [weak self] _ in
+        refreshTimer = Timer.scheduledTimer(withTimeInterval: Self.refreshInterval, repeats: true) { [weak self] _ in
             self?.pollIfNeeded()
         }
+
+        Clog.log("Starting polling")
     }
 
     /// Stops polling until `start()` is called again.
     func stop() {
         refreshTimer?.invalidate()
         refreshTimer = nil
+
+        Clog.log("Stopping polling")
     }
 
     /// Immediately requests a refresh and defers the next scheduled callback.
@@ -64,13 +66,12 @@ public class PollingController {
     
     // MARK: - Private Variables
     
-    fileprivate let refreshInterval: TimeInterval
     fileprivate var refreshTimer: Timer?
     fileprivate var lastRefreshInterval: TimeInterval = 0
 
     fileprivate func pollIfNeeded() {
         guard delegate?.isPollEnabled() == true,
-              Date.timeIntervalSinceReferenceDate - lastRefreshInterval >= refreshInterval else { return }
+              Date.timeIntervalSinceReferenceDate - lastRefreshInterval >= Self.refreshInterval else { return }
 
         delegate?.polling()
     }
