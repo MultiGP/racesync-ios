@@ -144,17 +144,41 @@ class RaceTabBarController: UITabBarController {
     fileprivate func configureViewControllers() {
 
         let controller = raceController
+        let existingVCs = viewControllers ?? []
+        let previouslySelectedVC = selectedViewController
 
         var vcs = [UIViewController]()
-        vcs += [RaceDetailViewController(with: controller)]
-        vcs += [RacePilotsViewController(with: controller)]
+        vcs += [existingVCs.first { $0 is RaceDetailViewController }
+            ?? RaceDetailViewController(with: controller)]
+        vcs += [existingVCs.first { $0 is RacePilotsViewController }
+            ?? RacePilotsViewController(with: controller)]
 
         if let race = race {
-            if race.canShowZippyQ { vcs += [ZippyqViewController(with: controller)] }
-            if race.canManagePayments { vcs += [RacePaymentsViewController(with: controller)] }
+            if race.canShowZippyQ {
+                vcs += [existingVCs.first { $0 is ZippyqViewController }
+                    ?? ZippyqViewController(with: controller)]
+            }
+            if race.canManagePayments {
+                vcs += [existingVCs.first { $0 is RacePaymentsViewController }
+                    ?? RacePaymentsViewController(with: controller)]
+            }
         }
 
-        configureTabBarController(with: vcs, selectedIndex: initialSelectedIndex)
+        if viewControllers == nil {
+            configureTabBarController(
+                with: vcs,
+                selectedIndex: min(initialSelectedIndex, max(0, vcs.count-1))
+            )
+        } else {
+            setViewControllers(vcs, animated: false)
+            if let previouslySelectedVC,
+               let selectedIndex = vcs.firstIndex(of: previouslySelectedVC) {
+                self.selectedIndex = selectedIndex
+            } else {
+                selectTab(.details)
+            }
+            preloadTabs()
+        }
 
         tabBar.isHidden = false
     }
@@ -216,13 +240,14 @@ class RaceTabBarController: UITabBarController {
         raceController.loadRace { [weak self] race, error in
             guard let self = self else { return }
 
-            if error != nil {
+            if error == nil {
                 self.reloadRaceTabs()
             }
         }
     }
 
     public func reloadRaceTabs() {
+        configureViewControllers()
         viewControllers?
             .compactMap { $0 as? RaceTabbable }
             .forEach { $0.reloadContent() }
