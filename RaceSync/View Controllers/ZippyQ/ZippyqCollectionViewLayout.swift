@@ -129,6 +129,28 @@ final class ZippyqCollectionViewLayout: UICollectionViewCompositionalLayout {
         return attributes
     }
 
+    override func initialLayoutAttributesForAppearingItem(
+        at itemIndexPath: IndexPath
+    ) -> UICollectionViewLayoutAttributes? {
+        guard let attributes = super.initialLayoutAttributesForAppearingItem(at: itemIndexPath)?
+            .copy() as? UICollectionViewLayoutAttributes else {
+            return nil
+        }
+        applyAccordionTransition(to: attributes, at: itemIndexPath)
+        return attributes
+    }
+
+    override func finalLayoutAttributesForDisappearingItem(
+        at itemIndexPath: IndexPath
+    ) -> UICollectionViewLayoutAttributes? {
+        guard let attributes = super.finalLayoutAttributesForDisappearingItem(at: itemIndexPath)?
+            .copy() as? UICollectionViewLayoutAttributes else {
+            return nil
+        }
+        applyAccordionTransition(to: attributes, at: itemIndexPath)
+        return attributes
+    }
+
     func targetContentOffset(forRoundHeaderAt minY: CGFloat) -> CGPoint? {
         guard let collectionView else { return nil }
 
@@ -152,6 +174,21 @@ final class ZippyqCollectionViewLayout: UICollectionViewCompositionalLayout {
 }
 
 private extension ZippyqCollectionViewLayout {
+
+    func applyAccordionTransition(to attributes: UICollectionViewLayoutAttributes,
+                                  at indexPath: IndexPath) {
+        let headerIndexPath = IndexPath(item: 0, section: indexPath.section)
+        guard let headerAttributes = layoutAttributesForSupplementaryView(
+            ofKind: Self.roundHeaderElementKind,
+            at: headerIndexPath
+        ) else { return }
+
+        attributes.transform = CGAffineTransform(
+            translationX: 0,
+            y: headerAttributes.frame.maxY - attributes.frame.maxY
+        )
+        attributes.zIndex = headerAttributes.zIndex - 1
+    }
 
     func updateHeaderAttributes(_ attributes: UICollectionViewLayoutAttributes) {
         guard attributes.representedElementKind == Self.headerElementKind else { return }

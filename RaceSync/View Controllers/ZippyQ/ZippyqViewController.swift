@@ -55,9 +55,15 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     fileprivate let snapshotController = ZippyqSnapshotController()
     fileprivate var headerLayoutMetrics: ZippyqHeaderView.LayoutMetrics?
     fileprivate var headerCollapseProgress: CGFloat = 0
-    fileprivate var usesRelativeHeaderCollapseProgress = false
+    fileprivate var headerCollapseTracking: HeaderCollapseTracking = .contentOffset
     fileprivate var lastHeaderScrollOffset: CGFloat = 0
     fileprivate var isJoiningNextRound = false
+
+    fileprivate enum HeaderCollapseTracking {
+        case contentOffset
+        case relativeOffset
+        case suspended
+    }
 
     fileprivate enum Constants {
         static let fastUpwardScrollVelocity: CGFloat = -0.8
@@ -397,18 +403,60 @@ private extension ZippyqViewController {
 private extension ZippyqViewController {
 
     func toggleRound(withId roundId: String) {
-        let isExpanding = !snapshotController.isRoundExpanded(withId: roundId)
-        setVisibleRoundHeader(withId: roundId, expanded: isExpanding)
+        if !snapshotController.isRoundExpanded(withId: roundId) {
+            expandAndScrollToRound(withId: roundId)
+            return
+        }
+
+        let currentContentOffset = collectionView.contentOffset
+        let wasAtBottom = currentContentOffset.y >= maximumContentOffsetY - 1
+        let scrollOffset = currentContentOffset.y + collectionView.adjustedContentInset.top
+        let shouldExpandHeader = scrollOffset <= headerCollapseRange
+        setVisibleRoundHeader(withId: roundId, expanded: false)
         snapshotController.toggleRound(withId: roundId)
-        applySnapshot(animatingDifferences: true) { [weak self] in
-            self?.scrollRoundToTop(withId: roundId)
+        headerCollapseTracking = .suspended
+        applySnapshot(animatingDifferences: true)
+
+        let targetOffsetY: CGFloat
+        if shouldExpandHeader {
+            targetOffsetY = -collectionView.adjustedContentInset.top
+        } else if wasAtBottom {
+            targetOffsetY = maximumContentOffsetY
+        } else {
+            targetOffsetY = min(
+                maximumContentOffsetY,
+                max(-collectionView.adjustedContentInset.top, currentContentOffset.y)
+            )
+        }
+        let targetContentOffset = CGPoint(x: currentContentOffset.x, y: targetOffsetY)
+
+        UIView.animate(
+            withDuration: 0.25,
+            delay: 0,
+            options: [.beginFromCurrentState, .curveEaseInOut]
+        ) { [weak self] in
+            guard let self else { return }
+            if shouldExpandHeader {
+                setHeaderCollapseProgress(0)
+            }
+            collectionView.contentOffset = targetContentOffset
+            collectionView.layoutIfNeeded()
+        } completion: { [weak self] _ in
+            self?.headerCollapseTracking = .contentOffset
         }
     }
 
     func expandAndScrollToRound(cycle: Int32, heat: Int32) {
-        let roundId = "\(cycle):\(heat)"
-        snapshotController.expandRound(withId: roundId)
-        applySnapshot(animatingDifferences: true) { [weak self] in
+        expandAndScrollToRound(withId: "\(cycle):\(heat)")
+    }
+
+    func expandAndScrollToRound(withId roundId: String) {
+        if !snapshotController.isRoundExpanded(withId: roundId) {
+            setVisibleRoundHeader(withId: roundId, expanded: true)
+            snapshotController.expandRound(withId: roundId)
+            applySnapshot(animatingDifferences: true)
+        }
+        DispatchQueue.main.async { [weak self] in
             self?.scrollRoundToTop(withId: roundId)
         }
     }
@@ -438,6 +486,15 @@ private extension ZippyqViewController {
         }
         collectionView.setContentOffset(targetOffset, animated: true)
     }
+
+    var maximumContentOffsetY: CGFloat {
+        return max(
+            -collectionView.adjustedContentInset.top,
+            collectionView.collectionViewLayout.collectionViewContentSize.height
+                - collectionView.bounds.height
+                + collectionView.adjustedContentInset.bottom
+        )
+    }
 }
 
 // MARK: - UICollectionViewDelegate
@@ -454,17 +511,18 @@ extension ZippyqViewController: UICollectionViewDelegate {
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard dataController.canJoinQueues, headerCollapseRange > 0 else { return }
+        guard dataController.canJoinQueues, headerCollapseRange > 0,
+              headerCollapseTracking != .suspended else { return }
 
         let offset = scrollView.contentOffset.y + scrollView.adjustedContentInset.top
         if offset <= 0 {
-            usesRelativeHeaderCollapseProgress = false
+            headerCollapseTracking = .contentOffset
             setHeaderCollapseProgress(0)
-        } else if usesRelativeHeaderCollapseProgress {
+        } else if headerCollapseTracking == .relativeOffset {
             let delta = offset - lastHeaderScrollOffset
             setHeaderCollapseProgress(headerCollapseProgress + delta / headerCollapseRange)
             if headerCollapseProgress >= 1, delta > 0 {
-                usesRelativeHeaderCollapseProgress = false
+                headerCollapseTracking = .contentOffset
             }
         } else {
             setHeaderCollapseProgress(offset / headerCollapseRange)
@@ -485,7 +543,7 @@ extension ZippyqViewController: UICollectionViewDelegate {
         let projectedOffset = targetContentOffset.pointee.y + scrollView.adjustedContentInset.top
 
         if velocity.y < Constants.fastUpwardScrollVelocity, headerCollapseProgress > 0 {
-            usesRelativeHeaderCollapseProgress = true
+            headerCollapseTracking = .relativeOffset
             lastHeaderScrollOffset = currentOffset
             let requiredDistance = headerCollapseProgress * headerCollapseRange
             let projectedDistance = max(0, currentOffset - projectedOffset)
@@ -495,7 +553,7 @@ extension ZippyqViewController: UICollectionViewDelegate {
             return
         }
 
-        if usesRelativeHeaderCollapseProgress {
+        if headerCollapseTracking == .relativeOffset {
             let projectedProgress = headerCollapseProgress
                 + (projectedOffset - currentOffset) / headerCollapseRange
             let targetProgress: CGFloat = projectedProgress >= 0.5 ? 1 : 0

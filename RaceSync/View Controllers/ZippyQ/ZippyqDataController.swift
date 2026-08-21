@@ -157,7 +157,7 @@ final class ZippyqDataController {
 
     func joinConfirmationViewModel(for recommendation: ZippyqSmartJoinRecommendation) -> ZippyqJoinConfirmationViewModel {
         let channel = channelLabel(for: recommendation.frequency) ?? recommendation.frequency
-        let previousFrequency = mostRecentlyAssignedFrequency(excluding: recommendation)
+        let previousFrequency = mostRecentlyAssignedFrequency(before: recommendation)
         let queue = response?.queues.first {
             $0.cycle == recommendation.cycle && $0.heat == recommendation.heat
         }
@@ -242,12 +242,13 @@ extension ZippyqDataController: PollingControllerDelegate {
 
 private extension ZippyqDataController {
 
-    func mostRecentlyAssignedFrequency(excluding recommendation: ZippyqSmartJoinRecommendation) -> String? {
+    func mostRecentlyAssignedFrequency(before recommendation: ZippyqSmartJoinRecommendation) -> String? {
         guard let userId = currentUser?.id else { return nil }
 
         return response?.queues
             .filter {
-                $0.cycle != recommendation.cycle || $0.heat != recommendation.heat
+                $0.cycle < recommendation.cycle
+                    || ($0.cycle == recommendation.cycle && $0.heat < recommendation.heat)
             }
             .flatMap { queue in
                 queue.entries.compactMap { entry -> (queue: ZippyQueue, frequency: String)? in
