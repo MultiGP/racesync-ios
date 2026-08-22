@@ -60,6 +60,7 @@
 		4F35D98930396C3A0089E6C3 /* ZippyqFrequencyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F35D98830396C3A0089E6C3 /* ZippyqFrequencyViewModel.swift */; };
 		4F35D98B30396C5C0089E6C3 /* ZippyqRoundViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F35D98A30396C5C0089E6C3 /* ZippyqRoundViewModel.swift */; };
 		4F35D98F30396C850089E6C3 /* ZippyqJoinConfirmationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F35D98E30396C850089E6C3 /* ZippyqJoinConfirmationViewModel.swift */; };
+		4F35D991303A30750089E6C3 /* ZippyqPilotStatsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F35D990303A30730089E6C3 /* ZippyqPilotStatsViewModel.swift */; };
 		4F3750A92EF4C9510068FE16 /* RaceEditable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3750A82EF4C9510068FE16 /* RaceEditable.swift */; };
 		4F3750AB2EF8B0BD0068FE16 /* TimeUtilTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3750AA2EF8B0BD0068FE16 /* TimeUtilTests.swift */; };
 		4F3D640D23FB253900DE6DF2 /* UICollectionView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3D640C23FB253900DE6DF2 /* UICollectionView+Extensions.swift */; };
@@ -422,6 +423,7 @@
 		4F35D98830396C3A0089E6C3 /* ZippyqFrequencyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqFrequencyViewModel.swift; sourceTree = "<group>"; };
 		4F35D98A30396C5C0089E6C3 /* ZippyqRoundViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqRoundViewModel.swift; sourceTree = "<group>"; };
 		4F35D98E30396C850089E6C3 /* ZippyqJoinConfirmationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqJoinConfirmationViewModel.swift; sourceTree = "<group>"; };
+		4F35D990303A30730089E6C3 /* ZippyqPilotStatsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqPilotStatsViewModel.swift; sourceTree = "<group>"; };
 		4F3750A82EF4C9510068FE16 /* RaceEditable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceEditable.swift; sourceTree = "<group>"; };
 		4F3750AA2EF8B0BD0068FE16 /* TimeUtilTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeUtilTests.swift; sourceTree = "<group>"; };
 		4F3D640C23FB253900DE6DF2 /* UICollectionView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Extensions.swift"; sourceTree = "<group>"; };
@@ -904,6 +906,7 @@
 			isa = PBXGroup;
 			children = (
 				4FABC009301D400000000001 /* ZippyqViewModels.swift */,
+				4F35D990303A30730089E6C3 /* ZippyqPilotStatsViewModel.swift */,
 				4F35D98630396C020089E6C3 /* ZippyqHeaderViewModel.swift */,
 				4F35D98830396C3A0089E6C3 /* ZippyqFrequencyViewModel.swift */,
 				4F35D98A30396C5C0089E6C3 /* ZippyqRoundViewModel.swift */,
@@ -1815,6 +1818,7 @@
 				4FE91EFC2FC5266D00460A74 /* EventsViewController.swift in Sources */,
 				4F6429122402DB00005E8036 /* ImageConstants.swift in Sources */,
 				4FD4E1C5237F9746008816B3 /* UserViewController.swift in Sources */,
+				4F35D991303A30750089E6C3 /* ZippyqPilotStatsViewModel.swift in Sources */,
 				4F6FA16E2E4C66940056E115 /* AppplicationPreferences.swift in Sources */,
 				4FCEAB462F11761900CAE0BD /* SeriesController.swift in Sources */,
 				4FD4E1DF237FEC0A008816B3 /* Appearance.swift in Sources */,
