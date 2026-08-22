@@ -12,8 +12,8 @@ import UIKit
 class ResultEntryViewModel: Descriptable {
 
     let entry: ResultEntry
-    let lapCount: Int
     let resultLabel: String?
+    let lapCount: Int
 
     init(with entry: ResultEntry, from race: Race) {
         self.entry = entry
@@ -120,26 +120,41 @@ extension ResultEntryViewModel {
                                 totalLaps: String?,
                                 fastestLap: String?,
                                 fastest2Laps: String?,
-        fastest3Laps: String?) -> String? {
+                                fastest3Laps: String?,
+                                bestAvailable: Bool = false) -> String? {
+
         if scoringFormat == .aggregateLap {
             let laps = resultLapCount(for: totalLaps)
             guard laps > 0 else { return "No Laps" }
-            return "\(laps) Laps"
+            return "\(laps) \(laps == 1 ? "Lap" : "Laps")"
         }
 
-        let time: String?
-        switch scoringFormat {
-        case .fastestLap:
-            time = fastestLap
-        case .fastest2Laps:
-            time = fastest2Laps
-        case .fastest3Laps:
-            time = fastest3Laps
-        case .aggregateLap:
-            time = nil // returned earlier
-        }
+        if bestAvailable {
+            let results = [
+                (lapCount: 3, time: fastest3Laps),
+                (lapCount: 2, time: fastest2Laps),
+                (lapCount: 1, time: fastestLap)
+            ]
 
-        guard let time else { return "DNF" }
-        return TimeUtil.lapTimeFormat(seconds: time)
+            for result in results {
+                guard let time = result.time, let seconds = Double(time), seconds > 0 else { continue }
+                return "\(result.lapCount) / \(TimeUtil.lapTimeFormat(seconds: time))"
+            }
+            return "DNF"
+        } else {
+            let time: String?
+            switch scoringFormat {
+            case .fastestLap:
+                time = fastestLap
+            case .fastest2Laps:
+                time = fastest2Laps
+            case .fastest3Laps:
+                time = fastest3Laps
+            case .aggregateLap:
+                time = nil // returned earlier
+            }
+            guard let time, let seconds = Double(time), seconds > 0 else { return "DNF" }
+            return TimeUtil.lapTimeFormat(seconds: time)
+        }
     }
 }

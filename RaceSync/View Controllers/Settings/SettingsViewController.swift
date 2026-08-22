@@ -94,6 +94,11 @@ class SettingsViewController: UIViewController {
     func loadSections() {
 
         sections = {
+            var settings: [Row] = [.notifications]
+            if Appearance.isDarkModeEnabled {
+                settings.append(.appearance)
+            }
+            
             var resources: [Row] = [.buildGuide, .seasonRules]
             if ApplicationControl.shared.isIOWindowEnable {
                 resources += [.ioSite]
@@ -107,11 +112,6 @@ class SettingsViewController: UIViewController {
 
             var about: [Row] = [.feedback, .joinBeta, .viewProject]
             if UIApplication.shared.supportsAlternateIcons { about += [.appicon] }
-
-            var settings: [Row] = [.notifications]
-            if Appearance.isDarkModeEnabled {
-                settings.append(.appearance)
-            }
 
             return [.settings: settings, .resources: resources, .about: about, .auth: auth]
        }()

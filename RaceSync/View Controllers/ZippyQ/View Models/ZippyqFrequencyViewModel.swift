@@ -53,7 +53,8 @@ class ZippyqFrequencyViewModel: Descriptable {
                 totalLaps: entry?.totalLaps,
                 fastestLap: entry?.fastestLap,
                 fastest2Laps: entry?.fastest2Laps,
-                fastest3Laps: entry?.fastest3Laps
+                fastest3Laps: entry?.fastest3Laps,
+                bestAvailable: true
             )
         } else {
             resultLabel = nil
@@ -80,7 +81,7 @@ class ZippyqFrequencyViewModel: Descriptable {
             subtitleLabel = packText
             imageUrl = userViewModel.pictureUrl
         } else {
-            titleLabel = "[Empty]"
+            titleLabel = "Empty"
             isAssigned = false
             subtitleLabel = nil
             imageUrl = nil

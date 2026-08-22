@@ -43,7 +43,7 @@ final class ZippyqDataController {
     weak var delegate: ZippyqDataControllerDelegate?
 
     var canJoinQueues: Bool {
-        return currentUser != nil && race?.isJoined == true && race?.zippyNoKiosk == true
+        return currentUser != nil && race?.isJoined == true && race?.zippyNoKiosk == true && race?.hasEnded(extendedByDays: 2) == false
     }
 
     var smartJoinRecommendation: ZippyqSmartJoinRecommendation? {

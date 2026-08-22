@@ -23,6 +23,7 @@ class ZippyqRoundViewModel: Descriptable {
     
     static let showsSpotsLeft: Bool = false
     static let showsSpotsFull: Bool = false
+    static let showsScoringFormatLabel: Bool = false
 
     init(with queue: ZippyQueue,
          frequencies: [Frequency],
@@ -36,7 +37,7 @@ class ZippyqRoundViewModel: Descriptable {
         heatLabel = queue.heat > 1 ? "Heat \(queue.heat)" : nil
 
         let hasResults = queue.entries.contains { $0.hasResults }
-        scoringFormatLabel = queue.status != .queued && hasResults ? scoringFormat.title : nil
+        scoringFormatLabel = Self.showsScoringFormatLabel && hasResults ? "Results" : nil // Just a legend
 
         let viewModels = frequencies.map {
             ZippyqFrequencyViewModel(
