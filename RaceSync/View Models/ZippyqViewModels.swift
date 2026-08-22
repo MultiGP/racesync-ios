@@ -88,7 +88,7 @@ private extension ZippyqHeaderViewModel {
                            maximumPackCount: Int32,
                            isUpNext: Bool) -> String {
         let usedCount = stats?.usedCount ?? 0
-        let queuedCount = stats?.queuedCount ?? 0
+        let queuedCount = max((stats?.queuedCount ?? 0) - usedCount, 0)
 
         let packText: String
         if maximumPackCount > 0 {

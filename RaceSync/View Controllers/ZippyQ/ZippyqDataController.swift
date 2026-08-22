@@ -466,7 +466,7 @@ private extension ZippyqDataController {
             }
 
         let maximumPackCount = race?.cycleCount ?? 0
-        let allocatedPackCount = (currentUserStats?.usedCount ?? 0) + (currentUserStats?.queuedCount ?? 0)
+        let allocatedPackCount = currentUserStats?.queuedCount ?? 0
         let canJoinAnotherRound = maximumPackCount <= 0 || allocatedPackCount < maximumPackCount
 
         return ZippyqSmartJoinInput(
