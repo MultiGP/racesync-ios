@@ -381,13 +381,17 @@ extension ZippyqViewController: ZippyqDataControllerDelegate {
                 CGPoint(x: 0, y: -collectionView.adjustedContentInset.top),
                 animated: false
             )
-            if let runningRoundId = snapshotController.runningRoundId {
-                scrollRoundToTop(withId: runningRoundId, animated: false)
-            }
         }
 
         setInitialLoading(false)
         collectionView.reloadEmptyDataSet()
+
+        if isInitialLoad, let runningRoundId = snapshotController.runningRoundId {
+            DispatchQueue.main.async { [weak self] in
+                self?.collectionView.layoutIfNeeded()
+                self?.scrollRoundToTop(withId: runningRoundId, animated: false)
+            }
+        }
     }
 
     func zippyqDataController(_ controller: ZippyqDataController,
