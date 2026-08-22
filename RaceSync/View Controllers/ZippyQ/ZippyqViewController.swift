@@ -62,6 +62,7 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     fileprivate var headerCollapseTracking: HeaderCollapseTracking = .contentOffset
     fileprivate var lastHeaderScrollOffset: CGFloat = 0
     fileprivate var isJoiningNextRound = false
+    fileprivate var lastUserScrollTime: CFTimeInterval = 0
     fileprivate var emptyStateError: EmptyStateViewModel?
     fileprivate let emptyStateNoRaceQueues = EmptyStateViewModel(.noRaceQueues)
 
@@ -80,6 +81,7 @@ class ZippyqViewController: UIViewController, RaceTabbable {
 
     fileprivate enum Constants {
         static let fastUpwardScrollVelocity: CGFloat = -0.8
+        static let runningRoundTransitionIdleInterval: CFTimeInterval = 5
     }
 
     // MARK: - Initialization
@@ -197,10 +199,36 @@ class ZippyqViewController: UIViewController, RaceTabbable {
         collectionView.isHidden = loading
     }
 
-    fileprivate func displayContent() {
+    fileprivate func displayContent(animatingRunningRoundChange: Bool = false) {
+        let previousRunningRoundId = snapshotController.runningRoundId
+        let previouslyExpandedRoundIds = snapshotController.expandedRoundIds
         snapshotController.update(with: dataController.roundViewModels)
         configureHeaderView()
-        applySnapshot(animatingDifferences: false, reloadingExistingItems: true)
+
+        let runningRoundId = snapshotController.runningRoundId
+        let isRunningRoundChange = previousRunningRoundId != nil
+            && runningRoundId != nil
+            && previousRunningRoundId != runningRoundId
+        guard animatingRunningRoundChange, isRunningRoundChange, let runningRoundId else {
+            applySnapshot(animatingDifferences: false, reloadingExistingItems: true)
+            return
+        }
+
+        snapshotController.collapseRounds(withIds: snapshotController.pastRoundIds)
+        snapshotController.expandRound(withId: runningRoundId)
+
+        let expansionChangedRoundIds = previouslyExpandedRoundIds
+            .symmetricDifference(snapshotController.expandedRoundIds)
+        let updatedRoundIds = snapshotController.pastRoundIds
+            .union([runningRoundId])
+        animateVisibleRoundHeaders(
+            withIds: updatedRoundIds,
+            expansionChangedRoundIds: expansionChangedRoundIds
+        )
+        applySnapshot(animatingDifferences: true, reloadingExistingItems: true)
+        DispatchQueue.main.async { [weak self] in
+            self?.scrollRoundToTop(withId: runningRoundId)
+        }
     }
 
     fileprivate func configureHeaderView() {
@@ -321,7 +349,14 @@ extension ZippyqViewController: ZippyqDataControllerDelegate {
     func zippyqDataControllerDidUpdateContent(_ controller: ZippyqDataController) {
         let isInitialLoad = activityIndicatorView.isLoading
         emptyStateError = nil
-        displayContent()
+        let hasBeenIdle = CACurrentMediaTime() - lastUserScrollTime
+            >= Constants.runningRoundTransitionIdleInterval
+        let canAnimateRunningRoundChange = !isInitialLoad
+            && viewIfLoaded?.window != nil
+            && !collectionView.isDragging
+            && !collectionView.isDecelerating
+            && hasBeenIdle
+        displayContent(animatingRunningRoundChange: canAnimateRunningRoundChange)
 
         if isInitialLoad {
             collectionView.layoutIfNeeded()
@@ -333,6 +368,9 @@ extension ZippyqViewController: ZippyqDataControllerDelegate {
                 CGPoint(x: 0, y: -collectionView.adjustedContentInset.top),
                 animated: false
             )
+            if let runningRoundId = snapshotController.runningRoundId {
+                scrollRoundToTop(withId: runningRoundId, animated: false)
+            }
         }
 
         setInitialLoading(false)
@@ -477,11 +515,14 @@ private extension ZippyqViewController {
         }
     }
 
-    func configure(_ header: ZippyqCollapsableHeaderView?, with viewModel: ZippyqRoundViewModel) {
+    func configure(_ header: ZippyqCollapsableHeaderView?,
+                   with viewModel: ZippyqRoundViewModel,
+                   animatingExpansion: Bool = false) {
         guard let header else { return }
         header.configure(
             with: viewModel,
-            isExpanded: snapshotController.isRoundExpanded(withId: viewModel.id)
+            isExpanded: snapshotController.isRoundExpanded(withId: viewModel.id),
+            animatingExpansion: animatingExpansion
         )
         header.didTapView = { [weak self] in
             if viewModel.isExpandable {
@@ -504,6 +545,28 @@ private extension ZippyqViewController {
             ) as? ZippyqCollapsableHeaderView
             if let viewModel = snapshotController.roundViewModel(for: sections[indexPath.section]) {
                 configure(header, with: viewModel)
+            }
+        }
+    }
+
+    func animateVisibleRoundHeaders(withIds roundIds: Set<String>,
+                                    expansionChangedRoundIds: Set<String>) {
+        let sections = dataSource.snapshot().sectionIdentifiers
+        let layout = collectionView.collectionViewLayout as? ZippyqCollectionViewLayout
+        for indexPath in collectionView.indexPathsForVisibleSupplementaryElements(
+            ofKind: ZippyqCollectionViewLayout.roundHeaderElementKind
+        ) where sections.indices.contains(indexPath.section) {
+            guard let viewModel = snapshotController.roundViewModel(for: sections[indexPath.section]),
+                  roundIds.contains(viewModel.id) else { continue }
+
+            let header = collectionView.supplementaryView(
+                forElementKind: ZippyqCollectionViewLayout.roundHeaderElementKind,
+                at: indexPath
+            ) as? ZippyqCollapsableHeaderView
+            configure(header, with: viewModel, animatingExpansion: true)
+
+            if expansionChangedRoundIds.contains(viewModel.id) {
+                layout?.prepareAccordionTransition(forSection: indexPath.section)
             }
         }
     }
@@ -592,7 +655,7 @@ private extension ZippyqViewController {
         header.setExpanded(expanded, animated: true)
     }
 
-    func scrollRoundToTop(withId roundId: String) {
+    func scrollRoundToTop(withId roundId: String, animated: Bool = true) {
         let sectionIdentifier = SectionIdentifier.round(roundId)
         guard let section = dataSource.snapshot().indexOfSection(sectionIdentifier) else { return }
 
@@ -605,7 +668,7 @@ private extension ZippyqViewController {
            let targetOffset = layout.targetContentOffset(forRoundHeaderAt: headerAttributes.frame.minY) else {
             return
         }
-        collectionView.setContentOffset(targetOffset, animated: true)
+        collectionView.setContentOffset(targetOffset, animated: animated)
     }
 
     var maximumContentOffsetY: CGFloat {
@@ -632,6 +695,9 @@ extension ZippyqViewController: UICollectionViewDelegate {
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.isDragging || scrollView.isDecelerating {
+            lastUserScrollTime = CACurrentMediaTime()
+        }
         guard !collectionView.isHidden, dataController.canJoinQueues, headerCollapseRange > 0,
               headerCollapseTracking != .suspended else { return }
 
@@ -652,6 +718,7 @@ extension ZippyqViewController: UICollectionViewDelegate {
     }
 
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        lastUserScrollTime = CACurrentMediaTime()
         lastHeaderScrollOffset = scrollView.contentOffset.y + scrollView.adjustedContentInset.top
     }
 

@@ -228,7 +228,9 @@ class ZippyqCollapsableHeaderView: UICollectionReusableView {
     
     // MARK: - Configuration
 
-    func configure(with viewModel: ZippyqRoundViewModel, isExpanded: Bool) {
+    func configure(with viewModel: ZippyqRoundViewModel,
+                   isExpanded: Bool,
+                   animatingExpansion: Bool = false) {
         titleLabel.text = viewModel.titleLabel
         contextualLabel.text = viewModel.contextualLabel
         subtitleLabel.text = viewModel.heatLabel
@@ -239,9 +241,15 @@ class ZippyqCollapsableHeaderView: UICollectionReusableView {
         avatarImageUrls = viewModel.avatarImageUrls
         updateAvatars()
 
+        let targetExpanded = viewModel.isExpandable && isExpanded
         self.isExpandable = viewModel.isExpandable
-        self.isExpanded = viewModel.isExpandable && isExpanded
-        updateExpansionState(animated: false)
+        if animatingExpansion, targetExpanded != self.isExpanded {
+            self.isExpanded = targetExpanded
+            updateExpansionState(animated: true)
+        } else {
+            self.isExpanded = targetExpanded
+            updateExpansionState(animated: false)
+        }
     }
     
     func setExpanded(_ expanded: Bool, animated: Bool) {

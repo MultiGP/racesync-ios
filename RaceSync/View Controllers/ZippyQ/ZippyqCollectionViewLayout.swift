@@ -37,7 +37,7 @@ final class ZippyqCollectionViewLayout: UICollectionViewCompositionalLayout {
 
     private let expandedHeaderHeight: CGFloat
     private let compactHeaderHeight: CGFloat
-    private var accordionTransitionSection: Int?
+    private var accordionTransitionSections = Set<Int>()
 
     private enum Constants {
         static let cellHeight: CGFloat = 60
@@ -137,7 +137,7 @@ final class ZippyqCollectionViewLayout: UICollectionViewCompositionalLayout {
             .copy() as? UICollectionViewLayoutAttributes else {
             return nil
         }
-        if itemIndexPath.section == accordionTransitionSection {
+        if accordionTransitionSections.contains(itemIndexPath.section) {
             applyAccordionTransition(to: attributes, at: itemIndexPath)
         }
         return attributes
@@ -150,7 +150,7 @@ final class ZippyqCollectionViewLayout: UICollectionViewCompositionalLayout {
             .copy() as? UICollectionViewLayoutAttributes else {
             return nil
         }
-        if itemIndexPath.section == accordionTransitionSection {
+        if accordionTransitionSections.contains(itemIndexPath.section) {
             applyAccordionTransition(to: attributes, at: itemIndexPath)
         }
         return attributes
@@ -158,11 +158,11 @@ final class ZippyqCollectionViewLayout: UICollectionViewCompositionalLayout {
 
     override func finalizeCollectionViewUpdates() {
         super.finalizeCollectionViewUpdates()
-        accordionTransitionSection = nil
+        accordionTransitionSections.removeAll()
     }
 
     func prepareAccordionTransition(forSection section: Int) {
-        accordionTransitionSection = section
+        accordionTransitionSections.insert(section)
     }
 
     func targetContentOffset(forRoundHeaderAt minY: CGFloat) -> CGPoint? {

@@ -41,6 +41,14 @@ final class ZippyqSnapshotController {
 
     private(set) var expandedRoundIds = Set<String>()
 
+    var runningRoundId: String? {
+        return roundViewModels.first { $0.badge == .running }?.id
+    }
+
+    var pastRoundIds: Set<String> {
+        return Set(roundViewModels.filter { $0.badge == .past }.map(\.id))
+    }
+
     // MARK: - Private Variables
 
     private var roundViewModels = [ZippyqRoundViewModel]()
@@ -99,6 +107,10 @@ final class ZippyqSnapshotController {
     func expandRound(withId roundId: String) {
         guard roundsById[roundId]?.isExpandable == true else { return }
         expandedRoundIds.insert(roundId)
+    }
+
+    func collapseRounds(withIds roundIds: Set<String>) {
+        expandedRoundIds.subtract(roundIds)
     }
 
     func isRoundExpanded(withId roundId: String) -> Bool {
