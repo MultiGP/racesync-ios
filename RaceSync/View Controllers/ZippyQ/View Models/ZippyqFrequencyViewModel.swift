@@ -63,16 +63,16 @@ class ZippyqFrequencyViewModel: Descriptable {
             let userViewModel = UserViewModel(with: user)
             let usedCount = stats.usedCount
             let packUnitText = "pack\(usedCount == 1 ? "" : "s")"
-            let noPackText = "No packs flown yet"
+            let noPackText = "No packs used yet"
             var packText = ""
 
             if maximumPackCount > 0 {
-                packText = usedCount == 0 ? noPackText : "\(usedCount)/\(maximumPackCount) \(packUnitText) flown"
+                packText = usedCount == 0 ? noPackText : "\(usedCount)/\(maximumPackCount) \(packUnitText) used"
             } else {
-                packText = usedCount == 0 ? noPackText : "\(usedCount) \(packUnitText) flown"
+                packText = usedCount == 0 ? noPackText : "\(usedCount) \(packUnitText) used"
             }
             if isCurrentUser {
-                packText += " | \(stats.queuedCount) queued"
+                packText += " | \(stats.queuedCount - usedCount) queued"
             }
 
             titleLabel = userViewModel.username

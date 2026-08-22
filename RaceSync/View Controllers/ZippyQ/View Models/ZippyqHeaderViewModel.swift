@@ -43,10 +43,10 @@ private extension ZippyqHeaderViewModel {
 
         let packText: String
         if maximumPackCount > 0 {
-            packText = usedCount == 0 ? "No packs flown yet" : "\(usedCount)/\(maximumPackCount) packs used"
+            packText = usedCount == 0 ? "No packs used yet" : "\(usedCount)/\(maximumPackCount) packs used"
         } else {
             packText = usedCount == 0
-                ? "No packs flown yet"
+                ? "No packs used yet"
                 : "\(usedCount) pack\(usedCount == 1 ? "" : "s") flown"
         }
 
