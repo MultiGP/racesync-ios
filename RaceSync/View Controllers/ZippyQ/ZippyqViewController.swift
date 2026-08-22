@@ -484,7 +484,11 @@ private extension ZippyqViewController {
             isExpanded: snapshotController.isRoundExpanded(withId: viewModel.id)
         )
         header.didTapView = { [weak self] in
-            self?.toggleRound(withId: viewModel.id)
+            if viewModel.isExpandable {
+                self?.toggleRound(withId: viewModel.id)
+            } else {
+                self?.scrollRoundToTop(withId: viewModel.id)
+            }
         }
     }
 

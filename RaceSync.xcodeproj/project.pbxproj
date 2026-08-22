@@ -56,6 +56,10 @@
 		4F2B7E872E86309300643697 /* SeriesApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2B7E862E86309300643697 /* SeriesApi.swift */; };
 		4F2B7E892E8635D200643697 /* SeriesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2B7E882E8635D200643697 /* SeriesViewModel.swift */; };
 		4F35D9833034E9D00089E6C3 /* UIButton+Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F35D9823034E9D00089E6C3 /* UIButton+Animation.swift */; };
+		4F35D98730396C070089E6C3 /* ZippyqHeaderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F35D98630396C020089E6C3 /* ZippyqHeaderViewModel.swift */; };
+		4F35D98930396C3A0089E6C3 /* ZippyqFrequencyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F35D98830396C3A0089E6C3 /* ZippyqFrequencyViewModel.swift */; };
+		4F35D98B30396C5C0089E6C3 /* ZippyqRoundViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F35D98A30396C5C0089E6C3 /* ZippyqRoundViewModel.swift */; };
+		4F35D98F30396C850089E6C3 /* ZippyqJoinConfirmationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F35D98E30396C850089E6C3 /* ZippyqJoinConfirmationViewModel.swift */; };
 		4F3750A92EF4C9510068FE16 /* RaceEditable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3750A82EF4C9510068FE16 /* RaceEditable.swift */; };
 		4F3750AB2EF8B0BD0068FE16 /* TimeUtilTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3750AA2EF8B0BD0068FE16 /* TimeUtilTests.swift */; };
 		4F3D640D23FB253900DE6DF2 /* UICollectionView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3D640C23FB253900DE6DF2 /* UICollectionView+Extensions.swift */; };
@@ -414,6 +418,10 @@
 		4F2B7E862E86309300643697 /* SeriesApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesApi.swift; sourceTree = "<group>"; };
 		4F2B7E882E8635D200643697 /* SeriesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesViewModel.swift; sourceTree = "<group>"; };
 		4F35D9823034E9D00089E6C3 /* UIButton+Animation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Animation.swift"; sourceTree = "<group>"; };
+		4F35D98630396C020089E6C3 /* ZippyqHeaderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqHeaderViewModel.swift; sourceTree = "<group>"; };
+		4F35D98830396C3A0089E6C3 /* ZippyqFrequencyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqFrequencyViewModel.swift; sourceTree = "<group>"; };
+		4F35D98A30396C5C0089E6C3 /* ZippyqRoundViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqRoundViewModel.swift; sourceTree = "<group>"; };
+		4F35D98E30396C850089E6C3 /* ZippyqJoinConfirmationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqJoinConfirmationViewModel.swift; sourceTree = "<group>"; };
 		4F3750A82EF4C9510068FE16 /* RaceEditable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceEditable.swift; sourceTree = "<group>"; };
 		4F3750AA2EF8B0BD0068FE16 /* TimeUtilTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeUtilTests.swift; sourceTree = "<group>"; };
 		4F3D640C23FB253900DE6DF2 /* UICollectionView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Extensions.swift"; sourceTree = "<group>"; };
@@ -892,6 +900,18 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		4F35D98530396BEE0089E6C3 /* View Models */ = {
+			isa = PBXGroup;
+			children = (
+				4FABC009301D400000000001 /* ZippyqViewModels.swift */,
+				4F35D98630396C020089E6C3 /* ZippyqHeaderViewModel.swift */,
+				4F35D98830396C3A0089E6C3 /* ZippyqFrequencyViewModel.swift */,
+				4F35D98A30396C5C0089E6C3 /* ZippyqRoundViewModel.swift */,
+				4F35D98E30396C850089E6C3 /* ZippyqJoinConfirmationViewModel.swift */,
+			);
+			path = "View Models";
+			sourceTree = "<group>";
+		};
 		4F39976526D45073006B1075 /* App Icon */ = {
 			isa = PBXGroup;
 			children = (
@@ -1081,7 +1101,6 @@
 				4F6A28E62D15046900FF692D /* ResultEntryViewModel.swift */,
 				4F2B7E882E8635D200643697 /* SeriesViewModel.swift */,
 				4F21086A2F90142B007C7716 /* SeriesResultViewModel.swift */,
-				4FABC009301D400000000001 /* ZippyqViewModels.swift */,
 				4F9DB7AB23D5A1DE00570483 /* EmptyStateViewModel.swift */,
 				4F0B61422385EEFF00930D91 /* ViewModelHelper.swift */,
 			);
@@ -1348,6 +1367,7 @@
 				4FBCD0033021000000000001 /* ZippyqCollectionViewLayout.swift */,
 				4FABC003301D200000000001 /* ZippyqSmartJoiner.swift */,
 				4FABC005301D200000000001 /* ZippyqSmartJoinable.swift */,
+				4F35D98530396BEE0089E6C3 /* View Models */,
 				4F35D984303650990089E6C3 /* Views */,
 			);
 			path = ZippyQ;
@@ -1725,6 +1745,7 @@
 				4F0B613F2385DA8F00930D91 /* UIImage+Extensions.swift in Sources */,
 				4F68BE6D2399DBCF009D44F7 /* UIViewController+Lookup.swift in Sources */,
 				4F64F680257B97E000574F4D /* WebViewController.swift in Sources */,
+				4F35D98930396C3A0089E6C3 /* ZippyqFrequencyViewModel.swift in Sources */,
 				4F00E075242932F2001DCFC4 /* RateMeDefaults.swift in Sources */,
 				4F605635258D89B5008AF93F /* CollectionViewCell+Reuse.swift in Sources */,
 				4F004EA9295BB282009C46AA /* DatePickerViewController.swift in Sources */,
@@ -1742,6 +1763,7 @@
 				4FE96E9224E3E687009A7F53 /* HeaderStretchable.swift in Sources */,
 				4FEADB742416B3D400F82F0D /* EventTracker.swift in Sources */,
 				4FEBB27623A1F9DA007514B4 /* UITabBarController+Extensions.swift in Sources */,
+				4F35D98B30396C5C0089E6C3 /* ZippyqRoundViewModel.swift in Sources */,
 				4FD4E1C3237F960A008816B3 /* CustomButton.swift in Sources */,
 				4F5C1E3E238A770B00D756EB /* UITableViewCell+Reuse.swift in Sources */,
 				4F2B7E892E8635D200643697 /* SeriesViewModel.swift in Sources */,
@@ -1769,6 +1791,7 @@
 				4FD4E1DB237FBE36008816B3 /* JoinButton.swift in Sources */,
 				4F90F0D42E8DD60700D9F5AF /* SeriesTabBarController.swift in Sources */,
 				4F7C8E3724D8AE16008FE125 /* ProfileAvatarView.swift in Sources */,
+				4F35D98730396C070089E6C3 /* ZippyqHeaderViewModel.swift in Sources */,
 				4F9DB79923D2D94E00570483 /* ExternalAppConstants.swift in Sources */,
 				4F482EFB251158FF00DBA0DF /* SocialActivity.swift in Sources */,
 				4FD53FAF23A0B20900158206 /* AvatarTableViewCell.swift in Sources */,
@@ -1831,6 +1854,7 @@
 				4F8B866C296583EB00EAF695 /* TextEditorViewController.swift in Sources */,
 				4FB0EB6A23BB3B1F009ABAF0 /* FormTableViewCell.swift in Sources */,
 				4FD4E1CD237F98E7008816B3 /* RaceTabBarController.swift in Sources */,
+				4F35D98F30396C850089E6C3 /* ZippyqJoinConfirmationViewModel.swift in Sources */,
 				4FCAF9FE23AC8B8400ACE7D3 /* Shimmable.swift in Sources */,
 				4F0F8F822F027A0F004EB3D3 /* StandingsListViewController.swift in Sources */,
 				4F4129DB2DC0AE32006A2763 /* NotificationsController.swift in Sources */,

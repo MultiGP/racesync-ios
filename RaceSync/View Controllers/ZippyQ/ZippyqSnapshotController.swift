@@ -61,10 +61,12 @@ final class ZippyqSnapshotController {
 
         let validRoundIds = Set(roundViewModels.map(\.id))
         expandedRoundIds.formIntersection(validRoundIds)
+        expandedRoundIds.subtract(roundViewModels.filter { !$0.isExpandable }.map(\.id))
 
         guard !hasInitializedExpandedRounds, !roundViewModels.isEmpty else { return }
         expandedRoundIds.formUnion(roundViewModels.filter {
-            $0.badge == .running || $0.frequencyViewModels.contains(where: \.isCurrentUser)
+            $0.isExpandable
+                && ($0.badge == .running || $0.frequencyViewModels.contains(where: \.isCurrentUser))
         }.map(\.id))
         hasInitializedExpandedRounds = true
     }
@@ -86,6 +88,7 @@ final class ZippyqSnapshotController {
     }
 
     func toggleRound(withId roundId: String) {
+        guard roundsById[roundId]?.isExpandable == true else { return }
         if expandedRoundIds.contains(roundId) {
             expandedRoundIds.remove(roundId)
         } else {
@@ -94,6 +97,7 @@ final class ZippyqSnapshotController {
     }
 
     func expandRound(withId roundId: String) {
+        guard roundsById[roundId]?.isExpandable == true else { return }
         expandedRoundIds.insert(roundId)
     }
 

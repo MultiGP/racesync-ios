@@ -150,6 +150,7 @@ class ZippyqCollapsableHeaderView: UICollectionReusableView {
     fileprivate lazy var contentView = UIView()
 
     fileprivate var isTouching = false
+    fileprivate var isExpandable = true
     fileprivate var accessoryWidthConstraint: Constraint?
     fileprivate var avatarImageUrls = [String?]()
 
@@ -238,11 +239,13 @@ class ZippyqCollapsableHeaderView: UICollectionReusableView {
         avatarImageUrls = viewModel.avatarImageUrls
         updateAvatars()
 
-        self.isExpanded = isExpanded
+        self.isExpandable = viewModel.isExpandable
+        self.isExpanded = viewModel.isExpandable && isExpanded
         updateExpansionState(animated: false)
     }
     
     func setExpanded(_ expanded: Bool, animated: Bool) {
+        guard isExpandable else { return }
         guard expanded != isExpanded else { return }
 
         isExpanded = expanded
@@ -332,11 +335,12 @@ private extension ZippyqCollapsableHeaderView {
 
     func updateExpansionState(animated: Bool) {
         separatorView.isHidden = isExpanded
+        chevronImageView.isHidden = !isExpandable
 
-        let displaysAvatars = !isExpanded && !avatarImageUrls.isEmpty
-        let displaysContext = isExpanded
-        let displaysSubtitle = isExpanded && subtitleLabel.text?.isEmpty == false
-        let displaysSubtitleContext = isExpanded && subtitleContextLabel.text?.isEmpty == false
+        let displaysAvatars = isExpandable && !isExpanded && !avatarImageUrls.isEmpty
+        let displaysContext = !isExpandable || isExpanded
+        let displaysSubtitle = isExpandable && isExpanded && subtitleLabel.text?.isEmpty == false
+        let displaysSubtitleContext = isExpandable && isExpanded && subtitleContextLabel.text?.isEmpty == false
         let displaysMetadata = displaysSubtitle || displaysSubtitleContext
         let expectedExpandedState = isExpanded
 

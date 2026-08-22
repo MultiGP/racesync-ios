@@ -405,8 +405,23 @@ private extension ZippyqDataController {
     }
 
     func smartJoinInput(from response: ZippyqResponse, userId: ObjectId) -> ZippyqSmartJoinInput {
-        let roundSequence = response.queues
-            .map { ZippyqSmartJoinRoundPosition(cycle: $0.cycle, heat: $0.heat) }
+        let prospectiveRoundCount = max(1, Int(race?.zippyqIterator ?? 0) + 1)
+        let lastCycle = response.queues.map(\.cycle).max() ?? 0
+        let prospectiveRounds = (1...prospectiveRoundCount).map { offset in
+            ZippyqSmartJoinRound(
+                cycle: lastCycle + Int32(offset),
+                heat: 1,
+                containsCurrentUser: false,
+                slots: frequencies.map {
+                    ZippyqSmartJoinSlot(frequency: $0.frequency, slot: $0.slot, isAvailable: true)
+                }
+            )
+        }
+        let roundSequence = (response.queues.map {
+            ZippyqSmartJoinRoundPosition(cycle: $0.cycle, heat: $0.heat)
+        } + prospectiveRounds.map {
+            ZippyqSmartJoinRoundPosition(cycle: $0.cycle, heat: $0.heat)
+        })
             .reduce(into: [ZippyqSmartJoinRoundPosition]()) { positions, position in
                 if !positions.contains(position) { positions.append(position) }
             }
@@ -463,7 +478,7 @@ private extension ZippyqDataController {
                     containsCurrentUser: queue.entries.contains { $0.user?.id == userId },
                     slots: slots
                 )
-            }
+            } + prospectiveRounds
 
         let maximumPackCount = race?.cycleCount ?? 0
         let allocatedPackCount = currentUserStats?.queuedCount ?? 0

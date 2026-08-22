@@ -11,7 +11,8 @@
 /// Rules, in priority order:
 /// 1. Do not recommend a slot when the user cannot join another round, has no selected frequencies,
 ///    or has already reached the race's ZippyQ depth.
-/// 2. Consider queued rounds only, excluding rounds that already contain the current user.
+/// 2. Consider queued rounds and prospective empty cycles that the API can create on demand,
+///    excluding rounds that already contain the current user.
 /// 3. Treat each ordered round/heat pair as one queue position. Exclude candidates that do not
 ///    leave the configured number of queue positions between the candidate and any of the user's
 ///    existing past, live, or queued assignments.
