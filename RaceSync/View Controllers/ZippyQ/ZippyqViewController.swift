@@ -386,7 +386,6 @@ extension ZippyqViewController: EmptyDataSetDelegate {
         if emptyStateError != nil { return true }
 
         return dataController.hasLoadedContent
-            && !race.isJoined
             && dataController.roundViewModels.isEmpty
     }
 

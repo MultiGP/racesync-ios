@@ -20,6 +20,8 @@ protocol ZippyqDataControllerDelegate: AnyObject {
 /// - Fetches queues and checks revision changes through interval-based polling.
 /// - Prevents duplicate content requests and refreshes its derived state after mutations.
 /// - Builds round view models and identifies the next queued round.
+/// - Limits past queues while a race is active, keeping the most recent configurable number visible.
+/// - Restores all past queues when no queue is running, the race is finalized, or its two-day window passes.
 /// - Adds, switches, and removes the current user from queued rounds.
 /// - Counts queued users per frequency, excluding LIVE and PAST rounds.
 /// - Exposes the current user's pack usage, queued packs, and upcoming rounds.
@@ -34,6 +36,9 @@ protocol ZippyqDataControllerDelegate: AnyObject {
 final class ZippyqDataController {
 
     // MARK: - Public Variables
+
+    /// Number of the most recent past queues displayed while focusing on a running race.
+    static var visiblePastQueueCount = 2
 
     weak var delegate: ZippyqDataControllerDelegate?
 
@@ -339,8 +344,28 @@ private extension ZippyqDataController {
     func updateRoundViewModels() {
         guard let response, let race else { return }
 
+        let hasRunningQueue = response.queues.contains { $0.status == .running }
+        let hidesPastQueues = hasRunningQueue
+            && !race.isFinalized
+            && !race.hasEnded(extendedByDays: 2)
+        let visiblePastQueues = Set(
+            response.queues
+                .filter { $0.status == .previous }
+                .sorted {
+                    if $0.cycle == $1.cycle { return $0.heat < $1.heat }
+                    return $0.cycle < $1.cycle
+                }
+                .suffix(max(0, Self.visiblePastQueueCount))
+                .map(ObjectIdentifier.init)
+        )
+        let queues = response.queues.filter {
+            !hidesPastQueues
+                || $0.status != .previous
+                || visiblePastQueues.contains(ObjectIdentifier($0))
+        }
+
         var queueGroups = [(cycle: Int32, status: ZippyqStatus, queues: [ZippyQueue])]()
-        for queue in response.queues {
+        for queue in queues {
             if let index = queueGroups.firstIndex(where: {
                 $0.cycle == queue.cycle && $0.status == queue.status
             }) {
