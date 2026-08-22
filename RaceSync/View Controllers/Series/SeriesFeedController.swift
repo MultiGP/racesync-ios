@@ -34,6 +34,7 @@ class SeriesFeedController {
 
     fileprivate let api = SeriesApi()
     fileprivate var collection = [SeriesFilter: [SeriesViewModel]]()
+    fileprivate static let processingQueue = DispatchQueue(label: "com.multigp.racesync.series-feed.processing", qos: .userInitiated)
 
     // MARK: - Data
 
@@ -58,32 +59,40 @@ class SeriesFeedController {
 
         api.getSeries { objects, error in
             if let objects = objects {
-                self.collection[.joined] = self.getJoinedSeries(from: objects)
-                self.collection[.regionals] = self.getRegionalSeries(from: objects)
-                self.collection[.all] = self.getAllSeries(from: objects)
-                completion?(self.collection[filter], false, nil)
+                Self.processingQueue.async {
+                    let collection: [SeriesFilter: [SeriesViewModel]] = [
+                        .joined: Self.getJoinedSeries(from: objects),
+                        .regionals: Self.getRegionalSeries(from: objects),
+                        .all: Self.getAllSeries(from: objects)
+                    ]
+
+                    DispatchQueue.main.async { [weak self] in
+                        self?.collection = collection
+                        completion?(collection[filter], false, nil)
+                    }
+                }
             } else if error != nil {
                 completion?(nil, false, error)
             }
         }
     }
 
-    fileprivate func getJoinedSeries(from objects: [Series]) -> [SeriesViewModel] {
+    fileprivate static func getJoinedSeries(from objects: [Series]) -> [SeriesViewModel] {
         return sortedSeries(objects.filter { $0.isJoined == true }, prioritizeRecent: true)
             .map { SeriesViewModel(with: $0) }
     }
 
-    fileprivate func getRegionalSeries(from objects: [Series]) -> [SeriesViewModel] {
+    fileprivate static func getRegionalSeries(from objects: [Series]) -> [SeriesViewModel] {
         return sortedSeries(objects.filter { $0.scoreType == .regionals }, prioritizeJoined: true)
             .map { SeriesViewModel(with: $0) }
     }
 
-    fileprivate func getAllSeries(from objects: [Series]) -> [SeriesViewModel] {
+    fileprivate static func getAllSeries(from objects: [Series]) -> [SeriesViewModel] {
         return sortedSeries(objects, prioritizeRecent: true)
             .map { SeriesViewModel(with: $0) }
     }
 
-    fileprivate func sortedSeries(_ objects: [Series], prioritizeJoined: Bool = false, prioritizeRecent: Bool = false) -> [Series] {
+    fileprivate static func sortedSeries(_ objects: [Series], prioritizeJoined: Bool = false, prioritizeRecent: Bool = false) -> [Series] {
         return objects.sorted {
             let now = Date()
 

@@ -23,6 +23,7 @@ public struct RaceData: Descriptable {
     public var content: String? = nil
 
     // Default race values, useful for new race creation
+    public var pilotLimit: Int32 = 0
     public var fee: Float32 = 0.0
     public var feeRequired: Bool = false
     public var format: String = ScoringFormat.fastest3Laps.rawValue
@@ -34,9 +35,10 @@ public struct RaceData: Descriptable {
     public var status: String = RaceStatus.open.rawValue
     public var timing: Bool = true
     public var zippyqDepth: Int32 = 5
-    public var zippyqIterator: Int32 = 1
+    public var zippyqIterator: Int32 = 0
     public var zippyqNoKiosk: Bool = true
-
+    public var zippyqPredictTimes: Bool = false
+    
     // To be used to broadcast email and/or APNS after saving
     // See php code base that needs to be implemented on the API side
     // https://github.com/MultiGP/multigp-com/blob/09841623ae274fa8f62a3a4df1393cf1cf986b74/public_html/mgp/protected/modules/multigp/models/Race.php#L311
@@ -68,6 +70,7 @@ public struct RaceData: Descriptable {
         self.qualifying = race.disableSlotAutoPopulation.rawValue
         self.privacy = race.type.rawValue
         self.status = race.status.rawValue
+        self.pilotLimit = race.pilotLimit
         self.fee = race.fee
         self.feeRequired = race.isPaymentRequiredToJoin
         self.funfly = race.scoringDisabled
@@ -81,6 +84,7 @@ public struct RaceData: Descriptable {
         self.zippyqDepth = race.maxZippyqDepth
         self.zippyqIterator = race.zippyqIterator
         self.zippyqNoKiosk = race.zippyNoKiosk
+        self.zippyqPredictTimes = race.predictZippyqTimes
     }
 
     public func toParams() -> Params {
@@ -99,6 +103,7 @@ public struct RaceData: Descriptable {
         params[ParamKey.disableSlotAutoPopulation] = qualifying
         params[ParamKey.type] = privacy
         params[ParamKey.status] = status
+        params[ParamKey.pilotLimit] = pilotLimit
         params[ParamKey.fee] = fee
         params[ParamKey.paymentRequiredToJoin] = feeRequired.intValue
         params[ParamKey.scoringDisabled] = funfly
@@ -113,7 +118,7 @@ public struct RaceData: Descriptable {
         params[ParamKey.maxZippyqDepth] = zippyqDepth
         params[ParamKey.zippyqIterator] = zippyqIterator
         params[ParamKey.zippyNoKiosk] = zippyqNoKiosk.intValue
-
+        params[ParamKey.predictZippyqTimes] = zippyqPredictTimes.intValue
         return params
     }
 

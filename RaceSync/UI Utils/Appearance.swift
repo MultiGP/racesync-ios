@@ -11,7 +11,17 @@ import AlamofireImage
 import Presentr
 
 class Appearance {
+    
+    static let isDarkModeEnabled: Bool = {
+    #if DEBUG
+        return true
+    #else
+        return false
+    #endif
+    }()
+
     static func configureUIAppearance() {
+        applyUserInterfaceStyle()
         configureViewAppearance()
         configureNavigationBarAppearance()
         configureTabBarAppearance()
@@ -33,24 +43,62 @@ class Appearance {
         presenter.cornerRadius = 10
         return presenter
     }
+    
+    static func applyUserInterfaceStyle() {
+        guard let window = UIApplication.shared.delegate?.window else { return }
+
+        window?.overrideUserInterfaceStyle = isDarkModeEnabled
+            ? AppPrefs.appearance.userInterfaceStyle
+            : .light
+        window?.rootViewController?.view.setNeedsLayout()
+        window?.rootViewController?.view.setNeedsDisplay()
+    }
+
+    static func applyUserInterfaceStyle(to view: UIView) {
+        guard let window = view.window else { return }
+
+        view.overrideUserInterfaceStyle = isDarkModeEnabled
+            ? window.traitCollection.userInterfaceStyle
+            : .light
+    }
+    
+    static func applyTransparentStyle(to navigationItem: UINavigationItem) {
+        guard #available(iOS 26, *) else { return }
+                
+        let appearance = navigationBarOpaqueAppearance(opaque: false, shadow: false)
+        appearance.backgroundEffect = nil
+        appearance.backgroundImage = UIImage()
+        appearance.shadowImage = UIImage()
+        navigationItem.standardAppearance = appearance
+        navigationItem.scrollEdgeAppearance = appearance
+        navigationItem.compactAppearance = appearance
+        navigationItem.compactScrollEdgeAppearance = appearance
+    }
+    
+    static func applyOpaqueStyle(to navigationItem: UINavigationItem, shadow: Bool = true) {
+        guard #available(iOS 26, *) else { return }
+
+        let appearance = navigationBarOpaqueAppearance(opaque: true, shadow: shadow)
+        navigationItem.standardAppearance = appearance
+        navigationItem.scrollEdgeAppearance = appearance
+        navigationItem.compactAppearance = appearance
+        navigationItem.compactScrollEdgeAppearance = appearance
+    }
 }
 
 fileprivate extension Appearance {
-
+    
     static func configureViewAppearance() {
         let windowAppearance = UIWindow.appearance()
-        windowAppearance.tintColor = Color.blue
-
+        windowAppearance.tintColor = Color.buttonTint
+        
         if let mainWindow = UIApplication.shared.delegate?.window {
             mainWindow?.backgroundColor = Color.white
-
-            mainWindow?.overrideUserInterfaceStyle = .light
         }
     }
+    
+    static func navigationBarOpaqueAppearance(opaque: Bool = true, shadow: Bool = true) -> UINavigationBarAppearance {
 
-    static func configureNavigationBarAppearance() {
-        let foregroundColor = Color.blue
-        let backgroundColor = Color.navigationBarColor
         let backIndicatorImage = ButtonImg.back
         let textAttributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.boldSystemFont(ofSize: 18),
@@ -58,15 +106,29 @@ fileprivate extension Appearance {
         ]
 
         let appearance = UINavigationBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = backgroundColor
-        appearance.shadowColor = Color.gray100
         appearance.titleTextAttributes = textAttributes
         appearance.setBackIndicatorImage(
             backIndicatorImage?.withRenderingMode(.alwaysTemplate),
             transitionMaskImage: backIndicatorImage
         )
+        
+        if opaque {
+            appearance.configureWithOpaqueBackground()
+            appearance.backgroundColor = Color.barBackground
+            appearance.shadowColor = shadow ? Color.gray100 : .clear
+        } else {
+            appearance.configureWithTransparentBackground()
+            appearance.backgroundColor = Color.clear
+            appearance.shadowColor = .clear
+        }
+        
+        return appearance
+    }
 
+    static func configureNavigationBarAppearance() {
+        let foregroundColor = Color.buttonTint
+        let appearance = navigationBarOpaqueAppearance()
+        
         UINavigationBar.appearance().standardAppearance = appearance
         UINavigationBar.appearance().compactAppearance = appearance
         UINavigationBar.appearance().scrollEdgeAppearance = appearance
@@ -84,8 +146,8 @@ fileprivate extension Appearance {
     }
 
     static func configureTabBarAppearance() {
-        let foregroundColor = Color.blue
-        let backgroundColor = Color.navigationBarColor
+        let foregroundColor = Color.tabBarForeground
+        let backgroundColor = Color.barBackground
         let unselectedItemTintColor = Color.gray300
         let backgroundImage = UIImage.image(withColor: backgroundColor, imageSize: CGSize(width: 44, height: 44))
 
@@ -120,8 +182,8 @@ fileprivate extension Appearance {
     }
 
     static func configureToolBarAppearance() {
-        let foregroundColor = Color.blue
-        let backgroundColor = Color.navigationBarColor
+        let foregroundColor = Color.buttonTint
+        let backgroundColor = Color.barBackground
 
         // set the color and font for the title
         let toolBarAppearance = UIToolbar.appearance()

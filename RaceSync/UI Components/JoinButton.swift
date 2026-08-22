@@ -140,7 +140,7 @@ class JoinButton: CustomButton {
 
             if let borderColor = state.outlineColor {
                 layer.borderColor = borderColor.cgColor
-                layer.borderWidth = 1
+                layer.borderWidth = 1.5
             } else {
                 layer.borderWidth = 0
             }
@@ -255,11 +255,11 @@ extension JoinState {
 
     var titleColor: UIColor {
         switch self {
-        case .notJoined:    return Color.green
-        case .joined:       return Color.white
-        case .closed:       return Color.black
+        case .notJoined:    return Color.dynamic(light: Color.green, dark: Color.black)
+        case .joined:       return Color.dynamic(light: Color.white, dark: Color.black)
+        case .closed:       return Color.dynamic(light: Color.black, dark: Color.gray400)
         case .notPaid(fee: _):
-                            return Color.green
+                            return Color.dynamic(light: Color.green, dark: Color.black)
         }
     }
 

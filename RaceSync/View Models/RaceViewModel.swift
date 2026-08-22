@@ -28,6 +28,7 @@ class RaceViewModel: Descriptable {
     let distanceLabel: String
     let distance: Double
     let participantCount: Int
+    let limitLabel: String
     let feeLabel: String
     let chapterLabel: String
     let seriesLabel: String
@@ -58,6 +59,7 @@ class RaceViewModel: Descriptable {
         self.ownerLabel = race.ownerUserName
         self.seasonLabel = race.seasonName
         self.imageUrl = Self.imageUrl(for: race)
+        self.limitLabel = Self.limitLabelString(for: race)
         self.feeLabel = Self.feeLabelString(for: race)
     }
 
@@ -286,16 +288,24 @@ extension RaceViewModel {
 
         return attributedString
     }
+    
+    static func limitLabelString(for race: Race) -> String {
+        guard race.pilotLimit > 0 else {
+            return ""
+        }
+        return "Limited to \(race.pilotLimit) pilot\(race.pilotLimit == 1 ? "" : "s")"
+    }
 
     static func feeLabelString(for race: Race) -> String {
-        if race.fee > 0 {
-            if race.amountPaid > 0 {
-                return String(format: "✓ Paid $%.2f", race.amountPaid)
-            } else if race.amountDue > 0 {
-                return String(format: "Fee: %.2f USD", race.fee)
-            }
+        guard race.fee > 0 else {
+            return ""
         }
-        return ""
+        
+        if race.amountPaid > 0 {
+            return String(format: "✓ Paid $%.2f", race.amountPaid)
+        } else {
+            return String(format: "Fee: %.2f USD", race.fee)
+        }
     }
 }
 

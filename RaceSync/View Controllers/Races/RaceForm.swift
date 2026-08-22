@@ -31,8 +31,8 @@ enum RaceFormSection: Int {
 }
 
 enum RaceFormRow: Int, EnumTitle {
-    case chapter, `class`, content, endDate, fee, feeRequired, format, location, name,
-         notify, privacy, rounds, schedule, scoring, season, startDate, zDepth, zIterator, zNoKiosk
+    case chapter, `class`, content, endDate, limit, fee, feeRequired, format, location, name,
+         notify, privacy, rounds, schedule, scoring, season, startDate, zDepth, zIterator, zNoKiosk, zPrediction
 
     public var title: String {
         switch self {
@@ -40,6 +40,7 @@ enum RaceFormRow: Int, EnumTitle {
         case .class:        return "Race Class"
         case .content:      return "Description"
         case .endDate:      return "End Date"
+        case .limit:        return "Pilot Limit"
         case .fee:          return "Race Fee"
         case .feeRequired:  return "Payment Required to Join"
         case .format:       return "Race Format"
@@ -52,9 +53,10 @@ enum RaceFormRow: Int, EnumTitle {
         case .scoring:      return "Fun Fly"
         case .season:       return "Season"
         case .startDate:    return "Start Date"
-        case .zDepth:       return "ZippyQ Depth"
-        case .zIterator:    return "Rest rounds"
+        case .zDepth:       return "Pilot Queue Limit"
+        case .zIterator:    return "Rest Rounds"
         case .zNoKiosk:     return "Allow Pilot Devices to Q"
+        case .zPrediction:  return "Predict Round Times"
         }
     }
 
@@ -64,6 +66,7 @@ enum RaceFormRow: Int, EnumTitle {
         case .class:        return nil
         case .content:      return "Enter the details of this event"
         case .endDate:      return nil
+        case .limit:        return "Leave blank for no limit"
         case .fee:          return "Race Fee (USD)"
         case .feeRequired:  return nil
         case .format:       return nil
@@ -71,14 +74,15 @@ enum RaceFormRow: Int, EnumTitle {
         case .name:         return "Name of this event"
         case .notify:       return nil
         case .privacy:      return "Allow everyone or only chapter members to see this event"
-        case .rounds:       return "Limit ZippyQ packs"
+        case .rounds:       return "Sets the maximum number of packs (rounds) that a pilot can join"
         case .schedule:     return nil
         case .scoring:      return "Fun Fly disables scoring"
         case .season:       return nil
         case .startDate:    return nil
-        case .zDepth:       return "Set how many times a pilot can be in the line"
-        case .zIterator:    return "Number of rounds to rest"
-        case .zNoKiosk:     return "Allow ZippyQ sign up from your phone"
+        case .zDepth:       return "How many times a pilot can be in the line"
+        case .zIterator:    return "How many rounds to wait between runs"
+        case .zNoKiosk:     return "Allows ZippyQ sign up from your phone"
+        case .zPrediction:  return "Displays actual and predicted round start times"
         }
     }
 }
@@ -109,6 +113,8 @@ extension RaceFormRow {
             return QualifyingType(rawValue: raceData.qualifying)?.title
         case .privacy:
             return EventType(rawValue: raceData.privacy)?.title
+        case .limit:
+            return (raceData.pilotLimit > 0) ? "\(raceData.pilotLimit)" : "No limit"
         case .fee:
             return String(format: "$%.2f USD", raceData.fee)
         case .feeRequired:
@@ -134,6 +140,8 @@ extension RaceFormRow {
             return "\(raceData.zippyqIterator)"
         case .zNoKiosk:
             return raceData.zippyqNoKiosk ? "" : nil // will be converted to Bool
+        case .zPrediction:
+            return raceData.zippyqPredictTimes ? "" : nil // will be converted to Bool
         }
     }
 
@@ -148,11 +156,11 @@ extension RaceFormRow {
 
     var formType: FormType {
         switch self {
-        case .name, .fee, .rounds, .zDepth, .zIterator:
+        case .name, .limit, .fee, .rounds, .zDepth, .zIterator:
             return .textfield
         case .startDate, .endDate:
             return .datePicker
-        case .scoring, .feeRequired, .notify, .zNoKiosk:
+        case .scoring, .feeRequired, .notify, .zNoKiosk, .zPrediction:
             return .switch
         case .content:
             return .textEditor
@@ -163,7 +171,7 @@ extension RaceFormRow {
 
     var keyboardType: UIKeyboardType {
         switch self {
-        case .fee:
+        case .limit, .fee:
             return UIKeyboardType.decimalPad
         case .rounds, .zDepth, .zIterator:
             return UIKeyboardType.numberPad

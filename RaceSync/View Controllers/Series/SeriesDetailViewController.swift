@@ -24,6 +24,11 @@ class SeriesDetailViewController: UIViewController {
     var seriesApi: SeriesApi {
         get { return seriesController.seriesApi }
     }
+    
+    var shouldUseTransparentNavigationBar: Bool {
+        guard #available(iOS 26, *) else { return false }
+        return series.mainImageUrl != nil
+    }
 
     // MARK: - Private Variables
 
@@ -161,8 +166,8 @@ class SeriesDetailViewController: UIViewController {
 
         let vSpacing = Constants.padding * 3/4
 
-        let content = series.description.replaceHTMLColorTag(with: Color.black).stripHTMLFontTag().stripHTMLEdges()
-        htmlView.html = "<div id=\"content\" style=\"color:\(Color.black.toHexString()); text-align: justify; padding-top: \(vSpacing)px; padding-bottom: \(vSpacing)px;\">\(content)</div>"
+        let content = series.description.replaceHTMLColorTag(with: "currentColor").stripHTMLFontTag().stripHTMLEdges()
+        htmlView.html = "<div id=\"content\" style=\"text-align: justify; padding-top: \(vSpacing)px; padding-bottom: \(vSpacing)px;\">\(content)</div>"
         htmlView.isUserInteractionEnabled = true
     }
 }

@@ -37,9 +37,9 @@ class ProfileViewModel: Descriptable {
         self.type = .user
         self.id = user.id
 
-        self.title = ViewModelHelper.titleLabel(for: user.userName, country: user.country)
+        self.title = ViewModelHelper.titleLabel(for: user.userName)
         self.mainTextLabel = user.displayName.uppercased()
-        self.secondaryTextLabel = ViewModelHelper.locationLabel(for: user.city, state: user.state)
+        self.secondaryTextLabel = ViewModelHelper.locationLabel(for: user.city, state: user.state, country: user.country)
         self.backgroundUrl = user.profileBackgroundUrl
         self.pictureUrl = user.profilePictureUrl
 

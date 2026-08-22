@@ -164,7 +164,7 @@ class RaceListViewController: UIViewController, ViewJoinable {
 
     // MARK: - Data Update
 
-    fileprivate func raceViewModel(for indexPath: IndexPath) -> RaceViewModel? {
+    fileprivate func raceViewModel(at indexPath: IndexPath) -> RaceViewModel? {
         guard indexPath.row < raceList.count else { return nil }
         return raceList[indexPath.row]
     }
@@ -292,7 +292,7 @@ extension RaceListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        if let viewModel = raceViewModel(for: indexPath) {
+        if let viewModel = raceViewModel(at: indexPath) {
             openRaceDetail(viewModel)
         }
     }
@@ -313,7 +313,7 @@ extension RaceListViewController: UITableViewDataSource {
     }
 
     func raceTableViewCell(for indexPath: IndexPath) -> RaceTableViewCell {
-        guard let viewModel = raceViewModel(for: indexPath) else { return RaceTableViewCell() }
+        guard let viewModel = raceViewModel(at: indexPath) else { return RaceTableViewCell() }
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as RaceTableViewCell
 
         cell.dateLabel.text = viewModel.startDateLabel //"Saturday Sept 14 @ 9:00 AM"

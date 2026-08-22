@@ -111,7 +111,7 @@ extension UserDefaults {
         }
 
         var keyValue: String {
-            return "com.multigp.RaceSync.rateme.\(self)"
+            return "com.multigp.racesync.rateme.\(self)"
         }
 
         static func synchronize() {

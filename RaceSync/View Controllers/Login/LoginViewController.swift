@@ -34,12 +34,14 @@ class LoginViewController: UIViewController {
         let label = UILabel()
         label.text = titleText
         label.font = UIFont.systemFont(ofSize: 13, weight: .medium)
-        label.textColor = Color.gray200
+        label.textColor = Color.dynamic(light: Color.gray200, dark: Color.gray400)
         return label
     }()
 
     fileprivate lazy var emailField: UITextField = {
         let textField = UITextField()
+        textField.tintColor = Color.black
+        textField.textColor = Color.black
         textField.delegate = self
         textField.placeholder = "Email"
         textField.keyboardType = .emailAddress
@@ -54,6 +56,8 @@ class LoginViewController: UIViewController {
 
     fileprivate lazy var passwordField: UITextField = {
         let textField = UITextField()
+        textField.tintColor = Color.black
+        textField.textColor = Color.black
         textField.delegate = self
         textField.placeholder = "Password"
         textField.keyboardType = .`default`
@@ -87,22 +91,23 @@ class LoginViewController: UIViewController {
     }()
 
     fileprivate lazy var loginButton: ActionButton = {
+        let titleColor = Color.dynamic(light: Color.blue, dark: Color.black)
+        
         let button = ActionButton(type: .system)
+        button.addTarget(self, action:#selector(didPressLoginButton), for: .touchUpInside)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 21, weight: .regular)
-        button.setTitleColor(Color.blue, for: .normal)
+        button.setTitleColor(titleColor, for: .normal)
         button.setTitle("Login", for: .normal)
-        button.backgroundColor = Color.white.withAlphaComponent(0.8)
-        button.layer.cornerRadius = Constants.padding/2
+        button.backgroundColor = Color.white.withAlphaComponent(0.7)
+        button.layer.cornerCurve = .continuous
         button.layer.borderColor = Color.gray100.cgColor
         button.layer.borderWidth = 0.5
-        button.addTarget(self, action:#selector(didPressLoginButton), for: .touchUpInside)
         
         if #available(iOS 26.0, *) {
             button.layer.cornerRadius = Constants.actionButtonHeight/2
         } else {
             button.layer.cornerRadius = Constants.padding/2
         }
-                
         return button
     }()
 
@@ -114,7 +119,7 @@ class LoginViewController: UIViewController {
         let label = "By tapping “Login” you will accept our " + link + "."
 
         let attributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .medium),
-                          NSAttributedString.Key.foregroundColor: Color.gray200]
+                          NSAttributedString.Key.foregroundColor: Color.dynamic(light: Color.gray200, dark: Color.gray400)]
 
         let linkAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14, weight: .medium),
                           NSAttributedString.Key.foregroundColor: Color.link]
@@ -122,7 +127,6 @@ class LoginViewController: UIViewController {
         let attributedString = NSMutableAttributedString(string: label, attributes: attributes)
         attributedString.setAttributes(linkAttributes, range: NSString(string: label).range(of: link))
         button.setAttributedTitle(attributedString, for: .normal)
-
         return button
     }()
 
@@ -177,6 +181,12 @@ class LoginViewController: UIViewController {
         )
     }
 
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) else { return }
+        loginButton.layer.borderColor = Color.gray100.resolvedColor(with: traitCollection).cgColor
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
@@ -212,7 +222,7 @@ class LoginViewController: UIViewController {
     // MARK: - Layout
 
     fileprivate func setupLayout() {
-
+        
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapView))
         view.addGestureRecognizer(tapGestureRecognizer)
 
@@ -245,7 +255,7 @@ class LoginViewController: UIViewController {
 
         func addline(under view: UIView) {
             let separatorLine = UIView()
-            separatorLine.backgroundColor = Color.gray100
+            separatorLine.backgroundColor = Color.gray200
             loginFormView.addSubview(separatorLine)
             separatorLine.snp.makeConstraints {
                 $0.top.equalTo(view.snp.bottom).offset(Constants.padding/2)

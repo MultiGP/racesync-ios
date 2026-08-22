@@ -334,7 +334,7 @@ private final class SliderImageCell: UICollectionViewCell {
         let view = UIView()
         view.layer.shadowRadius = 2
         view.layer.shadowOpacity = 0.35
-        view.layer.shadowColor = Color.black.cgColor
+        view.layer.shadowColor = UIColor.black.cgColor
         view.layer.shadowOffset = CGSize(width: 0, height: 2.0)
         view.layer.masksToBounds = false
         return view
@@ -369,4 +369,3 @@ private final class SliderImageCell: UICollectionViewCell {
         shadowView.layer.shadowPath = UIBezierPath(roundedRect: shadowView.bounds, cornerRadius: cornerRadius).cgPath
     }
 }
-

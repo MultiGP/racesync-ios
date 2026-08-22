@@ -68,6 +68,28 @@ class RaceTabBarController: UITabBarController {
         return button
     }()
 
+    fileprivate lazy var titleActivityIndicatorView: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView(style: .medium)
+        view.color = .secondaryLabel
+        view.hidesWhenStopped = true
+        return view
+    }()
+
+    fileprivate lazy var titleContainerView: UIStackView = {
+        let leadingSpacer = UIView()
+        let activityContainer = UIView()
+        leadingSpacer.snp.makeConstraints { $0.width.equalTo(20) }
+        activityContainer.snp.makeConstraints { $0.width.equalTo(20) }
+        activityContainer.addSubview(titleActivityIndicatorView)
+        titleActivityIndicatorView.snp.makeConstraints { $0.center.equalToSuperview() }
+
+        let stackView = UIStackView(arrangedSubviews: [leadingSpacer, titleButton, activityContainer])
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        stackView.spacing = 6
+        return stackView
+    }()
+
     fileprivate lazy var activityIndicatorView: ActivityLoadingView = {
         let view = ActivityLoadingView(style: .medium)
         view.title = "Loading Race..."
@@ -129,7 +151,7 @@ class RaceTabBarController: UITabBarController {
     fileprivate func setupLayout() {
 
         // Using a custom button title in this case, to display the id of a Race on tap
-        navigationItem.titleView = titleButton
+        navigationItem.titleView = titleContainerView
 
         view.backgroundColor = Color.white
         tabBar.isHidden = true // hiding temporarily, while the view loads
@@ -144,17 +166,41 @@ class RaceTabBarController: UITabBarController {
     fileprivate func configureViewControllers() {
 
         let controller = raceController
+        let existingVCs = viewControllers ?? []
+        let previouslySelectedVC = selectedViewController
 
         var vcs = [UIViewController]()
-        vcs += [RaceDetailViewController(with: controller)]
-        vcs += [RacePilotsViewController(with: controller)]
+        vcs += [existingVCs.first { $0 is RaceDetailViewController }
+            ?? RaceDetailViewController(with: controller)]
+        vcs += [existingVCs.first { $0 is RacePilotsViewController }
+            ?? RacePilotsViewController(with: controller)]
 
         if let race = race {
-            if race.canShowSchedule { vcs += [RaceScheduleViewController(with: controller)] }
-            if race.canManagePayments { vcs += [RacePaymentsViewController(with: controller)] }
+            if race.canShowZippyQ {
+                vcs += [existingVCs.first { $0 is ZippyqViewController }
+                    ?? ZippyqViewController(with: controller)]
+            }
+            if race.canManagePayments {
+                vcs += [existingVCs.first { $0 is RacePaymentsViewController }
+                    ?? RacePaymentsViewController(with: controller)]
+            }
         }
 
-        configureTabBarController(with: vcs, selectedIndex: initialSelectedIndex)
+        if viewControllers == nil {
+            configureTabBarController(
+                with: vcs,
+                selectedIndex: min(initialSelectedIndex, max(0, vcs.count-1))
+            )
+        } else {
+            setViewControllers(vcs, animated: false)
+            if let previouslySelectedVC,
+               let selectedIndex = vcs.firstIndex(of: previouslySelectedVC) {
+                self.selectedIndex = selectedIndex
+            } else {
+                selectTab(.details)
+            }
+            preloadTabs()
+        }
 
         tabBar.isHidden = false
     }
@@ -169,7 +215,20 @@ class RaceTabBarController: UITabBarController {
         guard let vc = viewControllers?[index] else { return }
 
         title = vc.title
+        titleActivityIndicatorView.stopAnimating()
         navigationItem.rightBarButtonItems = vc.navigationItem.rightBarButtonItems
+
+        if let detailVC = vc as? RaceDetailViewController,
+           detailVC.shouldUseTransparentNavigationBar {
+            Appearance.applyTransparentStyle(to: navigationItem)
+        } else {
+            Appearance.applyOpaqueStyle(to: navigationItem, shadow: true)
+        }
+    }
+
+    func setTitleActivityIndicatorVisible(_ visible: Bool, for viewController: UIViewController) {
+        guard selectedViewController === viewController else { return }
+        visible ? titleActivityIndicatorView.startAnimating() : titleActivityIndicatorView.stopAnimating()
     }
 
     @objc fileprivate func didPressTitleButton() {
@@ -209,13 +268,14 @@ class RaceTabBarController: UITabBarController {
         raceController.loadRace { [weak self] race, error in
             guard let self = self else { return }
 
-            if error != nil {
+            if error == nil {
                 self.reloadRaceTabs()
             }
         }
     }
 
     public func reloadRaceTabs() {
+        configureViewControllers()
         viewControllers?
             .compactMap { $0 as? RaceTabbable }
             .forEach { $0.reloadContent() }

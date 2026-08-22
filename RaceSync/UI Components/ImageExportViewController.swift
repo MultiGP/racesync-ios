@@ -48,7 +48,7 @@ class ImageExportViewController: UIViewController {
 
     lazy var imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = Color.white
+        imageView.backgroundColor = UIColor.white
         imageView.layer.cornerRadius = Constants.cornerRadius/2
         imageView.layer.masksToBounds = true
         imageView.isUserInteractionEnabled = true
@@ -74,7 +74,7 @@ class ImageExportViewController: UIViewController {
     lazy var captionLabel: PasteboardLabel = {
         let label = PasteboardLabel()
         label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-        label.textColor = Color.black
+        label.textColor = UIColor.black
         label.textAlignment = .center
         return label
     }()
@@ -86,8 +86,8 @@ class ImageExportViewController: UIViewController {
         button.setTitle("Save to Photos", for: .normal)
         button.addTarget(self, action: #selector(didPressPhotosButton), for: .touchUpInside)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 19, weight: .regular)
-        button.tintColor = Color.black
-        button.backgroundColor = Color.white
+        button.tintColor = UIColor.black
+        button.backgroundColor = UIColor.white
         button.imageEdgeInsets = UIEdgeInsets(left: -50)
         button.titleEdgeInsets = UIEdgeInsets(left: -30)
         button.layer.cornerRadius = Constants.cornerRadius/2
@@ -102,8 +102,8 @@ class ImageExportViewController: UIViewController {
         button.setTitle("Share to...", for: .normal)
         button.addTarget(self, action: #selector(didPressShareButton), for: .touchUpInside)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 19, weight: .regular)
-        button.tintColor = Color.black
-        button.backgroundColor = Color.white
+        button.tintColor = UIColor.black
+        button.backgroundColor = UIColor.white
         button.imageEdgeInsets = UIEdgeInsets(left: -30)
         button.titleEdgeInsets = UIEdgeInsets(left: 0)
         button.layer.cornerRadius = Constants.cornerRadius/2
@@ -118,8 +118,8 @@ class ImageExportViewController: UIViewController {
         button.setTitle("Share to Instagram", for: .normal)
         button.addTarget(self, action: #selector(didPressInstagramButton), for: .touchUpInside)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 19, weight: .regular)
-        button.tintColor = Color.black
-        button.backgroundColor = Color.white
+        button.tintColor = UIColor.black
+        button.backgroundColor = UIColor.white
         button.imageEdgeInsets = UIEdgeInsets(left: -20)
         button.titleEdgeInsets = UIEdgeInsets(left: 0)
         button.layer.cornerRadius = Constants.cornerRadius/2
@@ -174,7 +174,7 @@ class ImageExportViewController: UIViewController {
 
         captionLabel.text = caption
 
-        view.backgroundColor = Color.black.withAlphaComponent(0.7)
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dissmissView)))
 
         view.addSubview(imageView)

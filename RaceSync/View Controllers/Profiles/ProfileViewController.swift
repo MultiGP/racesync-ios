@@ -74,6 +74,8 @@ class ProfileViewController: UIViewController, Shimmable {
         return button
     }()
 
+    fileprivate var isNavigationBarOpaque = false
+
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
     }
@@ -112,6 +114,8 @@ class ProfileViewController: UIViewController, Shimmable {
 
         // Using a custom button title in this case, to display the id of a User/Chapter on tap
         navigationItem.titleView = titleButton
+        
+        Appearance.applyTransparentStyle(to: navigationItem)
 
         headerView.topLayoutInset = topOffset
         headerView.viewModel = profileViewModel
@@ -208,6 +212,17 @@ extension ProfileViewController: UIScrollViewDelegate {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         stretchHeaderView(with: scrollView.contentOffset)
+
+        let shouldUseOpaqueNavigationBar = scrollView.contentOffset.y >= headerView.frame.height - topOffset
+        guard shouldUseOpaqueNavigationBar != isNavigationBarOpaque else { return }
+
+        isNavigationBarOpaque = shouldUseOpaqueNavigationBar
+
+        if shouldUseOpaqueNavigationBar {
+            Appearance.applyOpaqueStyle(to: navigationItem)
+        } else {
+            Appearance.applyTransparentStyle(to: navigationItem)
+        }
     }
 }
 

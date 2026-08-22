@@ -417,11 +417,6 @@ extension RacePilotsViewController: UITableViewDataSource {
                 cell.selectedBackgroundView?.backgroundColor = Color.pinnedSelected
             }
         }
-
-        // only real races have frequencies
-        if !race.hasEnded && race.raceClass != .esport {
-           cell.textPill.text = viewModel.channelLabel
-       }
     }
 }
 

@@ -94,21 +94,21 @@ class RaceFormViewController: UIViewController {
     // Needs to be computed each time, since there are dynamic values
     fileprivate var sections: [RaceFormSection: [RaceFormRow]] {
         get {
-            var general: [RaceFormRow] = [.name, .startDate, .endDate, .chapter, .location, .season, .privacy]
+            var general: [RaceFormRow] = [.name, .startDate, .endDate, .chapter, .location, .season, .privacy, .limit]
 
             // Payments are enabled at a chapter level
             if let chapter = chapters.filter ({ return $0.id == data.chapterId }).first, chapter.paymentsEnabled {
                 general += [.fee, .feeRequired]
             }
 
-            var specific: [RaceFormRow] = [.scoring, .class, .format, .schedule]
+            var specific: [RaceFormRow] = [.content, .scoring, .class, .format, .schedule]
 
             // Only applicable for ZippyQ
             if data.qualifying == QualifyingType.open.rawValue {
                 specific += [.rounds, .zDepth, .zIterator, .zNoKiosk]
             }
 
-            specific += [.content, .notify]
+            specific += [.notify]
 
             return [.general: general, .specific: specific]
         }
@@ -231,6 +231,8 @@ class RaceFormViewController: UIViewController {
             data.funfly = sender.isOn
         } else if row == .zNoKiosk {
             data.zippyqNoKiosk = sender.isOn
+        } else if row == .zPrediction {
+            data.zippyqPredictTimes = sender.isOn
         } else if row == .notify {
             data.sendNotification = sender.isOn
         }
@@ -429,6 +431,8 @@ extension RaceFormViewController {
 
     func text(for row: RaceFormRow) -> String? {
         switch row {
+        case .limit:
+            return (data.pilotLimit > 0) ? "\(data.pilotLimit)" : nil // blank field
         case .fee:
             return (data.fee > 0) ? String(format: "%.2f", data.fee) : nil // blank field
         default:
@@ -654,6 +658,8 @@ extension RaceFormViewController: FormBaseViewControllerDelegate {
             if let value = EventType(title: item)?.rawValue {
                 data.privacy = value
             }
+        case .limit:
+            data.pilotLimit = Int32(item) ?? 0
         case .fee:
             let amount = Float32(item) ?? 0
             if amount == 0 { data.feeRequired = false }
@@ -670,6 +676,8 @@ extension RaceFormViewController: FormBaseViewControllerDelegate {
             data.zippyqIterator = (item as NSString).intValue
         case .zNoKiosk:
             data.zippyqNoKiosk = (item == true.localizedString)
+        case .zPrediction:
+            data.zippyqPredictTimes = (item == true.localizedString)
         case .season:
             if let season = seasons?.filter ({ return $0.name == item }).first {
                 data.seasonId = season.id

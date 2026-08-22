@@ -34,7 +34,7 @@ public enum APISettingsType: Int, EnumTitle {
     }
 }
 
-public let APISettingsDomain: String = "com.multigp.RaceSync.settings"
+public let APISettingsDomain: String = "com.multigp.racesync.settings"
 
 public class APISettings {
 

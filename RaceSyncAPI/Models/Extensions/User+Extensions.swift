@@ -37,9 +37,10 @@ public extension User {
     var isDevTeam: Bool {
         let ids = [
             "20676",    // Ignacio Romero
-            "96",       // Roger Bess
-            "2145",     // Mark Grohe
             "35533",    // Viki Baarathi
+            "2145",     // Mark Grohe
+            "15308",    // Shawn Ames
+            "96",       // Roger Bess
         ]
 
         return ids.contains(where: { (someId) -> Bool in

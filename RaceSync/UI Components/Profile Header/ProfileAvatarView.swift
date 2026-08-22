@@ -51,7 +51,7 @@ class ProfileAvatarView: DimmableView {
         backgroundColor = Color.clear
         dimmableView = imageView
         
-        layer.shadowColor = Color.black.cgColor
+        layer.shadowColor = UIColor.black.cgColor
         layer.shadowOffset = CGSize(width: 0, height: 2.0)
         layer.shadowOpacity = 0.35
         layer.shadowRadius = 2.5

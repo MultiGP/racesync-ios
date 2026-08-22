@@ -68,7 +68,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
 
     fileprivate lazy var headerView: UIView = {
         let view = UIView()
-        view.backgroundColor = Color.navigationBarColor
+        view.backgroundColor = Color.barBackground
         view.tintColor = Color.blue
 
         view.addSubview(searchBar)
@@ -85,7 +85,7 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
 
     fileprivate lazy var toolbar: UIView = {
         let view = UIView()
-        view.backgroundColor = Color.navigationBarColor
+        view.backgroundColor = Color.barBackground
         view.addSeparatorLine()
         return view
     }()
@@ -514,7 +514,7 @@ extension StandingsViewController: UITableViewDataSource {
             cell.titleLabel.textColor = Color.black
             cell.subtitleLabel.textColor = Color.gray300
             cell.rankView.titleLabel.textColor = Color.gray300
-            cell.backgroundView?.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : Color.gray20
+            cell.backgroundView?.backgroundColor = (indexPath.row % 2 == 0) ? Color.cellColor : Color.cellColor2
             cell.selectedBackgroundView?.backgroundColor = Color.gray50
         }
     }

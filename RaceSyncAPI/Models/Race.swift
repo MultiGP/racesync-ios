@@ -34,6 +34,7 @@ public class Race: Mappable, Descriptable {
     public var maxZippyqDepth: Int32 = 0
     public var zippyqIterator: Int32 = 0
     public var zippyNoKiosk: Bool = true
+    public var predictZippyqTimes: Bool = false
     public var maxBatteriesForQualifying: Int32 = 0
 
     public var urlName: String = ""
@@ -73,6 +74,7 @@ public class Race: Mappable, Descriptable {
     public var batteryRestriction: String = ""
     public var propSizeRestriction: String = ""
 
+    public var pilotLimit: Int32 = 0
     public var fee: Float = 0
     public var isPaymentRequiredToJoin: Bool = false
     public var amountDue: Float = 0
@@ -128,8 +130,9 @@ public class Race: Mappable, Descriptable {
         cycleCount <- (map[ParamKey.cycleCount], IntegerTransform())
         disableSlotAutoPopulation <- (map[ParamKey.disableSlotAutoPopulation], EnumTransform<QualifyingType>())
         maxZippyqDepth <- (map[ParamKey.maxZippyqDepth], IntegerTransform())
-        zippyqIterator <- map[ParamKey.zippyqIterator]
-        zippyNoKiosk <- map[ParamKey.zippyNoKiosk]
+        zippyqIterator <- (map[ParamKey.zippyqIterator], IntegerTransform())
+        zippyNoKiosk <- (map[ParamKey.zippyNoKiosk], BooleanTransform())
+        predictZippyqTimes <- (map[ParamKey.predictZippyqTimes], BooleanTransform())
         maxBatteriesForQualifying <- (map[ParamKey.maxBatteriesForQualifying], IntegerTransform())
 
         urlName <- map[ParamKey.urlName]
@@ -168,7 +171,8 @@ public class Race: Mappable, Descriptable {
         sizeRestriction <- map[ParamKey.sizeRestriction]
         batteryRestriction <- map[ParamKey.batteryRestriction]
         propSizeRestriction <- map[ParamKey.propellerSizeRestriction]
-
+        
+        pilotLimit <- map[ParamKey.pilotLimit]
         fee <- (map[ParamKey.fee], FloatTransform())
         isPaymentRequiredToJoin <- (map[ParamKey.paymentRequiredToJoin], BooleanTransform())
         amountDue <- (map[ParamKey.amountDue], FloatTransform())

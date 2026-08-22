@@ -42,11 +42,20 @@ class SegmentedTableViewHeaderView: UITableViewHeaderFooterView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Super Overrides
+
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+        
+        // Locks the view from changing modes automatically
+        Appearance.applyUserInterfaceStyle(to: self)
+    }
+
     // MARK: - Layout
 
     fileprivate func setupLayout() {
         backgroundView = UIView()
-        backgroundView?.backgroundColor = Color.navigationBarColor
+        backgroundView?.backgroundColor = Color.barBackground
 
         addSubview(segmentedControl)
         segmentedControl.snp.makeConstraints {

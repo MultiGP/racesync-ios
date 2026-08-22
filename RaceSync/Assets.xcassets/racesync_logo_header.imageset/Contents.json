@@ -3,6 +3,16 @@
     {
       "filename" : "racesync_logo_header.pdf",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "racesync_logo_header-dark.pdf",
+      "idiom" : "universal"
     }
   ],
   "info" : {

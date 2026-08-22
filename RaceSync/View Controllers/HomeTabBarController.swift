@@ -119,6 +119,15 @@ class HomeTabBarController: UITabBarController {
         setupLayout()
     }
 
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) else { return }
+
+        let borderColor = Color.gray100.resolvedColor(with: traitCollection).cgColor
+        userProfileButton.layer.borderColor = borderColor
+        chapterProfileButton.layer.borderColor = borderColor
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 

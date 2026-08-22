@@ -142,10 +142,10 @@ class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
     }
 
     override func didSelectRow(at indexPath: IndexPath) {
-        if selectedSegment == .left, let viewModel = raceViewModel(for: indexPath.row) {
+        if selectedSegment == .left, let viewModel = raceViewModel(at: indexPath.row) {
             let vc = RaceTabBarController(with: viewModel.race)
             navigationController?.pushViewController(vc, animated: true)
-        } else if selectedSegment == .right, let viewModel = chapterViewModel(for: indexPath.row) {
+        } else if selectedSegment == .right, let viewModel = chapterViewModel(at: indexPath.row) {
             let vc = ChapterViewController(with: viewModel.chapter)
             navigationController?.pushViewController(vc, animated: true)
         }
@@ -158,8 +158,8 @@ class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
     func getQRImage(with userId: String) -> UIImage? {
         var qrCode = QRCode(userId)
         qrCode?.size = CGSize(width: 270, height: 270)
-        qrCode?.color = CIColor(color: Color.black)
-        qrCode?.backgroundColor = CIColor(color: Color.white)
+        qrCode?.color = CIColor(color: UIColor.black)
+        qrCode?.backgroundColor = CIColor(color: UIColor.white)
         return qrCode?.image
     }
 
@@ -302,14 +302,14 @@ class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
         }
     }
 
-    func raceViewModel(for index: Int) -> RaceViewModel? {
+    func raceViewModel(at index: Int) -> RaceViewModel? {
         if index >= 0, index < raceViewModels.count {
             return raceViewModels[index]
         }
         return nil
     }
 
-    func chapterViewModel(for index: Int) -> ChapterViewModel? {
+    func chapterViewModel(at index: Int) -> ChapterViewModel? {
         if index >= 0, index < chapterViewModels.count {
             return chapterViewModels[index]
         }
@@ -343,7 +343,7 @@ extension UserViewController: UITableViewDataSource {
 
     func userRaceTableViewCell(for indexPath: IndexPath) -> UserRaceTableViewCell {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as UserRaceTableViewCell
-        guard let viewModel = raceViewModel(for: indexPath.row) else { return cell }
+        guard let viewModel = raceViewModel(at: indexPath.row) else { return cell }
 
         cell.dateLabel.text = viewModel.startDateLabel //"Saturday Sept 14 @ 9:00 AM"
         cell.titleLabel.text = viewModel.titleLabel
@@ -358,7 +358,7 @@ extension UserViewController: UITableViewDataSource {
 
     func chapterTableViewCell(for indexPath: IndexPath) -> ChapterTableViewCell {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as ChapterTableViewCell
-        guard let viewModel = chapterViewModel(for: indexPath.row) else { return cell }
+        guard let viewModel = chapterViewModel(at: indexPath.row) else { return cell }
 
         cell.titleLabel.text = viewModel.titleLabel
         cell.subtitleLabel.text = viewModel.locationLabel
@@ -443,4 +443,3 @@ extension UserViewController: EmptyDataSetDelegate {
         return !shimmeringView.isShimmering
     }
 }
-

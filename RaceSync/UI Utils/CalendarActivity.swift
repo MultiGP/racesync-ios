@@ -11,7 +11,7 @@ import EventKit
 
 class CalendarActivity: UIActivity {
 
-    // MARK: - Private Variables
+    // MARK: - Public Variables
 
     var event: CalendarEvent?
 
