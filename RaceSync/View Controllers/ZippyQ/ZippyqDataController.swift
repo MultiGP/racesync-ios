@@ -353,8 +353,21 @@ private extension ZippyqDataController {
         let orderedQueues = queueGroups.flatMap {
             $0.queues.sorted { $0.heat < $1.heat }
         }
-        let nextQueuedIndex = orderedQueues.firstIndex { $0.status == .queued }
-        roundViewModels = orderedQueues.enumerated().map { index, queue in
+        
+        let lastOccupiedQueuedIndex = orderedQueues.lastIndex {
+            $0.status == .queued && !$0.entries.isEmpty
+        }
+        var includedTrailingEmptyQueuedRound = false
+        let visibleQueues = orderedQueues.enumerated().compactMap { index, queue in
+            guard queue.status == .queued, queue.entries.isEmpty else { return queue }
+            if let lastOccupiedQueuedIndex, index < lastOccupiedQueuedIndex { return queue }
+            guard canJoinQueues, !includedTrailingEmptyQueuedRound else { return nil }
+            includedTrailingEmptyQueuedRound = true
+            return queue
+        }
+        let nextQueuedIndex = visibleQueues.firstIndex { $0.status == .queued }
+
+        roundViewModels = visibleQueues.enumerated().map { index, queue in
             ZippyqRoundViewModel(
                 with: queue,
                 frequencies: frequencies,

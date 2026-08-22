@@ -63,6 +63,7 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     fileprivate var lastHeaderScrollOffset: CGFloat = 0
     fileprivate var isJoiningNextRound = false
     fileprivate var emptyStateError: EmptyStateViewModel?
+    fileprivate let emptyStateNoRaceQueues = EmptyStateViewModel(.noRaceQueues)
 
     fileprivate lazy var activityIndicatorView: ActivityLoadingView = {
         let view = ActivityLoadingView(style: .medium)
@@ -124,14 +125,13 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     // MARK: - Layout
 
     fileprivate func setupLayout() {
-        
+
         configureNavigationItems()
         _ = dataSource
 
         view.addSubview(collectionView)
         collectionView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
-            $0.leading.trailing.bottom.equalToSuperview()
+            $0.edges.equalToSuperview()
         }
 
         view.addSubview(activityIndicatorView)
@@ -329,7 +329,10 @@ extension ZippyqViewController: ZippyqDataControllerDelegate {
                 applyHeaderLayoutMetrics(metrics)
                 collectionView.layoutIfNeeded()
             }
-            collectionView.setContentOffset(.zero, animated: false)
+            collectionView.setContentOffset(
+                CGPoint(x: 0, y: -collectionView.adjustedContentInset.top),
+                animated: false
+            )
         }
 
         setInitialLoading(false)
@@ -351,16 +354,27 @@ extension ZippyqViewController: ZippyqDataControllerDelegate {
 extension ZippyqViewController: EmptyDataSetSource {
 
     func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
-        return emptyStateError?.title
+        return emptyStateError?.title ?? emptyStateNoRaceQueues.title
     }
 
     func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
-        return emptyStateError?.description
+        return emptyStateError?.description ?? emptyStateNoRaceQueues.description
     }
 
-    func buttonTitle(forEmptyDataSet scrollView: UIScrollView,
-                     for state: UIControl.State) -> NSAttributedString? {
-        return emptyStateError?.buttonTitle(state)
+    func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
+        
+        if emptyStateError != nil {
+            return nil
+        }
+        return emptyStateNoRaceQueues.buttonTitle(state)
+    }
+
+    func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
+        return -scrollView.adjustedContentInset.top
+    }
+
+    func backgroundColor(forEmptyDataSet scrollView: UIScrollView) -> UIColor? {
+        return Color.white
     }
 }
 
@@ -369,11 +383,19 @@ extension ZippyqViewController: EmptyDataSetSource {
 extension ZippyqViewController: EmptyDataSetDelegate {
 
     func emptyDataSetShouldDisplay(_ scrollView: UIScrollView) -> Bool {
-        return emptyStateError != nil
+        if emptyStateError != nil { return true }
+
+        return dataController.hasLoadedContent
+            && !race.isJoined
+            && dataController.roundViewModels.isEmpty
     }
 
     func emptyDataSetShouldAllowScroll(_ scrollView: UIScrollView) -> Bool {
         return dataController.hasLoadedContent
+    }
+
+    func emptyDataSet(_ scrollView: UIScrollView, didTapButton button: UIButton) {
+        raceController.showZippyqWeb()
     }
 }
 
@@ -382,6 +404,7 @@ extension ZippyqViewController: EmptyDataSetDelegate {
 private extension ZippyqViewController {
 
     func makeDataSource() -> DataSource {
+
         let dataSource = DataSource(collectionView: collectionView) { [weak self] collectionView, indexPath, identifier in
             guard let self,
                   let viewModel = snapshotController.frequencyViewModel(for: identifier) else {
@@ -436,10 +459,12 @@ private extension ZippyqViewController {
             configure(header, with: viewModel)
             return header
         }
+
         return dataSource
     }
 
     func configure(_ header: ZippyqHeaderView) {
+
         let displaysHeader = dataController.hasLoadedContent && dataController.canJoinQueues
         header.isHidden = !displaysHeader
         header.collapseProgress = headerCollapseProgress

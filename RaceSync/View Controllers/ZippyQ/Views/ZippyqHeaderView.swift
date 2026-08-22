@@ -49,6 +49,7 @@ class ZippyqHeaderView: UICollectionReusableView {
 
     fileprivate let joinButtonImage = (UIImage(systemName: "person.fill.badge.plus") ?? SystemImg.personFill)?
         .withConfiguration(UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold))
+        .withTintColor(Color.light, renderingMode: .alwaysOriginal)
     fileprivate var isConfigured = false
 
     fileprivate lazy var availabilityTitleLabel: UILabel = {
@@ -111,7 +112,7 @@ class ZippyqHeaderView: UICollectionReusableView {
 
         button.setTitle("Join Next Available", for: .normal)
         button.setTitleColor(Color.light, for: .normal)
-        button.setImage(joinButtonImage?.withTintColor(Color.light, renderingMode: .alwaysOriginal), for: .normal)
+        button.setImage(joinButtonImage, for: .normal)
         button.tintColor = Color.light
         button.backgroundColor = Color.green
         button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)

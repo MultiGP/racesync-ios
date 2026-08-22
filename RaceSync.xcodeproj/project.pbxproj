@@ -76,7 +76,6 @@
 		4F536ED32F8AFCEE006FF620 /* Series+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F536ED22F8AFCEE006FF620 /* Series+Extensions.swift */; };
 		4F536ED52F8C52B9006FF620 /* SeriesPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F536ED42F8C52B9006FF620 /* SeriesPickerViewController.swift */; };
 		4F536ED72F8C5869006FF620 /* SimpleTableViewCell+Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F536ED62F8C585F006FF620 /* SimpleTableViewCell+Configuration.swift */; };
-		4F5488962D2146C80056EA59 /* RaceScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5488952D2146C80056EA59 /* RaceScheduleViewController.swift */; };
 		4F5488982D2236950056EA59 /* String+HTML.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5488972D2236950056EA59 /* String+HTML.swift */; };
 		4F5614A42DDC4C2800EAD42A /* MessageEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5614A32DDC4C2800EAD42A /* MessageEnums.swift */; };
 		4F5C1E3E238A770B00D756EB /* UITableViewCell+Reuse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F5C1E3D238A770B00D756EB /* UITableViewCell+Reuse.swift */; };
@@ -435,7 +434,6 @@
 		4F536ED22F8AFCEE006FF620 /* Series+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Series+Extensions.swift"; sourceTree = "<group>"; };
 		4F536ED42F8C52B9006FF620 /* SeriesPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesPickerViewController.swift; sourceTree = "<group>"; };
 		4F536ED62F8C585F006FF620 /* SimpleTableViewCell+Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SimpleTableViewCell+Configuration.swift"; sourceTree = "<group>"; };
-		4F5488952D2146C80056EA59 /* RaceScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceScheduleViewController.swift; sourceTree = "<group>"; };
 		4F5488972D2236950056EA59 /* String+HTML.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+HTML.swift"; sourceTree = "<group>"; };
 		4F5614A32DDC4C2800EAD42A /* MessageEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEnums.swift; sourceTree = "<group>"; };
 		4F5C1E3D238A770B00D756EB /* UITableViewCell+Reuse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableViewCell+Reuse.swift"; sourceTree = "<group>"; };
@@ -1230,7 +1228,6 @@
 				4FD4E1CC237F98E7008816B3 /* RaceTabBarController.swift */,
 				4FD4E1CA237F98A0008816B3 /* RaceDetailViewController.swift */,
 				4FD4E1C8237F987C008816B3 /* RacePilotsViewController.swift */,
-				4F5488952D2146C80056EA59 /* RaceScheduleViewController.swift */,
 				4F6503392E45CE5900FA8AED /* RacePaymentsViewController.swift */,
 				4FC50257242700DC0088320B /* RacePilotsPickerController.swift */,
 				4F004E9F295AA641009C46AA /* RaceFormViewController.swift */,
@@ -1699,7 +1696,6 @@
 				4F00E072242932D7001DCFC4 /* RateMe.swift in Sources */,
 				4F71B32B2E4910100029D3CB /* Collection+Extensions.swift in Sources */,
 				4FD4E1D1237F9DC8008816B3 /* DummyViewController.swift in Sources */,
-				4F5488962D2146C80056EA59 /* RaceScheduleViewController.swift in Sources */,
 				4F8668F423860900005E310A /* UniversalConstants.swift in Sources */,
 				4F536ED72F8C5869006FF620 /* SimpleTableViewCell+Configuration.swift in Sources */,
 				4FF16CC02E70EC9300B4FC51 /* ViewJoinableRegistry.swift in Sources */,

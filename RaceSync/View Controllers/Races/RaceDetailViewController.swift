@@ -759,11 +759,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         }
     }
 
-    func openZippyQSchedule(_ cell: FormTableViewCell) {
-        let zippyqUrl = MGPWeb.getUrl(for: .zippyqView, value: race.id)
-        WebViewController.open(zippyqUrl)
-    }
-
     func openLiveFPV(_ cell: FormTableViewCell) {
         guard let url = race.liveTimeEventUrl else { return }
         WebViewController.open(url)
@@ -824,7 +819,7 @@ extension RaceDetailViewController: UITableViewDelegate {
         } else if row == .season {
             showSeasonRaces(cell)
         } else if row == .zippyQ {
-            openZippyQSchedule(cell)
+            raceController.showZippyqWeb()
         } else if row == .results {
             openLiveFPV(cell)
         }

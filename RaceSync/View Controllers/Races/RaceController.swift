@@ -215,14 +215,11 @@ class RaceController {
         visibleViewController?.present(vc, animated: true)
     }
 
-    func showZippyQWeb() {
+    func showZippyqWeb() {
         guard let race = race else { return }
-
-        let url = MGPWeb.getURL(for: .zippyqView, value: race.id)
-
-        if UIApplication.shared.canOpenURL(url) {
-            UIApplication.shared.open(url)
-        }
+        
+        let zippyqUrl = MGPWeb.getUrl(for: .zippyqView, value: race.id)
+        WebViewController.open(zippyqUrl)
     }
 
     func saveInCalendar() {
@@ -296,7 +293,7 @@ class RaceController {
         case .share:
             showShareMenu()
         case .zippyQ:
-            showZippyQWeb()
+            showZippyqWeb()
         }
     }
 
