@@ -12,6 +12,8 @@ import RaceSyncAPI
 protocol ZippyqDataControllerDelegate: AnyObject {
     func zippyqDataControllerDidUpdateContent(_ controller: ZippyqDataController)
     func zippyqDataController(_ controller: ZippyqDataController, didFailToLoadContent error: NSError)
+    func zippyqDataControllerDidStartNetworkActivity(_ controller: ZippyqDataController)
+    func zippyqDataControllerDidEndNetworkActivity(_ controller: ZippyqDataController)
 }
 
 /// Coordinates ZippyQ data and user actions independently from its view controller.
@@ -89,6 +91,7 @@ final class ZippyqDataController {
     fileprivate var response: ZippyqResponse?
     fileprivate var revisionHash: ZippyqRevisionHash?
     fileprivate var isLoadingContent = false
+    fileprivate var networkActivityCount = 0
     
     private(set) var hasLoadedContent = false
     private(set) var roundViewModels = [ZippyqRoundViewModel]()
@@ -230,6 +233,7 @@ extension ZippyqDataController: PollingControllerDelegate {
     }
 
     func polling() {
+        beginNetworkActivity()
         zippyqApi.getRevision(for: raceId, revision: revisionHash) { [weak self] revision, error in
             guard let self else { return }
 
@@ -238,6 +242,7 @@ extension ZippyqDataController: PollingControllerDelegate {
             } else if let revision, revision.value != revisionHash {
                 fetchContent(revision: revision.value)
             }
+            endNetworkActivity()
         }
     }
 }
@@ -284,6 +289,7 @@ private extension ZippyqDataController {
     func fetchContent(revision: ZippyqRevisionHash?) {
         guard !isLoadingContent else { return }
         isLoadingContent = true
+        beginNetworkActivity()
 
         zippyqApi.getQueues(for: raceId) { [weak self] response, error in
             guard let self else { return }
@@ -296,7 +302,20 @@ private extension ZippyqDataController {
                 Clog.log("ZippyQ getQueues failed: \(error.localizedDescription)")
                 delegate?.zippyqDataController(self, didFailToLoadContent: error)
             }
+            endNetworkActivity()
         }
+    }
+
+    func beginNetworkActivity() {
+        networkActivityCount += 1
+        guard networkActivityCount == 1 else { return }
+        delegate?.zippyqDataControllerDidStartNetworkActivity(self)
+    }
+
+    func endNetworkActivity() {
+        networkActivityCount = max(0, networkActivityCount - 1)
+        guard networkActivityCount == 0 else { return }
+        delegate?.zippyqDataControllerDidEndNetworkActivity(self)
     }
 
     func updateContent(with response: ZippyqResponse) {

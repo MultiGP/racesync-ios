@@ -122,6 +122,7 @@ class ZippyqViewController: UIViewController, RaceTabbable {
         super.viewWillDisappear(animated)
 
         dataController.stopPolling()
+        setTitleActivityIndicatorVisible(false)
     }
 
     // MARK: - Layout
@@ -346,6 +347,18 @@ class ZippyqViewController: UIViewController, RaceTabbable {
 
 extension ZippyqViewController: ZippyqDataControllerDelegate {
 
+    func zippyqDataControllerDidStartNetworkActivity(_ controller: ZippyqDataController) {
+        DispatchQueue.main.async { [weak self] in
+            self?.setTitleActivityIndicatorVisible(true)
+        }
+    }
+
+    func zippyqDataControllerDidEndNetworkActivity(_ controller: ZippyqDataController) {
+        DispatchQueue.main.async { [weak self] in
+            self?.setTitleActivityIndicatorVisible(false)
+        }
+    }
+
     func zippyqDataControllerDidUpdateContent(_ controller: ZippyqDataController) {
         let isInitialLoad = activityIndicatorView.isLoading
         emptyStateError = nil
@@ -384,6 +397,14 @@ extension ZippyqViewController: ZippyqDataControllerDelegate {
         emptyStateError = EmptyStateViewModel(.error(error))
         setInitialLoading(false)
         collectionView.reloadEmptyDataSet()
+    }
+}
+
+private extension ZippyqViewController {
+
+    func setTitleActivityIndicatorVisible(_ visible: Bool) {
+        (tabBarController as? RaceTabBarController)?
+            .setTitleActivityIndicatorVisible(visible, for: self)
     }
 }
 
