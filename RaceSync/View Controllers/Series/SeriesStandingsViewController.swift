@@ -43,8 +43,9 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
     
     fileprivate lazy var segmentedControl: UISegmentedControl = {
         let control = UISegmentedControl(items: SeriesStandingsFilter.titles)
-        control.selectedSegmentIndex = SeriesStandingsFilter.pilots.index
         control.addTarget(self, action: #selector(didChangeSegment), for: .valueChanged)
+        control.selectedSegmentTintColor = Color.barBackground
+        control.selectedSegmentIndex = SeriesStandingsFilter.pilots.index
         return control
     }()
 

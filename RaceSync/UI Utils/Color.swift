@@ -50,8 +50,11 @@ public struct Color {
 
     public static let link =                    dynamic(light: Color.red, dark: Color.blue)
 
-    public static let pinned =                  dynamic(light: #colorLiteral(red: 0.3921568627, green: 0.4196078431, blue: 0.5490196078, alpha: 1), dark: #colorLiteral(red: 0.2475, green: 0.28125, blue: 0.45, alpha: 1))                   // standings pinned cell background
-    public static let pinnedSelected =          dynamic(light: #colorLiteral(red: 0.1843137255, green: 0.2196078431, blue: 0.3960784314, alpha: 1), dark: #colorLiteral(red: 0.2142857143, green: 0.2292857143, blue: 0.3, alpha: 1))                   // standings pinned cell selected background
+//    public static let pinned =                  dynamic(light: #colorLiteral(red: 0.3921568627, green: 0.4196078431, blue: 0.5490196078, alpha: 1), dark: #colorLiteral(red: 0.2475, green: 0.28125, blue: 0.45, alpha: 1))                   // standings pinned cell background
+//    public static let pinnedSelected =          dynamic(light: #colorLiteral(red: 0.1843137255, green: 0.2196078431, blue: 0.3960784314, alpha: 1), dark: #colorLiteral(red: 0.1843137255, green: 0.2196078431, blue: 0.3960784314, alpha: 1))                   // standings pinned cell selected background
+//    
+    public static let pinned =                  #colorLiteral(red: 0.3921568627, green: 0.4196078431, blue: 0.5490196078, alpha: 1)                   // standings pinned cell background
+    public static let pinnedSelected =          #colorLiteral(red: 0.1843137255, green: 0.2196078431, blue: 0.3960784314, alpha: 1)                   // standings pinned cell selected background
 }
 
 public extension Color {

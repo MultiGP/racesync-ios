@@ -103,7 +103,7 @@ h6 {
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --editor-text: #ececff;
+        --editor-text: #fcfcff;
         --editor-placeholder: #a5a5bd;
         --editor-border: #68687d;
     }

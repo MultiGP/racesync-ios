@@ -32,7 +32,7 @@ class Appearance {
     static func defaultPresenter() -> Presentr {
         let presenter = Presentr(presentationType: .bottomHalf)
         presenter.blurBackground = false
-        presenter.backgroundOpacity = 0.2
+        presenter.backgroundOpacity = 0.5
         presenter.transitionType = .coverVertical
         presenter.dismissTransitionType = .coverVertical
         presenter.dismissAnimated = true

@@ -62,11 +62,12 @@ class MapViewController: UIViewController {
 
     fileprivate lazy var segmentedControl: UISegmentedControl = {
         let items = [MapSegment.map.title, MapSegment.hybrid.title, MapSegment.satellite.title]
-        let segmentedControl = UISegmentedControl(items: items)
-        segmentedControl.addTarget(self, action: #selector(didChangeSegment), for: .valueChanged)
-        segmentedControl.selectedSegmentIndex = initialSelectedMapSegment.rawValue
-        segmentedControl.backgroundColor = Color.gray100.withAlphaComponent(0.5)
-        return segmentedControl
+        let control = UISegmentedControl(items: items)
+        control.addTarget(self, action: #selector(didChangeSegment), for: .valueChanged)
+        control.selectedSegmentIndex = initialSelectedMapSegment.rawValue
+        control.backgroundColor = Color.gray100.withAlphaComponent(0.5)
+        control.selectedSegmentTintColor = Color.barBackground
+        return control
     }()
 
     fileprivate lazy var navigationBarButtonItem: UIBarButtonItem = {
@@ -279,7 +280,7 @@ class MapViewController: UIViewController {
                 config.image = image
                 config.cornerStyle = .capsule
                 config.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
-                config.baseBackgroundColor = UIColor.black.withAlphaComponent(0.6)
+                config.baseBackgroundColor = Color.dark.withAlphaComponent(0.6)
                 config.baseForegroundColor = .white
                 self.compassButton.configuration = config
             } else {

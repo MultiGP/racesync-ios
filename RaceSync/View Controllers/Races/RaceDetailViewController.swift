@@ -446,7 +446,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             $0.top.equalTo(htmlView.snp.bottom).offset(Constants.padding/2)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(Constants.cellHeight*CGFloat(tableViewRows.count))
-            $0.bottom.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(Constants.cellHeight/2)
         }
 
         scrollView.addSubview(contentView)
@@ -474,7 +474,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             raceViewModel.chapterLabel.isEmpty ? nil : Row.chapter,
             raceViewModel.seriesLabel.isEmpty ? nil : Row.series,
             raceViewModel.seasonLabel.isEmpty ? nil : Row.season,
-            race.isZippyQEnabled ? Row.zippyQ : nil,
             raceViewModel.subtitleLabel.string.isEmpty ? nil : Row.class,
             race.liveTimeEventUrl != nil ? Row.results : nil
         ].compactMap { $0 }
@@ -496,13 +495,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             s.configureHTML()
         }
 
-        // lays out the content and helps calculating the content size
-        let contentRect: CGRect = scrollView.subviews.reduce(into: .zero) { rect, view in
-            rect = rect.union(view.frame)
-        }
-        
-        // Seems like this is not doing anything?
-        scrollView.contentSize = CGSize(width: contentRect.size.width, height: contentRect.size.height)
     }
 
     fileprivate func configureJoinButton() {
@@ -818,8 +810,6 @@ extension RaceDetailViewController: UITableViewDelegate {
             showSeriesDetail(cell)
         } else if row == .season {
             showSeasonRaces(cell)
-        } else if row == .zippyQ {
-            raceController.showZippyqWeb()
         } else if row == .results {
             openLiveFPV(cell)
         }
@@ -850,6 +840,7 @@ extension RaceDetailViewController: UITableViewDataSource {
         cell.textLabel?.text = row.title
         cell.isLoading = false
         cell.detailImage = nil
+        cell.backgroundColor = Color.cellColor
 
         if row == .chapter {
             cell.detailTextLabel?.text = raceViewModel.chapterLabel
@@ -859,8 +850,6 @@ extension RaceDetailViewController: UITableViewDataSource {
             cell.detailTextLabel?.text = raceViewModel.seriesLabel
         } else if row == .season {
             cell.detailTextLabel?.text = raceViewModel.seasonLabel
-        } else if row == .zippyQ {
-            cell.detailTextLabel?.text = "multigp.com"
         } else if row == .class {
             cell.detailImage = raceViewModel.raceClassImage()
         } else if row == .results, let url = race.liveTimeEventUrl {
@@ -941,7 +930,7 @@ extension RaceDetailViewController: MKMapViewDelegate {
 }
 
 fileprivate enum Row: Int, EnumTitle, CaseIterable {
-    case chapter, owner, series, season, zippyQ, `class`, results
+    case chapter, owner, series, season, `class`, results
 
     var title: String {
         switch self {
@@ -949,7 +938,6 @@ fileprivate enum Row: Int, EnumTitle, CaseIterable {
         case .owner:            return "Coordinator"
         case .series:           return "Series"
         case .season:           return "Season"
-        case .zippyQ:           return "ZippyQ"
         case .class:            return "Class"
         case .results:          return "Results on"
         }

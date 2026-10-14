@@ -118,13 +118,13 @@ extension Pinnable {
         let cellHeight = tableView.rectForRow(at: indexPath).height
         let cellSize = CGSize(width: cellWidth, height: cellHeight)
 
-        guard let cell = pinnedCellForRow(at: indexPath, size: cellSize) else { return nil }
+        guard let renderingContext = pinnedCellForRow(at: indexPath, size: cellSize) else { return nil }
+        let cell = renderingContext.cell
 
-        // Wrap in container to preserve layout (optional but cleaner)
-        let container = UIView(frame: cell.bounds)
-        container.addSubview(cell)
-
-        guard let snapshot = container.snapshotView(afterScreenUpdates: true) else { return nil }
+        let snapshot = withExtendedLifetime(renderingContext.renderingTable) {
+            cell.snapshotView(afterScreenUpdates: true)
+        }
+        guard let snapshot else { return nil }
         snapshot.tag = indexPath.row
         snapshot.addTapAction { [weak self] in
             guard let self = self,
@@ -140,12 +140,15 @@ extension Pinnable {
         let cellHeight = tableView.rectForRow(at: indexPath).height
         let cellSize = CGSize(width: cellWidth, height: cellHeight)
 
-        guard let cell = pinnedCellForRow(at: indexPath, size: cellSize) else { return nil }
+        guard let renderingContext = pinnedCellForRow(at: indexPath, size: cellSize) else { return nil }
+        let cell = renderingContext.cell
 
         // Render into an image
         let renderer = UIGraphicsImageRenderer(size: cell.bounds.size)
-        let image = renderer.image { context in
-            cell.layer.render(in: context.cgContext)
+        let image = withExtendedLifetime(renderingContext.renderingTable) {
+            renderer.image { context in
+                cell.layer.render(in: context.cgContext)
+            }
         }
 
         // the cell may have been added to the view hierarchy, so let's remove it
@@ -166,7 +169,10 @@ extension Pinnable {
         return imageView
     }
 
-    fileprivate func pinnedCellForRow(at indexPath: IndexPath, size: CGSize) -> UITableViewCell? {
+    fileprivate func pinnedCellForRow(
+        at indexPath: IndexPath,
+        size: CGSize
+    ) -> (cell: UITableViewCell, renderingTable: UITableView)? {
         // This cell is created manually for bitmap rendering, independently of
         // the table view's data-source request.
         guard let cell = tableView.dequeueReusableCell(withIdentifier: pinnedCellIdentifier()) else {
@@ -190,7 +196,9 @@ extension Pinnable {
         renderingTable.layoutIfNeeded()
         cell.layoutIfNeeded()
 
-        return cell
+        // Return the table with the cell so its trait environment remains alive
+        // until after the caller has captured the snapshot or bitmap.
+        return (cell, renderingTable)
     }
 
     fileprivate func removePinnedCell() {

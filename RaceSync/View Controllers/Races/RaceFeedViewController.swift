@@ -89,6 +89,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
     fileprivate lazy var segmentedControl: UISegmentedControl = {
         let control = UISegmentedControl()
         control.addTarget(self, action: #selector(didChangeSegment), for: .valueChanged)
+        control.selectedSegmentTintColor = Color.barBackground
         return control
     }()
 
@@ -389,6 +390,7 @@ extension RaceFeedViewController: UITableViewDataSource {
         cell.memberBadgeView.count = viewModel.participantCount
         cell.avatarImageView.imageView.setImage(with: viewModel.imageUrl, placeholderImage: PlaceholderImg.medium)
         cell.backgroundView?.backgroundColor = Color.cellColor
+        cell.backgroundColor = Color.cellColor
 
         if selectedRaceFilter == .joined {
             cell.subtitleLabel.text = viewModel.locationLabel

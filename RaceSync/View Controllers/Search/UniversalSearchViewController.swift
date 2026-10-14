@@ -57,6 +57,7 @@ class UniversalSearchViewController: UIViewController, Shimmable {
     fileprivate lazy var segmentedControl: UISegmentedControl = {
         let control = UISegmentedControl()
         control.addTarget(self, action: #selector(didChangeSegment), for: .valueChanged)
+        control.selectedSegmentTintColor = Color.barBackground
         control.isEnabled = false
 
         for section in Section.allCases {

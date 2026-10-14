@@ -54,11 +54,11 @@ class StandingBadgeView: UIView {
         // Define attributes
         let rankAttributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.systemFont(ofSize: textSize, weight: .bold),
-            .foregroundColor: UIColor.white
+            .foregroundColor: Color.light
         ]
         let ordinalAttributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.systemFont(ofSize: textSize/2, weight: .medium),
-            .foregroundColor: UIColor.white,
+            .foregroundColor: Color.light,
             .baselineOffset: textSize/3 // raises the ordinal element to the top of the font
         ]
 

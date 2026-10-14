@@ -110,7 +110,7 @@ extension AppIconViewController: UITableViewDataSource {
 
         cell.textLabel?.text = icon.title
         cell.imageView?.image = icon.preview?.rounded(with: 60 / 4)
-        cell.imageView?.layer.shadowColor = UIColor.black.cgColor
+        cell.imageView?.layer.shadowColor = Color.dark.cgColor
         cell.imageView?.layer.shadowOffset = CGSize(width: 0, height: 2.0)
         cell.imageView?.layer.shadowOpacity = 0.2
         cell.imageView?.layer.shadowRadius = 3

@@ -39,7 +39,7 @@ class SeriesFeedViewController: UIViewController, Shimmable {
     fileprivate lazy var headerView: UIView = {
         let view = UIView()
         view.backgroundColor = Color.barBackground
-        view.tintColor = Color.blue
+        view.tintColor = Color.buttonTint
 
         let spacing: CGFloat = 10
         let buttonWidth: CGFloat = 30
@@ -68,6 +68,7 @@ class SeriesFeedViewController: UIViewController, Shimmable {
         let control = UISegmentedControl(items: SeriesFilter.titles)
         control.selectedSegmentIndex = AppPrefs.lastSelectedSeriesFilter.index
         control.addTarget(self, action: #selector(didChangeSegment), for: .valueChanged)
+        control.selectedSegmentTintColor = Color.barBackground
         return control
     }()
 
