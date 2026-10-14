@@ -343,6 +343,12 @@ extension HomeTabBarController: UITabBarControllerDelegate {
     override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {        
         // Trigger haptic gesture to emphasize the action
         HapticEngine.shared.trigger()
+
+        // Persist only selections coming from the tab bar interaction
+        if let index = tabBar.items?.firstIndex(of: item),
+           let tab = HomeTabs(rawValue: index) {
+            AppPrefs.lastSelectedHomeTab = tab
+        }
     }
     
     func tabBarController(_ controller: UITabBarController, didSelect viewController: UIViewController) {
@@ -360,9 +366,5 @@ extension HomeTabBarController: UITabBarControllerDelegate {
             }
         }
 
-        // To open the last tab at launch
-        if let tab = HomeTabs(rawValue: controller.selectedIndex) {
-            AppPrefs.lastSelectedHomeTab = tab
-        }
     }
 }
