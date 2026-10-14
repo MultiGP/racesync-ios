@@ -18,7 +18,7 @@ extension UITabBarController {
         // Trick to pre-load each view controller
         self.preloadTabs()
 
-        var idx = selectedIndex
+        var idx = vcs.indices.contains(selectedIndex) ? selectedIndex : 0
 
         if idx < vcs.count {
             let vc = vcs[idx]
@@ -29,14 +29,20 @@ extension UITabBarController {
             }
         }
 
-        // force refresh to work around UITabBarController bug
-        if idx < vcs.count-1 {
-            self.selectedIndex = idx+1
-        } else if idx > 0 {
-            self.selectedIndex = idx-1
-        }
+        if #available(iOS 26.0, *) {
+            // Switching through a neighboring tab is visible with the new tab
+            // bar animations, especially when restoring a middle tab.
+            self.selectedIndex = idx
+        } else {
+            // Force refresh to work around a UITabBarController bug on older OSes.
+            if idx < vcs.count-1 {
+                self.selectedIndex = idx+1
+            } else if idx > 0 {
+                self.selectedIndex = idx-1
+            }
 
-        self.selectedIndex = idx
+            self.selectedIndex = idx
+        }
     }
 
     func preloadTabs() {
