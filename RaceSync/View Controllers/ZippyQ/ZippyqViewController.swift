@@ -61,10 +61,10 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     fileprivate var headerCollapseProgress: CGFloat = 0
     fileprivate var headerCollapseTracking: HeaderCollapseTracking = .contentOffset
     fileprivate var lastHeaderScrollOffset: CGFloat = 0
-    fileprivate var isJoiningNextRound = false
     fileprivate var lastUserScrollTime: CFTimeInterval = 0
     fileprivate var emptyStateError: EmptyStateViewModel?
     fileprivate let emptyStateNoRaceQueues = EmptyStateViewModel(.noRaceQueues)
+    fileprivate var isJoiningNextRound = false
 
     fileprivate lazy var activityIndicatorView: ActivityLoadingView = {
         let view = ActivityLoadingView(style: .medium)

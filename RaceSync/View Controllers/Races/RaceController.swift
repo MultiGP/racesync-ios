@@ -197,17 +197,22 @@ class RaceController {
 
         var items: [Any] = [url]
         var activities = [UIActivity]()
-
-        if race.canManagePayments {
-            activities += [PaypalActivity()]
-        }
-
-        activities += [MGPActivity(), CopyLinkActivity()]
-
+        activities += [CopyLinkActivity(), MGPActivity()]
+        
         // Calendar integration
         if let event = race.createCalendarEvent(with: raceId) {
             items += [event]
             activities += [CalendarActivity()]
+        }
+
+        if race.isZippyQEnabled {
+            let zippyQActivity = MGPZippyQActivity()
+            zippyQActivity.raceId = race.id
+            activities += [zippyQActivity]
+        }
+        
+        if race.canManagePayments {
+            activities += [PaypalActivity()]
         }
 
         let vc = UIActivityViewController(activityItems: items, applicationActivities: activities)
