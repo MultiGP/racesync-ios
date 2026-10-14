@@ -218,6 +218,11 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         }
     }
 
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        refreshPinnedViewIfAppearanceChanged(from: previousTraitCollection)
+    }
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
     }
@@ -497,25 +502,28 @@ extension StandingsViewController: UITableViewDataSource {
         cell.avatarImageView.isHidden = true
         cell.accessoryView = nil
 
-        if let userId = myUserId, viewModel.standing.pilotId == userId {
-            cell.titleLabel.textColor = Color.white
-            cell.subtitleLabel.textColor = Color.gray20
-            cell.rankView.titleLabel.textColor = Color.gray20
-            cell.backgroundView?.backgroundColor = Color.pinned
-            cell.selectedBackgroundView?.backgroundColor = Color.pinnedSelected
-            
-            if isRootTabBar {
-                let image = ButtonImg.share?.withTintColor(.white)
-                let imageView = UIImageView(image: image)
-                imageView.tintColor = .white
-                cell.accessoryView = imageView
-            }
-        } else {
-            cell.titleLabel.textColor = Color.black
-            cell.subtitleLabel.textColor = Color.gray300
-            cell.rankView.titleLabel.textColor = Color.gray300
-            cell.backgroundView?.backgroundColor = (indexPath.row % 2 == 0) ? Color.cellColor : Color.cellColor2
-            cell.selectedBackgroundView?.backgroundColor = Color.gray50
+        cell.titleLabel.textColor = Color.black
+        cell.subtitleLabel.textColor = Color.gray300
+        cell.rankView.titleLabel.textColor = Color.gray300
+        cell.backgroundView?.backgroundColor = (indexPath.row % 2 == 0) ? Color.cellColor : Color.cellColor2
+        cell.selectedBackgroundView?.backgroundColor = Color.gray50
+    }
+
+    func configurePinned<T>(_ view: T, forRowAt indexPath: IndexPath) where T: UITableViewCell {
+        configure(view, forRowAt: indexPath)
+        guard let cell = view as? AvatarTableViewCell else { return }
+
+        cell.titleLabel.textColor = Color.light
+        cell.subtitleLabel.textColor = Color.light.withAlphaComponent(0.8)
+        cell.rankView.titleLabel.textColor = Color.light
+        cell.backgroundView?.backgroundColor = Color.pinned
+        cell.selectedBackgroundView?.backgroundColor = Color.pinnedSelected
+
+        if isRootTabBar {
+            let image = ButtonImg.share?.withTintColor(.white)
+            let imageView = UIImageView(image: image)
+            imageView.tintColor = .white
+            cell.accessoryView = imageView
         }
     }
 }

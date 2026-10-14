@@ -110,6 +110,11 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
         super.viewDidAppear(animated)
     }
 
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        refreshPinnedViewIfAppearanceChanged(from: previousTraitCollection)
+    }
+
     deinit {
         unregisterJoinable()
     }
@@ -409,14 +414,18 @@ extension RacePilotsViewController: UITableViewDataSource {
                 cell.rankView.rank = Int32(indexPath.row+1)
             }
 
-            if let userId = myUserId, viewModel.userId == userId {
-                cell.titleLabel.textColor = Color.white
-                cell.subtitleLabel.textColor = Color.gray20
-                cell.rankView.titleLabel.textColor = Color.gray20                
-                cell.backgroundView?.backgroundColor = Color.pinned
-                cell.selectedBackgroundView?.backgroundColor = Color.pinnedSelected
-            }
         }
+    }
+
+    func configurePinned<T>(_ view: T, forRowAt indexPath: IndexPath) where T: UITableViewCell {
+        configure(view, forRowAt: indexPath)
+        guard let cell = view as? AvatarTableViewCell else { return }
+
+        cell.titleLabel.textColor = Color.white
+        cell.subtitleLabel.textColor = Color.gray20
+        cell.rankView.titleLabel.textColor = Color.gray20
+        cell.backgroundView?.backgroundColor = Color.pinned
+        cell.selectedBackgroundView?.backgroundColor = Color.pinnedSelected
     }
 }
 

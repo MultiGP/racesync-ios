@@ -154,6 +154,11 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
         super.viewDidAppear(animated)
     }
 
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        refreshPinnedViewIfAppearanceChanged(from: previousTraitCollection)
+    }
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
@@ -347,19 +352,22 @@ extension SeriesStandingsViewController: UITableViewDataSource {
             cell.titleLabel.numberOfLines = 2
         }
 
-        if viewModel.pilotId == myUserId {
-            cell.titleLabel.textColor = Color.white
-            cell.subtitleLabel.textColor = Color.gray20
-            cell.rankView.titleLabel.textColor = Color.gray20
-            cell.backgroundColor = Color.gray200
-            cell.selectedBackgroundView?.backgroundColor = Color.gray300
-        } else {
-            cell.titleLabel.textColor = Color.black
-            cell.subtitleLabel.textColor = Color.gray300
-            cell.rankView.titleLabel.textColor = Color.gray300
-            cell.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : Color.gray20
-            cell.selectedBackgroundView?.backgroundColor = Color.gray50
-        }
+        cell.titleLabel.textColor = Color.black
+        cell.subtitleLabel.textColor = Color.gray300
+        cell.rankView.titleLabel.textColor = Color.gray300
+        cell.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : Color.gray20
+        cell.selectedBackgroundView?.backgroundColor = Color.gray50
+    }
+
+    func configurePinned<T>(_ view: T, forRowAt indexPath: IndexPath) where T: UITableViewCell {
+        configure(view, forRowAt: indexPath)
+        guard let cell = view as? AvatarTableViewCell else { return }
+
+        cell.titleLabel.textColor = Color.white
+        cell.subtitleLabel.textColor = Color.gray20
+        cell.rankView.titleLabel.textColor = Color.gray20
+        cell.backgroundColor = Color.gray200
+        cell.selectedBackgroundView?.backgroundColor = Color.gray300
     }
 }
 

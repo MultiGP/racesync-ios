@@ -23,7 +23,7 @@ class SettingsViewController: UIViewController {
         tableView.register(cellType: FormTableViewCell.self)
 
         let backgroundView = UIView()
-        backgroundView.backgroundColor = Color.gray20
+        backgroundView.backgroundColor = Color.tableGroupedBackground
         tableView.backgroundView = backgroundView
 
         return tableView
@@ -300,6 +300,7 @@ extension SettingsViewController: UITableViewDataSource {
         cell.imageView?.image = row.image
         cell.imageView?.tintColor = Color.black
         cell.accessoryType = .disclosureIndicator
+        cell.backgroundColor = Color.cellGrouped
         cell.isLoading = false
 
         if row == .appearance {

@@ -25,7 +25,7 @@ public struct Color {
     public static let yellow: UIColor =         #colorLiteral(red: 0.9764705882, green: 0.8431372549, blue: 0.2862745098, alpha: 1) // #F9D749          // Special elements (GQ Trophee)
 
     // Grayscales
-    public static let white =                   dynamic(light: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), dark: #colorLiteral(red: 0.057, green: 0.057, blue: 0.06, alpha: 1))
+    public static let white =                   dynamic(light: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), dark: #colorLiteral(red: 0.07199999998, green: 0.07199999998, blue: 0.08, alpha: 0.98))
     public static let gray20 =                  dynamic(light: #colorLiteral(red: 0.9607843137, green: 0.9647058824, blue: 0.988627451, alpha: 1), dark: #colorLiteral(red: 0.1746, green: 0.1746, blue: 0.18, alpha: 1))                  // lite-backgrounds
     public static let gray50 =                  dynamic(light: #colorLiteral(red: 0.9294117647, green: 0.9254901961, blue: 0.9533333333, alpha: 1), dark: #colorLiteral(red: 0.2362159737, green: 0.2362159737, blue: 0.2486483934, alpha: 1))                  // backgrounds
     public static let gray100 =                 dynamic(light: #colorLiteral(red: 0.7921568627, green: 0.7921568627, blue: 0.8121568627, alpha: 1), dark: #colorLiteral(red: 0.3270185178, green: 0.3270185178, blue: 0.3442300187, alpha: 1))                  // bar shadow, separator lines
@@ -37,14 +37,16 @@ public struct Color {
     public static let clear: UIColor =          #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0) // #000000
     
     // UI specific
-    public static let cellColor =               dynamic(light: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), dark: #colorLiteral(red: 0.048, green: 0.048, blue: 0.06, alpha: 1))
-    public static let cellColor2 =              dynamic(light: #colorLiteral(red: 0.9702, green: 0.9702, blue: 0.98, alpha: 1), dark: #colorLiteral(red: 0.072, green: 0.072, blue: 0.09, alpha: 1))
-    
+    public static let cellColor =               dynamic(light: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), dark: #colorLiteral(red: 0.07199999998, green: 0.07199999998, blue: 0.08, alpha: 1))
+    public static let cellColor2 =              dynamic(light: #colorLiteral(red: 0.9702, green: 0.9702, blue: 0.98, alpha: 1), dark: #colorLiteral(red: 0.0968, green: 0.0968, blue: 0.11, alpha: 1))
+    public static let cellGrouped =             UIColor.secondarySystemGroupedBackground
+
     public static let buttonTint =              dynamic(light: Color.blue, dark: Color.light)
     public static let viewTint =                dynamic(light: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0.98), dark: #colorLiteral(red: 0.048, green: 0.048, blue: 0.06, alpha: 0.98))
-    public static let barBackground =           dynamic(light: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0.98), dark: #colorLiteral(red: 0.048, green: 0.048, blue: 0.06, alpha: 0.98))
+    public static let barBackground =           dynamic(light: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0.98), dark: #colorLiteral(red: 0.07199999998, green: 0.07199999998, blue: 0.08, alpha: 0.98))
     public static let tabBarForeground =        dynamic(light: Color.blue, dark: Color.light)
-    public static let tableBackground =         dynamic(light: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0.98), dark: #colorLiteral(red: 0.054, green: 0.054, blue: 0.06, alpha: 0.98))
+    public static let tableBackground =         UIColor.systemBackground
+    public static let tableGroupedBackground =  UIColor.systemGroupedBackground
 
     public static let link =                    dynamic(light: Color.red, dark: Color.blue)
 
