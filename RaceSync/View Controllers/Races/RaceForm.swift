@@ -74,13 +74,13 @@ enum RaceFormRow: Int, EnumTitle {
         case .name:         return "Name of this event"
         case .notify:       return nil
         case .privacy:      return "Allow everyone or only chapter members to see this event"
-        case .rounds:       return "Sets the maximum number of packs (rounds) that a pilot can join"
+        case .rounds:       return "Maximum packs per pilot"
         case .schedule:     return nil
         case .scoring:      return "Fun Fly disables scoring"
         case .season:       return nil
         case .startDate:    return nil
-        case .zDepth:       return "How many times a pilot can be in the line"
-        case .zIterator:    return "How many rounds to wait between runs"
+        case .zDepth:       return "Pilot queue limit for future rounds"
+        case .zIterator:    return "Minimum rounds between runs"
         case .zNoKiosk:     return "Allows ZippyQ sign up from your phone"
         case .zPrediction:  return "Displays actual and predicted round start times"
         }

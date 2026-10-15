@@ -31,9 +31,9 @@ public struct RaceData: Descriptable {
     public var privacy: String = EventType.public.rawValue
     public var qualifying: String = QualifyingType.open.rawValue
     public var raceClass: String = RaceClass.open.rawValue
-    public var rounds: Int32 = 5
     public var status: String = RaceStatus.open.rawValue
     public var timing: Bool = true
+    public var rounds: Int32 = 5
     public var zippyqDepth: Int32 = 5
     public var zippyqIterator: Int32 = 0
     public var zippyqNoKiosk: Bool = true

@@ -96,15 +96,14 @@ class AvatarTableViewCell: UITableViewCell {
     // MARK: - Layout
 
     open func setupLayout() {
-        backgroundColor = Color.white
+        self.accessoryType = .disclosureIndicator
+        self.backgroundColor =  Color.cellColor
         
         self.backgroundView = UIView()
-        self.backgroundView?.backgroundColor = Color.clear
+        self.backgroundView?.backgroundColor =  Color.cellColor
         
         self.selectedBackgroundView = UIView()
         self.selectedBackgroundView?.backgroundColor = Color.gray20
-
-        accessoryType = .disclosureIndicator
 
         contentView.addSubview(textPill)
         textPill.snp.makeConstraints {

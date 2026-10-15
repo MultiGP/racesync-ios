@@ -361,6 +361,7 @@ extension RacePilotsViewController: UITableViewDataSource {
 
         cell.textLabel?.text = "View full results on"
         cell.detailImage = web.image
+        cell.backgroundView?.backgroundColor = Color.cellColor
         
         if cell.detailImage == nil {
             cell.detailTextLabel?.text = URL(string: url)?.rootDomain ?? ""
@@ -383,7 +384,7 @@ extension RacePilotsViewController: UITableViewDataSource {
         cell.titleLabel.textColor = Color.black
         cell.subtitleLabel.textColor = Color.gray300
         cell.rankView.titleLabel.textColor = Color.gray300
-        cell.backgroundView?.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : Color.gray20
+        cell.backgroundView?.backgroundColor = (indexPath.row % 2 == 0) ? Color.cellColor : Color.cellColor2
         cell.selectedBackgroundView?.backgroundColor = Color.gray50
 
         if race.canShowResults {
