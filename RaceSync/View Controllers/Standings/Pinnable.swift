@@ -185,8 +185,7 @@ extension Pinnable {
         // geometry as a cell managed by a table view.
         let renderingTable = UITableView(frame: CGRect(origin: .zero, size: size), style: tableView.style)
         renderingTable.overrideUserInterfaceStyle = tableView.traitCollection.userInterfaceStyle
-        renderingTable.separatorStyle = tableView.separatorStyle
-        renderingTable.separatorInset = tableView.separatorInset
+        renderingTable.separatorStyle = .none
         renderingTable.layoutMargins = tableView.layoutMargins
         renderingTable.rowHeight = size.height
 
