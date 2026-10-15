@@ -18,7 +18,7 @@ class RaceFeedMenuViewController: UIViewController {
     // MARK: - Private Variables
 
     fileprivate lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: .zero, style: .plain)
+        let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.register(cellType: FormTableViewCell.self)
         tableView.contentInsetAdjustmentBehavior = .always
         tableView.tableHeaderView = headerView
@@ -27,7 +27,7 @@ class RaceFeedMenuViewController: UIViewController {
         tableView.delegate = self
 
         let backgroundView = UIView()
-        backgroundView.backgroundColor = Color.white
+        backgroundView.backgroundColor = Color.tableGroupedBackground
         tableView.backgroundView = backgroundView
 
         return tableView

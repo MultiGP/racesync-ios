@@ -43,7 +43,7 @@ extension Shimmable where Self: UIViewController {
 
     static fileprivate func tableViewCellShimmerView() -> UIView {
         let view = UIView()
-        guard let image = PlaceholderImg.shimmerList else { return view }
+        guard let image = PlaceholderImg.shimmerList?.withTintColor(Color.cellColor2) else { return view }
 
         let cellHeight = image.size.height
         let screenHeight = UIScreen.main.bounds.height

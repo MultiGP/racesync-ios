@@ -30,7 +30,7 @@ class ProfileViewController: UIViewController, Shimmable {
         tableView.contentInsetAdjustmentBehavior = .always
         tableView.alwaysBounceVertical = true
         tableView.tableFooterView = UIView()
-        tableView.backgroundColor = Color.white
+        tableView.backgroundColor = Color.tableBackground
 
         if #available(iOS 15.0, *) {
             tableView.sectionHeaderTopPadding = 0

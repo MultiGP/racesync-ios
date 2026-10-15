@@ -67,6 +67,12 @@ class FormTableViewCell: UITableViewCell {
     // MARK: - Layout
 
     fileprivate func setupLayout() {
+        self.backgroundColor = Color.cellGrouped
+
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = Color.cellGrouped
+        self.backgroundView = backgroundView
+
         let selectedBackgroundView = UIView()
         selectedBackgroundView.backgroundColor = Color.gray20
         self.selectedBackgroundView = selectedBackgroundView

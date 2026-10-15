@@ -34,7 +34,7 @@ class RaceFormViewController: UIViewController {
         tableView.delegate = self
 
         let backgroundView = UIView()
-        backgroundView.backgroundColor = Color.gray20
+        backgroundView.backgroundColor = Color.tableGroupedBackground
         tableView.backgroundView = backgroundView
 
         return tableView
@@ -101,14 +101,14 @@ class RaceFormViewController: UIViewController {
                 general += [.fee, .feeRequired]
             }
 
-            var specific: [RaceFormRow] = [.content, .scoring, .class, .format, .schedule]
+            var specific: [RaceFormRow] = [.scoring, .class, .format, .schedule]
 
             // Only applicable for ZippyQ
             if data.qualifying == QualifyingType.open.rawValue {
                 specific += [.rounds, .zDepth, .zIterator, .zNoKiosk]
             }
 
-            specific += [.notify]
+            specific += [.content, .notify]
 
             return [.general: general, .specific: specific]
         }

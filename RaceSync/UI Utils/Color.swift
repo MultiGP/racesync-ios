@@ -25,30 +25,30 @@ public struct Color {
     public static let yellow: UIColor =         #colorLiteral(red: 0.9764705882, green: 0.8431372549, blue: 0.2862745098, alpha: 1) // #F9D749          // Special elements (GQ Trophee)
 
     // Grayscales
-    public static let white =                   dynamic(light: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), dark: #colorLiteral(red: 0.07199999998, green: 0.07199999998, blue: 0.08, alpha: 0.98))
-    public static let gray20 =                  dynamic(light: #colorLiteral(red: 0.9607843137, green: 0.9647058824, blue: 0.988627451, alpha: 1), dark: #colorLiteral(red: 0.1746, green: 0.1746, blue: 0.18, alpha: 1))                  // lite-backgrounds
-    public static let gray50 =                  dynamic(light: #colorLiteral(red: 0.9294117647, green: 0.9254901961, blue: 0.9533333333, alpha: 1), dark: #colorLiteral(red: 0.2362159737, green: 0.2362159737, blue: 0.2486483934, alpha: 1))                  // backgrounds
-    public static let gray100 =                 dynamic(light: #colorLiteral(red: 0.7921568627, green: 0.7921568627, blue: 0.8121568627, alpha: 1), dark: #colorLiteral(red: 0.3270185178, green: 0.3270185178, blue: 0.3442300187, alpha: 1))                  // bar shadow, separator lines
-    public static let gray200 =                 dynamic(light: #colorLiteral(red: 0.5568627451, green: 0.5568627451, blue: 0.5964705882, alpha: 1), dark: #colorLiteral(red: 0.5666470588, green: 0.5666470588, blue: 0.5964705882, alpha: 1))
-    public static let gray300 =                 dynamic(light: #colorLiteral(red: 0.4274509804, green: 0.4274509804, blue: 0.4670588235, alpha: 1), dark: #colorLiteral(red: 0.6780392157, green: 0.6780392157, blue: 0.7137254902, alpha: 1))                  // sub-titles
-    public static let gray400 =                 dynamic(light: #colorLiteral(red: 0.262745098, green: 0.262745098, blue: 0.282745098, alpha: 1), dark: #colorLiteral(red: 0.76, green: 0.76, blue: 0.8, alpha: 1))                  // caption
-    public static let gray500 =                 dynamic(light: #colorLiteral(red: 0.1921568627, green: 0.1921568627, blue: 0.2200000000, alpha: 1), dark: #colorLiteral(red: 0.8717647059, green: 0.8717647059, blue: 0.9176470588, alpha: 1))
-    public static let black =                   dynamic(light: #colorLiteral(red: 0.05458580635, green: 0.05458580635, blue: 0.05627402716, alpha: 1), dark: #colorLiteral(red: 0.97, green: 0.97, blue: 1, alpha: 1))                  // titles / text
+    public static let white =                   dynamic(light: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), dark: #colorLiteral(red: 0.09803921569, green: 0.1137254902, blue: 0.1333333333, alpha: 0.98))
+    public static let gray20 =                  dynamic(light: #colorLiteral(red: 0.9607843137, green: 0.9647058824, blue: 0.988627451, alpha: 1), dark: #colorLiteral(red: 0.1294117647, green: 0.1529411765, blue: 0.1843137255, alpha: 1))                  // lite-backgrounds
+    public static let gray50 =                  dynamic(light: #colorLiteral(red: 0.9294117647, green: 0.9254901961, blue: 0.9533333333, alpha: 1), dark: #colorLiteral(red: 0.168627451, green: 0.2, blue: 0.2352941176, alpha: 1))                  // backgrounds
+    public static let gray100 =                 dynamic(light: #colorLiteral(red: 0.7921568627, green: 0.7921568627, blue: 0.8121568627, alpha: 1), dark: #colorLiteral(red: 0.2823529412, green: 0.3176470588, blue: 0.3647058824, alpha: 1))                  // bar shadow, separator lines
+    public static let gray200 =                 dynamic(light: #colorLiteral(red: 0.5568627451, green: 0.5568627451, blue: 0.5964705882, alpha: 1), dark: #colorLiteral(red: 0.5019607843, green: 0.537254902, blue: 0.5921568627, alpha: 1))
+    public static let gray300 =                 dynamic(light: #colorLiteral(red: 0.4274509804, green: 0.4274509804, blue: 0.4670588235, alpha: 1), dark: #colorLiteral(red: 0.6156862745, green: 0.6470588235, blue: 0.6980392157, alpha: 1))                  // sub-titles
+    public static let gray400 =                 dynamic(light: #colorLiteral(red: 0.262745098, green: 0.262745098, blue: 0.282745098, alpha: 1), dark: #colorLiteral(red: 0.7098039216, green: 0.7450980392, blue: 0.7960784314, alpha: 1))                  // caption
+    public static let gray500 =                 dynamic(light: #colorLiteral(red: 0.1921568627, green: 0.1921568627, blue: 0.2200000000, alpha: 1), dark: #colorLiteral(red: 0.8235294118, green: 0.8470588235, blue: 0.8862745098, alpha: 1))
+    public static let black =                   dynamic(light: #colorLiteral(red: 0.05458580635, green: 0.05458580635, blue: 0.05627402716, alpha: 1), dark: #colorLiteral(red: 0.9333333333, green: 0.9490196078, blue: 0.9725490196, alpha: 1))                  // titles / text
     public static let clear: UIColor =          #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0) // #000000
     
     // UI specific
-    public static let cellColor =               dynamic(light: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), dark: #colorLiteral(red: 0.07199999998, green: 0.07199999998, blue: 0.08, alpha: 1))
-    public static let cellColor2 =              dynamic(light: #colorLiteral(red: 0.9702, green: 0.9702, blue: 0.98, alpha: 1), dark: #colorLiteral(red: 0.0968, green: 0.0968, blue: 0.11, alpha: 1))
-    public static let cellGrouped =             UIColor.secondarySystemGroupedBackground
+    public static let cellColor =               dynamic(light: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), dark: #colorLiteral(red: 0.09803921569, green: 0.1137254902, blue: 0.1333333333, alpha: 1))
+    public static let cellColor2 =              dynamic(light: #colorLiteral(red: 0.9702, green: 0.9702, blue: 0.98, alpha: 1), dark: #colorLiteral(red: 0.1215686275, green: 0.1450980392, blue: 0.1725490196, alpha: 1))
+    public static let cellGrouped =             dynamic(light: UIColor.secondarySystemGroupedBackground, dark: #colorLiteral(red: 0.1294117647, green: 0.1529411765, blue: 0.1843137255, alpha: 1))
 
-    public static let buttonTint =              dynamic(light: Color.blue, dark: Color.light)
-    public static let viewTint =                dynamic(light: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0.98), dark: #colorLiteral(red: 0.048, green: 0.048, blue: 0.06, alpha: 0.98))
-    public static let barBackground =           dynamic(light: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0.98), dark: #colorLiteral(red: 0.07199999998, green: 0.07199999998, blue: 0.08, alpha: 0.98))
-    public static let tabBarForeground =        dynamic(light: Color.blue, dark: Color.light)
-    public static let tableBackground =         UIColor.systemBackground
-    public static let tableGroupedBackground =  UIColor.systemGroupedBackground
+    public static let buttonTint =              dynamic(light: Self.blue, dark: Self.light)
+    public static let viewTint =                dynamic(light: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0.98), dark: #colorLiteral(red: 0.0862745098, green: 0.1019607843, blue: 0.1215686275, alpha: 0.98))
+    public static let barBackground =           dynamic(light: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0.98), dark: #colorLiteral(red: 0.09803921569, green: 0.1137254902, blue: 0.1333333333, alpha: 0.98))
+    public static let tabBarForeground =        dynamic(light: Color.blue, dark: Self.light)
+    public static let tableBackground =         dynamic(light: UIColor.systemBackground, dark: #colorLiteral(red: 0.09803921569, green: 0.1137254902, blue: 0.1333333333, alpha: 1))
+    public static let tableGroupedBackground =  dynamic(light: UIColor.systemGroupedBackground, dark: #colorLiteral(red: 0.08235294118, green: 0.09803921569, blue: 0.1176470588, alpha: 1))
 
-    public static let link =                    dynamic(light: Color.red, dark: Color.blue)
+    public static let link =                    dynamic(light: Self.red, dark: Self.blue)
 
 //    public static let pinned =                  dynamic(light: #colorLiteral(red: 0.3921568627, green: 0.4196078431, blue: 0.5490196078, alpha: 1), dark: #colorLiteral(red: 0.2475, green: 0.28125, blue: 0.45, alpha: 1))                   // standings pinned cell background
 //    public static let pinnedSelected =          dynamic(light: #colorLiteral(red: 0.1843137255, green: 0.2196078431, blue: 0.3960784314, alpha: 1), dark: #colorLiteral(red: 0.1843137255, green: 0.2196078431, blue: 0.3960784314, alpha: 1))                   // standings pinned cell selected background

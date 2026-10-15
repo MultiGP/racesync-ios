@@ -28,7 +28,7 @@ class ZippyqFrequencyContentView: UIView {
         } else {
             label.font = UIFont.systemFont(ofSize: 20, weight: .medium)
         }
-        label.textColor = Color.blue
+        label.textColor = Color.dynamic(light: Color.blue, dark: Color.light)
         label.textAlignment = .center
         return label
     }()
@@ -54,7 +54,7 @@ class ZippyqFrequencyContentView: UIView {
     lazy var resultLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.monospacedDigitSystemFont(ofSize: 15, weight: .regular)
-        label.textColor = Color.blue
+        label.textColor = Color.dynamic(light: Color.blue, dark: Color.light)
         label.textAlignment = .right
         return label
     }()

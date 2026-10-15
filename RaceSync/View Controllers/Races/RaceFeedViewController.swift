@@ -470,13 +470,16 @@ extension RaceFeedViewController: EmptyDataSetSource {
 }
 
 extension RaceFeedViewController: EmptyDataSetDelegate {
+    
+    func emptyDataSetShouldDisplay(_ scrollView: UIScrollView) -> Bool {
+        return !shimmeringView.isShimmering
+    }
 
     func emptyDataSetShouldAllowScroll(_ scrollView: UIScrollView) -> Bool {
         return true
     }
 
     func emptyDataSet(_ scrollView: UIScrollView, didTapButton button: UIButton) {
-
         if selectedRaceFilter == .joined {
             selectSegment(.nearby)
         } else if selectedRaceFilter == .chapters {

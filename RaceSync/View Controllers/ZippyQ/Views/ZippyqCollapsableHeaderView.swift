@@ -43,7 +43,7 @@ class ZippyqCollapsableHeaderView: UICollectionReusableView {
         } else {
             label.font = UIFont.systemFont(ofSize: 22, weight: .medium)
         }
-        label.textColor = Color.blue
+        label.textColor = Color.dynamic(light: Color.blue, dark: Color.light)
         return label
     }()
 
@@ -74,7 +74,7 @@ class ZippyqCollapsableHeaderView: UICollectionReusableView {
     fileprivate lazy var subtitleContextLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
-        label.textColor = Color.blue
+        label.textColor = Color.dynamic(light: Color.blue, dark: Color.light)
         label.textAlignment = .right
         label.lineBreakMode = .byTruncatingTail
         label.isHidden = true
@@ -319,7 +319,7 @@ private extension ZippyqCollapsableHeaderView {
 
         for imageUrl in avatarImageUrls {
             let avatarImageView = AvatarImageView(withHeight: Constants.avatarSize, showShadow: false)
-            avatarImageView.imageView.layer.borderColor = Color.tableBackground.cgColor
+            avatarImageView.imageView.layer.borderColor = Color.cellColor.cgColor
             avatarImageView.imageView.layer.borderWidth = Constants.avatarBorderWidth
             avatarImageView.imageView.setImage(with: imageUrl,
                                                placeholderImage: PlaceholderImg.medium,

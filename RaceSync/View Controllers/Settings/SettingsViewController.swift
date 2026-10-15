@@ -300,7 +300,6 @@ extension SettingsViewController: UITableViewDataSource {
         cell.imageView?.image = row.image
         cell.imageView?.tintColor = Color.black
         cell.accessoryType = .disclosureIndicator
-        cell.backgroundColor = Color.cellGrouped
         cell.isLoading = false
 
         if row == .appearance {

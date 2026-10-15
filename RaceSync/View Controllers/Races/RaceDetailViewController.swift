@@ -841,7 +841,8 @@ extension RaceDetailViewController: UITableViewDataSource {
         cell.isLoading = false
         cell.detailImage = nil
         cell.backgroundColor = Color.cellColor
-
+        cell.backgroundView?.backgroundColor = Color.cellColor
+        
         if row == .chapter {
             cell.detailTextLabel?.text = raceViewModel.chapterLabel
         } else if row == .owner {
