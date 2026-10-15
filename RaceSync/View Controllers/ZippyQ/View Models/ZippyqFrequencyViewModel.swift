@@ -62,9 +62,7 @@ class ZippyqFrequencyViewModel: Descriptable {
 
         if let user = entry?.user, let stats = pilotStats[user.id] {
             let userViewModel = UserViewModel(with: user)
-            let detailLevel: ZippyqPilotStatsViewModel.ZippyqPilotStatsDetailLevel = isCurrentUser
-                ? .currentUserCompact
-                : .packUsage
+            let detailLevel: ZippyqPilotStatsViewModel.ZippyqPilotStatsDetailLevel = .packUsage
 
             titleLabel = userViewModel.username
             isAssigned = true

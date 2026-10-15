@@ -50,9 +50,9 @@ enum ZippyqRoundBadge: Equatable {
         switch self {
         case .none:                 return Color.clear
         case .running:              return Color.light.withAlphaComponent(0.9)
-        case .upNext:               return Color.dynamic(light: Color.blue, dark: Color.light).withAlphaComponent(0.8)
+        case .upNext:               return Color.dynamic(light: Color.blue, dark: Color.gray20).withAlphaComponent(0.8)
         case .past:                 return Color.blue.withAlphaComponent(0.8)
-        case .full:                 return Color.dynamic(light: Color.blue, dark: Color.light).withAlphaComponent(0.8)
+        case .full:                 return Color.dynamic(light: Color.blue, dark: Color.gray20).withAlphaComponent(0.8)
         case .spotsLeft:            return Color.gray300
         }
     }

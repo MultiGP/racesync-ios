@@ -13,7 +13,6 @@ class ZippyqPilotStatsViewModel {
 
     enum ZippyqPilotStatsDetailLevel {
         case packUsage
-        case currentUserCompact
         case currentUserDetailed
     }
 
@@ -23,18 +22,13 @@ class ZippyqPilotStatsViewModel {
          maximumPackCount: Int32,
          detailLevel: ZippyqPilotStatsDetailLevel,
          isUpNext: Bool = false) {
+        
         let usedCount = stats?.usedCount ?? 0
-        let queuedCount = max((stats?.queuedCount ?? 0) - usedCount, 0)
-        let packUsage = Self.packUsageLabel(
-            usedCount: usedCount,
-            maximumPackCount: maximumPackCount
-        )
+        let queuedCount = stats?.queuedCount ?? 0
+        let packUsage = Self.packUsageLabel(usedCount: usedCount)
 
         switch detailLevel {
         case .packUsage:
-            label = packUsage
-
-        case .currentUserCompact:
             label = "\(packUsage) • \(queuedCount) queued"
 
         case .currentUserDetailed:
@@ -64,13 +58,8 @@ private extension ZippyqPilotStatsViewModel {
 
     static let maximumDisplayedRoundCount = 5
 
-    static func packUsageLabel(usedCount: Int32, maximumPackCount: Int32) -> String {
+    static func packUsageLabel(usedCount: Int32) -> String {
         guard usedCount > 0 else { return "No used packs" }
-
-        if maximumPackCount > 0 {
-            return "\(usedCount) of \(maximumPackCount) packs used"
-        }
-
         return "\(usedCount) pack\(usedCount == 1 ? "" : "s") used"
     }
 

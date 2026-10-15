@@ -136,7 +136,7 @@ class ZippyqHeaderView: UICollectionReusableView {
     fileprivate lazy var statsLabel: UILabel = {
         let label = UILabel()
         label.font = Constants.statsFont
-        label.textColor = Color.blue
+        label.textColor = Color.dynamic(light: Color.blue, dark: Color.light)
         label.textAlignment = .center
         label.adjustsFontSizeToFitWidth = true
         label.minimumScaleFactor = 0.75
@@ -279,7 +279,7 @@ private extension ZippyqHeaderView {
             $0.width.greaterThanOrEqualTo(Constants.toggleWidthMin).priority(998)
         }
         button.isEnabled = viewModel.isEnabled
-        button.backgroundColor = viewModel.isSelected ? Color.gray20 : Color.cellColor
+        button.backgroundColor = viewModel.isSelected ? Color.highlightedBackground : Color.cellColor
         button.layer.cornerCurve = .continuous
         button.layer.cornerRadius = Constants.toggleCornerRadius
         button.layer.borderWidth = viewModel.isSelected ? 1.0 : 0.5
@@ -290,7 +290,7 @@ private extension ZippyqHeaderView {
             configuration.cornerStyle = .fixed
             configuration.background.cornerRadius = Constants.toggleCornerRadius
             configuration.background.backgroundColor = viewModel.isSelected
-                ? Color.gray20.withAlphaComponent(0.12)
+                ? Color.highlightedBackground
                 : Color.cellColor.withAlphaComponent(0.2)
             button.configuration = configuration
             button.backgroundColor = .clear
@@ -312,7 +312,7 @@ private extension ZippyqHeaderView {
         let channel = UILabel()
         channel.text = channelLabel
         channel.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
-        channel.textColor = viewModel.isSelected ? Color.blue : Color.black
+        channel.textColor = viewModel.isSelected ? Color.blue : Color.gray500
         channel.textAlignment = .center
         channel.isUserInteractionEnabled = false
 

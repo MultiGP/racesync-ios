@@ -94,9 +94,6 @@ class ZippyqFrequencyContentView: UIView {
         static let avatarHeight: CGFloat = 36
         static let spacing: CGFloat = 12
         static let separatorHeight: CGFloat = 0.5
-        static let currentUserBackgroundColor = Color.dynamic(
-            light: UIColor(hex: "f8f7fc"), dark: UIColor(hex: "263238")
-        )
     }
 
     // MARK: - Initialization
@@ -173,7 +170,7 @@ class ZippyqFrequencyContentView: UIView {
     // MARK: - Configuration
 
     func configure(with viewModel: ZippyqFrequencyViewModel, showsTopSeparator: Bool) {
-        let backgroundColor = viewModel.isCurrentUser ? Constants.currentUserBackgroundColor : Color.white
+        let backgroundColor = viewModel.isCurrentUser ? Color.highlightedBackground : Color.white
         self.backgroundColor = backgroundColor
 
         titleLabel.text = viewModel.titleLabel
