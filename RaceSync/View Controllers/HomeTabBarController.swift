@@ -151,7 +151,6 @@ class HomeTabBarController: UITabBarController {
     // MARK: - Layout
 
     fileprivate func setupLayout() {
-        delegate = self
         configureNavigationItems()
     }
 
@@ -234,6 +233,7 @@ class HomeTabBarController: UITabBarController {
         let tab = AppPrefs.lastSelectedHomeTab
 
         configureTabBarController(with: vcs, selectedIndex: tab.rawValue)
+        delegate = self
 
         if APIServices.shared.myUser == nil {
             loadMyUser()
@@ -335,22 +335,11 @@ extension HomeTabBarController: ChapterPickerViewControllerDelegate {
 }
 
 extension HomeTabBarController: UITabBarControllerDelegate {
-    
+
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         return true
     }
-    
-    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {        
-        // Trigger haptic gesture to emphasize the action
-        HapticEngine.shared.trigger()
 
-        // Persist only selections coming from the tab bar interaction
-        if let index = tabBar.items?.firstIndex(of: item),
-           let tab = HomeTabs(rawValue: index) {
-            AppPrefs.lastSelectedHomeTab = tab
-        }
-    }
-    
     func tabBarController(_ controller: UITabBarController, didSelect viewController: UIViewController) {
 
         if let vcs = viewControllers, vcs.contains(viewController) {
@@ -366,5 +355,11 @@ extension HomeTabBarController: UITabBarControllerDelegate {
             }
         }
 
+        if let index = viewControllers?.firstIndex(of: viewController),
+           let tab = HomeTabs(rawValue: index) {
+            AppPrefs.lastSelectedHomeTab = tab
+        }
+        
+        HapticEngine.shared.trigger()
     }
 }

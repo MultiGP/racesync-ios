@@ -47,11 +47,11 @@ class AppplicationPreferences {
     
     static var lastSelectedHomeTab: HomeTabs {
         get {
-            let string = UserDefaults.standard.string(forKey: LastSelected.homeTab)
-            return string.flatMap { Int($0) }.flatMap { HomeTabs(rawValue: $0) } ?? HomeTabs.default
+            let value = UserDefaults.standard.integer(forKey: LastSelected.homeTab)
+            return HomeTabs(rawValue: value) ?? HomeTabs.default
         }
         set {
-            UserDefaults.standard.set("\(newValue.rawValue)", forKey: LastSelected.homeTab)
+            UserDefaults.standard.set(newValue.rawValue, forKey: LastSelected.homeTab)
             UserDefaults.standard.synchronize()
         }
     }

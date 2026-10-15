@@ -30,9 +30,22 @@ extension UITabBarController {
         }
 
         if #available(iOS 26.0, *) {
-            // Switching through a neighboring tab is visible with the new tab
-            // bar animations, especially when restoring a middle tab.
-            self.selectedIndex = idx
+            if idx == 0, vcs.count > 1 {
+                // The first tab is already UIKit's default selection. Force one
+                // state change so its selection background is initialized.
+                UIView.performWithoutAnimation {
+                    self.selectedIndex = 1
+                    self.selectedIndex = idx
+                    self.view.layoutIfNeeded()
+                    self.tabBar.layoutIfNeeded()
+                }
+            } else {
+                UIView.performWithoutAnimation {
+                    self.selectedIndex = idx
+                    self.view.layoutIfNeeded()
+                    self.tabBar.layoutIfNeeded()
+                }
+            }
         } else {
             // Force refresh to work around a UITabBarController bug on older OSes.
             if idx < vcs.count-1 {
