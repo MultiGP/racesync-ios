@@ -19,10 +19,10 @@ protocol Pinnable where Self: UIViewController {
     func registerPinnedView<T: UITableViewCell>(viewType: T.Type)
     func configure<T: UITableViewCell>(_ view: T, forRowAt indexPath: IndexPath)
     func configurePinned<T: UITableViewCell>(_ view: T, forRowAt indexPath: IndexPath)
+    func pinnedViewBottomInset() -> CGFloat
     func layoutPinnedView()
     func invalidatePinnedView()
 }
-
 extension Pinnable {
 
     // MARK: - Public
@@ -35,6 +35,10 @@ extension Pinnable {
         configure(view, forRowAt: indexPath)
     }
 
+    func pinnedViewBottomInset() -> CGFloat {
+        return tableView.adjustedContentInset.bottom
+    }
+
     func layoutPinnedView() {
         guard canPinView(),
               let indexPath = pinnedViewIndexPath(),
@@ -44,7 +48,7 @@ extension Pinnable {
         let cellSuperRect = tableView.convert(cellRect, to: superview)
 
         let topInset = tableView.adjustedContentInset.top
-        let bottomInset = tableView.adjustedContentInset.bottom
+        let bottomInset = pinnedViewBottomInset()
 
         let topPinY = tableView.frame.minY + topInset
         let bottomPinY = tableView.frame.maxY - bottomInset - cellSuperRect.height
@@ -241,3 +245,4 @@ fileprivate extension UIView {
         objc_setAssociatedObject(self, "[\(arc4random())]", handler, .OBJC_ASSOCIATION_RETAIN)
     }
 }
+

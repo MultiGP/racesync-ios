@@ -83,10 +83,27 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         return view
     }()
 
-    fileprivate lazy var toolbar: UIView = {
+    fileprivate lazy var bottomBarView: UIView = {
         let view = UIView()
         view.backgroundColor = Color.barBackground
         view.addSeparatorLine()
+        return view
+    }()
+
+    fileprivate lazy var bottomGradientView: UIVisualEffectView = {
+        
+        let style: UIBlurEffect.Style = .systemThinMaterial
+        let view = UIVisualEffectView(effect: UIBlurEffect(style: style))
+        view.isUserInteractionEnabled = false
+
+        let mask = CAGradientLayer()
+        mask.colors = [
+            Color.clear.cgColor,
+            Color.dark.withAlphaComponent(0.65).cgColor,
+            Color.dark.cgColor
+        ]
+        mask.locations = [0, 0.45, 1]
+        view.layer.mask = mask
         return view
     }()
 
@@ -187,6 +204,8 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         static let cellHeight: CGFloat = 80
         static let headerViewHeight: CGFloat = 51
         static let searchBarHeight: CGFloat = 56
+        static let defaultBottomBarHeight: CGFloat = 64
+        static let bottomGradientExtension: CGFloat = 36
     }
 
     // MARK: - Lifecycle Methods
@@ -215,6 +234,15 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
 
         if !standingsController.didFetchStandings(for: season) {
             loadContent()
+        }
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        if #available(iOS 26.0, *), !isRootTabBar,
+           let mask = bottomGradientView.layer.mask as? CAGradientLayer {
+            mask.frame = bottomGradientView.bounds
         }
     }
 
@@ -258,25 +286,40 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
             $0.leading.trailing.equalToSuperview()
         }
 
-        if !isRootTabBar {
-            view.addSubview(toolbar)
-            toolbar.snp.makeConstraints {
-                $0.leading.trailing.equalToSuperview()
-                $0.bottom.equalTo(view.snp.bottom)
-                $0.height.equalTo(64)
-            }
-        }
-
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
             $0.top.equalTo(headerView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
 
             if !isRootTabBar {
-                $0.bottom.equalTo(toolbar.snp.top)
+                if #available(iOS 26.0, *) {
+                    $0.bottom.equalTo(view.snp.bottom)
+                } else {
+                    $0.bottom.equalTo(bottomBarView.snp.top)
+                }
                 tableView.refreshControl = nil // a user doesn't need to reload this data, since it won't update
             } else {
                 $0.bottom.equalTo(view.snp.bottom)
+            }
+        }
+
+        if !isRootTabBar {
+            let bottomBarHeight = tabBarController?.tabBar.frame.height ?? Constants.defaultBottomBarHeight
+            view.addSubview(bottomBarView)
+            bottomBarView.snp.makeConstraints {
+                $0.leading.trailing.equalToSuperview()
+                $0.bottom.equalTo(view.snp.bottom)
+                $0.height.equalTo(bottomBarHeight + Constants.bottomGradientExtension)
+            }
+
+            if #available(iOS 26.0, *) {
+                bottomBarView.backgroundColor = .clear
+                bottomBarView.subviews.forEach { $0.removeFromSuperview() }
+                bottomBarView.isUserInteractionEnabled = false
+                bottomBarView.addSubview(bottomGradientView)
+                bottomGradientView.snp.makeConstraints {
+                    $0.edges.equalToSuperview()
+                }
             }
         }
 
@@ -349,6 +392,13 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     }
 
     // MARK: - Cell Pinning
+
+    func pinnedViewBottomInset() -> CGFloat {
+        if #available(iOS 26.0, *), !isRootTabBar {
+            return tabBarController?.tabBar.frame.height ?? Constants.defaultBottomBarHeight
+        }
+        return tableView.adjustedContentInset.bottom
+    }
 
     func canPinView() -> Bool {
         guard let userId = myUserId else { return false }
