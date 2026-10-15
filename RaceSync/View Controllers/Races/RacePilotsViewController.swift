@@ -384,6 +384,7 @@ extension RacePilotsViewController: UITableViewDataSource {
         cell.titleLabel.textColor = Color.black
         cell.subtitleLabel.textColor = Color.gray300
         cell.rankView.titleLabel.textColor = Color.gray300
+        cell.configureDisclosureIndicator(color: Color.gray300.resolvedColor(with: traitCollection))
         cell.backgroundView?.backgroundColor = (indexPath.row % 2 == 0) ? Color.cellColor : Color.cellColor2
         cell.selectedBackgroundView?.backgroundColor = Color.gray50
 
@@ -414,7 +415,6 @@ extension RacePilotsViewController: UITableViewDataSource {
                 cell.textPill.style = .text
                 cell.rankView.rank = Int32(indexPath.row+1)
             }
-
         }
     }
 
@@ -422,12 +422,17 @@ extension RacePilotsViewController: UITableViewDataSource {
         configure(view, forRowAt: indexPath)
         guard let cell = view as? AvatarTableViewCell else { return }
 
-        cell.titleLabel.textColor = Color.white
-        cell.subtitleLabel.textColor = Color.gray20
-        cell.rankView.titleLabel.textColor = Color.gray20
+        cell.titleLabel.textColor = Color.light
+        cell.subtitleLabel.textColor = Color.light.withAlphaComponent(0.8)
+        cell.rankView.titleLabel.textColor = Color.light
+        cell.textPill.style = .text
+        cell.textPill.titleLabel.textColor = Color.gray400.resolvedColor(with: traitCollection)
+        cell.textPill.backgroundColor = Color.gray100.withAlphaComponent(0.75).resolvedColor(with: traitCollection)
+        cell.configureDisclosureIndicator(color: Color.light)
         cell.backgroundView?.backgroundColor = Color.pinned
         cell.selectedBackgroundView?.backgroundColor = Color.pinnedSelected
     }
+
 }
 
 extension RacePilotsViewController: UIScrollViewDelegate {

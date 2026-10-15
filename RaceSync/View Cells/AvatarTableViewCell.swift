@@ -95,6 +95,16 @@ class AvatarTableViewCell: UITableViewCell {
 
     // MARK: - Layout
 
+    func configureDisclosureIndicator(color: UIColor) {
+        let configuration = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
+        let image = SystemImg.chevronRight?
+            .applyingSymbolConfiguration(configuration)?
+            .withTintColor(color, renderingMode: .alwaysOriginal)
+
+        accessoryType = .none
+        accessoryView = UIImageView(image: image)
+    }
+
     open func setupLayout() {
         self.accessoryType = .disclosureIndicator
         self.backgroundColor =  Color.cellColor
