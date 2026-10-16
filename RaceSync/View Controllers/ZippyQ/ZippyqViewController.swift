@@ -65,6 +65,17 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     fileprivate var emptyStateError: EmptyStateViewModel?
     fileprivate let emptyStateNoRaceQueues = EmptyStateViewModel(.noRaceQueues)
     fileprivate var isJoiningNextRound = false
+    fileprivate var isLoadingPastRounds = false
+
+    fileprivate lazy var pastRoundsRefreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.attributedTitle = NSAttributedString(
+            string: "Load Past Rounds",
+            attributes: [.foregroundColor: Color.gray200]
+        )
+        refreshControl.addTarget(self, action: #selector(loadMorePastRounds), for: .valueChanged)
+        return refreshControl
+    }()
 
     fileprivate lazy var activityIndicatorView: ActivityLoadingView = {
         let view = ActivityLoadingView(style: .medium)
@@ -200,16 +211,25 @@ class ZippyqViewController: UIViewController, RaceTabbable {
         collectionView.isHidden = loading
     }
 
-    fileprivate func displayContent(animatingRunningRoundChange: Bool = false) {
+    fileprivate func displayContent(animatingRunningRoundChange: Bool = false,
+                                    animatingPastRoundInsertion: Bool = false) {
         let previousRunningRoundId = snapshotController.runningRoundId
         let previouslyExpandedRoundIds = snapshotController.expandedRoundIds
-        snapshotController.update(with: dataController.roundViewModels)
+        snapshotController.update(
+            with: dataController.roundViewModels,
+            expandsInitialRounds: dataController.shouldLimitPastQueues
+        )
+        configurePastRoundsRefreshControl()
         configureHeaderView()
 
         let runningRoundId = snapshotController.runningRoundId
         let isRunningRoundChange = previousRunningRoundId != nil
             && runningRoundId != nil
             && previousRunningRoundId != runningRoundId
+        if animatingPastRoundInsertion {
+            applySnapshot(animatingDifferences: true)
+            return
+        }
         guard animatingRunningRoundChange, isRunningRoundChange, let runningRoundId else {
             applySnapshot(animatingDifferences: false, reloadingExistingItems: true)
             return
@@ -270,6 +290,17 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     }
 
     // MARK: - Actions
+
+    @objc fileprivate func loadMorePastRounds() {
+        guard dataController.canLoadMorePastQueues else {
+            pastRoundsRefreshControl.endRefreshing()
+            configurePastRoundsRefreshControl()
+            return
+        }
+
+        isLoadingPastRounds = true
+        dataController.loadMorePastQueues()
+    }
 
     fileprivate func joinNextRound() {
         guard !isJoiningNextRound else { return }
@@ -369,7 +400,20 @@ extension ZippyqViewController: ZippyqDataControllerDelegate {
             && !collectionView.isDragging
             && !collectionView.isDecelerating
             && hasBeenIdle
-        displayContent(animatingRunningRoundChange: canAnimateRunningRoundChange)
+        let animatingPastRoundInsertion = isLoadingPastRounds
+        isLoadingPastRounds = false
+        displayContent(
+            animatingRunningRoundChange: canAnimateRunningRoundChange,
+            animatingPastRoundInsertion: animatingPastRoundInsertion
+        )
+
+        if pastRoundsRefreshControl.isRefreshing {
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                pastRoundsRefreshControl.endRefreshing()
+                configurePastRoundsRefreshControl()
+            }
+        }
 
         if isInitialLoad {
             collectionView.layoutIfNeeded()
@@ -386,10 +430,15 @@ extension ZippyqViewController: ZippyqDataControllerDelegate {
         setInitialLoading(false)
         collectionView.reloadEmptyDataSet()
 
-        if isInitialLoad, let runningRoundId = snapshotController.runningRoundId {
+        if isInitialLoad {
             DispatchQueue.main.async { [weak self] in
-                self?.collectionView.layoutIfNeeded()
-                self?.scrollRoundToTop(withId: runningRoundId, animated: false)
+                guard let self else { return }
+                collectionView.layoutIfNeeded()
+                if dataController.shouldLimitPastQueues,
+                   let runningRoundId = snapshotController.runningRoundId {
+                    scrollRoundToTop(withId: runningRoundId, animated: false)
+                }
+                configurePastRoundsRefreshControl()
             }
         }
     }
@@ -405,6 +454,21 @@ extension ZippyqViewController: ZippyqDataControllerDelegate {
 }
 
 private extension ZippyqViewController {
+
+    func configurePastRoundsRefreshControl() {
+        guard !collectionView.isHidden else {
+            collectionView.refreshControl = nil
+            return
+        }
+
+        if dataController.canLoadMorePastQueues {
+            if collectionView.refreshControl !== pastRoundsRefreshControl {
+                collectionView.refreshControl = pastRoundsRefreshControl
+            }
+        } else if !pastRoundsRefreshControl.isRefreshing {
+            collectionView.refreshControl = nil
+        }
+    }
 
     func setTitleActivityIndicatorVisible(_ visible: Bool) {
         (tabBarController as? RaceTabBarController)?

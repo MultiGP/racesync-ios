@@ -15,7 +15,7 @@ import UIKit
 /// - Preserves the API-provided ordering of rounds and their frequencies.
 /// - Builds diffable data source snapshots for the collection view.
 /// - Includes frequency items only while their round is expanded.
-/// - Initially expands current active rounds and rounds containing the current user.
+/// - Optionally expands current active rounds and rounds containing the current user on first load.
 /// - Preserves expansion state across content refreshes and removes rounds that no longer exist.
 /// - Resolves snapshot identifiers back to their corresponding view models.
 ///
@@ -58,7 +58,8 @@ final class ZippyqSnapshotController {
 
     // MARK: - Public Methods
 
-    func update(with roundViewModels: [ZippyqRoundViewModel]) {
+    func update(with roundViewModels: [ZippyqRoundViewModel],
+                expandsInitialRounds: Bool = true) {
         self.roundViewModels = roundViewModels
         roundsById = Dictionary(uniqueKeysWithValues: roundViewModels.map { ($0.id, $0) })
         frequenciesById = roundViewModels.reduce(into: [:]) { values, round in
@@ -72,10 +73,12 @@ final class ZippyqSnapshotController {
         expandedRoundIds.subtract(roundViewModels.filter { !$0.isExpandable }.map(\.id))
 
         guard !hasInitializedExpandedRounds, !roundViewModels.isEmpty else { return }
-        expandedRoundIds.formUnion(roundViewModels.filter {
-            $0.isExpandable
-                && ($0.badge == .running || $0.frequencyViewModels.contains(where: \.isCurrentUser))
-        }.map(\.id))
+        if expandsInitialRounds {
+            expandedRoundIds.formUnion(roundViewModels.filter {
+                $0.isExpandable
+                    && ($0.badge == .running || $0.frequencyViewModels.contains(where: \.isCurrentUser))
+            }.map(\.id))
+        }
         hasInitializedExpandedRounds = true
     }
 

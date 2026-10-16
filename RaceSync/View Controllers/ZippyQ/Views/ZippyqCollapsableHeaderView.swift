@@ -30,6 +30,8 @@ class ZippyqCollapsableHeaderView: UICollectionReusableView {
         } else {
             pill.titleLabel.font = UIFont.systemFont(ofSize: 11, weight: .semibold)
         }
+        pill.setContentCompressionResistancePriority(.required, for: .horizontal)
+        pill.titleLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
         pill.isHidden = true
         return pill
     }()
@@ -122,7 +124,7 @@ class ZippyqCollapsableHeaderView: UICollectionReusableView {
         let stackView = UIStackView(arrangedSubviews: [leadingStackView, spacerView, trailingStackView])
         stackView.axis = .horizontal
         stackView.alignment = .center
-        stackView.spacing = Constants.padding
+        stackView.spacing = Constants.contentSpacing
         return stackView
     }()
 
@@ -158,6 +160,7 @@ class ZippyqCollapsableHeaderView: UICollectionReusableView {
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
         static let badgeSpacing: CGFloat = 12
+        static let contentSpacing: CGFloat = 0
         static let chevronSize: CGFloat = 20
         static let avatarSize: CGFloat = headerHeight / 2
         static let avatarOverlap: CGFloat = avatarSize / 4
@@ -355,13 +358,16 @@ private extension ZippyqCollapsableHeaderView {
         let avatarsWidth = avatarCount > 0
             ? avatarCount * Constants.avatarSize - (avatarCount - 1) * Constants.avatarOverlap
             : 0
-        let width = max(avatarsWidth, contextualLabel.intrinsicContentSize.width)
+        let width = isExpandable && !isExpanded
+            ? avatarsWidth
+            : contextualLabel.intrinsicContentSize.width
         accessoryWidthConstraint?.update(offset: width)
     }
 
     func updateExpansionState(animated: Bool) {
         separatorView.isHidden = isExpanded
         chevronImageView.isHidden = !isExpandable
+        updateAccessoryWidth()
 
         let displaysAvatars = isExpandable && !isExpanded && !avatarImageUrls.isEmpty
         let displaysContext = !isExpandable || isExpanded

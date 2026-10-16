@@ -40,7 +40,10 @@ final class ZippyqDataController {
     // MARK: - Public Variables
 
     /// Number of the most recent past queues displayed while focusing on a running race.
-    static var visiblePastQueueCount = 2
+    static var visiblePastQueueCount = 3
+
+    /// Number of additional past queues revealed by each load-more request.
+    static var pastQueueLoadBatchSize = 6
 
     weak var delegate: ZippyqDataControllerDelegate?
 
@@ -99,6 +102,7 @@ final class ZippyqDataController {
     private(set) var frequencyQueueCounts = [String: Int]()
     private(set) var currentUserStats: ZippyqPilotStats?
     private(set) var selectedFrequencies = Set<String>()
+    private var visiblePastQueueCount = ZippyqDataController.visiblePastQueueCount
 
     fileprivate var race: Race? {
         return raceController?.race
@@ -106,6 +110,18 @@ final class ZippyqDataController {
 
     fileprivate var currentUser: User? {
         return APIServices.shared.myUser
+    }
+
+    var canLoadMorePastQueues: Bool {
+        guard shouldLimitPastQueues, let response else { return false }
+        return response.queues.filter { $0.status == .previous }.count > visiblePastQueueCount
+    }
+
+    var shouldLimitPastQueues: Bool {
+        guard let response, let race else { return false }
+        return response.queues.contains { $0.status == .running }
+            && !race.isFinalized
+            && !race.hasEnded(extendedByDays: 2)
     }
 
     fileprivate var preferencesKey: String {
@@ -133,6 +149,14 @@ final class ZippyqDataController {
     func loadContent(force: Bool = false) {
         guard !isLoadingContent, force || !hasLoadedContent else { return }
         fetchContent(revision: nil)
+    }
+
+    func loadMorePastQueues() {
+        guard canLoadMorePastQueues else { return }
+
+        visiblePastQueueCount += Self.pastQueueLoadBatchSize
+        updateRoundViewModels()
+        delegate?.zippyqDataControllerDidUpdateContent(self)
     }
 
     func setSelectedFrequencies(_ frequencies: Set<String>) {
@@ -363,10 +387,7 @@ private extension ZippyqDataController {
     func updateRoundViewModels() {
         guard let response, let race else { return }
 
-        let hasRunningQueue = response.queues.contains { $0.status == .running }
-        let hidesPastQueues = hasRunningQueue
-            && !race.isFinalized
-            && !race.hasEnded(extendedByDays: 2)
+        let hidesPastQueues = shouldLimitPastQueues
         let visiblePastQueues = Set(
             response.queues
                 .filter { $0.status == .previous }
@@ -374,7 +395,7 @@ private extension ZippyqDataController {
                     if $0.cycle == $1.cycle { return $0.heat < $1.heat }
                     return $0.cycle < $1.cycle
                 }
-                .suffix(max(0, Self.visiblePastQueueCount))
+                .suffix(max(0, visiblePastQueueCount))
                 .map(ObjectIdentifier.init)
         )
         let queues = response.queues.filter {
