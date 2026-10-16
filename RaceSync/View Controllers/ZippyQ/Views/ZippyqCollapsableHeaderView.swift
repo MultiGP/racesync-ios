@@ -193,6 +193,13 @@ class ZippyqCollapsableHeaderView: UICollectionReusableView {
         setExpanded(false, animated: false)
     }
 
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        guard traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) else { return }
+        updateAvatarBorderColor()
+    }
+
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
 
@@ -310,6 +317,7 @@ private extension ZippyqCollapsableHeaderView {
 
     func setHighlighted(_ highlighted: Bool) {
         contentView.backgroundColor = highlighted ? selectedBackgroundColor : Color.tableBackground
+        updateAvatarBorderColor()
     }
 
     func updateAvatars() {
@@ -320,7 +328,6 @@ private extension ZippyqCollapsableHeaderView {
 
         for imageUrl in avatarImageUrls {
             let avatarImageView = AvatarImageView(withHeight: Constants.avatarSize, showShadow: false)
-            avatarImageView.imageView.layer.borderColor = Color.cellColor.cgColor
             avatarImageView.imageView.layer.borderWidth = Constants.avatarBorderWidth
             avatarImageView.imageView.setImage(with: imageUrl,
                                                placeholderImage: PlaceholderImg.medium,
@@ -330,7 +337,17 @@ private extension ZippyqCollapsableHeaderView {
                 $0.size.equalTo(Constants.avatarSize)
             }
         }
+        updateAvatarBorderColor()
         updateAccessoryWidth()
+    }
+
+    func updateAvatarBorderColor() {
+        let backgroundColor = contentView.backgroundColor ?? Color.tableBackground
+        let borderColor = backgroundColor.resolvedColor(with: traitCollection).cgColor
+
+        avatarStackView.arrangedSubviews
+            .compactMap { $0 as? AvatarImageView }
+            .forEach { $0.imageView.layer.borderColor = borderColor }
     }
 
     func updateAccessoryWidth() {

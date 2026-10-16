@@ -29,7 +29,12 @@ class ZippyqPilotStatsViewModel {
 
         switch detailLevel {
         case .packUsage:
-            label = "\(packUsage) • \(queuedCount) queued"
+            var components = [packUsage]
+            if queuedCount > 0 {
+                components.append("\(queuedCount) queued")
+            }
+
+            label = components.joined(separator: " • ")
 
         case .currentUserDetailed:
             let queueLabel: String
