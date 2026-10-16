@@ -307,9 +307,9 @@ extension RacePilotsViewController: UITableViewDelegate {
 
         // Best spot to lay the pinned view for the first time
         if indexPath == visibleIndexPaths.max() && !didShowPinnedView {
-            DispatchQueue.main.async {
-                self.invalidatePinnedView()
-                self.didShowPinnedView = true
+            DispatchQueue.main.async { [weak self] in
+                self?.invalidatePinnedView()
+                self?.didShowPinnedView = true
             }
         }
     }
@@ -387,7 +387,7 @@ extension RacePilotsViewController: UITableViewDataSource {
         cell.configureDisclosureIndicator(color: Color.gray300.resolvedColor(with: traitCollection))
         cell.backgroundView?.backgroundColor = (indexPath.row % 2 == 0) ? Color.cellColor : Color.cellColor2
         cell.selectedBackgroundView?.backgroundColor = Color.gray50
-
+        
         if race.canShowResults {
             var score:Int32? = 0
             cell.rankView.rank = score
@@ -428,11 +428,10 @@ extension RacePilotsViewController: UITableViewDataSource {
         cell.textPill.style = .text
         cell.textPill.titleLabel.textColor = Color.gray400.resolvedColor(with: traitCollection)
         cell.textPill.backgroundColor = Color.gray100.withAlphaComponent(0.75).resolvedColor(with: traitCollection)
-        cell.configureDisclosureIndicator(color: Color.light)
+        cell.configureDisclosureIndicator(color: Color.light.withAlphaComponent(0.7))
         cell.backgroundView?.backgroundColor = Color.pinned
         cell.selectedBackgroundView?.backgroundColor = Color.pinnedSelected
     }
-
 }
 
 extension RacePilotsViewController: UIScrollViewDelegate {

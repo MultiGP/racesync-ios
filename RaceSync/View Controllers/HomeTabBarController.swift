@@ -85,16 +85,6 @@ class HomeTabBarController: UITabBarController {
         return button
     }()
 
-//    fileprivate lazy var badgeHub: BadgeHub = {
-//        let hub = BadgeHub(barButtonItem: notificationsButton)
-//        hub.setCircleColor(Color.lightRed, label: Color.white)
-//        hub.setCircleBorderColor(Color.white, borderWidth: 1)
-//        hub.setMaxCount(to: 100)
-//        hub.scaleCircleSize(by: 0.7)
-//        hub.moveCircleBy(x: 35.0, y: 0)
-//        return hub
-//    }()
-
     fileprivate let presenter = Appearance.defaultPresenter()
     fileprivate let userApi = UserApi()
     fileprivate let chapterApi = ChapterApi()

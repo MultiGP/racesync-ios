@@ -153,7 +153,7 @@ class RaceTabBarController: UITabBarController {
         // Using a custom button title in this case, to display the id of a Race on tap
         navigationItem.titleView = titleContainerView
 
-        view.backgroundColor = Color.white
+        view.backgroundColor = Color.tableBackground
         tabBar.isHidden = true // hiding temporarily, while the view loads
         delegate = self
 

@@ -105,7 +105,7 @@ class RaceFeedMenuViewController: UIViewController {
     fileprivate func setupLayout() {
 
         title = "Race Feed Options"
-        view.backgroundColor = Color.white
+        view.backgroundColor = Color.tableBackground
 
         // Adds a close button in case of being presented modally
         if navigationController?.viewControllers.count == 1 {

@@ -113,11 +113,13 @@ class RaceTableViewCell: UITableViewCell {
 
     fileprivate func setupLayout() {
         self.accessoryType = .none
-        self.backgroundColor = Color.cellColor
-
-        let backgroundView = UIView()
-        backgroundView.backgroundColor = Color.cellColor
-        self.backgroundView = backgroundView
+        self.backgroundColor =  Color.white
+        
+        self.backgroundView = UIView()
+        self.backgroundView?.backgroundColor =  Color.white
+        
+        self.selectedBackgroundView = UIView()
+        self.selectedBackgroundView?.backgroundColor = Color.gray20
         
         contentView.addSubview(avatarImageView)
         avatarImageView.snp.makeConstraints {

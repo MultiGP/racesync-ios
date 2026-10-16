@@ -98,6 +98,8 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
     
     var pinnedView: UIView?
     var cachedPinnedIndexPath: IndexPath?
+    fileprivate var didShowPinnedView = false
+    fileprivate var needsPinnedAvatarRefresh = true
 
     fileprivate var showsSegmentedControl: Bool {
         get {
@@ -220,7 +222,7 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
     // MARK: - Pinnable
 
     func canPinView() -> Bool {
-        return myUserId != nil
+        return myUserId != nil && selectedFilter == .pilots
     }
 
     func pinnedViewIndexPath() -> IndexPath? {
@@ -243,8 +245,11 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
     // MARK: - Actions
 
     @objc fileprivate func didChangeSegment() {
+        didShowPinnedView = false
         tableView.setContentOffset(.zero, animated: false)
         tableView.reloadData()
+        
+        invalidatePinnedView()
     }
 
     func showUserProfile(forUserAt indexPath: IndexPath, from cell: AvatarTableViewCell) {
@@ -281,6 +286,19 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
 }
 
 extension SeriesStandingsViewController: UITableViewDelegate {
+
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        guard let visibleIndexPaths = tableView.indexPathsForVisibleRows else { return }
+
+        // Wait for the initial visible cells to finish laying out before
+        // deciding whether the authenticated user's row needs to be pinned.
+        if indexPath == visibleIndexPaths.max() && !didShowPinnedView {
+            DispatchQueue.main.async { [weak self] in
+                self?.invalidatePinnedView()
+                self?.didShowPinnedView = true
+            }
+        }
+    }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) as? AvatarTableViewCell else { return }
@@ -337,12 +355,20 @@ extension SeriesStandingsViewController: UITableViewDataSource {
 
         cell.rankView.rank = Int32(indexPath.row + 1)
         cell.titleLabel.text = viewModel.titleLabel
+        cell.titleLabel.numberOfLines = 1
         cell.subtitleLabel.text = viewModel.subtitleLabel
-        cell.avatarImageView.imageView.setImage(with: viewModel.imageUrl, placeholderImage: PlaceholderImg.medium)
+        cell.avatarImageView.imageView.setImage(with: viewModel.imageUrl, placeholderImage: PlaceholderImg.medium) { [weak self] image in
+            guard let self, image != nil, self.needsPinnedAvatarRefresh,
+                  indexPath == self.pinnedViewIndexPath(), self.pinnedView != nil else { return }
+
+            self.needsPinnedAvatarRefresh = false
+            self.invalidatePinnedView()
+        }
+        cell.textPill.text = nil
+        cell.textPill.style = .text
 
         if !viewModel.scoreLabel.isEmpty {
             cell.textPill.text = viewModel.scoreLabel
-            cell.textPill.style = .text
         }
 
         if viewModel.subtitleLabel == SeriesResultViewModel.emptyLabel {
@@ -356,7 +382,8 @@ extension SeriesStandingsViewController: UITableViewDataSource {
         cell.titleLabel.textColor = Color.black
         cell.subtitleLabel.textColor = Color.gray300
         cell.rankView.titleLabel.textColor = Color.gray300
-        cell.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : Color.gray20
+        cell.configureDisclosureIndicator(color: Color.gray300.resolvedColor(with: traitCollection))
+        cell.backgroundView?.backgroundColor = (indexPath.row % 2 == 0) ? Color.cellColor : Color.cellColor2
         cell.selectedBackgroundView?.backgroundColor = Color.gray50
     }
 
@@ -364,11 +391,15 @@ extension SeriesStandingsViewController: UITableViewDataSource {
         configure(view, forRowAt: indexPath)
         guard let cell = view as? AvatarTableViewCell else { return }
 
-        cell.titleLabel.textColor = Color.white
-        cell.subtitleLabel.textColor = Color.gray20
-        cell.rankView.titleLabel.textColor = Color.gray20
-        cell.backgroundColor = Color.gray200
-        cell.selectedBackgroundView?.backgroundColor = Color.gray300
+        cell.titleLabel.textColor = Color.light
+        cell.subtitleLabel.textColor = Color.light.withAlphaComponent(0.8)
+        cell.rankView.titleLabel.textColor = Color.light
+        cell.textPill.style = .text
+        cell.textPill.titleLabel.textColor = Color.gray400.resolvedColor(with: traitCollection)
+        cell.textPill.backgroundColor = Color.gray100.withAlphaComponent(0.75).resolvedColor(with: traitCollection)
+        cell.configureDisclosureIndicator(color: Color.light.withAlphaComponent(0.7))
+        cell.backgroundView?.backgroundColor = Color.pinned
+        cell.selectedBackgroundView?.backgroundColor = Color.pinnedSelected
     }
 }
 

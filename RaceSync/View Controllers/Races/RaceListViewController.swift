@@ -24,6 +24,7 @@ class RaceListViewController: UIViewController, ViewJoinable {
         tableView.register(cellType: RaceTableViewCell.self)
         tableView.emptyDataSetSource = self
         tableView.tableFooterView = UIView()
+        tableView.backgroundColor = Color.tableBackground
         return tableView
     }()
 
@@ -379,6 +380,6 @@ extension RaceListViewController: EmptyDataSetSource {
     }
 
     func backgroundColor(forEmptyDataSet scrollView: UIScrollView) -> UIColor? {
-        return Color.white
+        return Color.tableBackground
     }
 }

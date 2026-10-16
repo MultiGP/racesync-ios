@@ -591,7 +591,6 @@ extension StandingsViewController: UITableViewDelegate {
         } else {
             showUserProfile(forUserAt: indexPath, from: cell)
         }
-
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
