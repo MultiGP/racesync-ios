@@ -44,6 +44,7 @@ class ZippyqCollapsableHeaderView: UICollectionReusableView {
             label.font = UIFont.systemFont(ofSize: 22, weight: .medium)
         }
         label.textColor = Color.dynamic(light: Color.blue, dark: Color.light)
+        label.setContentCompressionResistancePriority(.required, for: .horizontal)
         return label
     }()
 
@@ -156,7 +157,7 @@ class ZippyqCollapsableHeaderView: UICollectionReusableView {
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
-        static let badgeSpacing: CGFloat = 10
+        static let badgeSpacing: CGFloat = 12
         static let chevronSize: CGFloat = 20
         static let avatarSize: CGFloat = headerHeight / 2
         static let avatarOverlap: CGFloat = avatarSize / 4
