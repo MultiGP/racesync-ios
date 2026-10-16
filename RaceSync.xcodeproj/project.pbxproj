@@ -221,6 +221,7 @@
 		4FABC00A301D400000000001 /* ZippyqViewModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FABC009301D400000000001 /* ZippyqViewModels.swift */; };
 		4FABC00C301D400000000001 /* ZippyqHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FABC00B301D400000000001 /* ZippyqHeaderView.swift */; };
 		4FABC00E301D500000000001 /* ZippyqResultsCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FABC00D301D500000000001 /* ZippyqResultsCalculator.swift */; };
+		4FABC00F303C000000000001 /* ZippyqViewController+Scrolling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FABC00E303C000000000001 /* ZippyqViewController+Scrolling.swift */; };
 		4FAC24A823DC3E06009AD585 /* UILabel+LinesCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAC24A723DC3E06009AD585 /* UILabel+LinesCount.swift */; };
 		4FB06AB3296B521000F14E59 /* AppIcon-MGP1@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4FB06AAF296B521000F14E59 /* AppIcon-MGP1@3x.png */; };
 		4FB06AB4296B521000F14E59 /* AppIcon-MGP2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4FB06AB0296B521000F14E59 /* AppIcon-MGP2@2x.png */; };
@@ -285,7 +286,6 @@
 		4FE4C0A22945E0EF00F47F0A /* RaceListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE4C0A12945E0EF00F47F0A /* RaceListViewController.swift */; };
 		4FE645133018072F008CBD26 /* ZippyQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE645123018072D008CBD26 /* ZippyQueue.swift */; };
 		4FE64516301820B7008CBD26 /* ZippyqViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE64515301820B7008CBD26 /* ZippyqViewController.swift */; };
-		4FABC00F303C000000000001 /* ZippyqViewController+Scrolling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FABC00E303C000000000001 /* ZippyqViewController+Scrolling.swift */; };
 		4FE645183019CCEA008CBD26 /* ZippyqEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE645173019CCEA008CBD26 /* ZippyqEnums.swift */; };
 		4FE64519301A501D008CBD26 /* ZippyqCollapsableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE6451C301B1001008CBD26 /* ZippyqCollapsableHeaderView.swift */; };
 		4FE6451B3019F001008CBD26 /* Frequency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE6451A3019F001008CBD26 /* Frequency.swift */; };
@@ -589,6 +589,7 @@
 		4FABC009301D400000000001 /* ZippyqViewModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqViewModels.swift; sourceTree = "<group>"; };
 		4FABC00B301D400000000001 /* ZippyqHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqHeaderView.swift; sourceTree = "<group>"; };
 		4FABC00D301D500000000001 /* ZippyqResultsCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqResultsCalculator.swift; sourceTree = "<group>"; };
+		4FABC00E303C000000000001 /* ZippyqViewController+Scrolling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZippyqViewController+Scrolling.swift"; sourceTree = "<group>"; };
 		4FAC24A723DC3E06009AD585 /* UILabel+LinesCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+LinesCount.swift"; sourceTree = "<group>"; };
 		4FB06AAF296B521000F14E59 /* AppIcon-MGP1@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-MGP1@3x.png"; sourceTree = "<group>"; };
 		4FB06AB0296B521000F14E59 /* AppIcon-MGP2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-MGP2@2x.png"; sourceTree = "<group>"; };
@@ -654,7 +655,6 @@
 		4FE4C0A12945E0EF00F47F0A /* RaceListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceListViewController.swift; sourceTree = "<group>"; };
 		4FE645123018072D008CBD26 /* ZippyQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyQueue.swift; sourceTree = "<group>"; };
 		4FE64515301820B7008CBD26 /* ZippyqViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqViewController.swift; sourceTree = "<group>"; };
-		4FABC00E303C000000000001 /* ZippyqViewController+Scrolling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZippyqViewController+Scrolling.swift"; sourceTree = "<group>"; };
 		4FE645173019CCEA008CBD26 /* ZippyqEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqEnums.swift; sourceTree = "<group>"; };
 		4FE6451A3019F001008CBD26 /* Frequency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Frequency.swift; sourceTree = "<group>"; };
 		4FE6451C301B1001008CBD26 /* ZippyqCollapsableHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqCollapsableHeaderView.swift; sourceTree = "<group>"; };
@@ -2188,7 +2188,7 @@
 				CODE_SIGN_ENTITLEMENTS = RaceSync/RaceSync.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 129;
+				CURRENT_PROJECT_VERSION = 130;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = TJ4PB66YQS;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
@@ -2224,7 +2224,7 @@
 				CODE_SIGN_ENTITLEMENTS = RaceSync/RaceSync.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 129;
+				CURRENT_PROJECT_VERSION = 130;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = TJ4PB66YQS;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
