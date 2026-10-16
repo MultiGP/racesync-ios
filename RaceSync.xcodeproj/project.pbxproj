@@ -220,6 +220,7 @@
 		4FABC008301D300000000001 /* ZippyqDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FABC007301D300000000001 /* ZippyqDataController.swift */; };
 		4FABC00A301D400000000001 /* ZippyqViewModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FABC009301D400000000001 /* ZippyqViewModels.swift */; };
 		4FABC00C301D400000000001 /* ZippyqHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FABC00B301D400000000001 /* ZippyqHeaderView.swift */; };
+		4FABC00E301D500000000001 /* ZippyqResultsCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FABC00D301D500000000001 /* ZippyqResultsCalculator.swift */; };
 		4FAC24A823DC3E06009AD585 /* UILabel+LinesCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAC24A723DC3E06009AD585 /* UILabel+LinesCount.swift */; };
 		4FB06AB3296B521000F14E59 /* AppIcon-MGP1@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4FB06AAF296B521000F14E59 /* AppIcon-MGP1@3x.png */; };
 		4FB06AB4296B521000F14E59 /* AppIcon-MGP2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4FB06AB0296B521000F14E59 /* AppIcon-MGP2@2x.png */; };
@@ -586,6 +587,7 @@
 		4FABC007301D300000000001 /* ZippyqDataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqDataController.swift; sourceTree = "<group>"; };
 		4FABC009301D400000000001 /* ZippyqViewModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqViewModels.swift; sourceTree = "<group>"; };
 		4FABC00B301D400000000001 /* ZippyqHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqHeaderView.swift; sourceTree = "<group>"; };
+		4FABC00D301D500000000001 /* ZippyqResultsCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqResultsCalculator.swift; sourceTree = "<group>"; };
 		4FAC24A723DC3E06009AD585 /* UILabel+LinesCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+LinesCount.swift"; sourceTree = "<group>"; };
 		4FB06AAF296B521000F14E59 /* AppIcon-MGP1@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-MGP1@3x.png"; sourceTree = "<group>"; };
 		4FB06AB0296B521000F14E59 /* AppIcon-MGP2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-MGP2@2x.png"; sourceTree = "<group>"; };
@@ -1367,6 +1369,7 @@
 				4FE64515301820B7008CBD26 /* ZippyqViewController.swift */,
 				4FABC007301D300000000001 /* ZippyqDataController.swift */,
 				4FBCD0013020000000000001 /* ZippyqSnapshotController.swift */,
+				4FABC00D301D500000000001 /* ZippyqResultsCalculator.swift */,
 				4FBCD0033021000000000001 /* ZippyqCollectionViewLayout.swift */,
 				4FABC003301D200000000001 /* ZippyqSmartJoiner.swift */,
 				4FABC005301D200000000001 /* ZippyqSmartJoinable.swift */,
@@ -1836,6 +1839,7 @@
 				4FABC004301D200000000001 /* ZippyqSmartJoiner.swift in Sources */,
 				4FABC006301D200000000001 /* ZippyqSmartJoinable.swift in Sources */,
 				4FABC008301D300000000001 /* ZippyqDataController.swift in Sources */,
+				4FABC00E301D500000000001 /* ZippyqResultsCalculator.swift in Sources */,
 				4FABC00A301D400000000001 /* ZippyqViewModels.swift in Sources */,
 				4FABC00C301D400000000001 /* ZippyqHeaderView.swift in Sources */,
 				4FBCD0043021000000000001 /* ZippyqCollectionViewLayout.swift in Sources */,

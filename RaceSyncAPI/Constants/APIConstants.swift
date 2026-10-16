@@ -15,6 +15,7 @@ public let StandardDateFormat: String = "yyyy-MM-dd"
 public let StandardDateTimeFormat: String = "yyyy-MM-dd HH:mm:ss"
 public let OldDateTimeFormat: String = "yyyy-MM-dd h:mm a"
 public let USLocale: String = "en_US_POSIX"
+public let MaximumValidRaceResultTime: TimeInterval = 1500
 
 enum EndPoint {
     static let userLogin = "user/login"

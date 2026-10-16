@@ -30,6 +30,7 @@ class ZippyqRoundViewModel: Descriptable {
          pilotStats: ZippyqPilotCollection,
          maximumPackCount: Int32,
          scoringFormat: ScoringFormat,
+         resultChanges: [ObjectId: ZippyqResultChange],
          isUpNext: Bool) {
 
         id = "\(queue.cycle):\(queue.heat)"
@@ -45,7 +46,8 @@ class ZippyqRoundViewModel: Descriptable {
                 queue: queue,
                 pilotStats: pilotStats,
                 maximumPackCount: maximumPackCount,
-                scoringFormat: scoringFormat
+                scoringFormat: scoringFormat,
+                resultChanges: resultChanges
             )
         }
         let assignedViewModels = viewModels.filter { $0.isAssigned }

@@ -88,6 +88,7 @@ final class ZippyqDataController {
     fileprivate let raceId: ObjectId
     fileprivate let zippyqApi: ZippyqApiInterface = ZippyqApi()
     fileprivate let smartJoiner: ZippyqSmartJoinable = ZippyqSmartJoiner()
+    fileprivate let resultsCalculator = ZippyqResultsCalculator()
     fileprivate let userDefaults = UserDefaults.standard
     fileprivate let pollingController = PollingController()
 
@@ -387,6 +388,10 @@ private extension ZippyqDataController {
     func updateRoundViewModels() {
         guard let response, let race else { return }
 
+        let resultChanges = resultsCalculator.changes(
+            in: response.queues,
+            scoringFormat: race.trueScoringFormat
+        )
         let hidesPastQueues = shouldLimitPastQueues
         let visiblePastQueues = Set(
             response.queues
@@ -439,6 +444,7 @@ private extension ZippyqDataController {
                 pilotStats: response.pilotStats,
                 maximumPackCount: race.cycleCount,
                 scoringFormat: race.trueScoringFormat,
+                resultChanges: resultChanges,
                 isUpNext: (race.inProgress && index == nextQueuedIndex)
             )
         }

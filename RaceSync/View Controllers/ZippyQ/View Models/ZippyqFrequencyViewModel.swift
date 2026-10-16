@@ -25,6 +25,8 @@ class ZippyqFrequencyViewModel: Descriptable {
     let subtitleLabel: String?
     let imageUrl: String?
     let resultLabel: String?
+    let isResultImproved: Bool
+    let leaderboardMovement: ZippyqLeaderboardMovement?
     let action: ZippyqFrequencyAction?
     let isActionEnabled: Bool
 
@@ -32,11 +34,15 @@ class ZippyqFrequencyViewModel: Descriptable {
          queue: ZippyQueue,
          pilotStats: ZippyqPilotCollection,
          maximumPackCount: Int32,
-         scoringFormat: ScoringFormat) {
+         scoringFormat: ScoringFormat,
+         resultChanges: [ObjectId: ZippyqResultChange]) {
 
         let entry = queue.entries.first { $0.frequency?.frequency == frequency.frequency }
+        let resultChange = entry.flatMap { resultChanges[$0.id] }
         user = entry?.user
         isCurrentUser = APIServices.shared.isCurrentUser(entry?.user)
+        isResultImproved = resultChange?.hasImproved ?? false
+        leaderboardMovement = resultChange?.leaderboardMovement
 
         self.frequency = frequency
         slot = Int(frequency.slot)

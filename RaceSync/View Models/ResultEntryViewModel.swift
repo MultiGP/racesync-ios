@@ -46,7 +46,7 @@ extension ResultEntryViewModel {
 
         let unique = entries.reduce(into: [ObjectId: ResultEntry]()) { dict, entry in
             guard let newValue = Double(entry[keyPath: format.key] ?? "") else { return }
-            guard newValue > 0 && newValue < 1500 else { return } // a value can't be over 15 minutes, else it's considered invalid
+            guard newValue > 0 && newValue < MaximumValidRaceResultTime else { return }
 
             if let oldEntry = dict[entry.pilotId],
                let oldValue = Double(oldEntry[keyPath: format.key] ?? "") {

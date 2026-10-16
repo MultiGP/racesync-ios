@@ -176,7 +176,7 @@ class ZippyqFrequencyContentView: UIView {
         titleLabel.text = viewModel.titleLabel
         titleLabel.textColor = viewModel.isAssigned ? Color.black : Color.gray200
         subtitleLabel.text = viewModel.subtitleLabel
-        resultLabel.text = viewModel.resultLabel
+        configureResultLabel(with: viewModel)
         resultLabel.isHidden = viewModel.resultLabel == nil
         actionButton.action = viewModel.action
         actionButton.isEnabled = viewModel.isActionEnabled
@@ -197,12 +197,45 @@ class ZippyqFrequencyContentView: UIView {
         }
     }
 
+    fileprivate func configureResultLabel(with viewModel: ZippyqFrequencyViewModel) {
+        guard let result = viewModel.resultLabel else {
+            resultLabel.attributedText = nil
+            return
+        }
+
+        let resultColor = viewModel.isResultImproved
+            ? Color.green
+            : Color.dynamic(light: Color.blue, dark: Color.light)
+        let resultFont = UIFont.monospacedDigitSystemFont(
+            ofSize: 15,
+            weight: viewModel.isResultImproved ? .bold : .regular
+        )
+        let text = NSMutableAttributedString()
+
+        if let movement = viewModel.leaderboardMovement {
+            let arrow = movement == .up ? "↑ " : "↓ "
+            let arrowColor = movement == .up ? Color.green : Color.red
+            text.append(NSAttributedString(
+                string: arrow,
+                attributes: [
+                    .font: UIFont.monospacedDigitSystemFont(ofSize: 15, weight: .bold),
+                    .foregroundColor: arrowColor
+                ]
+            ))
+        }
+        text.append(NSAttributedString(
+            string: result,
+            attributes: [.font: resultFont, .foregroundColor: resultColor]
+        ))
+        resultLabel.attributedText = text
+    }
+
     func prepareForReuse() {
         channelLabel.text = nil
         avatarImageView.imageView.image = nil
         titleLabel.text = nil
         subtitleLabel.text = nil
-        resultLabel.text = nil
+        resultLabel.attributedText = nil
         resultLabel.isHidden = true
         actionButton.action = nil
         actionButton.isEnabled = false
