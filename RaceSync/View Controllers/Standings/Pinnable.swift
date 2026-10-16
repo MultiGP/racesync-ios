@@ -87,6 +87,15 @@ extension Pinnable {
         }
     }
 
+    func layoutPinnedViewAfterInitialDisplay(at indexPath: IndexPath) -> Bool {
+        guard indexPath == tableView.indexPathsForVisibleRows?.max() else { return false }
+
+        DispatchQueue.main.async { [weak self] in
+            self?.invalidatePinnedView()
+        }
+        return true
+    }
+
     // MARK: - Private
 
     fileprivate func showPinnedCell(at y: CGFloat, indexPath: IndexPath, size: CGSize) {

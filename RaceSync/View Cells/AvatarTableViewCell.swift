@@ -105,6 +105,22 @@ class AvatarTableViewCell: UITableViewCell {
         accessoryView = UIImageView(image: image)
     }
 
+    func configurePinnedAppearance() {
+        titleLabel.textColor = Color.light
+        subtitleLabel.textColor = Color.light.withAlphaComponent(0.8)
+        rankView.titleLabel.textColor = Color.light
+        backgroundView?.backgroundColor = Color.pinned
+        selectedBackgroundView?.backgroundColor = Color.pinnedSelected
+    }
+
+    func configurePinnedResultAppearance() {
+        configurePinnedAppearance()
+        textPill.style = .text
+        textPill.titleLabel.textColor = Color.gray400.resolvedColor(with: traitCollection)
+        textPill.backgroundColor = Color.gray100.withAlphaComponent(0.75).resolvedColor(with: traitCollection)
+        configureDisclosureIndicator(color: Color.light.withAlphaComponent(0.7))
+    }
+
     open func setupLayout() {
         self.accessoryType = .disclosureIndicator
         self.backgroundColor =  Color.cellColor

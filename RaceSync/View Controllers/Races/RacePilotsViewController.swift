@@ -303,15 +303,8 @@ extension RacePilotsViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        guard let visibleIndexPaths = tableView.indexPathsForVisibleRows else { return }
-
-        // Best spot to lay the pinned view for the first time
-        if indexPath == visibleIndexPaths.max() && !didShowPinnedView {
-            DispatchQueue.main.async { [weak self] in
-                self?.invalidatePinnedView()
-                self?.didShowPinnedView = true
-            }
-        }
+        guard !didShowPinnedView else { return }
+        didShowPinnedView = layoutPinnedViewAfterInitialDisplay(at: indexPath)
     }
 }
 
@@ -422,15 +415,7 @@ extension RacePilotsViewController: UITableViewDataSource {
         configure(view, forRowAt: indexPath)
         guard let cell = view as? AvatarTableViewCell else { return }
 
-        cell.titleLabel.textColor = Color.light
-        cell.subtitleLabel.textColor = Color.light.withAlphaComponent(0.8)
-        cell.rankView.titleLabel.textColor = Color.light
-        cell.textPill.style = .text
-        cell.textPill.titleLabel.textColor = Color.gray400.resolvedColor(with: traitCollection)
-        cell.textPill.backgroundColor = Color.gray100.withAlphaComponent(0.75).resolvedColor(with: traitCollection)
-        cell.configureDisclosureIndicator(color: Color.light.withAlphaComponent(0.7))
-        cell.backgroundView?.backgroundColor = Color.pinned
-        cell.selectedBackgroundView?.backgroundColor = Color.pinnedSelected
+        cell.configurePinnedResultAppearance()
     }
 }
 

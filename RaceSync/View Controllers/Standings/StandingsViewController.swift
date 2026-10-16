@@ -563,11 +563,7 @@ extension StandingsViewController: UITableViewDataSource {
         configure(view, forRowAt: indexPath)
         guard let cell = view as? AvatarTableViewCell else { return }
 
-        cell.titleLabel.textColor = Color.light
-        cell.subtitleLabel.textColor = Color.light.withAlphaComponent(0.8)
-        cell.rankView.titleLabel.textColor = Color.light
-        cell.backgroundView?.backgroundColor = Color.pinned
-        cell.selectedBackgroundView?.backgroundColor = Color.pinnedSelected
+        cell.configurePinnedAppearance()
 
         if isRootTabBar {
             let image = ButtonImg.share?.withTintColor(.white)
