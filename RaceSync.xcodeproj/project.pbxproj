@@ -285,6 +285,7 @@
 		4FE4C0A22945E0EF00F47F0A /* RaceListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE4C0A12945E0EF00F47F0A /* RaceListViewController.swift */; };
 		4FE645133018072F008CBD26 /* ZippyQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE645123018072D008CBD26 /* ZippyQueue.swift */; };
 		4FE64516301820B7008CBD26 /* ZippyqViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE64515301820B7008CBD26 /* ZippyqViewController.swift */; };
+		4FABC00F303C000000000001 /* ZippyqViewController+Scrolling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FABC00E303C000000000001 /* ZippyqViewController+Scrolling.swift */; };
 		4FE645183019CCEA008CBD26 /* ZippyqEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE645173019CCEA008CBD26 /* ZippyqEnums.swift */; };
 		4FE64519301A501D008CBD26 /* ZippyqCollapsableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE6451C301B1001008CBD26 /* ZippyqCollapsableHeaderView.swift */; };
 		4FE6451B3019F001008CBD26 /* Frequency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE6451A3019F001008CBD26 /* Frequency.swift */; };
@@ -653,6 +654,7 @@
 		4FE4C0A12945E0EF00F47F0A /* RaceListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceListViewController.swift; sourceTree = "<group>"; };
 		4FE645123018072D008CBD26 /* ZippyQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyQueue.swift; sourceTree = "<group>"; };
 		4FE64515301820B7008CBD26 /* ZippyqViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqViewController.swift; sourceTree = "<group>"; };
+		4FABC00E303C000000000001 /* ZippyqViewController+Scrolling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZippyqViewController+Scrolling.swift"; sourceTree = "<group>"; };
 		4FE645173019CCEA008CBD26 /* ZippyqEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqEnums.swift; sourceTree = "<group>"; };
 		4FE6451A3019F001008CBD26 /* Frequency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Frequency.swift; sourceTree = "<group>"; };
 		4FE6451C301B1001008CBD26 /* ZippyqCollapsableHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqCollapsableHeaderView.swift; sourceTree = "<group>"; };
@@ -1367,6 +1369,7 @@
 			isa = PBXGroup;
 			children = (
 				4FE64515301820B7008CBD26 /* ZippyqViewController.swift */,
+				4FABC00E303C000000000001 /* ZippyqViewController+Scrolling.swift */,
 				4FABC007301D300000000001 /* ZippyqDataController.swift */,
 				4FBCD0013020000000000001 /* ZippyqSnapshotController.swift */,
 				4FABC00D301D500000000001 /* ZippyqResultsCalculator.swift */,
@@ -1903,6 +1906,7 @@
 				4F8B4A102DDCEECD00B735DA /* BadgeHub.swift in Sources */,
 				4FD53FAD23A0B01E00158206 /* UserViewModel.swift in Sources */,
 				4FE64516301820B7008CBD26 /* ZippyqViewController.swift in Sources */,
+				4FABC00F303C000000000001 /* ZippyqViewController+Scrolling.swift in Sources */,
 				4FBCD0023020000000000001 /* ZippyqSnapshotController.swift in Sources */,
 				4FE91EEB2FC2957900460A74 /* EventSessionBucketlist.swift in Sources */,
 				4F03693626D457CB00E30821 /* AppIconViewController.swift in Sources */,
