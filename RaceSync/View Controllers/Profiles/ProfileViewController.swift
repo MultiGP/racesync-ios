@@ -74,10 +74,26 @@ class ProfileViewController: UIViewController, Shimmable {
         return button
     }()
 
+    fileprivate lazy var navigationGradientView: UIVisualEffectView = {
+        let view = UIVisualEffectView(effect: UIBlurEffect(style: .systemThinMaterial))
+        view.isUserInteractionEnabled = false
+
+        let mask = CAGradientLayer()
+        mask.colors = [
+            UIColor.black.cgColor,
+            UIColor.black.withAlphaComponent(0.65).cgColor,
+            UIColor.clear.cgColor
+        ]
+        mask.locations = [0, 0.55, 1]
+        view.layer.mask = mask
+        return view
+    }()
+
     fileprivate var isNavigationBarOpaque = false
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
+        static let navigationGradientExtension: CGFloat = 44
     }
 
     // MARK: - Initialization
@@ -104,6 +120,15 @@ class ProfileViewController: UIViewController, Shimmable {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        if #available(iOS 26.0, *),
+           let mask = navigationGradientView.layer.mask as? CAGradientLayer {
+            mask.frame = navigationGradientView.bounds
+        }
     }
 
     // MARK: - Layout
@@ -136,6 +161,15 @@ class ProfileViewController: UIViewController, Shimmable {
         shimmeringView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(headerViewSize.height + SegmentedTableViewHeaderView.headerHeight)
             $0.leading.trailing.bottom.equalToSuperview()
+        }
+
+        if #available(iOS 26.0, *) {
+            view.addSubview(navigationGradientView)
+            navigationGradientView.snp.makeConstraints {
+                $0.top.leading.trailing.equalToSuperview()
+                $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.top)
+                    .offset(Constants.navigationGradientExtension)
+            }
         }
     }
 
@@ -217,6 +251,9 @@ extension ProfileViewController: UIScrollViewDelegate {
         guard shouldUseOpaqueNavigationBar != isNavigationBarOpaque else { return }
 
         isNavigationBarOpaque = shouldUseOpaqueNavigationBar
+        if #available(iOS 26.0, *) {
+            navigationGradientView.isHidden = shouldUseOpaqueNavigationBar
+        }
 
         if shouldUseOpaqueNavigationBar {
             Appearance.applyOpaqueStyle(to: navigationItem)
