@@ -85,16 +85,6 @@ class HomeTabBarController: UITabBarController {
         return button
     }()
 
-//    fileprivate lazy var badgeHub: BadgeHub = {
-//        let hub = BadgeHub(barButtonItem: notificationsButton)
-//        hub.setCircleColor(Color.lightRed, label: Color.white)
-//        hub.setCircleBorderColor(Color.white, borderWidth: 1)
-//        hub.setMaxCount(to: 100)
-//        hub.scaleCircleSize(by: 0.7)
-//        hub.moveCircleBy(x: 35.0, y: 0)
-//        return hub
-//    }()
-
     fileprivate let presenter = Appearance.defaultPresenter()
     fileprivate let userApi = UserApi()
     fileprivate let chapterApi = ChapterApi()
@@ -117,6 +107,15 @@ class HomeTabBarController: UITabBarController {
         super.viewDidLoad()
 
         setupLayout()
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) else { return }
+
+        let borderColor = Color.gray100.resolvedColor(with: traitCollection).cgColor
+        userProfileButton.layer.borderColor = borderColor
+        chapterProfileButton.layer.borderColor = borderColor
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -142,7 +141,6 @@ class HomeTabBarController: UITabBarController {
     // MARK: - Layout
 
     fileprivate func setupLayout() {
-        delegate = self
         configureNavigationItems()
     }
 
@@ -225,6 +223,7 @@ class HomeTabBarController: UITabBarController {
         let tab = AppPrefs.lastSelectedHomeTab
 
         configureTabBarController(with: vcs, selectedIndex: tab.rawValue)
+        delegate = self
 
         if APIServices.shared.myUser == nil {
             loadMyUser()
@@ -326,16 +325,11 @@ extension HomeTabBarController: ChapterPickerViewControllerDelegate {
 }
 
 extension HomeTabBarController: UITabBarControllerDelegate {
-    
+
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         return true
     }
-    
-    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {        
-        // Trigger haptic gesture to emphasize the action
-        HapticEngine.shared.trigger()
-    }
-    
+
     func tabBarController(_ controller: UITabBarController, didSelect viewController: UIViewController) {
 
         if let vcs = viewControllers, vcs.contains(viewController) {
@@ -351,9 +345,11 @@ extension HomeTabBarController: UITabBarControllerDelegate {
             }
         }
 
-        // To open the last tab at launch
-        if let tab = HomeTabs(rawValue: controller.selectedIndex) {
+        if let index = viewControllers?.firstIndex(of: viewController),
+           let tab = HomeTabs(rawValue: index) {
             AppPrefs.lastSelectedHomeTab = tab
         }
+        
+        HapticEngine.shared.trigger()
     }
 }

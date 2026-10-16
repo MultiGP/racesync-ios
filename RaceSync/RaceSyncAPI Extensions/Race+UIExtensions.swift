@@ -33,14 +33,11 @@ extension Race {
     var canShowResults: Bool {
         guard let results = results, results.count > 0 else { return false }
 
-        return results.contains { entry in
-            [entry.score, entry.totalLaps, entry.totalTime, entry.fastest3Laps, entry.fastest2Laps, entry.fastestLap]
-                .contains { $0 != nil && !$0!.isEmpty }
-        }
+        return results.contains { $0.hasResults }
     }
 
-    var canShowSchedule: Bool {
-        guard hasStarted && !hasEnded else { return false }
+    var canShowZippyQ: Bool {
+//        guard hasStarted && !hasEnded else { return false }
         return isZippyQEnabled
     }
 

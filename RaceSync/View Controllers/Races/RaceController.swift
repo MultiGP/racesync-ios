@@ -197,17 +197,22 @@ class RaceController {
 
         var items: [Any] = [url]
         var activities = [UIActivity]()
-
-        if race.canManagePayments {
-            activities += [PaypalActivity()]
-        }
-
-        activities += [MGPActivity(), CopyLinkActivity()]
-
+        activities += [CopyLinkActivity(), MGPActivity()]
+        
         // Calendar integration
         if let event = race.createCalendarEvent(with: raceId) {
             items += [event]
             activities += [CalendarActivity()]
+        }
+
+        if race.isZippyQEnabled {
+            let zippyQActivity = MGPZippyQActivity()
+            zippyQActivity.raceId = race.id
+            activities += [zippyQActivity]
+        }
+        
+        if race.canManagePayments {
+            activities += [PaypalActivity()]
         }
 
         let vc = UIActivityViewController(activityItems: items, applicationActivities: activities)
@@ -215,14 +220,11 @@ class RaceController {
         visibleViewController?.present(vc, animated: true)
     }
 
-    func showZippyQWeb() {
+    func showZippyqWeb() {
         guard let race = race else { return }
-
-        let url = MGPWeb.getURL(for: .zippyqView, value: race.id)
-
-        if UIApplication.shared.canOpenURL(url) {
-            UIApplication.shared.open(url)
-        }
+        
+        let zippyqUrl = MGPWeb.getUrl(for: .zippyqView, value: race.id)
+        WebViewController.open(zippyqUrl)
     }
 
     func saveInCalendar() {
@@ -271,7 +273,7 @@ class RaceController {
                 let item = option.makeButton(target: self, action: #selector(raceActionTapped(_:)))
                 item.tag = option.rawValue
                 return item
-            }.interspersed(with: UIBarButtonItem.spacer())
+            }
         } else {
             // Still needed for versions of iOS previous to iOS26
             let actions = filtered.map { (image: $0.image, selector: #selector(raceActionTapped(_:)), tag: $0.rawValue) }
@@ -296,7 +298,7 @@ class RaceController {
         case .share:
             showShareMenu()
         case .zippyQ:
-            showZippyQWeb()
+            showZippyqWeb()
         }
     }
 

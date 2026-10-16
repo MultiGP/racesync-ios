@@ -30,6 +30,7 @@ enum EmptyState {
     case noRacePilots
     case noRaceResults
     case noRacePayments
+    case noRaceQueues
     case noChapters
     case noChapterMembers
     case noEvents
@@ -86,6 +87,8 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "No Series Results"
         case .noRacePayments:
             text = "No Race Payments"
+        case .noRaceQueues:
+            text = "No Race Queues"
         case .noChapters, .noMyProfileChapters, .noProfileChapters:
             text = "No Chapters"
         case .noEvents:
@@ -132,7 +135,9 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
         case .noSeriesResults:
             text = "There are no series results available yet."
         case .noRacePayments:
-            text = "No payments found yet, or a network error occurred."
+            text = "No payments have been made for this race yet."
+        case .noRaceQueues:
+            text = "There are no race queues available yet."
         case .noChapterMembers:
             text = "There are no registered members yet."
         case .noProfileRaces:
@@ -173,6 +178,8 @@ struct EmptyStateViewModel: EmptyStateViewModelInterface {
             text = "Search Nearby Races"
         case .noRacePilots:
             text = "Join Race"
+        case .noRaceQueues:
+            text = "View Web ZippyQ"
         case .noPushAuthorized:
             text = "Allow Push Notifications"
         case .noPushEnabled:

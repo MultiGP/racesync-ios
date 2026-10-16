@@ -18,6 +18,12 @@ public class DateUtil {
         return DateFormatter(withFormat: OldDateTimeFormat, locale: USLocale)
     }()
 
+    public static var utcDateFormatter: DateFormatter = {
+        let formatter = DateFormatter(withFormat: StandardDateTimeFormat, locale: USLocale)
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        return formatter
+    }()
+
     public static func deserializeJSONDate(_ jsonDate: String) -> Date? {
         if let date = standardDateFormatter.date(from: jsonDate) {
             return date
@@ -26,6 +32,10 @@ public class DateUtil {
             return date
         }
         return nil
+    }
+
+    public static func deserializeUTCJSONDate(_ jsonDate: String) -> Date? {
+        return utcDateFormatter.date(from: jsonDate)
     }
 
     public static func localizedString(from date: Date?, full: Bool = false) -> String? {

@@ -33,6 +33,11 @@ public class APIServices {
             Clog.log("Did set my User with id: \(String(describing: myUser?.id))")
         }
     }
+    
+    public func isCurrentUser(_ user: User?) -> Bool {
+        let currentUserId = APIServices.shared.myUser?.id
+        return currentUserId.map { user?.id == $0 } ?? false
+    }
 
     // My Home Chapter
     public var myChapter: Chapter? {

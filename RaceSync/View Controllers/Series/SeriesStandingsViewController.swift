@@ -43,14 +43,15 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
     
     fileprivate lazy var segmentedControl: UISegmentedControl = {
         let control = UISegmentedControl(items: SeriesStandingsFilter.titles)
-        control.selectedSegmentIndex = SeriesStandingsFilter.pilots.index
         control.addTarget(self, action: #selector(didChangeSegment), for: .valueChanged)
+        control.selectedSegmentTintColor = Color.barBackground
+        control.selectedSegmentIndex = SeriesStandingsFilter.pilots.index
         return control
     }()
 
     fileprivate lazy var headerView: UIView = {
         let view = UIView()
-        view.backgroundColor = Color.navigationBarColor
+        view.backgroundColor = Color.barBackground
         view.tintColor = Color.blue
 
         let spacing: CGFloat = 10
@@ -97,6 +98,8 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
     
     var pinnedView: UIView?
     var cachedPinnedIndexPath: IndexPath?
+    fileprivate var didShowPinnedView = false
+    fileprivate var needsPinnedAvatarRefresh = true
 
     fileprivate var showsSegmentedControl: Bool {
         get {
@@ -152,6 +155,11 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        refreshPinnedViewIfAppearanceChanged(from: previousTraitCollection)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -214,7 +222,7 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
     // MARK: - Pinnable
 
     func canPinView() -> Bool {
-        return myUserId != nil
+        return myUserId != nil && selectedFilter == .pilots
     }
 
     func pinnedViewIndexPath() -> IndexPath? {
@@ -237,8 +245,11 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
     // MARK: - Actions
 
     @objc fileprivate func didChangeSegment() {
+        didShowPinnedView = false
         tableView.setContentOffset(.zero, animated: false)
         tableView.reloadData()
+        
+        invalidatePinnedView()
     }
 
     func showUserProfile(forUserAt indexPath: IndexPath, from cell: AvatarTableViewCell) {
@@ -275,6 +286,11 @@ class SeriesStandingsViewController: UIViewController, Pinnable {
 }
 
 extension SeriesStandingsViewController: UITableViewDelegate {
+
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        guard !didShowPinnedView else { return }
+        didShowPinnedView = layoutPinnedViewAfterInitialDisplay(at: indexPath)
+    }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) as? AvatarTableViewCell else { return }
@@ -331,12 +347,20 @@ extension SeriesStandingsViewController: UITableViewDataSource {
 
         cell.rankView.rank = Int32(indexPath.row + 1)
         cell.titleLabel.text = viewModel.titleLabel
+        cell.titleLabel.numberOfLines = 1
         cell.subtitleLabel.text = viewModel.subtitleLabel
-        cell.avatarImageView.imageView.setImage(with: viewModel.imageUrl, placeholderImage: PlaceholderImg.medium)
+        cell.avatarImageView.imageView.setImage(with: viewModel.imageUrl, placeholderImage: PlaceholderImg.medium) { [weak self] image in
+            guard let self, image != nil, self.needsPinnedAvatarRefresh,
+                  indexPath == self.pinnedViewIndexPath(), self.pinnedView != nil else { return }
+
+            self.needsPinnedAvatarRefresh = false
+            self.invalidatePinnedView()
+        }
+        cell.textPill.text = nil
+        cell.textPill.style = .text
 
         if !viewModel.scoreLabel.isEmpty {
             cell.textPill.text = viewModel.scoreLabel
-            cell.textPill.style = .text
         }
 
         if viewModel.subtitleLabel == SeriesResultViewModel.emptyLabel {
@@ -347,19 +371,19 @@ extension SeriesStandingsViewController: UITableViewDataSource {
             cell.titleLabel.numberOfLines = 2
         }
 
-        if viewModel.pilotId == myUserId {
-            cell.titleLabel.textColor = Color.white
-            cell.subtitleLabel.textColor = Color.gray20
-            cell.rankView.titleLabel.textColor = Color.gray20
-            cell.backgroundColor = Color.gray200
-            cell.selectedBackgroundView?.backgroundColor = Color.gray300
-        } else {
-            cell.titleLabel.textColor = Color.black
-            cell.subtitleLabel.textColor = Color.gray300
-            cell.rankView.titleLabel.textColor = Color.gray300
-            cell.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : Color.gray20
-            cell.selectedBackgroundView?.backgroundColor = Color.gray50
-        }
+        cell.titleLabel.textColor = Color.black
+        cell.subtitleLabel.textColor = Color.gray300
+        cell.rankView.titleLabel.textColor = Color.gray300
+        cell.configureDisclosureIndicator(color: Color.gray300.resolvedColor(with: traitCollection))
+        cell.backgroundView?.backgroundColor = (indexPath.row % 2 == 0) ? Color.cellColor : Color.cellColor2
+        cell.selectedBackgroundView?.backgroundColor = Color.gray50
+    }
+
+    func configurePinned<T>(_ view: T, forRowAt indexPath: IndexPath) where T: UITableViewCell {
+        configure(view, forRowAt: indexPath)
+        guard let cell = view as? AvatarTableViewCell else { return }
+
+        cell.configurePinnedResultAppearance()
     }
 }
 

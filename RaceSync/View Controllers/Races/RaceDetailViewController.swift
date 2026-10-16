@@ -67,11 +67,20 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         label.numberOfLines = 1
         return label
     }()
+    
+    fileprivate lazy var limitLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        label.textColor = Color.gray300
+        label.textAlignment = .right
+        label.numberOfLines = 1
+        return label
+    }()
 
     fileprivate lazy var rotatingIconView: RotatingIconView = {
         let view = RotatingIconView()
         view.tintColor = Color.yellow
-        view.imageView.image = ButtonImg.trophy?.withRenderingMode(.alwaysTemplate)
+        view.imageView.image = ButtonImg.trophy
         view.imageView.tintColor = Color.yellow
         return view
     }()
@@ -129,6 +138,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         let view = UIImageView()
         view.contentMode = .scaleAspectFit
         view.backgroundColor = Color.clear
+        view.tintColor = Color.black
         return view
     }()
 
@@ -200,7 +210,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             $0.height.greaterThanOrEqualTo(JoinButton.minHeight)
         }
 
-        var subviews: [UIView] = [topStackView, feeLabel, memberBadgeView]
+        var subviews: [UIView] = [topStackView, feeLabel, limitLabel, memberBadgeView]
         let stackView = UIStackView(arrangedSubviews: subviews)
         stackView.axis = .vertical
         stackView.alignment = .trailing
@@ -272,8 +282,17 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         return raceCoordinate != nil
     }
 
+    var shouldUseTransparentNavigationBar: Bool {
+        guard #available(iOS 26, *) else { return false }
+        return canDisplayMap
+    }
+
     fileprivate var canDisplayFee: Bool {
         return raceViewModel.feeLabel.count > 0
+    }
+    
+    fileprivate var canDisplayLimit: Bool {
+        return raceViewModel.limitLabel.count > 0
     }
 
     fileprivate var tableViewRows = [Row]()
@@ -285,6 +304,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     fileprivate var seriesApi = SeriesApi()
 
     fileprivate var htmlViewHeightConstraint: Constraint?
+    fileprivate var mapTopConstraint: Constraint?
 //    fileprivate let ignoreFinalizingError: Bool = true // The API finalize(id) still returns 500 error. Reported https://github.com/MultiGP/multigp-com/issues/93
 
     fileprivate enum Constants {
@@ -293,7 +313,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         static let mapHeight: CGFloat = UIScreen.main.bounds.height/3 // 1/3 of the screen
         static let cellHeight: CGFloat = 50
         static let maxButtonSize: CGFloat = 100
-        static let buttonSpacing: CGFloat = 12
         static let htmlpadding: CGFloat = 12
     }
 
@@ -326,6 +345,11 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         super.viewDidAppear(animated)
     }
 
+    override func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+        mapTopConstraint?.update(offset: -view.safeAreaInsets.top)
+    }
+
     deinit {
         unregisterJoinable()
     }
@@ -344,7 +368,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         if canDisplayMap {
             contentView.addSubview(mapView)
             mapView.snp.makeConstraints {
-                $0.top.equalToSuperview().offset(-topOffset)
+                mapTopConstraint = $0.top.equalToSuperview().offset(-view.safeAreaInsets.top).constraint
                 $0.leading.trailing.equalToSuperview()
                 $0.height.equalTo(Constants.mapHeight)
             }
@@ -422,7 +446,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             $0.top.equalTo(htmlView.snp.bottom).offset(Constants.padding/2)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(Constants.cellHeight*CGFloat(tableViewRows.count))
-            $0.bottom.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(Constants.cellHeight/2)
         }
 
         scrollView.addSubview(contentView)
@@ -450,7 +474,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             raceViewModel.chapterLabel.isEmpty ? nil : Row.chapter,
             raceViewModel.seriesLabel.isEmpty ? nil : Row.series,
             raceViewModel.seasonLabel.isEmpty ? nil : Row.season,
-            race.isZippyQEnabled ? Row.zippyQ : nil,
             raceViewModel.subtitleLabel.string.isEmpty ? nil : Row.class,
             race.liveTimeEventUrl != nil ? Row.results : nil
         ].compactMap { $0 }
@@ -472,13 +495,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             s.configureHTML()
         }
 
-        // lays out the content and helps calculating the content size
-        let contentRect: CGRect = scrollView.subviews.reduce(into: .zero) { rect, view in
-            rect = rect.union(view.frame)
-        }
-        
-        // Seems like this is not doing anything?
-        scrollView.contentSize = CGSize(width: contentRect.size.width, height: contentRect.size.height)
     }
 
     fileprivate func configureJoinButton() {
@@ -531,11 +547,11 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             locationButton.imageEdgeInsets = UIEdgeInsets(top: -Constants.padding, left: -Constants.padding, bottom: 0, right: 0)
         }
 
-        if canDisplayFee {
-            feeLabel.text = raceViewModel.feeLabel
-        }
-
+        limitLabel.text = raceViewModel.limitLabel
+        feeLabel.text = raceViewModel.feeLabel
+        
         locationButton.isHidden = !canDisplayAddress
+        limitLabel.isHidden = !canDisplayLimit
         feeLabel.isHidden = !canDisplayFee
     }
 
@@ -545,15 +561,15 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         let race = raceViewModel.race
 
         if race.description.stripHTML().count > 0 {
-            let description = race.description.replaceHTMLColorTag(with: Color.gray300).stripHTMLFontTag().stripHTMLEdges()
+            let description = race.description.replaceHTMLColorTag(with: "currentColor").stripHTMLFontTag().stripHTMLEdges()
             html += "<div id=\"description\">\(description)</div>"
         }
         if race.content.stripHTML().count > 0 {
-            let content = race.content.replaceHTMLColorTag(with: Color.black).stripHTMLFontTag().stripHTMLEdges()
-            html += "<div id=\"content\" style=\"color:\(Color.black.toHexString()); padding-top: \(spacing)px; padding-bottom: \(spacing)px;\">\(content)</div>"
+            let content = race.content.replaceHTMLColorTag(with: "currentColor").stripHTMLFontTag().stripHTMLEdges()
+            html += "<div id=\"content\" style=\"padding-top: \(spacing)px; padding-bottom: \(spacing)px;\">\(content)</div>"
         }
         if race.itinerary.stripHTML().count > 0 {
-            let itinerary = race.description.replaceHTMLColorTag(with: Color.gray100).stripHTMLFontTag().stripHTMLEdges()
+            let itinerary = race.itinerary.replaceHTMLColorTag(with: "currentColor").stripHTMLFontTag().stripHTMLEdges()
             html += "<hr style=\"border-top: 0.25px solid;\">"
             html += "<div id=\"itinerary\" style=\"padding-top: \(spacing)px;\">\(itinerary)</div>"
         }
@@ -735,11 +751,6 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         }
     }
 
-    func openZippyQSchedule(_ cell: FormTableViewCell) {
-        let zippyqUrl = MGPWeb.getUrl(for: .zippyqView, value: race.id)
-        WebViewController.open(zippyqUrl)
-    }
-
     func openLiveFPV(_ cell: FormTableViewCell) {
         guard let url = race.liveTimeEventUrl else { return }
         WebViewController.open(url)
@@ -799,8 +810,6 @@ extension RaceDetailViewController: UITableViewDelegate {
             showSeriesDetail(cell)
         } else if row == .season {
             showSeasonRaces(cell)
-        } else if row == .zippyQ {
-            openZippyQSchedule(cell)
         } else if row == .results {
             openLiveFPV(cell)
         }
@@ -831,7 +840,9 @@ extension RaceDetailViewController: UITableViewDataSource {
         cell.textLabel?.text = row.title
         cell.isLoading = false
         cell.detailImage = nil
-
+        cell.backgroundColor = Color.cellColor
+        cell.backgroundView?.backgroundColor = Color.cellColor
+        
         if row == .chapter {
             cell.detailTextLabel?.text = raceViewModel.chapterLabel
         } else if row == .owner {
@@ -840,8 +851,6 @@ extension RaceDetailViewController: UITableViewDataSource {
             cell.detailTextLabel?.text = raceViewModel.seriesLabel
         } else if row == .season {
             cell.detailTextLabel?.text = raceViewModel.seasonLabel
-        } else if row == .zippyQ {
-            cell.detailTextLabel?.text = "multigp.com"
         } else if row == .class {
             cell.detailImage = raceViewModel.raceClassImage()
         } else if row == .results, let url = race.liveTimeEventUrl {
@@ -881,6 +890,20 @@ extension RaceDetailViewController: RichEditorDelegate {
     }
 }
 
+// MARK: - UIScrollView Delegate
+
+extension RaceDetailViewController: UIScrollViewDelegate {
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard canDisplayMap, mapView.bounds.height > 0 else { return }
+
+        let overscroll = max(0, -scrollView.contentOffset.y - scrollView.adjustedContentInset.top)
+        let scale = 1 + overscroll / mapView.bounds.height
+
+        mapView.transform = CGAffineTransform(a: scale, b: 0, c: 0, d: scale, tx: 0, ty: -overscroll / 2)
+    }
+}
+
 // MARK: - MKMapView Delegate
 
 extension RaceDetailViewController: MKMapViewDelegate {
@@ -908,7 +931,7 @@ extension RaceDetailViewController: MKMapViewDelegate {
 }
 
 fileprivate enum Row: Int, EnumTitle, CaseIterable {
-    case chapter, owner, series, season, zippyQ, `class`, results
+    case chapter, owner, series, season, `class`, results
 
     var title: String {
         switch self {
@@ -916,7 +939,6 @@ fileprivate enum Row: Int, EnumTitle, CaseIterable {
         case .owner:            return "Coordinator"
         case .series:           return "Series"
         case .season:           return "Season"
-        case .zippyQ:           return "ZippyQ"
         case .class:            return "Class"
         case .results:          return "Results on"
         }

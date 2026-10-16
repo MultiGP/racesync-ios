@@ -24,6 +24,7 @@ class RaceFeedController {
 
     fileprivate let api = RaceApi()
     fileprivate var collection = [RaceFilter: [RaceViewModel]]()
+    fileprivate static let processingQueue = DispatchQueue(label: "com.multigp.racesync.race-feed.processing", qos: .userInitiated)
 
     fileprivate var settings: APISettings {
         get { return APIServices.shared.settings }
@@ -71,6 +72,15 @@ class RaceFeedController {
 
 fileprivate extension RaceFeedController {
 
+    static func makeViewModels(from races: [Race], sorting: RaceViewSorting, completion: @escaping ([RaceViewModel]) -> Void) {
+        processingQueue.async {
+            let viewModels = RaceViewModel.sortedViewModels(with: races, sorting: sorting)
+            DispatchQueue.main.async {
+                completion(viewModels)
+            }
+        }
+    }
+
     func getJoinedRaces(_ forceFetch: Bool = false, _ completion: RaceFeedControllerCompletionBlock<[RaceViewModel]>?) {
 
         if let viewModels = collection[.joined] {
@@ -84,9 +94,10 @@ fileprivate extension RaceFeedController {
         api.getMyRaces(filters: filters) { [weak self] (races, error) in
             if let races = races {
                 let filtered = races.filter { !$0.hasEnded(extendedByDays: 1) }
-                let sortedViewModels = RaceViewModel.sortedViewModels(with: filtered, sorting: sorting)
-                self?.collection[.joined] = sortedViewModels
-                completion?(sortedViewModels, false, nil)
+                Self.makeViewModels(from: filtered, sorting: sorting) { viewModels in
+                    self?.collection[.joined] = viewModels
+                    completion?(viewModels, false, nil)
+                }
             } else {
                 completion?(nil, false, error)
             }
@@ -109,9 +120,10 @@ fileprivate extension RaceFeedController {
 
         api.getMyRaces(filters: filters, latitude: lat, longitude: long) { [weak self] (races, error) in
             if let races = races {
-                let sortedViewModels = RaceViewModel.sortedViewModels(with: races, sorting: sorting)
-                self?.collection[.nearby] = sortedViewModels
-                completion?(sortedViewModels, false, nil)
+                Self.makeViewModels(from: races, sorting: sorting) { viewModels in
+                    self?.collection[.nearby] = viewModels
+                    completion?(viewModels, false, nil)
+                }
             } else {
                 completion?(nil, false, error)
             }
@@ -131,9 +143,10 @@ fileprivate extension RaceFeedController {
 
         api.getRaces(with: filters, chapterIds: user.chapterIds) { [weak self] races, error in
             if let races = races {
-                let sortedViewModels = RaceViewModel.sortedViewModels(with: races, sorting: sorting)
-                self?.collection[.chapters] = sortedViewModels
-                completion?(sortedViewModels, false, nil)
+                Self.makeViewModels(from: races, sorting: sorting) { viewModels in
+                    self?.collection[.chapters] = viewModels
+                    completion?(viewModels, false, nil)
+                }
             } else {
                 completion?(nil, false, error)
             }
@@ -152,9 +165,10 @@ fileprivate extension RaceFeedController {
 
         api.getRaces(with: filters, raceClass: `class`) { [weak self] (races, error) in
             if let races = races {
-                let sortedViewModels = RaceViewModel.sortedViewModels(with: races, sorting: sorting)
-                self?.collection[.classes(`class`)] = sortedViewModels
-                completion?(sortedViewModels, false, nil)
+                Self.makeViewModels(from: races, sorting: sorting) { viewModels in
+                    self?.collection[.classes(`class`)] = viewModels
+                    completion?(viewModels, false, nil)
+                }
             } else {
                 completion?(nil, false, error)
             }
@@ -176,9 +190,10 @@ fileprivate extension RaceFeedController {
         api.getRaces(with: filters, startDate: "\(series.year)", pageSize: 300) { [weak self]  (races, error) in
 
             if let races = races {
-                let sortedViewModels = RaceViewModel.sortedViewModels(with: races, sorting: sorting)
-                self?.collection[.series(series)] = sortedViewModels
-                completion?(sortedViewModels, false, nil)
+                Self.makeViewModels(from: races, sorting: sorting) { viewModels in
+                    self?.collection[.series(series)] = viewModels
+                    completion?(viewModels, false, nil)
+                }
             } else {
                 completion?(nil, false, error)
             }

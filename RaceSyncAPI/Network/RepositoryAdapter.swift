@@ -14,12 +14,13 @@ import SwiftyJSON
 class RepositoryAdapter {
 
     let networkAdapter = NetworkAdapter(serverUri: MGPWeb.getUrl(for: .apiBase))
+    private static let responseQueue = DispatchQueue(label: "com.multigp.racesync.repository.response", qos: .userInitiated, attributes: .concurrent)
 
-    func getObject<Element: Mappable>(_ endPoint: String, parameters: Params? = nil, type: Element.Type, keyPath: String = ParamKey.data, _ completion: @escaping ObjectCompletionBlock<Element>) {
+    func getObject<Element: Mappable>(_ endPoint: String, parameters: Params? = nil, type: Element.Type, keyPath: String? = ParamKey.data, _ completion: @escaping ObjectCompletionBlock<Element>) {
         
         networkAdapter.httpRequest(endPoint, method: .post, parameters: parameters) { (request) in
             Clog.log("Starting request \(String(describing: request.request?.url)) with parameters \(String(describing: parameters))")
-            request.responseObject(keyPath: keyPath, completionHandler: { (response: DataResponse<Element>) in
+            request.responseObject(queue: Self.responseQueue, keyPath: keyPath, completionHandler: { (response: DataResponse<Element>) in
                 Clog.log("Ended request with code \(String(describing: response.response?.statusCode))")
 
                 if let response = response.response {
@@ -30,16 +31,16 @@ class RepositoryAdapter {
 
                 switch response.result {
                 case .success(let value):
-                    let json = JSON(value)
-                    if let errors = ErrorUtil.errors(fromJSON: json) {
-                        completion(nil, errors.first)
+                    if let data = response.data,
+                       let errors = ErrorUtil.errors(fromJSON: JSON(data)) {
+                        Self.completeOnMain(completion, object: nil, error: errors.first)
                     } else {
-                        completion(value, nil)
+                        Self.completeOnMain(completion, object: value, error: nil)
                     }
                 case .failure:
                     let error = ErrorUtil.parseError(response)
                     Clog.log("Network error \(error.debugDescription)")
-                    completion(nil, error)
+                    Self.completeOnMain(completion, object: nil, error: error)
                 }
             })
         }
@@ -56,7 +57,7 @@ class RepositoryAdapter {
 
         networkAdapter.httpRequest(finalEndpoint, method: .post, parameters: parameters) { (request) in
             Clog.log("Starting request \(String(describing: request.request?.url)) with parameters \(String(describing: parameters))")
-            request.responseArray(keyPath: keyPath, completionHandler: { (response: DataResponse<[Element]>) in
+            request.responseArray(queue: Self.responseQueue, keyPath: keyPath, completionHandler: { (response: DataResponse<[Element]>) in
                 var log: String = "+ Ended request with code \(String(describing: response.response?.statusCode)) "
 
                 if let code = response.response?.statusCode, code == 401 {
@@ -67,7 +68,7 @@ class RepositoryAdapter {
                 switch response.value {
                 case .none:
                     log += "(0 objects)"
-                    completion([], nil)
+                    Self.completeOnMain(completion, object: [], error: nil)
                     Clog.log("\(log)")
                     return
                 default:
@@ -78,15 +79,15 @@ class RepositoryAdapter {
                 case .success(let value):
                     let json = JSON(value)
                     if let errors = ErrorUtil.errors(fromJSON: json) {
-                        completion(nil, errors.first)
+                        Self.completeOnMain(completion, object: nil, error: errors.first)
                         log += " Network Error: \(errors.first.debugDescription)"
                     } else {
-                        completion(value, nil)
+                        Self.completeOnMain(completion, object: value, error: nil)
                         log += "(\(value.count) objects)"
                     }
                 case .failure:
                     let error = ErrorUtil.parseError(response)
-                    completion(nil, error)
+                    Self.completeOnMain(completion, object: nil, error: error)
                     log += " Network Error: \(error.debugDescription)"
                 }
 
@@ -98,7 +99,7 @@ class RepositoryAdapter {
     func performAction(_ endPoint: String, parameters: Params? = nil, completion: @escaping StatusCompletionBlock) {
         networkAdapter.httpRequest(endPoint,  method: .post, parameters: parameters) { (request) in
             Clog.log("Starting request \(String(describing: request.request?.url)) with parameters \(String(describing: parameters))")
-            request.responseJSON { (response) in
+            request.responseJSON(queue: Self.responseQueue) { (response) in
                 Clog.log("Ended request with code \(String(describing: response.response?.statusCode))")
 
                 if let code = response.response?.statusCode, code == 401 {
@@ -109,12 +110,12 @@ class RepositoryAdapter {
                 case .success(let value):
                     let json = JSON(value)
                     if let errors = ErrorUtil.errors(fromJSON: json) {
-                        completion(false, errors.first)
+                        Self.completeOnMain(completion, status: false, error: errors.first)
                     } else {
-                        completion(json[ParamKey.status].bool ?? false, nil)
+                        Self.completeOnMain(completion, status: json[ParamKey.status].bool ?? false, error: nil)
                     }
                 case .failure:
-                    completion(false, response.error as NSError?)
+                    Self.completeOnMain(completion, status: false, error: response.error as NSError?)
                 }
             }
         }
@@ -156,6 +157,21 @@ class RepositoryAdapter {
                 Clog.log("encodingError \(encodingError)")
                 print(encodingError)
             }
+        }
+    }
+}
+
+private extension RepositoryAdapter {
+
+    static func completeOnMain<Element>(_ completion: @escaping ObjectCompletionBlock<Element>, object: Element?, error: NSError?) {
+        DispatchQueue.main.async {
+            completion(object, error)
+        }
+    }
+
+    static func completeOnMain(_ completion: @escaping StatusCompletionBlock, status: Bool, error: NSError?) {
+        DispatchQueue.main.async {
+            completion(status, error)
         }
     }
 }

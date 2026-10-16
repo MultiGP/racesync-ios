@@ -298,7 +298,7 @@ extension RacePilotsPickerController: UITableViewDataSource {
 
     fileprivate func chapterUserViewCell(for indexPath: IndexPath) -> ChapterUserTableViewCell {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as ChapterUserTableViewCell
-        guard let viewModel = userViewModel(for: indexPath) else { return cell }
+        guard let viewModel = userViewModel(at: indexPath) else { return cell }
 
         // Find external match, for checking if joined or not.
         let otherViewModel = externalUserViewModels?.first { $0.userId == viewModel.userId }
@@ -325,7 +325,7 @@ extension RacePilotsPickerController: UITableViewDataSource {
         return cell
     }
 
-    fileprivate func userViewModel(for indexPath: IndexPath) -> UserViewModel? {
+    fileprivate func userViewModel(at indexPath: IndexPath) -> UserViewModel? {
         if isSearching {
             return searchResult[indexPath.row]
         } else {

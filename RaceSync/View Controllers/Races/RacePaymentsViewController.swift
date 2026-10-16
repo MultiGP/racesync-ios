@@ -90,6 +90,7 @@ class RacePaymentsViewController: UIViewController, RaceTabbable {
 
     fileprivate var userApi = UserApi()
     fileprivate var userPaymentPairs: [(user: UserViewModel, payment: RacePayment?)] = []
+    fileprivate var userViewModelCache = [ObjectId: UserViewModel]()
 
     fileprivate var sortingColumn: Column = .pilot
     fileprivate var sortingAscending = true
@@ -103,6 +104,7 @@ class RacePaymentsViewController: UIViewController, RaceTabbable {
         static let padding: CGFloat = UniversalConstants.padding
         static let cellHeight: CGFloat = 80
         static let buttonSpacing: CGFloat = 12
+        static let maximumConcurrentUserRequests = 4
     }
 
     // MARK: - Initialization
@@ -189,30 +191,66 @@ class RacePaymentsViewController: UIViewController, RaceTabbable {
             }
 
             let userPilotIds = Set(userViewModels.map { $0.userId })
-            let extraPayments = payments.filter { !userPilotIds.contains($0.pilotId) }
+            let missingPilotIds = Set(payments.map { $0.pilotId })
+                .subtracting(userPilotIds)
+                .filter { !$0.isEmpty }
 
             self.calculateTotals(from: payments)
 
-            guard !extraPayments.isEmpty else {
+            guard !missingPilotIds.isEmpty else {
                 self.pair(payments: payments, with: userViewModels)
                 return self.finishLoading()
             }
 
-            var counter = extraPayments.count
+            self.loadUserViewModels(for: missingPilotIds) { [weak self] additionalUsers in
+                guard let self else { return }
 
-            for payment in extraPayments {
-                self.userApi.getUser(with: payment.pilotId) { user, _ in
-                    if let user = user {
-                        userViewModels.append(UserViewModel(with: user))
-                    }
-                    counter -= 1
-                    if counter == 0 {
-                        self.pair(payments: payments, with: userViewModels)
-                        self.finishLoading()
+                userViewModels.append(contentsOf: additionalUsers)
+                self.pair(payments: payments, with: userViewModels)
+                self.finishLoading()
+            }
+        }
+    }
+
+    fileprivate func loadUserViewModels(for userIds: Set<ObjectId>, completion: @escaping ([UserViewModel]) -> Void) {
+        var users = userIds.compactMap { userViewModelCache[$0] }
+        var unresolvedIds = Array(userIds.filter { userViewModelCache[$0] == nil })
+
+        guard !unresolvedIds.isEmpty else {
+            return completion(users)
+        }
+
+        func loadNextBatch() {
+            let batchSize = min(Constants.maximumConcurrentUserRequests, unresolvedIds.count)
+            let ids = Array(unresolvedIds.prefix(batchSize))
+            unresolvedIds.removeFirst(batchSize)
+
+            let group = DispatchGroup()
+
+            for id in ids {
+                group.enter()
+                userApi.getUser(with: id) { [weak self] user, _ in
+                    DispatchQueue.main.async {
+                        defer { group.leave() }
+                        guard let self, let user else { return }
+
+                        let viewModel = UserViewModel(with: user)
+                        self.userViewModelCache[id] = viewModel
+                        users.append(viewModel)
                     }
                 }
             }
+
+            group.notify(queue: .main) {
+                if unresolvedIds.isEmpty {
+                    completion(users)
+                } else {
+                    loadNextBatch()
+                }
+            }
         }
+
+        loadNextBatch()
     }
 
     fileprivate func calculateTotals(from payments: [RacePayment]) {

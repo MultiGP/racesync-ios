@@ -11,9 +11,12 @@ import UIKit
 extension String {
 
     func replaceHTMLColorTag(with color: UIColor) -> String {
-        let colorHex = color.toHexString()
+        replaceHTMLColorTag(with: color.toHexString())
+    }
+
+    func replaceHTMLColorTag(with cssColor: String) -> String {
         let pattern = #"color:\s*#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})"#
-        return self.replacingOccurrences(of: pattern, with: colorHex, options: .regularExpression, range: nil)
+        return self.replacingOccurrences(of: pattern, with: "color: \(cssColor)", options: .regularExpression, range: nil)
     }
 
     func stripHTMLFontTag() -> String {

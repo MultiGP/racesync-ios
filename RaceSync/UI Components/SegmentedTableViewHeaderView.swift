@@ -19,9 +19,10 @@ class SegmentedTableViewHeaderView: UITableViewHeaderFooterView {
 
     lazy var segmentedControl: UISegmentedControl = {
         let items = ["Item 1", "Item 2"] // pre-loading elements
-        let segmentedControl = UISegmentedControl(items: items)
-        segmentedControl.selectedSegmentIndex = 0
-        return segmentedControl
+        let control = UISegmentedControl(items: items)
+        control.selectedSegmentIndex = 0
+        control.selectedSegmentTintColor = Color.barBackground
+        return control
     }()
 
     // MARK: - Private Variables
@@ -42,11 +43,20 @@ class SegmentedTableViewHeaderView: UITableViewHeaderFooterView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Super Overrides
+
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+        
+        // Locks the view from changing modes automatically
+        Appearance.applyUserInterfaceStyle(to: self)
+    }
+
     // MARK: - Layout
 
     fileprivate func setupLayout() {
         backgroundView = UIView()
-        backgroundView?.backgroundColor = Color.navigationBarColor
+        backgroundView?.backgroundColor = Color.barBackground
 
         addSubview(segmentedControl)
         segmentedControl.snp.makeConstraints {

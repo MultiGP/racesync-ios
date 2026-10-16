@@ -110,7 +110,7 @@ extension StandingsListViewController: UITableViewDataSource {
         let section = sections[indexPath.row]
         cell.titleLabel.text = section.shortTitle
         cell.subtitleLabel.text = "\(section.pilotCount) Pilots"
-        cell.iconImageView.image = UIImage(named: "logo_gq\(section.year)")
+        cell.iconImageView.image = section.image
         cell.accessoryType = .disclosureIndicator
 
         return cell
@@ -122,3 +122,15 @@ extension StandingsListViewController: UITableViewDataSource {
 }
 
 fileprivate typealias Section = StandingSeason
+
+extension Section {
+    
+    var image: UIImage? {
+        switch self {
+        case .y2023, .y2024, .y2025:
+            return UIImage(named: "logo_gq")
+        default:
+            return UIImage(named: "logo_gq\(rawValue)")
+        }
+    }
+}

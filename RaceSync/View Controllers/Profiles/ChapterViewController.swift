@@ -159,10 +159,10 @@ class ChapterViewController: ProfileViewController, ViewJoinable, RaceEditable {
     }
 
     override func didSelectRow(at indexPath: IndexPath) {
-        if selectedSegment == .left, let viewModel = raceViewModel(for: indexPath.row) {
+        if selectedSegment == .left, let viewModel = raceViewModel(at: indexPath.row) {
             let vc = RaceTabBarController(with: viewModel.race)
             navigationController?.pushViewController(vc, animated: true)
-        } else if selectedSegment == .right, let viewModel = userViewModel(for: indexPath.row), let user = viewModel.user {
+        } else if selectedSegment == .right, let viewModel = userViewModel(at: indexPath.row), let user = viewModel.user {
             let vc = UserViewController(with: user)
             navigationController?.pushViewController(vc, animated: true)
         }
@@ -312,14 +312,14 @@ class ChapterViewController: ProfileViewController, ViewJoinable, RaceEditable {
         }
     }
 
-    func raceViewModel(for index: Int) -> RaceViewModel? {
+    func raceViewModel(at index: Int) -> RaceViewModel? {
         if index >= 0, index < raceViewModels.count {
             return raceViewModels[index]
         }
         return nil
     }
 
-    func userViewModel(for index: Int) -> UserViewModel? {
+    func userViewModel(at index: Int) -> UserViewModel? {
         if index >= 0, index < userViewModels.count {
             return userViewModels[index]
         }
@@ -353,7 +353,7 @@ extension ChapterViewController: UITableViewDataSource {
 
     func raceTableViewCell(for indexPath: IndexPath) -> RaceTableViewCell {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as RaceTableViewCell
-        guard let viewModel = raceViewModel(for: indexPath.row) else { return cell }
+        guard let viewModel = raceViewModel(at: indexPath.row) else { return cell }
 
         cell.dateLabel.text = viewModel.startDateLabel //"Saturday Sept 14 @ 9:00 AM"
         cell.titleLabel.text = viewModel.titleLabel
@@ -378,7 +378,7 @@ extension ChapterViewController: UITableViewDataSource {
 
     func avatarTableViewCell(for indexPath: IndexPath) -> AvatarTableViewCell {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as AvatarTableViewCell
-        guard let viewModel = userViewModel(for: indexPath.row) else { return cell }
+        guard let viewModel = userViewModel(at: indexPath.row) else { return cell }
 
         cell.titleLabel.text = viewModel.displayName
         cell.avatarImageView.imageView.setImage(with: viewModel.pictureUrl, placeholderImage: PlaceholderImg.medium, size: Constants.avatarImageSize)

@@ -18,7 +18,7 @@ class RaceFeedMenuViewController: UIViewController {
     // MARK: - Private Variables
 
     fileprivate lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: .zero, style: .plain)
+        let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.register(cellType: FormTableViewCell.self)
         tableView.contentInsetAdjustmentBehavior = .always
         tableView.tableHeaderView = headerView
@@ -27,7 +27,7 @@ class RaceFeedMenuViewController: UIViewController {
         tableView.delegate = self
 
         let backgroundView = UIView()
-        backgroundView.backgroundColor = Color.white
+        backgroundView.backgroundColor = Color.tableGroupedBackground
         tableView.backgroundView = backgroundView
 
         return tableView
@@ -105,7 +105,7 @@ class RaceFeedMenuViewController: UIViewController {
     fileprivate func setupLayout() {
 
         title = "Race Feed Options"
-        view.backgroundColor = Color.white
+        view.backgroundColor = Color.tableBackground
 
         // Adds a close button in case of being presented modally
         if navigationController?.viewControllers.count == 1 {
@@ -122,6 +122,40 @@ class RaceFeedMenuViewController: UIViewController {
 
     @objc fileprivate func didPressCloseButton() {
         dismiss(animated: true)
+    }
+}
+
+extension RaceFeedMenuViewController: UITableViewDataSource {
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection sectionIdx: Int) -> Int {
+        return rows.count
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as FormTableViewCell
+        let row = rows[indexPath.row]
+
+        cell.textLabel?.text = row.title
+        cell.detailTextLabel?.text = nil
+        cell.textLabel?.textColor = Color.black
+        cell.imageView?.image = UIImage.init(named: row.imageName)?.withTintColor(Color.black)
+        cell.accessoryType = .disclosureIndicator
+
+        let settings = APIServices.shared.settings
+
+        if row == .raceFeedFilters {
+            let filterTitles = settings.raceFeedFilters.compactMap { $0.title }
+            cell.detailTextLabel?.text = filterTitles.joined(separator: ", ")
+        } else if row == .searchRadius {
+            cell.detailTextLabel?.text = "\(settings.searchRadius) \(settings.lengthUnit.symbol)"
+        } else if row == .measurement {
+            cell.detailTextLabel?.text = settings.measurementSystem.title
+        }
+        return cell
+    }
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return Constants.cellHeight
     }
 }
 
@@ -212,40 +246,6 @@ extension RaceFeedMenuViewController: UITableViewDelegate {
             self.tableView.reloadData()
             self.navigationController?.popViewController(animated: true)
         }
-    }
-}
-
-extension RaceFeedMenuViewController: UITableViewDataSource {
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection sectionIdx: Int) -> Int {
-        return rows.count
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as FormTableViewCell
-        let row = rows[indexPath.row]
-
-        cell.textLabel?.text = row.title
-        cell.detailTextLabel?.text = nil
-        cell.textLabel?.textColor = Color.black
-        cell.imageView?.image = UIImage.init(named: row.imageName)
-        cell.accessoryType = .disclosureIndicator
-
-        let settings = APIServices.shared.settings
-
-        if row == .raceFeedFilters {
-            let filterTitles = settings.raceFeedFilters.compactMap { $0.title }
-            cell.detailTextLabel?.text = filterTitles.joined(separator: ", ")
-        } else if row == .searchRadius {
-            cell.detailTextLabel?.text = "\(settings.searchRadius) \(settings.lengthUnit.symbol)"
-        } else if row == .measurement {
-            cell.detailTextLabel?.text = settings.measurementSystem.title
-        }
-        return cell
-    }
-
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return Constants.cellHeight
     }
 }
 
