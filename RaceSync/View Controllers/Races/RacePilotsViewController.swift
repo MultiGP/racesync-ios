@@ -35,8 +35,9 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
         tableView.register(cellType: FormTableViewCell.self)
         tableView.register(cellType: AvatarTableViewCell.self)
         tableView.refreshControl = self.refreshControl
+        tableView.tableHeaderView = UIView()
         tableView.tableFooterView = UIView()
-        tableView.backgroundColor = Color.gray50
+        tableView.backgroundColor = Color.tableGroupedBackground
         
         let longPress = UILongPressGestureRecognizer(target: self,action: #selector(didLongPress(_:)))
         longPress.minimumPressDuration = 0.3
@@ -47,11 +48,11 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
     }()
 
     fileprivate lazy var refreshControl: UIRefreshControl = {
-        let refreshControl = UIRefreshControl()
-        refreshControl.backgroundColor = Color.gray50
-        refreshControl.tintColor = Color.blue
-        refreshControl.addTarget(self, action: #selector(didPullRefreshControl), for: .valueChanged)
-        return refreshControl
+        let control = UIRefreshControl()
+        control.backgroundColor = Color.clear
+        control.tintColor = Color.refreshControl
+        control.addTarget(self, action: #selector(didPullRefreshControl), for: .valueChanged)
+        return control
     }()
 
     fileprivate var userApi = UserApi()
@@ -123,7 +124,7 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
 
     fileprivate func setupLayout() {
 
-        view.backgroundColor = Color.white
+        view.backgroundColor = tableView.backgroundColor
 
         registerPinnedView(viewType: AvatarTableViewCell.self)
 
@@ -456,7 +457,7 @@ extension RacePilotsViewController: EmptyDataSetSource {
     }
 
     func backgroundColor(forEmptyDataSet scrollView: UIScrollView) -> UIColor? {
-        return Color.white
+        return tableView.backgroundColor
     }
 }
 

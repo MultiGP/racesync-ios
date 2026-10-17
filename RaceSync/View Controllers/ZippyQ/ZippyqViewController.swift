@@ -29,26 +29,30 @@ class ZippyqViewController: UIViewController, RaceTabbable {
 
     lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCollectionViewLayout())
+        collectionView.backgroundColor = Color.tableGroupedBackground
+        collectionView.alwaysBounceVertical = true
+        collectionView.contentInsetAdjustmentBehavior = .automatic
+        collectionView.delegate = self
+        collectionView.emptyDataSetDelegate = self
+        collectionView.emptyDataSetSource = self
+        
         collectionView.register(cellType: ZippyqFrequencyCollectionViewCell.self)
+        
         collectionView.register(
             ZippyqCollapsableHeaderView.self,
             forSupplementaryViewOfKind: ZippyqCollectionViewLayout.roundHeaderElementKind,
             withReuseIdentifier: ZippyqCollapsableHeaderView.identifier
         )
+        
         collectionView.register(
             ZippyqHeaderView.self,
             forSupplementaryViewOfKind: ZippyqCollectionViewLayout.headerElementKind,
             withReuseIdentifier: ZippyqHeaderView.identifier
         )
-        collectionView.backgroundColor = .systemGroupedBackground
-        collectionView.alwaysBounceVertical = true
-        collectionView.contentInsetAdjustmentBehavior = .automatic
+        
         if #available(iOS 26, *) {
             collectionView.topEdgeEffect.isHidden = true
         }
-        collectionView.delegate = self
-        collectionView.emptyDataSetDelegate = self
-        collectionView.emptyDataSetSource = self
         return collectionView
     }()
 
@@ -68,13 +72,15 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     fileprivate var isLoadingPastRounds = false
 
     fileprivate lazy var pastRoundsRefreshControl: UIRefreshControl = {
-        let refreshControl = UIRefreshControl()
-        refreshControl.attributedTitle = NSAttributedString(
+        let control = UIRefreshControl()
+        control.backgroundColor = .clear
+        control.tintColor = Color.refreshControl
+        control.attributedTitle = NSAttributedString(
             string: "Load Past Rounds",
-            attributes: [.foregroundColor: Color.gray200]
+            attributes: [.foregroundColor: Color.refreshControl]
         )
-        refreshControl.addTarget(self, action: #selector(loadMorePastRounds), for: .valueChanged)
-        return refreshControl
+        control.addTarget(self, action: #selector(loadMorePastRounds), for: .valueChanged)
+        return control
     }()
 
     fileprivate lazy var activityIndicatorView: ActivityLoadingView = {
@@ -141,6 +147,8 @@ class ZippyqViewController: UIViewController, RaceTabbable {
 
     fileprivate func setupLayout() {
 
+        view.backgroundColor = collectionView.backgroundColor
+        
         configureNavigationItems()
         _ = dataSource
 
@@ -503,7 +511,7 @@ extension ZippyqViewController: EmptyDataSetSource {
     }
 
     func backgroundColor(forEmptyDataSet scrollView: UIScrollView) -> UIColor? {
-        return Color.white
+        return collectionView.backgroundColor
     }
 }
 

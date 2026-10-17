@@ -380,6 +380,6 @@ extension RaceListViewController: EmptyDataSetSource {
     }
 
     func backgroundColor(forEmptyDataSet scrollView: UIScrollView) -> UIColor? {
-        return Color.tableBackground
+        return tableView.backgroundColor
     }
 }

@@ -45,21 +45,21 @@ class RacePaymentsViewController: UIViewController, RaceTabbable {
         tableView.delegate = self
         tableView.emptyDataSetSource = self
         tableView.emptyDataSetDelegate = self
-        tableView.tableHeaderView = UIView()
-        tableView.tableFooterView = UIView()
-        tableView.backgroundColor = Color.clear
         tableView.register(cellType: ColumnTableViewCell.self)
         tableView.register(ColumnTableViewHeaderView.self, forHeaderFooterViewReuseIdentifier: ColumnTableViewHeaderView.identifier)
         tableView.refreshControl = self.refreshControl
+        tableView.tableHeaderView = UIView()
+        tableView.tableFooterView = UIView()
+        tableView.backgroundColor = Color.tableGroupedBackground
         return tableView
     }()
 
     fileprivate lazy var refreshControl: UIRefreshControl = {
-        let refreshControl = UIRefreshControl()
-        refreshControl.backgroundColor = Color.clear
-        refreshControl.tintColor = Color.blue
-        refreshControl.addTarget(self, action: #selector(didPullRefreshControl), for: .valueChanged)
-        return refreshControl
+        let control = UIRefreshControl()
+        control.backgroundColor = Color.clear
+        control.tintColor = Color.refreshControl
+        control.addTarget(self, action: #selector(didPullRefreshControl), for: .valueChanged)
+        return control
     }()
 
     fileprivate lazy var activityIndicatorView: UIActivityIndicatorView = {
@@ -148,7 +148,7 @@ class RacePaymentsViewController: UIViewController, RaceTabbable {
 
     fileprivate func setupLayout() {
 
-        view.backgroundColor = Color.gray50
+        view.backgroundColor = tableView.backgroundColor
 
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
@@ -464,7 +464,7 @@ extension RacePaymentsViewController: EmptyDataSetSource {
     }
 
     func backgroundColor(forEmptyDataSet scrollView: UIScrollView) -> UIColor? {
-        return Color.white
+        return tableView.backgroundColor
     }
 }
 

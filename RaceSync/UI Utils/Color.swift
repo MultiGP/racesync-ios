@@ -44,9 +44,10 @@ public struct Color {
     public static let viewTint =                dynamic(light: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0.98), dark: #colorLiteral(red: 0.0862745098, green: 0.1019607843, blue: 0.1215686275, alpha: 0.98))
     public static let barBackground =           dynamic(light: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0.98), dark: #colorLiteral(red: 0.09803921569, green: 0.1137254902, blue: 0.1333333333, alpha: 0.98))
     public static let tabBarForeground =        dynamic(light: Color.blue, dark: Self.light)
-    public static let tableBackground =         dynamic(light: UIColor.systemBackground, dark: #colorLiteral(red: 0.09803921569, green: 0.1137254902, blue: 0.1333333333, alpha: 1))
-    public static let tableGroupedBackground =  dynamic(light: UIColor.systemGroupedBackground, dark: #colorLiteral(red: 0.08235294118, green: 0.09803921569, blue: 0.1176470588, alpha: 1))
+    public static let tableBackground =         dynamic(light: UIColor.systemBackground, dark: #colorLiteral(red: 0.09803921569, green: 0.1137254902, blue: 0.1333333333, alpha: 0.98))
+    public static let tableGroupedBackground =  dynamic(light: UIColor.systemGroupedBackground, dark: #colorLiteral(red: 0.1258, green: 0.1454444445, blue: 0.17, alpha: 0.98))
     public static let highlightedBackground =   dynamic(light: #colorLiteral(red: 0.9294117647, green: 0.9607843137, blue: 1, alpha: 1), dark: #colorLiteral(red: 0.1411764706, green: 0.2, blue: 0.2588235294, alpha: 1))
+    public static let refreshControl =          Self.gray400
     public static let link =                    dynamic(light: Self.red, dark: Self.blue)
 
     public static let pinned =                  #colorLiteral(red: 0.3921568627, green: 0.4196078431, blue: 0.5490196078, alpha: 1)                   // standings pinned cell background
