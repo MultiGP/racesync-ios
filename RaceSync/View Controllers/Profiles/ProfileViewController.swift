@@ -242,7 +242,7 @@ extension ProfileViewController: UIScrollViewDelegate {
         }
 
         if shouldUseOpaqueNavigationBar {
-            Appearance.applyOpaqueStyle(to: navigationItem)
+            Appearance.applyOpaqueStyle(to: navigationItem, shadow: false)
         } else {
             Appearance.applyTransparentStyle(to: navigationItem)
         }
