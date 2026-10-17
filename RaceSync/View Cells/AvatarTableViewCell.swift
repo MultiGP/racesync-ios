@@ -15,12 +15,19 @@ class AvatarTableViewCell: UITableViewCell {
 
     var isLoading: Bool = false {
         didSet {
+            guard isLoading != oldValue else { return }
+
             if isLoading {
+                accessoryTypeBeforeLoading = accessoryType
+                accessoryViewBeforeLoading = accessoryView
+                accessoryType = .none
                 accessoryView = spinnerView
                 spinnerView.startAnimating()
             } else {
-                accessoryView = nil
-                accessoryType = .disclosureIndicator
+                spinnerView.stopAnimating()
+                accessoryType = accessoryTypeBeforeLoading
+                accessoryView = accessoryViewBeforeLoading
+                accessoryViewBeforeLoading = nil
             }
         }
     }
@@ -75,6 +82,8 @@ class AvatarTableViewCell: UITableViewCell {
     fileprivate var imageViewWidthConstraint: Constraint?
     fileprivate var rankLabelWidthConstraint: Constraint?
     fileprivate var rankLabelLeadingConstraint: Constraint?
+    fileprivate var accessoryTypeBeforeLoading: UITableViewCell.AccessoryType = .none
+    fileprivate var accessoryViewBeforeLoading: UIView?
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -187,6 +196,10 @@ class AvatarTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
 
+        if isLoading {
+            isLoading = false
+        }
+        accessoryViewBeforeLoading = nil
         titleLabel.numberOfLines = 1
         titleLabel.text = nil
         subtitleLabel.text = nil

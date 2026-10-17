@@ -80,6 +80,33 @@ class Appearance {
         navigationItem.compactAppearance = appearance
         navigationItem.compactScrollEdgeAppearance = appearance
     }
+    
+    static func navigationGradientView(_ effect: UIBlurEffect.Style = .systemThinMaterial,
+                                       position: UIBarPosition = .top) -> UIVisualEffectView {
+        
+        let view = UIVisualEffectView(effect: UIBlurEffect(style: effect))
+        view.isUserInteractionEnabled = false
+
+        let mask = CAGradientLayer()
+        switch position {
+        case .bottom:
+            mask.colors = [
+                Color.clear.cgColor,
+                Color.black.withAlphaComponent(0.65).cgColor,
+                Color.black.cgColor
+            ]
+            mask.locations = [0, 0.45, 1]
+        default:
+            mask.colors = [
+                Color.black.cgColor,
+                Color.black.withAlphaComponent(0.65).cgColor,
+                Color.clear.cgColor
+            ]
+            mask.locations = [0, 0.55, 1]
+        }
+        view.layer.mask = mask
+        return view
+    }
 }
 
 fileprivate extension Appearance {

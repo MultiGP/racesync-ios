@@ -90,23 +90,8 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         return view
     }()
 
-    fileprivate lazy var bottomGradientView: UIVisualEffectView = {
-        
-        let style: UIBlurEffect.Style = .systemThinMaterial
-        let view = UIVisualEffectView(effect: UIBlurEffect(style: style))
-        view.isUserInteractionEnabled = false
-
-        let mask = CAGradientLayer()
-        mask.colors = [
-            Color.clear.cgColor,
-            Color.dark.withAlphaComponent(0.65).cgColor,
-            Color.dark.cgColor
-        ]
-        mask.locations = [0, 0.45, 1]
-        view.layer.mask = mask
-        return view
-    }()
-
+    fileprivate var bottomGradientView: UIVisualEffectView = Appearance.navigationGradientView(position: .bottom)
+    
     fileprivate lazy var headerSectionView: UIView = {
 
         let isEmpty = standingsController.isEmpty(for: season)

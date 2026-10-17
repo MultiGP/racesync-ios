@@ -74,21 +74,7 @@ class ProfileViewController: UIViewController, Shimmable {
         return button
     }()
 
-    fileprivate lazy var navigationGradientView: UIVisualEffectView = {
-        let view = UIVisualEffectView(effect: UIBlurEffect(style: .systemThinMaterial))
-        view.isUserInteractionEnabled = false
-
-        let mask = CAGradientLayer()
-        mask.colors = [
-            UIColor.black.cgColor,
-            UIColor.black.withAlphaComponent(0.65).cgColor,
-            UIColor.clear.cgColor
-        ]
-        mask.locations = [0, 0.55, 1]
-        view.layer.mask = mask
-        return view
-    }()
-
+    fileprivate var navigationGradientView: UIVisualEffectView = Appearance.navigationGradientView()
     fileprivate var isNavigationBarOpaque = false
 
     fileprivate enum Constants {
