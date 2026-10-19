@@ -32,9 +32,7 @@ class ProfileViewController: UIViewController, Shimmable {
         tableView.tableFooterView = UIView()
         tableView.backgroundColor = Color.tableBackground
 
-        if #available(iOS 15.0, *) {
-            tableView.sectionHeaderTopPadding = 0
-        }
+        tableView.sectionHeaderTopPadding = 0
 
         for direction in [UISwipeGestureRecognizer.Direction.left, UISwipeGestureRecognizer.Direction.right] {
             let gesture = UISwipeGestureRecognizer(target: self, action: #selector(didSwipeHorizontally(_:)))

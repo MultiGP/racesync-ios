@@ -98,22 +98,8 @@ enum SystemImg {
     static let star = UIImage(systemName:"star") // iOS 13.0+
     static let starFill = UIImage(systemName:"star.fill") // iOS 13.0+
     static let map = UIImage(systemName:"map") // iOS 13.0+
-
-    static var globe: UIImage? {
-        if #available(iOS 15.0, *) {
-            return UIImage(systemName:"globe.americas") // iOS 15.0+
-        } else {
-            return UIImage(systemName:"globe") // iOS 13.0+
-        }
-    }
-    
-    static var globeFill: UIImage? {
-        if #available(iOS 15.0, *) {
-            return UIImage(systemName:"globe.americas.fill") // iOS 15.0+
-        } else {
-            return UIImage(systemName:"globe.fill") // iOS 13.0+
-        }
-    }
+    static let globe = UIImage(systemName: "globe.americas") // iOS 15.0+
+    static let globeFill = UIImage(systemName: "globe.americas.fill") // iOS 15.0+
 
     static var flagCheckeredCrossed: UIImage? {
         if #available(iOS 18.0, *) {

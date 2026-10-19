@@ -187,10 +187,7 @@ fileprivate extension Appearance {
         }
         
         UITabBar.appearance().standardAppearance = tabBarAppearance
-
-        if #available(iOS 15.0, *) {
-            UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
-        }
+        UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
         
         // set the color and font for the title
         let barAppearance = UITabBar.appearance()

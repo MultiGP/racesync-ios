@@ -64,12 +64,10 @@ class GalleryViewController: UIViewController {
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .plain, target: self, action: #selector(didPressCloseButton))
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: ButtonImg.share, style: .plain, target: self, action: #selector(didPressShareButton))
 
-        if #available(iOS 15.0, *) {
-            let navigationBarAppearance = UINavigationBarAppearance()
-            navigationBarAppearance.configureWithTransparentBackground()
-            navigationBarAppearance.titleTextAttributes = textAttributes
-            navigationItem.standardAppearance = navigationBarAppearance
-        }
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.configureWithTransparentBackground()
+        navigationBarAppearance.titleTextAttributes = textAttributes
+        navigationItem.standardAppearance = navigationBarAppearance
 
         let barAppearance = UINavigationBar.appearance(whenContainedInInstancesOf: [Self.self])
         barAppearance.barTintColor = backgroundColor
