@@ -210,6 +210,10 @@ extension ApplicationControl {
                 return true
             }
         }
+        if (link.domain == .pilot || link.domain == .pilots), link.action == .view,
+           let pilot = link.parameters[ParamKey.pilot], !pilot.isEmpty {
+            return true
+        }
         return false
     }
 
@@ -217,12 +221,7 @@ extension ApplicationControl {
 
         if link.isRace {
             if link.action == .view, let raceId = link.parameters[ParamKey.id]  {
-                if let nc = UIViewController.topMostViewController() as? NavigationController {
-
-                    let vc = RaceTabBarController(with: raceId)
-                    vc.hidesBottomBarWhenPushed = true
-                    nc.pushViewController(vc, animated: true)
-                }
+                showRace(with: raceId)
             }
             else if link.action == .join  {
                 // Makes sure to dismiss the payment webview, if still present
@@ -239,6 +238,9 @@ extension ApplicationControl {
                     }
                 }
             }
+        } else if (link.domain == .pilot || link.domain == .pilots), link.action == .view,
+                  let pilot = link.parameters[ParamKey.pilot], !pilot.isEmpty {
+            showUser(with: pilot)
         }
     }
 }
@@ -286,5 +288,22 @@ extension ApplicationControl {
                 completion(.joined)
             }
         )
+    }
+}
+
+fileprivate extension ApplicationControl {
+    
+    func showRace(with raceId: ObjectId) {
+        guard let nc = UIViewController.topMostViewController() as? NavigationController else { return }
+        let vc = RaceTabBarController(with: raceId)
+        vc.hidesBottomBarWhenPushed = true
+        nc.pushViewController(vc, animated: true)
+    }
+    
+    func showUser(with userId: ObjectId) {
+        guard let nc = UIViewController.topMostViewController() as? NavigationController else { return }
+        let vc = UserViewController(pilot: userId)
+        vc.hidesBottomBarWhenPushed = true
+        nc.pushViewController(vc, animated: true)
     }
 }

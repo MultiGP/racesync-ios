@@ -22,16 +22,29 @@ class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
 
     // MARK: - Private Variables
 
-    fileprivate var user: User
+    fileprivate var user: User?
     fileprivate let raceApi = RaceApi()
     fileprivate let chapterApi = ChapterApi()
     fileprivate let userApi = UserApi()
+    fileprivate var userLookup: UserLookup?
 
     fileprivate var raceViewModels = [RaceViewModel]()
     fileprivate var chapterViewModels = [ChapterViewModel]()
     fileprivate var presenter: Presentr?
     fileprivate var userCoordinate: CLLocationCoordinate2D?
     fileprivate var isPhotoEditale = false
+    fileprivate var emptyStateError: EmptyStateViewModel?
+    
+    fileprivate enum UserLookup {
+        case id(String), username(String)
+    }
+
+    fileprivate lazy var activityIndicatorView: ActivityLoadingView = {
+        let view = ActivityLoadingView(style: .medium)
+        view.title = "Loading User..."
+        view.hidesWhenStopped = true
+        return view
+    }()
 
     fileprivate let emptyStateRaces = EmptyStateViewModel(.noProfileRaces)
     fileprivate let emptyStateChapters = EmptyStateViewModel(.noProfileChapters)
@@ -58,6 +71,24 @@ class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
         }
     }
 
+    init(userId: ObjectId) {
+        self.userLookup = .id(userId)
+        super.init(with: nil)
+    }
+
+    init(username: String) {
+        self.userLookup = .username(username)
+        super.init(with: nil)
+    }
+
+    convenience init(pilot: String) {
+        if pilot.allSatisfy({ $0.isASCII && $0.isNumber }) {
+            self.init(userId: pilot)
+        } else {
+            self.init(username: pilot)
+        }
+    }
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -67,7 +98,11 @@ class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        loadContent()
+        if user == nil {
+            loadUser()
+        } else {
+            loadContent()
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -85,6 +120,12 @@ class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
     // MARK: - Layout
 
     override func setupLayout() {
+        guard let user else {
+            view.backgroundColor = Color.tableBackground
+            view.addSubview(activityIndicatorView)
+            activityIndicatorView.snp.makeConstraints { $0.center.equalToSuperview() }
+            return
+        }
         super.setupLayout()
 
         registerJoinable()
@@ -107,6 +148,7 @@ class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
     }
     
     fileprivate func configureBarButtonItems() {
+        guard let user else { return }
         // Build the action list
         var actions: [BarButtonAction] = [
             (ButtonImg.share, #selector(didPressShareButton), 0)
@@ -164,7 +206,7 @@ class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
     }
 
     @objc func didPressQRButton() {
-        guard let qrImage = getQRImage(with: user.id) else { return }
+        guard let user, let qrImage = getQRImage(with: user.id) else { return }
         let vc = ImageExportViewController(with: qrImage, caption: user.id)
 
         let presenter = Presentr(presentationType: .fullScreen)
@@ -198,7 +240,7 @@ class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
     }
 
     @objc func didPressShareButton() {
-        guard let userURL = URL(string: user.url) else { return }
+        guard let user, let userURL = URL(string: user.url) else { return }
 
         let activities: [UIActivity] = [MGPActivity(), CopyLinkActivity()]
 
@@ -209,8 +251,46 @@ class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
 
     // MARK: - Data Update
 
+    fileprivate func loadUser() {
+        guard let userLookup else { return }
+        activityIndicatorView.isLoading = true
+
+        let completion: ObjectCompletionBlock<User> = { [weak self] user, error in
+            guard let self else { return }
+            self.activityIndicatorView.isLoading = false
+
+            guard let user else {
+                let error = error ?? NSError(domain: "UserProfile", code: 0, userInfo: [NSLocalizedDescriptionKey: "Couldn't find this pilot."])
+                self.emptyStateError = EmptyStateViewModel(.error(error))
+                let scrollView = UIScrollView()
+                scrollView.contentInsetAdjustmentBehavior = .never
+                scrollView.emptyDataSetSource = self
+                scrollView.emptyDataSetDelegate = self
+                self.view.addSubview(scrollView)
+                scrollView.snp.makeConstraints { $0.edges.equalToSuperview() }
+                scrollView.reloadEmptyDataSet()
+                return
+            }
+
+            self.user = user
+            self.profileViewModel = ProfileViewModel(with: user)
+            if let latitude = CLLocationDegrees(user.latitude), let longitude = CLLocationDegrees(user.longitude) {
+                self.userCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+            }
+            self.activityIndicatorView.removeFromSuperview()
+            self.setupLayout()
+            self.loadContent()
+        }
+
+        switch userLookup {
+        case .id(let id): userApi.getUser(with: id, completion)
+        case .username(let username): userApi.searchUser(with: username, completion)
+        }
+    }
+
     // ViewJoinable
     func loadContent(forced: Bool = false) {
+        guard user != nil else { return }
         if selectedSegment == .left {
             loadRaces(forced)
         } else {
@@ -229,6 +309,7 @@ class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
     }
 
     fileprivate func fetchRaces(_ completion: VoidCompletionBlock? = nil) {
+        guard let user else { completion?(); return }
         raceApi.getRaces(with: [.joined], userId: user.id) { (races, error) in
             if let races = races {
                 let sortedRaces = races.sorted(by: { $0.startDate?.compare($1.startDate ?? Date()) == .orderedDescending })
@@ -242,6 +323,7 @@ class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
     }
 
     fileprivate func fetchChapters(_ completion: VoidCompletionBlock? = nil) {
+        guard let user else { completion?(); return }
         chapterApi.getChapters(forUser: user.id) { [weak self] (chapters, error) in
             guard let strongSelf = self else { return }
 
@@ -253,7 +335,7 @@ class UserViewController: ProfileViewController, ViewJoinable, RaceEditable {
                 })
 
                 // first display my managed chapters, then alphabetically
-                if strongSelf.user.isMe, let myManagedChapterIds = APIServices.shared.myManagedChapters?.compactMap({ $0.id }) {
+                if user.isMe, let myManagedChapterIds = APIServices.shared.myManagedChapters?.compactMap({ $0.id }) {
                     strongSelf.chapterViewModels = strongSelf.chapterViewModels.sorted(by: { (c1, c2) -> Bool in
                         return myManagedChapterIds.contains(c1.chapter.id)
                     })
@@ -381,6 +463,7 @@ extension UserViewController: ProfileHeaderViewDelegate {
     }
 
     func updateUserProfileUrl(_ url: String, for imageType: ImageType) {
+        guard let user else { return }
 
         if imageType == .main {
             user.profilePictureUrl = url
@@ -396,6 +479,8 @@ extension UserViewController: ProfileHeaderViewDelegate {
 extension UserViewController: EmptyDataSetSource {
 
     func getEmptyStateViewModel() -> EmptyStateViewModel {
+        if let emptyStateError { return emptyStateError }
+        guard let user else { return emptyStateRaces }
         if user.isMe {
             if selectedSegment == .left {
                 return emptyStateMyRaces
@@ -420,6 +505,7 @@ extension UserViewController: EmptyDataSetSource {
     }
 
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
+        guard user != nil else { return 0 }
 
         let headerViewHeight = headerView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
         let segmentedControlHeight = SegmentedTableViewHeaderView.headerHeight

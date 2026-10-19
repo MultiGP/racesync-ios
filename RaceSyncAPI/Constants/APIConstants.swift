@@ -86,6 +86,7 @@ public enum ParamKey {
     static public let id = "id"
     static public let sessionId = "sessionId"
     static public let raceId = "raceId"
+    static public let pilot = "pilot"
     static public let pilotId = "pilotId"
     static public let chapterId = "chapterId"
     static public let seasonId = "seasonId"

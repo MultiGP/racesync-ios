@@ -18,7 +18,7 @@ class ProfileViewController: UIViewController, Shimmable {
 
     // MARK: - Public Variables
 
-    let profileViewModel: ProfileViewModel
+    var profileViewModel: ProfileViewModel?
 
     let headerView = ProfileHeaderView()
     let shimmeringView: ShimmeringView = defaultShimmeringView()
@@ -45,6 +45,7 @@ class ProfileViewController: UIViewController, Shimmable {
 
     var segmentedControl: UISegmentedControl? {
         didSet {
+            guard let profileViewModel else { return }
             segmentedControl?.setTitle(profileViewModel.leftSegmentLabel, forSegmentAt: ProfileSegment.left.rawValue)
             segmentedControl?.setTitle(profileViewModel.rightSegmentLabel, forSegmentAt: ProfileSegment.right.rawValue)
             segmentedControl?.addTarget(self, action: #selector(didChangeSegment), for: .valueChanged)
@@ -82,7 +83,7 @@ class ProfileViewController: UIViewController, Shimmable {
 
     // MARK: - Initialization
 
-    init(with profileViewModel: ProfileViewModel) {
+    init(with profileViewModel: ProfileViewModel?) {
         self.profileViewModel = profileViewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -118,6 +119,7 @@ class ProfileViewController: UIViewController, Shimmable {
     // MARK: - Layout
 
     open func setupLayout() {
+        guard let profileViewModel else { return }
         title = profileViewModel.title
         view.backgroundColor = Color.white
 
@@ -184,7 +186,7 @@ class ProfileViewController: UIViewController, Shimmable {
     }
 
     @objc fileprivate func didPressTitleButton() {
-
+        guard let profileViewModel else { return }
         let btnTitle = titleButton.title(for: .normal)
         let id = profileViewModel.id
 
