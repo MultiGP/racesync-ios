@@ -23,11 +23,7 @@ class ZippyqFrequencyContentView: UIView {
 
     lazy var channelLabel: UILabel = {
         let label = UILabel()
-        if #available(iOS 16.0, *) {
-            label.font = UIFont.systemFont(ofSize: 22, weight: .medium, width: .condensed)
-        } else {
-            label.font = UIFont.systemFont(ofSize: 20, weight: .medium)
-        }
+        label.font = UIFont.systemFont(ofSize: 22, weight: .medium, width: .condensed)
         label.textColor = Color.dynamic(light: Color.blue, dark: Color.light)
         label.textAlignment = .center
         return label

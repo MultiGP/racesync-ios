@@ -138,7 +138,7 @@ extension RaceFeedMenuViewController: UITableViewDataSource {
         cell.textLabel?.text = row.title
         cell.detailTextLabel?.text = nil
         cell.textLabel?.textColor = Color.black
-        cell.imageView?.image = UIImage.init(named: row.imageName)?.withTintColor(Color.black)
+        cell.imageView?.image = row.image?.withTintColor(Color.black)
         cell.accessoryType = .disclosureIndicator
 
         let settings = APIServices.shared.settings
@@ -263,13 +263,12 @@ private typealias Row = APISettingsType
 
 private extension APISettingsType {
 
-    // For including icons to each row. Look for icons at https://thenounproject.com/
-    var imageName: String {
+    var image: UIImage? {
         switch self {
-        case .raceFeedFilters:  return "icn_settings_search"
-        case .searchRadius:     return "icn_settings_radius"
-        case .measurement:      return "icn_settings_ruler"
-        default:                return ""
+        case .raceFeedFilters:  return ButtonImg.search
+        case .searchRadius:     return ButtonImg.radius
+        case .measurement:      return ButtonImg.ruler
+        default:                return nil
         }
     }
 }

@@ -25,11 +25,7 @@ class ZippyqCollapsableHeaderView: UICollectionReusableView {
 
     lazy var textPill: TextPill = {
         let pill = TextPill(style: .badge)
-        if #available(iOS 16.0, *) {
-            pill.titleLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold, width: .condensed)
-        } else {
-            pill.titleLabel.font = UIFont.systemFont(ofSize: 11, weight: .semibold)
-        }
+        pill.titleLabel.font = UIFont.systemFont(ofSize: 13, weight: .semibold, width: .condensed)
         pill.setContentCompressionResistancePriority(.required, for: .horizontal)
         pill.titleLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
         pill.isHidden = true
@@ -40,11 +36,7 @@ class ZippyqCollapsableHeaderView: UICollectionReusableView {
 
     fileprivate lazy var titleLabel: UILabel = {
         let label = UILabel()
-        if #available(iOS 16.0, *) {
-            label.font = UIFont.systemFont(ofSize: 25, weight: .medium, width: .condensed)
-        } else {
-            label.font = UIFont.systemFont(ofSize: 22, weight: .medium)
-        }
+        label.font = UIFont.systemFont(ofSize: 25, weight: .medium, width: .condensed)
         label.textColor = Color.dynamic(light: Color.blue, dark: Color.light)
         label.setContentCompressionResistancePriority(.required, for: .horizontal)
         return label
@@ -52,11 +44,7 @@ class ZippyqCollapsableHeaderView: UICollectionReusableView {
 
     fileprivate lazy var contextualLabel: UILabel = {
         let label = UILabel()
-        if #available(iOS 16.0, *) {
-            label.font = UIFont.systemFont(ofSize: 17, weight: .medium, width: .condensed)
-        } else {
-            label.font = UIFont.systemFont(ofSize: 15, weight: .medium)
-        }
+        label.font = UIFont.systemFont(ofSize: 17, weight: .medium, width: .condensed)
         label.textColor = Color.gray300
         label.textAlignment = .right
         return label
@@ -64,11 +52,7 @@ class ZippyqCollapsableHeaderView: UICollectionReusableView {
 
     fileprivate lazy var subtitleLabel: UILabel = {
         let label = UILabel()
-        if #available(iOS 16.0, *) {
-            label.font = UIFont.systemFont(ofSize: 15, weight: .medium, width: .condensed)
-        } else {
-            label.font = UIFont.systemFont(ofSize: 13, weight: .medium)
-        }
+        label.font = UIFont.systemFont(ofSize: 15, weight: .medium, width: .condensed)
         label.textColor = Color.gray200
         label.isHidden = true
         return label

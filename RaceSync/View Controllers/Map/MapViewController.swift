@@ -433,7 +433,7 @@ extension MapViewController: MKMapViewDelegate {
         annotationView.canShowCallout = false
         annotationView.titleVisibility = .visible
         annotationView.markerTintColor = location.color
-        annotationView.glyphImage = UIImage(named: "icn_activity_mgp")
+        annotationView.glyphImage = LogoImg.activity_mgp
         annotationView.glyphTintColor = Color.white
         return annotationView
     }

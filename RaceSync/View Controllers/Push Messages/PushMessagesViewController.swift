@@ -117,15 +117,13 @@ class PushMessagesViewController: UIViewController {
         rightBtnItem.isEnabled = false
         navigationItem.rightBarButtonItem = rightBtnItem
 
-        if #available(iOS 16.0, *) { rightBtnItem.isHidden = true }
+        rightBtnItem.isHidden = true
     }
     
     fileprivate func updateClearButton() {
         let item = navigationItem.rightBarButtonItem
 
-        if #available(iOS 16.0, *) {
-            item?.isHidden = !PushMessagesController.shared.isPushNotificationsEnabled()
-        }
+        item?.isHidden = !PushMessagesController.shared.isPushNotificationsEnabled()
         item?.isEnabled = messageViewModels.count > 0
     }
 

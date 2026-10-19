@@ -357,13 +357,8 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     // MARK: - Search
 
     fileprivate func enableSearchBar(_ enable: Bool) {
-        if #available(iOS 16.4, *) {
-            searchBar.alpha = enable ? 1.0 : 0.5
-            searchBar.isEnabled = enable
-        } else {
-            searchBar.alpha = enable ? 1.0 : 0.5
-            searchBar.isUserInteractionEnabled = enable
-        }
+        searchBar.alpha = enable ? 1.0 : 0.5
+        searchBar.isEnabled = enable
     }
 
     fileprivate var isSearching: Bool {
@@ -690,7 +685,7 @@ extension StandingsViewController: EmptyDataSetSource {
         guard !shimmeringView.isShimmering, !isSearching else { return nil }
 
         if isRootTabBar && standingsController.isEmpty(for: season) {
-            return UIImage(named: "logo_gq_large")
+            return LogoImg.gq_large
         }
         return nil
     }

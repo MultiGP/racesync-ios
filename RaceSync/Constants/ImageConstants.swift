@@ -23,6 +23,9 @@ enum LogoImg {
     static let activity_safari = UIImage(named: "icn_activity_safari")
     static let activity_mgp = UIImage(named: "icn_activity_mgp")
     static let activity_copylink = UIImage(named: "icn_activity_copylink")
+    
+    static let gq = UIImage(named: "logo_gq")
+    static let gq_large = UIImage(named: "logo_gq_large")
 
     static let activity_livefpv = UIImage(named: "icn_activity_livefpv")
     static let activity_facebook = UIImage(named: "icn_activity_facebook")
@@ -64,7 +67,9 @@ enum ButtonImg {
     static let join_check = UIImage(named: "icn_join_check")
     static let join_cross = UIImage(named: "icn_join_cross")
 
+    static let search = UIImage(named: "icn_settings_search")
     static let radius = UIImage(named: "icn_settings_radius")
+    static let ruler = UIImage(named: "icn_settings_ruler")
     static let checkmark = UIImage(named: "icn_cell_checkmark")
 
     static let cal_small = UIImage(named: "icn_calendar_small")?.withRenderingMode(.alwaysTemplate)
@@ -101,72 +106,15 @@ enum SystemImg {
     static let globe = UIImage(systemName: "globe.americas") // iOS 15.0+
     static let globeFill = UIImage(systemName: "globe.americas.fill") // iOS 15.0+
 
-    static var flagCheckeredCrossed: UIImage? {
-        if #available(iOS 18.0, *) {
-            return UIImage(systemName:"flag.pattern.checkered.2.crossed") // iOS 18.0+
-        } else if #available(iOS 16.0, *) {
-            return UIImage(systemName:"flag.checkered.2.crossed") // iOS 16.0+
-        } else {
-            return UIImage(systemName:"flag.2.crossed") // iOS 15.0+
-        }
-    }
+    static let flagCheckeredCrossed = UIImage(systemName: "flag.pattern.checkered.2.crossed") // iOS 18.0+
+    static let flagCheckered = UIImage(systemName: "flag.pattern.checkered") // iOS 18.0+
 
-    static var flagCheckered: UIImage? {
-        if #available(iOS 18.0, *) {
-            return UIImage(systemName:"flag.pattern.checkered") // iOS 18.0+
-        } else if #available(iOS 16.0, *) {
-            return UIImage(systemName:"flag.checkered") // iOS 16.0+
-        } else {
-            return UIImage(systemName:"checkerboard.rectangle") // iOS 14.0+
-        }
-    }
+    static let medal = UIImage(systemName: "medal") // iOS 16.0+
+    static let medalFill = UIImage(systemName: "medal.fill") // iOS 16.0+
 
-    static var medal: UIImage? {
-        if #available(iOS 16.0, *) {
-            return UIImage(systemName:"medal") // iOS 16.0+
-        } else {
-            return UIImage(named: "icn_tab_medal")
-        }
-    }
-
-    static var medalFill: UIImage? {
-        if #available(iOS 16.0, *) {
-            return UIImage(systemName:"medal.fill") // iOS 16.0+
-        } else {
-            return UIImage(systemName:"")
-        }
-    }
-
-    static var trophy: UIImage? {
-        if #available(iOS 16.0, *) {
-            return UIImage(systemName:"trophy") // iOS 16.0+
-        } else {
-            return UIImage(systemName:"")
-        }
-    }
-
-    static var trophyFill: UIImage? {
-        if #available(iOS 16.0, *) {
-            return UIImage(systemName:"trophy.fill") // iOS 16.0+
-        } else {
-            return UIImage(systemName:"")
-        }
-    }
+    static let trophy = UIImage(systemName: "trophy") // iOS 16.0+
+    static let trophyFill = UIImage(systemName: "trophy.fill") // iOS 16.0+
     
-    static var bulletList: UIImage? {
-        if #available(iOS 16.0, *) {
-            return UIImage(systemName:"list.bullet.clipboard") // iOS 16.0+
-        } else {
-            return UIImage(systemName:"list.bullet") // iOS 13.0+
-        }
-    }
-    
-    static var bulletListFill: UIImage? {
-        if #available(iOS 16.0, *) {
-            return UIImage(systemName:"list.bullet.clipboard.fill") // iOS 16.0+
-        } else {
-            return UIImage(systemName:"list.bullet") // iOS 13.0+
-        }
-    }
-    
+    static let bulletList = UIImage(systemName: "list.bullet.clipboard") // iOS 16.0+
+    static let bulletListFill = UIImage(systemName: "list.bullet.clipboard.fill") // iOS 16.0+
 }

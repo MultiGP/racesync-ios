@@ -128,7 +128,7 @@ extension Section {
     var image: UIImage? {
         switch self {
         case .y2023, .y2024, .y2025:
-            return UIImage(named: "logo_gq")
+            return LogoImg.gq
         default:
             return UIImage(named: "logo_gq\(rawValue)")
         }

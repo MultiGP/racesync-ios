@@ -180,11 +180,9 @@ fileprivate extension Appearance {
         tabBarAppearance.shadowColor = Color.gray100
         
         // TODO: This isn't working on iOS26 but let's revisit at another time. The idea is to give more separation to each tab.
-        if #available(iOS 18.0, *) {
-            tabBarAppearance.stackedItemPositioning = .centered
-            tabBarAppearance.stackedItemSpacing = 80
-            tabBarAppearance.stackedItemWidth = 40
-        }
+        tabBarAppearance.stackedItemPositioning = .centered
+        tabBarAppearance.stackedItemSpacing = 80
+        tabBarAppearance.stackedItemWidth = 40
         
         UITabBar.appearance().standardAppearance = tabBarAppearance
         UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance

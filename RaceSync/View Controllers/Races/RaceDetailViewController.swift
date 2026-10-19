@@ -942,7 +942,7 @@ extension RaceDetailViewController: MKMapViewDelegate {
         annotationView.canShowCallout = true
         annotationView.titleVisibility = .visible
         annotationView.markerTintColor = Color.blue
-        annotationView.glyphImage = UIImage(named: "icn_activity_mgp")
+        annotationView.glyphImage = LogoImg.activity_mgp
         annotationView.glyphTintColor = Color.white
         annotationView.isSelected = false
         return annotationView
