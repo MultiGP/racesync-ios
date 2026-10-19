@@ -32,6 +32,11 @@ class SettingsViewController: UIViewController {
     fileprivate var sections = [Section: [Row]]()
     fileprivate let isDevModeEnabled: Bool = true
     fileprivate var isTogglingPush: Bool = false
+    
+    fileprivate var isAlternateIconsEnabled: Bool {
+        // disabled for now
+        get { return UIApplication.shared.supportsAlternateIcons && false }
+    }
 
     fileprivate func nextEnvironment() -> APIEnvironment {
         return APIServices.shared.settings.isDev ? APIEnvironment.prod : APIEnvironment.dev
@@ -111,7 +116,7 @@ class SettingsViewController: UIViewController {
             }
 
             var about: [Row] = [.feedback, .joinBeta, .viewProject]
-            if UIApplication.shared.supportsAlternateIcons { about += [.appicon] }
+            if isAlternateIconsEnabled { about += [.appicon] }
 
             return [.settings: settings, .resources: resources, .about: about, .auth: auth]
        }()

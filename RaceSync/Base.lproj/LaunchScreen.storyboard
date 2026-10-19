@@ -71,7 +71,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="launch_bkgd" width="2082" height="2777"/>
+        <image name="launch_bkgd" width="1535" height="2048"/>
         <image name="multigp_logo_splash" width="220" height="220"/>
         <image name="racesync_logo_splash" width="360" height="86"/>
         <systemColor name="tertiarySystemBackgroundColor">
