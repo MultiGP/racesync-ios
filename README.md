@@ -10,10 +10,10 @@
     <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Assets/RaceSync App - Screenshot4.png" style="display: block; width: auto; height: auto;"></th>
   </tr>
   <tr>
-    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Assets/RaceSync App - Screenshot5.png" style="display: block; width: auto; height: auto;"></th>
     <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Assets/RaceSync App - Screenshot6.png" style="display: block; width: auto; height: auto;"></th>
     <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Assets/RaceSync App - Screenshot7.png" style="display: block; width: auto; height: auto;"></th>
     <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Assets/RaceSync App - Screenshot8.png" style="display: block; width: auto; height: auto;"></th>
+    <th style="padding: 0; border: 1px solid black;"><img src="Documentation/App Store/Assets/RaceSync App - Screenshot9.png" style="display: block; width: auto; height: auto;"></th>
   </tr>
 </table>
 
