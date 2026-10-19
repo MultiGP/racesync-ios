@@ -68,4 +68,37 @@ final class TimeUtilTests: XCTestCase {
 
         XCTAssertEqual(result, expected)
     }
+
+    func testZeroAndInvalidValues() {
+        XCTAssertEqual(TimeUtil.lapTimeFormat(seconds: "0"), "0.000s")
+        XCTAssertEqual(TimeUtil.lapTimeFormat(seconds: ""), "")
+        XCTAssertEqual(TimeUtil.lapTimeFormat(seconds: "not a time"), "")
+    }
+
+    func testFormattingBoundaries() {
+        let cases = [
+            ("9.999", "9.999s"),
+            ("10", "10.000s"),
+            ("59.999", "59.999s"),
+            ("60", "01:00.000"),
+            ("3599.999", "59:59.999"),
+            ("3600", "1:00:00.000")
+        ]
+
+        for (input, expected) in cases {
+            XCTAssertEqual(TimeUtil.lapTimeFormat(seconds: input), expected, "Input: \(input)")
+        }
+    }
+
+    func testExtraDecimalPlacesAreTruncated() {
+        XCTAssertEqual(TimeUtil.lapTimeFormat(seconds: "9.9999"), "9.999s")
+        XCTAssertEqual(TimeUtil.lapTimeFormat(seconds: "60.1239"), "01:00.123")
+    }
+
+    func testNoUnitAcrossFormattingRanges() {
+        XCTAssertEqual(TimeUtil.lapTimeFormat(seconds: "0", showUnit: false), "0.000")
+        XCTAssertEqual(TimeUtil.lapTimeFormat(seconds: "10", showUnit: false), "10.000")
+        XCTAssertEqual(TimeUtil.lapTimeFormat(seconds: "60", showUnit: false), "01:00.000")
+        XCTAssertEqual(TimeUtil.lapTimeFormat(seconds: "3600", showUnit: false), "1:00:00.000")
+    }
 }
