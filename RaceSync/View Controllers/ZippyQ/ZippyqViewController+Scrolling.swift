@@ -189,7 +189,7 @@ extension ZippyqViewController: UICollectionViewDelegate {
         if scrollView.isDragging || scrollView.isDecelerating {
             lastUserScrollTime = CACurrentMediaTime()
         }
-        guard !collectionView.isHidden, dataController.canJoinQueues, headerCollapseRange > 0,
+        guard !collectionView.isHidden, shouldDisplaySmartJoinHeader, headerCollapseRange > 0,
               headerCollapseTracking != .suspended else { return }
 
         let offset = scrollView.contentOffset.y + scrollView.adjustedContentInset.top
@@ -261,7 +261,7 @@ extension ZippyqViewController {
     }
 
     func setHeaderCollapseProgress(_ progress: CGFloat) {
-        guard dataController.canJoinQueues else { return }
+        guard shouldDisplaySmartJoinHeader else { return }
 
         let progress = min(max(progress, 0), 1)
         guard progress != headerCollapseProgress else { return }

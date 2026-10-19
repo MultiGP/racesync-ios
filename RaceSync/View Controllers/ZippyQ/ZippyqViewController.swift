@@ -15,6 +15,9 @@ class ZippyqViewController: UIViewController, RaceTabbable {
 
     // MARK: - Public Variables
 
+    /// UI-only override for App Store screenshots. Queue eligibility and API actions remain unchanged.
+    static var forceDisplaySmartJoinHeader = false
+
     var raceController: RaceController
 
     var race: Race {
@@ -66,6 +69,9 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     var headerCollapseTracking: HeaderCollapseTracking = .contentOffset
     var lastHeaderScrollOffset: CGFloat = 0
     var lastUserScrollTime: CFTimeInterval = 0
+    var shouldDisplaySmartJoinHeader: Bool {
+        return dataController.canJoinQueues || Self.forceDisplaySmartJoinHeader
+    }
     fileprivate var emptyStateError: EmptyStateViewModel?
     fileprivate let emptyStateNoRaceQueues = EmptyStateViewModel(.noRaceQueues)
     fileprivate var isJoiningNextRound = false
@@ -182,7 +188,7 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     }
 
     func makeCollectionViewLayout() -> UICollectionViewLayout {
-        let displaysHeader = dataController.canJoinQueues
+        let displaysHeader = shouldDisplaySmartJoinHeader
         let expandedHeaderHeight = headerLayoutMetrics?.expandedHeight ?? ZippyqHeaderView.initialLayoutHeight
         let compactHeaderHeight = headerLayoutMetrics?.compactHeight ?? expandedHeaderHeight
         return ZippyqCollectionViewLayout(
@@ -261,8 +267,8 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     }
 
     fileprivate func configureHeaderView() {
-        let displaysHeader = dataController.hasLoadedContent && dataController.canJoinQueues
-        let layoutDisplaysHeader = dataController.canJoinQueues
+        let displaysHeader = dataController.hasLoadedContent && shouldDisplaySmartJoinHeader
+        let layoutDisplaysHeader = shouldDisplaySmartJoinHeader
         if let layout = collectionView.collectionViewLayout as? ZippyqCollectionViewLayout,
            layout.displaysHeader != layoutDisplaysHeader {
             collectionView.setCollectionViewLayout(makeCollectionViewLayout(), animated: false)
@@ -601,7 +607,7 @@ private extension ZippyqViewController {
 
     func configure(_ header: ZippyqHeaderView) {
 
-        let displaysHeader = dataController.hasLoadedContent && dataController.canJoinQueues
+        let displaysHeader = dataController.hasLoadedContent && shouldDisplaySmartJoinHeader
         header.isHidden = !displaysHeader
         header.collapseProgress = headerCollapseProgress
         header.didResolveLayoutMetrics = { [weak self] metrics in
