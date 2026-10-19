@@ -255,6 +255,8 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         }
     }()
 
+    fileprivate var navigationGradientView: UIVisualEffectView = Appearance.navigationGradientView()
+
     fileprivate var raceCoordinate: CLLocationCoordinate2D? {
         if race.courseId != nil, let lat = CLLocationDegrees(race.latitude), let long = CLLocationDegrees(race.longitude) {
             return CLLocationCoordinate2D(latitude: lat, longitude: long)
@@ -314,6 +316,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         static let cellHeight: CGFloat = 50
         static let maxButtonSize: CGFloat = 100
         static let htmlpadding: CGFloat = 12
+        static let navigationGradientExtension: CGFloat = 44
     }
 
     // MARK: - Initialization
@@ -343,6 +346,15 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        if #available(iOS 26.0, *), canDisplayMap,
+           let mask = navigationGradientView.layer.mask as? CAGradientLayer {
+            mask.frame = navigationGradientView.bounds
+        }
     }
 
     override func viewSafeAreaInsetsDidChange() {
@@ -458,6 +470,17 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         scrollView.snp.makeConstraints {
             $0.edges.equalToSuperview()
             $0.width.equalTo(UIScreen.main.bounds.width)
+        }
+        
+        if #available(iOS 26.0, *) {
+            if canDisplayMap {
+                view.addSubview(navigationGradientView)
+                navigationGradientView.snp.makeConstraints {
+                    $0.top.leading.trailing.equalToSuperview()
+                    $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.top)
+                        .offset(Constants.navigationGradientExtension)
+                }
+            }
         }
     }
 
