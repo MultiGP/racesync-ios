@@ -46,7 +46,7 @@ class RepositoryAdapter {
         }
     }
 
-    func getObjects<Element: Mappable>(_ endPoint: String, parameters: Params? = nil, currentPage: Int = 0, pageSize: Int = StandardPageSize, skipPagination: Bool = false, type: Element.Type, keyPath: String = ParamKey.data, _ completion: @escaping ObjectCompletionBlock<[Element]>) {
+    func getObjects<Element: Mappable>(_ endPoint: String, parameters: Params? = nil, currentPage: Int = 0, pageSize: Int = StandardPageSize, skipPagination: Bool = false, type: Element.Type, keyPath: String = ParamKey.data, reportRequestErrors: Bool = false, _ completion: @escaping ObjectCompletionBlock<[Element]>) {
 
         var finalEndpoint = endPoint
 
@@ -62,6 +62,14 @@ class RepositoryAdapter {
 
                 if let code = response.response?.statusCode, code == 401 {
                     Clog.log("Detected 401. Should log out User!")
+                }
+
+                // Do not mistake failed race-list requests for successful empty lists.
+                if reportRequestErrors, let error = response.result.error as NSError?,
+                   (response.response.map { !(200...302).contains($0.statusCode) } ?? true) || error.domain == NSURLErrorDomain {
+                    Self.completeOnMain(completion, object: nil, error: ErrorUtil.parseError(response))
+                    Clog.log("\(log) Network Error: \(error.debugDescription)")
+                    return
                 }
 
                 // patch for when lists are empty
