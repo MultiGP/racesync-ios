@@ -18,9 +18,9 @@
    * Improved the Payments layout.
 
 ### Fixes and Enhancements:
-   * Improved ZippyQ refreshes and animations, and fixed pack eligibility for queued pilots.
    * Expanded profile and race detail views to the top edge on newer iOS versions.
-   * Display the pilot limit on the race detail view when available.
+   * Displaying the pilot limit on the race detail view when available.
+   * Handling pilot and chapter profile urls in-app
    * Optimized network calls to make the UI feel faster.
    * General bug fixes.
 

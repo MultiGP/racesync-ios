@@ -148,7 +148,7 @@ public enum ParamKey {
     static let size = "size"
     static let race = "race"
     static let races = "races"
-    static let chapter = "chapter"
+    static public let chapter = "chapter"
     static let chapters = "chapters"
     static let managedChapters = "managedChapters"
     static let entries = "entries"
