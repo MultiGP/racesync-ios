@@ -99,8 +99,10 @@ class ZippyqHeaderView: UICollectionReusableView {
         view.addSubview(frequencyStackView)
         frequencyStackView.snp.makeConstraints {
             $0.top.equalTo(titleStackView.snp.bottom).offset(Constants.padding)
-            $0.leading.bottom.equalToSuperview()
+            $0.centerX.equalToSuperview()
+            $0.leading.greaterThanOrEqualToSuperview()
             $0.trailing.lessThanOrEqualToSuperview()
+            $0.bottom.equalToSuperview()
             $0.height.equalTo(Constants.toggleHeight)
         }
         return view
@@ -172,7 +174,6 @@ class ZippyqHeaderView: UICollectionReusableView {
         static let availabilityTitleFont = UIFont.systemFont(ofSize: 13, weight: .semibold)
         static let statsFont = UIFont.systemFont(ofSize: 14, weight: .medium)
         static let toggleWidthMax: CGFloat = 62
-        static let toggleWidthMin: CGFloat = 60
         static let toggleHeight: CGFloat = 72
         static let toggleCornerRadius: CGFloat = 9
         static let toggleIconSize: CGFloat = 16
@@ -276,7 +277,6 @@ private extension ZippyqHeaderView {
         let button = UIButton(type: .custom)
         button.snp.makeConstraints {
             $0.width.equalTo(Constants.toggleWidthMax).priority(999)
-            $0.width.greaterThanOrEqualTo(Constants.toggleWidthMin).priority(998)
         }
         button.isEnabled = viewModel.isEnabled
         button.backgroundColor = viewModel.isSelected ? Color.highlightedBackground : Color.cellColor
