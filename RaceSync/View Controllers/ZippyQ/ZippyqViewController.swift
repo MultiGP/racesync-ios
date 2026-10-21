@@ -16,7 +16,7 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     // MARK: - Public Variables
 
     /// UI-only override for App Store screenshots. Queue eligibility and API actions remain unchanged.
-    static var forceDisplaySmartJoinHeader = false
+    static var forceDisplaySmartJoinHeader = true
 
     var raceController: RaceController
 

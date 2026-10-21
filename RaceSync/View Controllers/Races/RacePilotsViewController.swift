@@ -445,7 +445,7 @@ extension RacePilotsViewController: EmptyDataSetSource {
     }
 
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
-        if race.status == .open && !race.hasStarted {
+        if race.status == .open && race.scheduleState != .current && race.scheduleState != .past {
             return emptyStateNoPilots.buttonTitle(state)
         } else {
             return nil

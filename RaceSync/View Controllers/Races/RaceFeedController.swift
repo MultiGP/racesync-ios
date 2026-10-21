@@ -93,7 +93,9 @@ fileprivate extension RaceFeedController {
 
         api.getMyRaces(filters: filters) { [weak self] (races, error) in
             if let races = races {
-                let filtered = races.filter { !$0.hasEnded(extendedByDays: 1) }
+                let filtered = races.filter {
+                    $0.scheduleState != .past || $0.isWithinScheduledWindow(endingDaysAfter: 1)
+                }
                 Self.makeViewModels(from: filtered, sorting: sorting) { viewModels in
                     self?.collection[.joined] = viewModels
                     completion?(viewModels, false, nil)

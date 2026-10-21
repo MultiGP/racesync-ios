@@ -48,7 +48,9 @@ final class ZippyqDataController {
     weak var delegate: ZippyqDataControllerDelegate?
 
     var canJoinQueues: Bool {
-        return currentUser != nil && race?.isJoined == true && race?.zippyNoKiosk == true && race?.hasEnded(extendedByDays: 2) == false
+        guard let race else { return false }
+        return currentUser != nil && race.isJoined && race.zippyNoKiosk
+            && (race.scheduleState != .past || race.isWithinScheduledWindow(endingDaysAfter: 2))
     }
 
     var smartJoinRecommendation: ZippyqSmartJoinRecommendation? {
@@ -123,7 +125,7 @@ final class ZippyqDataController {
         guard let response, let race else { return false }
         return response.queues.contains { $0.status == .running }
             && !race.isFinalized
-            && !race.hasEnded(extendedByDays: 2)
+            && (race.scheduleState != .past || race.isWithinScheduledWindow(endingDaysAfter: 2))
     }
 
     fileprivate var preferencesKey: String {
@@ -255,7 +257,8 @@ extension ZippyqDataController: PollingControllerDelegate {
 
     func isPollEnabled() -> Bool {
         guard let race else { return false }
-        return !race.isFinalized && race.isOngoing
+        return !race.isFinalized
+            && race.isWithinScheduledWindow(startingDaysBefore: 1, endingDaysAfter: 1)
     }
 
     func polling() {
@@ -451,7 +454,9 @@ private extension ZippyqDataController {
                 maximumPackCount: race.cycleCount,
                 scoringFormat: race.trueScoringFormat,
                 resultChanges: resultChanges,
-                isUpNext: (race.inProgress && index == nextQueuedIndex)
+                isUpNext: (!race.isFinalized
+                    && race.scheduleState == .current
+                    && index == nextQueuedIndex)
             )
         }
     }
