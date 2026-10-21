@@ -255,7 +255,7 @@ extension ZippyqDataController: PollingControllerDelegate {
 
     func isPollEnabled() -> Bool {
         guard let race else { return false }
-        return !race.isFinalized && !race.hasEnded
+        return !race.isFinalized && race.isOngoing
     }
 
     func polling() {

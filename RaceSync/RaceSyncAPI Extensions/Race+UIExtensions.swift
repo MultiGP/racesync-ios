@@ -25,6 +25,19 @@ extension Race {
 
     var hasEnded: Bool { hasEnded(extendedByDays: 0) }
 
+    /// ZippyQ only needs revision polling around the scheduled race window.
+    var isOngoing: Bool {
+        guard let startDate else { return false }
+
+        let calendar = Calendar.current
+        let activeStartDate = calendar.date(
+            byAdding: .day,
+            value: -1,
+            to: calendar.startOfDay(for: startDate)
+        ) ?? startDate
+        return Date() >= activeStartDate && !hasEnded(extendedByDays: 1)
+    }
+
     var inProgress: Bool {
         guard !isFinalized else { return false }
         return hasStarted && !hasEnded
