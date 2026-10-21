@@ -572,9 +572,15 @@ private extension ZippyqViewController {
 
             let cell: ZippyqFrequencyCollectionViewCell = collectionView.dequeueReusableCell(forIndexPath: indexPath)
             let allowsQueueActions = dataController.canJoinQueues
+            let previousItemIsCurrentUser = snapshotController.frequencyViewModel(
+                inRoundWithId: identifier.roundId,
+                at: indexPath.item - 1
+            )?.isCurrentUser == true
             cell.configure(
                 with: viewModel,
-                showsTopSeparator: indexPath.item > 0,
+                showsTopSeparator: indexPath.item > 0
+                    && !viewModel.isCurrentUser
+                    && !previousItemIsCurrentUser,
                 allowsQueueActions: allowsQueueActions
             )
             if allowsQueueActions {

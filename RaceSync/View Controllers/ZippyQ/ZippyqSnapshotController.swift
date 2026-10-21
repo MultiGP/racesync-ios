@@ -139,6 +139,15 @@ final class ZippyqSnapshotController {
         return frequenciesById[itemIdentifier]
     }
 
+    func frequencyViewModel(inRoundWithId roundId: String,
+                            at index: Int) -> ZippyqFrequencyViewModel? {
+        guard let frequencies = roundsById[roundId]?.frequencyViewModels,
+              frequencies.indices.contains(index) else {
+            return nil
+        }
+        return frequencies[index]
+    }
+
     // MARK: - Private Methods
 
     private func itemIdentifier(for viewModel: ZippyqFrequencyViewModel,
