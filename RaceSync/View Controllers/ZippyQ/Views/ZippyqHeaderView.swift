@@ -283,29 +283,14 @@ private extension ZippyqHeaderView {
         button.layer.cornerCurve = .continuous
         button.layer.cornerRadius = Constants.toggleCornerRadius
         button.layer.borderWidth = viewModel.isSelected ? 1.0 : 0.5
-        button.layer.borderColor = (viewModel.isSelected ? Color.blue : Color.gray100).cgColor
+        button.layer.borderColor = (viewModel.isSelected ? Color.blue : Color.gray100)
+            .resolvedColor(with: traitCollection)
+            .cgColor
 
-        if #available(iOS 26, *) {
-            var configuration = UIButton.Configuration.glass()
-            configuration.cornerStyle = .fixed
-            configuration.background.cornerRadius = Constants.toggleCornerRadius
-            configuration.background.backgroundColor = viewModel.isSelected
-                ? Color.highlightedBackground
-                : Color.cellColor.withAlphaComponent(0.2)
-            button.configuration = configuration
-            button.backgroundColor = .clear
-        }
-        
         guard let frequency = viewModel.frequency,
               let channelLabel = viewModel.channelLabel,
               let queuedPilotCount = viewModel.queuedPilotCount else {
-            if #available(iOS 26, *) {
-                var configuration = button.configuration ?? UIButton.Configuration.glass()
-                configuration.background.backgroundColor = Color.gray20.withAlphaComponent(0.2)
-                button.configuration = configuration
-            } else {
-                button.backgroundColor = Color.gray20.withAlphaComponent(0.35)
-            }
+            button.backgroundColor = Color.gray20.withAlphaComponent(0.35)
             return button
         }
 

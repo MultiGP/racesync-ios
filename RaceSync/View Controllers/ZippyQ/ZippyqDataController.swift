@@ -103,6 +103,7 @@ final class ZippyqDataController {
     private(set) var frequencyQueueCounts = [String: Int]()
     private(set) var currentUserStats: ZippyqPilotStats?
     private(set) var selectedFrequencies = Set<String>()
+    private var hasRestoredFrequencyPreferences = false
     private var visiblePastQueueCount = ZippyqDataController.visiblePastQueueCount
 
     fileprivate var race: Race? {
@@ -357,10 +358,15 @@ private extension ZippyqDataController {
     func updateSelectedFrequencies() {
         let validFrequencies = Set(frequencies.map { $0.frequency })
 
-        if let storedFrequencies = userDefaults.stringArray(forKey: preferencesKey) {
-            selectedFrequencies = Set(storedFrequencies).intersection(validFrequencies)
+        if !hasRestoredFrequencyPreferences {
+            if let storedFrequencies = userDefaults.stringArray(forKey: preferencesKey) {
+                selectedFrequencies = Set(storedFrequencies).intersection(validFrequencies)
+            } else {
+                selectedFrequencies = validFrequencies
+            }
+            hasRestoredFrequencyPreferences = true
         } else {
-            selectedFrequencies = validFrequencies
+            selectedFrequencies.formIntersection(validFrequencies)
         }
         userDefaults.set(Array(selectedFrequencies).sorted(), forKey: preferencesKey)
     }

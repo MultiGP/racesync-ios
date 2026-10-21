@@ -259,7 +259,6 @@ extension ZippyqViewController: UICollectionViewDelegate {
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         lastUserScrollTime = CACurrentMediaTime()
     }
-
 }
 
 extension ZippyqViewController {
