@@ -37,7 +37,13 @@ extension ZippyqViewController {
         if !snapshotController.isRoundExpanded(withId: roundId) {
             setVisibleRoundHeader(withId: roundId, expanded: true)
             snapshotController.expandRound(withId: roundId)
+            // Applying the accordion snapshot may temporarily adjust the
+            // collection offset. Keep the scroll-driven header state out of
+            // that transition; the coordinated animation below owns it.
+            headerCollapseTracking = .suspended
             applySnapshot(animatingDifferences: true)
+            // Schedule the offset animation alongside the diffable expansion,
+            // rather than after it has completed.
             animateScrollToRevealExpandedRoundIfNeeded(withId: roundId)
             return
         }
@@ -110,8 +116,7 @@ extension ZippyqViewController {
             collectionView.layoutIfNeeded()
             let sectionIdentifier = SectionIdentifier.round(roundId)
             let snapshot = dataSource.snapshot()
-            guard let section = snapshot.indexOfSection(sectionIdentifier),
-                  let layout = collectionView.collectionViewLayout as? ZippyqCollectionViewLayout else {
+            guard let section = snapshot.indexOfSection(sectionIdentifier) else {
                 return
             }
 
@@ -119,42 +124,22 @@ extension ZippyqViewController {
             guard let headerAttributes = collectionView.layoutAttributesForSupplementaryElement(
                 ofKind: ZippyqCollectionViewLayout.roundHeaderElementKind,
                 at: headerIndexPath
-            ), let maximumOffsetForVisibleHeader = layout.targetContentOffset(
-                forRoundHeaderAt: headerAttributes.frame.minY
-            )?.y else { return }
-
-            let itemCount = snapshot.itemIdentifiers(inSection: sectionIdentifier).count
-            guard itemCount > 0,
-                  let lastItemAttributes = collectionView.layoutAttributesForItem(
-                    at: IndexPath(item: itemCount - 1, section: section)
-                  ) else { return }
+            ) else { return }
 
             let currentOffset = collectionView.contentOffset
-            let collectionTop = collectionView.convert(collectionView.bounds, to: view).minY
-            let visibleBottom: CGFloat
-            if let tabBar = tabBarController?.tabBar, !tabBar.isHidden {
-                visibleBottom = tabBar.convert(tabBar.bounds, to: view).minY
-            } else {
-                visibleBottom = collectionView.convert(collectionView.bounds, to: view).maxY
-            }
-            let visibleHeight = max(0, visibleBottom - collectionTop)
-            let requiredOffsetY = lastItemAttributes.frame.maxY
-                + Constants.expandedRoundBottomMargin
-                - visibleHeight
-            let targetOffsetY: CGFloat
-            if requiredOffsetY <= maximumOffsetForVisibleHeader {
-                targetOffsetY = min(
-                    maximumOffsetForVisibleHeader,
-                    max(currentOffset.y, requiredOffsetY)
+            let minimumOffsetY = -collectionView.adjustedContentInset.top
+            let targetOffsetY = min(
+                maximumContentOffsetY,
+                max(
+                    minimumOffsetY,
+                    headerAttributes.frame.minY
+                        - collectionView.adjustedContentInset.top
+                        - ZippyqCollectionViewLayout.sectionSpacing
                 )
-            } else {
-                // A tall round cannot fit between both chrome areas. Keep its
-                // header visible so the user never loses the round they tapped.
-                targetOffsetY = maximumOffsetForVisibleHeader
-            }
+            )
 
-            // Keep the tapped round between the pinned Smart Joiner header and
-            // the tab bar, but leave short rounds exactly where they are.
+            // Put the tapped round immediately beneath the navigation chrome,
+            // retaining only the standard gap between grouped sections.
             guard abs(targetOffsetY - currentOffset.y) > 0.5 else { return }
 
             let targetOffset = CGPoint(x: currentOffset.x, y: targetOffsetY)

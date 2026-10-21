@@ -34,15 +34,12 @@ final class ZippyqCollectionViewLayout: UICollectionViewCompositionalLayout {
     }
 
     let displaysHeader: Bool
+    static let sectionSpacing: CGFloat = 18
+    static let cellHeight: CGFloat = 60
 
     private let expandedHeaderHeight: CGFloat
     private let compactHeaderHeight: CGFloat
     private var accordionTransitionSections = Set<Int>()
-
-    private enum Constants {
-        static let cellHeight: CGFloat = 60
-        static let sectionSpacing: CGFloat = 18 // native spacing between section views in UITableView.grouped
-    }
 
     // MARK: - Initialization
 
@@ -59,14 +56,14 @@ final class ZippyqCollectionViewLayout: UICollectionViewCompositionalLayout {
         let sectionProvider: UICollectionViewCompositionalLayoutSectionProvider = { sectionIndex, _ in
             let itemSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1),
-                heightDimension: .absolute(Constants.cellHeight)
+                heightDimension: .absolute(Self.cellHeight)
             )
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
             let group = NSCollectionLayoutGroup.vertical(layoutSize: itemSize, subitems: [item])
             let section = NSCollectionLayoutSection(group: group)
 
             guard let round = roundSectionProvider(sectionIndex) else { return section }
-            section.contentInsets.bottom = Constants.sectionSpacing
+            section.contentInsets.bottom = Self.sectionSpacing
             let headerHeight = round.displaysMetadata
                 ? ZippyqCollapsableHeaderView.headerHeightWithSubtitle
                 : ZippyqCollapsableHeaderView.headerHeight
@@ -86,7 +83,7 @@ final class ZippyqCollectionViewLayout: UICollectionViewCompositionalLayout {
 
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
-            heightDimension: .absolute(displaysHeader ? expandedHeaderHeight : Constants.sectionSpacing)
+            heightDimension: .absolute(displaysHeader ? expandedHeaderHeight : Self.sectionSpacing)
         )
         let header = NSCollectionLayoutBoundarySupplementaryItem(
             layoutSize: headerSize,
@@ -218,7 +215,7 @@ private extension ZippyqCollectionViewLayout {
                 )
             }
         } else {
-            frame.size.height = Constants.sectionSpacing
+            frame.size.height = Self.sectionSpacing
         }
         attributes.frame = frame
         attributes.zIndex = 1000
