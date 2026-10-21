@@ -17,6 +17,10 @@ class ViewModelHelper {
     }
 
     static func locationLabel(for city: String? = nil, state: String? = nil, country: String? = nil) -> String {
+        let hasCity = !(city?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true)
+        let hasState = !(state?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true)
+        guard hasCity || hasState else { return "" }
+
         var strings = [String]()
         var output = String()
 

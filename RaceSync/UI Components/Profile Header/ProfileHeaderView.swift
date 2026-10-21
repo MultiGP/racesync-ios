@@ -168,6 +168,7 @@ class ProfileHeaderView: UIView {
 
     fileprivate var imagePicker: ImagePickerController?
     fileprivate var separatorViewHeightConstraint: Constraint?
+    fileprivate var headerLabelTopConstraint: Constraint?
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -246,7 +247,9 @@ class ProfileHeaderView: UIView {
 
         addSubview(headerLabelStackView)
         headerLabelStackView.snp.makeConstraints {
-            $0.top.equalTo(leftBadgeButton.snp.bottom).offset(Constants.padding*2)
+            headerLabelTopConstraint = $0.top.equalTo(leftBadgeButton.snp.bottom)
+                .offset(Constants.padding * 2)
+                .constraint
             $0.leading.equalToSuperview().offset(Constants.padding)
             $0.trailing.equalToSuperview().offset(-Constants.padding)
             $0.bottom.equalToSuperview()
@@ -306,6 +309,7 @@ class ProfileHeaderView: UIView {
         if !viewModel.secondaryTextLabel.isEmpty {
             locationButton.setTitle(viewModel.secondaryTextLabel, for: .normal)
             locationButton.isHidden = false
+            locationIconView.isHidden = false
         } else {
             locationButton.setTitle(nil, for: .normal)
             locationButton.isHidden = true
@@ -317,11 +321,16 @@ class ProfileHeaderView: UIView {
             topBadgeButton.setImage(viewModel.topBadgeImage, for: .normal)
         }
 
-        leftBadgeButton.setTitle(viewModel.leftBadgeLabel, for: .normal)
-        leftBadgeButton.setImage(viewModel.leftBadgeImage, for: .normal)
+        leftBadgeButton.isHidden = !viewModel.displaysLeftBadge
+        leftBadgeButton.setTitle(viewModel.displaysLeftBadge ? viewModel.leftBadgeLabel : nil, for: .normal)
+        leftBadgeButton.setImage(viewModel.displaysLeftBadge ? viewModel.leftBadgeImage : nil, for: .normal)
 
-        rightBadgeButton.setTitle(viewModel.rightBadgeLabel, for: .normal)
-        rightBadgeButton.setImage(viewModel.rightBadgeImage, for: .normal)
+        rightBadgeButton.isHidden = !viewModel.displaysRightBadge
+        rightBadgeButton.setTitle(viewModel.displaysRightBadge ? viewModel.rightBadgeLabel : nil, for: .normal)
+        rightBadgeButton.setImage(viewModel.displaysRightBadge ? viewModel.rightBadgeImage : nil, for: .normal)
+
+        let displaysBadge = viewModel.displaysLeftBadge || viewModel.displaysRightBadge
+        headerLabelTopConstraint?.update(offset: displaysBadge ? Constants.padding * 2 : 0)
     }
 
     // MARK: - Actions
