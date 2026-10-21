@@ -59,7 +59,9 @@ final class ZippyqSnapshotController {
     // MARK: - Public Methods
 
     func update(with roundViewModels: [ZippyqRoundViewModel],
-                expandsInitialRounds: Bool = true) {
+                expandsInitialRounds: Bool = true,
+                expandsRoundsContainingCurrentUser: Bool = true,
+                initialExpandedRoundIds: Set<String> = []) {
         self.roundViewModels = roundViewModels
         roundsById = Dictionary(uniqueKeysWithValues: roundViewModels.map { ($0.id, $0) })
         frequenciesById = roundViewModels.reduce(into: [:]) { values, round in
@@ -73,10 +75,14 @@ final class ZippyqSnapshotController {
         expandedRoundIds.subtract(roundViewModels.filter { !$0.isExpandable }.map(\.id))
 
         guard !hasInitializedExpandedRounds, !roundViewModels.isEmpty else { return }
-        if expandsInitialRounds {
+        if !initialExpandedRoundIds.isEmpty {
+            expandedRoundIds.formUnion(initialExpandedRoundIds)
+        } else if expandsInitialRounds {
             expandedRoundIds.formUnion(roundViewModels.filter {
                 $0.isExpandable
-                    && ($0.badge == .running || $0.frequencyViewModels.contains(where: \.isCurrentUser))
+                    && ($0.badge == .running
+                        || (expandsRoundsContainingCurrentUser
+                            && $0.frequencyViewModels.contains(where: \.isCurrentUser)))
             }.map(\.id))
         }
         hasInitializedExpandedRounds = true

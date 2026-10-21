@@ -17,6 +17,12 @@ enum RaceScheduleState {
     case past
 }
 
+/// Describes how a race's server-provided rounds are presented in the app.
+enum RaceRoundsMode {
+    case zippyQ
+    case schedule
+}
+
 extension Race {
 
     var scheduledEndDate: Date? {
@@ -63,8 +69,13 @@ extension Race {
         return results.contains { $0.hasResults }
     }
 
-    var canShowZippyQ: Bool {
-        return isZippyQEnabled
+    var roundsMode: RaceRoundsMode {
+        switch disableSlotAutoPopulation {
+        case .open:
+            return .zippyQ
+        case .controlled:
+            return .schedule
+        }
     }
 
     func canCreateCalendarEvent() -> Bool {

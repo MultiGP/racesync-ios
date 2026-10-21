@@ -176,10 +176,8 @@ class RaceTabBarController: UITabBarController {
             ?? RacePilotsViewController(with: controller)]
 
         if let race = race {
-            if race.canShowZippyQ {
-                vcs += [existingVCs.first { $0 is ZippyqViewController }
-                    ?? ZippyqViewController(with: controller)]
-            }
+            vcs += [existingVCs.first { $0 is ZippyqViewController }
+                ?? ZippyqViewController(with: controller)]
             if race.canManagePayments {
                 vcs += [existingVCs.first { $0 is RacePaymentsViewController }
                     ?? RacePaymentsViewController(with: controller)]

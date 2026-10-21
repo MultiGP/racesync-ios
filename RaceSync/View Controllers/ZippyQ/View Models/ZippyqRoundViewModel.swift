@@ -12,10 +12,11 @@ import RaceSyncAPI
 class ZippyqRoundViewModel: Descriptable {
 
     let id: String
+    let cycle: Int32
     let titleLabel: String
     let heatLabel: String?
     let scoringFormatLabel: String?
-    let contextualLabel: String
+    let contextualLabel: String?
     let badge: ZippyqRoundBadge
     let isExpandable: Bool
     let frequencyViewModels: [ZippyqFrequencyViewModel]
@@ -31,11 +32,16 @@ class ZippyqRoundViewModel: Descriptable {
          maximumPackCount: Int32,
          scoringFormat: ScoringFormat,
          resultChanges: [ObjectId: ZippyqResultChange],
+         showsEmptyFrequencies: Bool = false,
+         showsHeatLabel: Bool = false,
+         showsContextualLabel: Bool = true,
+         showsPackUsage: Bool = true,
          isUpNext: Bool) {
 
         id = "\(queue.cycle):\(queue.heat)"
+        cycle = queue.cycle
         titleLabel = "Round \(queue.cycle)"
-        heatLabel = queue.heat > 1 ? "Heat \(queue.heat)" : nil
+        heatLabel = showsHeatLabel ? "Heat \(queue.heat)" : nil
 
         let hasResults = queue.entries.contains { $0.hasResults }
         scoringFormatLabel = Self.showsScoringFormatLabel && hasResults ? "Results" : nil // Just a legend
@@ -47,12 +53,14 @@ class ZippyqRoundViewModel: Descriptable {
                 pilotStats: pilotStats,
                 maximumPackCount: maximumPackCount,
                 scoringFormat: scoringFormat,
-                resultChanges: resultChanges
+                resultChanges: resultChanges,
+                showsPackUsage: showsPackUsage
             )
         }
         let assignedViewModels = viewModels.filter { $0.isAssigned }
-        frequencyViewModels = queue.status == .queued ? viewModels : assignedViewModels
-        isExpandable = queue.status == .queued || !assignedViewModels.isEmpty
+        let showsEmptySlots = showsEmptyFrequencies && queue.status != .previous
+        frequencyViewModels = showsEmptySlots ? viewModels : assignedViewModels
+        isExpandable = showsEmptySlots || !assignedViewModels.isEmpty
         avatarImageUrls = assignedViewModels.map { $0.imageUrl }
 
         let pilotCount = assignedViewModels.count
@@ -70,13 +78,13 @@ class ZippyqRoundViewModel: Descriptable {
         switch queue.status {
         case .running:
             badge = .running
-            contextualLabel = "\(pilotCount) Racing"
+            contextualLabel = showsContextualLabel ? "\(pilotCount) Racing" : nil
         case .queued:
             badge = isUpNext ? .upNext : availabilityBadge
-            contextualLabel = "\(pilotCount) Waiting"
+            contextualLabel = showsContextualLabel ? "\(pilotCount) Waiting" : nil
         case .previous:
             badge = .past
-            contextualLabel = "\(pilotCount) Raced"
+            contextualLabel = showsContextualLabel ? "\(pilotCount) Raced" : nil
         }
     }
 }

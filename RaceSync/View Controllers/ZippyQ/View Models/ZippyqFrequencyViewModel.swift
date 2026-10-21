@@ -35,10 +35,12 @@ class ZippyqFrequencyViewModel: Descriptable {
          pilotStats: ZippyqPilotCollection,
          maximumPackCount: Int32,
          scoringFormat: ScoringFormat,
-         resultChanges: [ObjectId: ZippyqResultChange]) {
+         resultChanges: [ObjectId: ZippyqResultChange],
+         showsPackUsage: Bool = true) {
 
         let entry = queue.entries.first { $0.frequency?.frequency == frequency.frequency }
         let resultChange = entry.flatMap { resultChanges[$0.id] }
+        let hasRoundResults = queue.entries.contains(where: \.hasResults)
         user = entry?.user
         isCurrentUser = APIServices.shared.isCurrentUser(entry?.user)
         isResultImproved = resultChange?.hasImproved ?? false
@@ -51,9 +53,7 @@ class ZippyqFrequencyViewModel: Descriptable {
         channelLabel = frequency.channelLabel
         frequencyColor = FrequencyColor.color(for: frequency.frequency)
 
-        if queue.status == .running, entry?.hasResults != true {
-            resultLabel = nil
-        } else if queue.status != .queued {
+        if entry != nil && (entry?.hasResults == true || hasRoundResults) {
             resultLabel = ResultEntryViewModel.formattedResult(
                 for: scoringFormat,
                 totalLaps: entry?.totalLaps,
@@ -68,15 +68,16 @@ class ZippyqFrequencyViewModel: Descriptable {
 
         if let user = entry?.user, let stats = pilotStats[user.id] {
             let userViewModel = UserViewModel(with: user)
-            let detailLevel: ZippyqPilotStatsViewModel.ZippyqPilotStatsDetailLevel = .packUsage
 
             titleLabel = userViewModel.username
             isAssigned = true
-            subtitleLabel = ZippyqPilotStatsViewModel(
-                stats: stats,
-                maximumPackCount: maximumPackCount,
-                detailLevel: detailLevel
-            ).label
+            subtitleLabel = showsPackUsage
+                ? ZippyqPilotStatsViewModel(
+                    stats: stats,
+                    maximumPackCount: maximumPackCount,
+                    detailLevel: .packUsage
+                ).label
+                : nil
             imageUrl = userViewModel.pictureUrl
         } else {
             titleLabel = "Empty"

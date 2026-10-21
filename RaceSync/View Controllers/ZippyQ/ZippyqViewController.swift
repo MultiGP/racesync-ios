@@ -14,15 +14,19 @@ import RaceSyncAPI
 class ZippyqViewController: UIViewController, RaceTabbable {
 
     // MARK: - Public Variables
-
+    
     /// UI-only override for App Store screenshots. Queue eligibility and API actions remain unchanged.
-    static var forceDisplaySmartJoinHeader = true
-
-    var raceController: RaceController
+#if DEBUG
+    static var forceDisplaySmartJoinHeader = false
+#else
+    static var forceDisplaySmartJoinHeader = false
+#endif
 
     var race: Race {
         return raceController.race!
     }
+
+    var raceController: RaceController
 
     // MARK: - Private Variables
 
@@ -69,7 +73,8 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     var headerCollapseTracking: HeaderCollapseTracking = .contentOffset
     var lastUserScrollTime: CFTimeInterval = 0
     var shouldDisplaySmartJoinHeader: Bool {
-        return dataController.canJoinQueues || Self.forceDisplaySmartJoinHeader
+        return dataController.canDisplaySmartJoinHeader
+            && (dataController.canJoinQueues || Self.forceDisplaySmartJoinHeader)
     }
     fileprivate var emptyStateError: EmptyStateViewModel?
     fileprivate let emptyStateNoRaceQueues = EmptyStateViewModel(.noRaceQueues)
@@ -90,7 +95,6 @@ class ZippyqViewController: UIViewController, RaceTabbable {
 
     fileprivate lazy var activityIndicatorView: ActivityLoadingView = {
         let view = ActivityLoadingView(style: .medium)
-        view.title = "Loading ZippyQ..."
         view.hidesWhenStopped = true
         return view
     }()
@@ -167,9 +171,18 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     }
 
     fileprivate func configureNavigationItems() {
-
-        title = "ZippyQ"
-        tabBarItem = UITabBarItem(title: title, image: SystemImg.bulletList, selectedImage: SystemImg.bulletListFill)
+        switch dataController.roundsMode {
+        case .zippyQ:
+            title = "ZippyQ"
+            tabBarItem = UITabBarItem(
+                title: title,
+                image: SystemImg.bulletList,
+                selectedImage: SystemImg.bulletListFill
+            )
+        case .schedule:
+            title = "Schedule"
+            tabBarItem = UITabBarItem(title: title, image: SystemImg.flagCheckered, tag: 0)
+        }
         navigationItem.rightBarButtonItems = raceController.navigationItems()
     }
 
@@ -219,6 +232,9 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     }
 
     fileprivate func setInitialLoading(_ loading: Bool) {
+        activityIndicatorView.title = dataController.roundsMode == .zippyQ
+            ? "Loading ZippyQ..."
+            : "Loading Schedule..."
         activityIndicatorView.isLoading = loading
         collectionView.isHidden = loading
     }
@@ -229,7 +245,9 @@ class ZippyqViewController: UIViewController, RaceTabbable {
         let previouslyExpandedRoundIds = snapshotController.expandedRoundIds
         snapshotController.update(
             with: dataController.roundViewModels,
-            expandsInitialRounds: dataController.shouldLimitPastQueues
+            expandsInitialRounds: dataController.shouldExpandInitialRounds,
+            expandsRoundsContainingCurrentUser: dataController.allowsQueueActions,
+            initialExpandedRoundIds: dataController.initialExpandedRoundIds
         )
         configurePastRoundsRefreshControl()
         configureHeaderView()
@@ -447,7 +465,9 @@ extension ZippyqViewController: ZippyqDataControllerDelegate {
             DispatchQueue.main.async { [weak self] in
                 guard let self else { return }
                 collectionView.layoutIfNeeded()
-                if dataController.shouldLimitPastQueues,
+                if let roundId = dataController.initialScheduleScrollRoundId {
+                    scrollRoundToTop(withId: roundId, animated: false)
+                } else if dataController.shouldLimitPastQueues,
                    let runningRoundId = snapshotController.runningRoundId {
                     scrollRoundToTop(withId: runningRoundId, animated: false)
                 }
@@ -502,8 +522,7 @@ extension ZippyqViewController: EmptyDataSetSource {
     }
 
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
-        
-        if emptyStateError != nil {
+        if emptyStateError != nil || dataController.roundsMode == .schedule {
             return nil
         }
         return emptyStateNoRaceQueues.buttonTitle(state)
@@ -534,6 +553,7 @@ extension ZippyqViewController: EmptyDataSetDelegate {
     }
 
     func emptyDataSet(_ scrollView: UIScrollView, didTapButton button: UIButton) {
+        guard dataController.roundsMode == .zippyQ else { return }
         raceController.showZippyqWeb()
     }
 }

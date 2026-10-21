@@ -354,7 +354,8 @@ private extension ZippyqCollapsableHeaderView {
         updateAccessoryWidth()
 
         let displaysAvatars = isExpandable && !isExpanded && !avatarImageUrls.isEmpty
-        let displaysContext = !isExpandable || isExpanded
+        let displaysContext = (!isExpandable || isExpanded)
+            && contextualLabel.text?.isEmpty == false
         let displaysSubtitle = isExpandable && isExpanded && subtitleLabel.text?.isEmpty == false
         let displaysSubtitleContext = isExpandable && isExpanded && subtitleContextLabel.text?.isEmpty == false
         let displaysMetadata = displaysSubtitle || displaysSubtitleContext

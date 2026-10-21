@@ -47,9 +47,29 @@ final class ZippyqDataController {
 
     weak var delegate: ZippyqDataControllerDelegate?
 
+    var roundsMode: RaceRoundsMode {
+        return race?.roundsMode ?? .zippyQ
+    }
+
+    var allowsQueueActions: Bool {
+        return roundsMode == .zippyQ
+    }
+
+    var shouldShowPackUsage: Bool {
+        guard let race else { return false }
+        return !race.isFinalized && race.isWithinScheduledWindow()
+    }
+
+    var canDisplaySmartJoinHeader: Bool {
+        return allowsQueueActions && shouldShowPackUsage
+    }
+
     var canJoinQueues: Bool {
         guard let race else { return false }
-        return currentUser != nil && race.isJoined && race.zippyNoKiosk
+        return allowsQueueActions
+            && currentUser != nil
+            && race.isJoined
+            && race.zippyNoKiosk
             && (race.scheduleState != .past || race.isWithinScheduledWindow(endingDaysAfter: 2))
     }
 
@@ -123,9 +143,68 @@ final class ZippyqDataController {
 
     var shouldLimitPastQueues: Bool {
         guard let response, let race else { return false }
-        return response.queues.contains { $0.status == .running }
+        return allowsQueueActions
+            && response.queues.contains { $0.status == .running }
             && !race.isFinalized
             && (race.scheduleState != .past || race.isWithinScheduledWindow(endingDaysAfter: 2))
+    }
+
+    var shouldExpandInitialRounds: Bool {
+        if allowsQueueActions {
+            return shouldLimitPastQueues
+        }
+        return response?.queues.contains { $0.status == .running } == true
+    }
+
+    var initialExpandedRoundIds: Set<String> {
+        guard !allowsQueueActions, let race else { return [] }
+
+        switch race.scheduleState {
+        case .upcoming:
+            return Set(roundViewModels
+                .filter { $0.cycle == 1 && $0.isExpandable }
+                .map(\.id))
+        case .current:
+            guard let latestPopulatedCycle = roundViewModels
+                .filter(\.isExpandable)
+                .map(\.cycle)
+                .max() else {
+                return []
+            }
+            return Set(roundViewModels
+                .filter { $0.cycle == latestPopulatedCycle && $0.isExpandable }
+                .map(\.id))
+        case .past:
+            let hasResults = roundViewModels.contains {
+                $0.frequencyViewModels.contains { $0.resultLabel != nil }
+            }
+            guard hasResults else { return [] }
+            return Set(roundViewModels.filter(\.isExpandable).map(\.id))
+        case .unknown:
+            return []
+        }
+    }
+
+    var initialScheduleScrollRoundId: String? {
+        guard !allowsQueueActions, let race else {
+            return nil
+        }
+
+        if let upNextRoundId = roundViewModels.first(where: {
+            $0.badge == .upNext
+        })?.id {
+            return upNextRoundId
+        }
+
+        if race.scheduleState == .current,
+           let latestPopulatedCycle = roundViewModels
+            .filter(\.isExpandable)
+            .map(\.cycle)
+            .max() {
+            return roundViewModels.first { $0.cycle == latestPopulatedCycle }?.id
+        }
+
+        return roundViewModels.first?.id
     }
 
     fileprivate var preferencesKey: String {
@@ -432,17 +511,32 @@ private extension ZippyqDataController {
         let orderedQueues = queueGroups.flatMap {
             $0.queues.sorted { $0.heat < $1.heat }
         }
+        let heatCountsByCycle = Dictionary(grouping: response.queues, by: \.cycle)
+            .mapValues { Set($0.map(\.heat)).count }
         
-        let lastOccupiedQueuedIndex = orderedQueues.lastIndex {
-            $0.status == .queued && !$0.entries.isEmpty
-        }
-        var includedTrailingEmptyQueuedRound = false
-        let visibleQueues = orderedQueues.enumerated().compactMap { index, queue in
-            guard queue.status == .queued, queue.entries.isEmpty else { return queue }
-            if let lastOccupiedQueuedIndex, index < lastOccupiedQueuedIndex { return queue }
-            guard canJoinQueues, !includedTrailingEmptyQueuedRound else { return nil }
-            includedTrailingEmptyQueuedRound = true
-            return queue
+        let visibleQueues: [ZippyQueue]
+        if allowsQueueActions {
+            let lastOccupiedQueuedIndex = orderedQueues.lastIndex {
+                $0.status == .queued && !$0.entries.isEmpty
+            }
+            var includedTrailingEmptyQueuedRound = false
+            visibleQueues = orderedQueues.enumerated().compactMap { index, queue in
+                guard queue.status == .queued, queue.entries.isEmpty else { return queue }
+                if let lastOccupiedQueuedIndex, index < lastOccupiedQueuedIndex { return queue }
+                guard canJoinQueues, !includedTrailingEmptyQueuedRound else { return nil }
+                includedTrailingEmptyQueuedRound = true
+                return queue
+            }
+        } else {
+            let populatedQueueIndices = orderedQueues.indices.filter {
+                !orderedQueues[$0].entries.isEmpty
+            }
+            if let firstPopulatedIndex = populatedQueueIndices.first,
+               let lastPopulatedIndex = populatedQueueIndices.last {
+                visibleQueues = Array(orderedQueues[firstPopulatedIndex...lastPopulatedIndex])
+            } else {
+                visibleQueues = []
+            }
         }
         let nextQueuedIndex = visibleQueues.firstIndex { $0.status == .queued }
 
@@ -454,6 +548,10 @@ private extension ZippyqDataController {
                 maximumPackCount: race.cycleCount,
                 scoringFormat: race.trueScoringFormat,
                 resultChanges: resultChanges,
+                showsEmptyFrequencies: allowsQueueActions,
+                showsHeatLabel: heatCountsByCycle[queue.cycle, default: 0] > 1,
+                showsContextualLabel: allowsQueueActions,
+                showsPackUsage: allowsQueueActions && shouldShowPackUsage,
                 isUpNext: (!race.isFinalized
                     && race.scheduleState == .current
                     && index == nextQueuedIndex)
