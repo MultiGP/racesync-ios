@@ -445,6 +445,16 @@ extension RacePaymentsViewController: RacePilotsPickerControllerDelegate {
     }
 }
 
+extension RacePaymentsViewController: ScrollToTop {
+
+    func scrollToTop() {
+        tableView.setContentOffset(
+            CGPoint(x: tableView.contentOffset.x, y: -tableView.adjustedContentInset.top),
+            animated: true
+        )
+    }
+}
+
 extension RacePaymentsViewController: EmptyDataSetSource {
 
     func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {

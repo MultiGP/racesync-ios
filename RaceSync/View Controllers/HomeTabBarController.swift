@@ -327,6 +327,10 @@ extension HomeTabBarController: ChapterPickerViewControllerDelegate {
 extension HomeTabBarController: UITabBarControllerDelegate {
 
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        if tabBarController.selectedViewController === viewController,
+           let scrollableViewController = viewController as? ScrollToTop {
+            scrollableViewController.scrollToTop()
+        }
         return true
     }
 
@@ -336,13 +340,6 @@ extension HomeTabBarController: UITabBarControllerDelegate {
             hideNavigationShadow()
         } else {
             hideNavigationShadow(false)
-        }
-
-        if controller.selectedViewController == viewController {
-            // Scroll the visible VC to the top
-            if let topVC = viewController as? ScrollToTop {
-                topVC.scrollToTop()
-            }
         }
 
         if let index = viewControllers?.firstIndex(of: viewController),

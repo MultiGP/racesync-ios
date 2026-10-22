@@ -250,6 +250,16 @@ extension ZippyqViewController {
     }
 }
 
+extension ZippyqViewController: ScrollToTop {
+
+    func scrollToTop() {
+        collectionView.setContentOffset(
+            CGPoint(x: collectionView.contentOffset.x, y: -collectionView.adjustedContentInset.top),
+            animated: true
+        )
+    }
+}
+
 // MARK: - UICollectionViewDelegate
 
 extension ZippyqViewController: UICollectionViewDelegate {

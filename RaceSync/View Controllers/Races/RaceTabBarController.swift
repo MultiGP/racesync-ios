@@ -295,6 +295,10 @@ class RaceTabBarController: UITabBarController {
 extension RaceTabBarController: UITabBarControllerDelegate {
 
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        if tabBarController.selectedViewController === viewController,
+           let scrollableViewController = viewController as? ScrollToTop {
+            scrollableViewController.scrollToTop()
+        }
         return true
     }
     
