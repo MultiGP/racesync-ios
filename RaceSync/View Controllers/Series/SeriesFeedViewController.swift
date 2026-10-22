@@ -321,3 +321,13 @@ extension SeriesFeedViewController: EmptyDataSetSource {
         return tableView.backgroundColor
     }
 }
+
+extension SeriesFeedViewController: ScrollToTop {
+
+    func scrollToTop() {
+        tableView.setContentOffset(
+            CGPoint(x: tableView.contentOffset.x, y: -tableView.adjustedContentInset.top),
+            animated: true
+        )
+    }
+}

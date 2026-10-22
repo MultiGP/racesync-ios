@@ -383,3 +383,13 @@ extension RaceListViewController: EmptyDataSetSource {
         return tableView.backgroundColor
     }
 }
+
+extension RaceListViewController: ScrollToTop {
+
+    func scrollToTop() {
+        tableView.setContentOffset(
+            CGPoint(x: tableView.contentOffset.x, y: -tableView.adjustedContentInset.top),
+            animated: true
+        )
+    }
+}

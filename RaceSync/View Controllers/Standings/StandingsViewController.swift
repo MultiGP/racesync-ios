@@ -613,7 +613,10 @@ extension StandingsViewController: UIScrollViewDelegate {
 extension StandingsViewController: ScrollToTop {
     
     func scrollToTop() {
-        tableView.setContentOffset(.zero, animated: true)
+        tableView.setContentOffset(
+            CGPoint(x: tableView.contentOffset.x, y: -tableView.adjustedContentInset.top),
+            animated: true
+        )
     }
 }
 
