@@ -130,11 +130,24 @@ extension ResultEntryViewModel {
         }
 
         if bestAvailable {
-            let results = [
-                (lapCount: 3, time: fastest3Laps),
-                (lapCount: 2, time: fastest2Laps),
-                (lapCount: 1, time: fastestLap)
-            ]
+            let results: [(lapCount: Int, time: String?)]
+            switch scoringFormat {
+            case .fastestLap:
+                results = [(lapCount: 1, time: fastestLap)]
+            case .fastest2Laps:
+                results = [
+                    (lapCount: 2, time: fastest2Laps),
+                    (lapCount: 1, time: fastestLap)
+                ]
+            case .fastest3Laps:
+                results = [
+                    (lapCount: 3, time: fastest3Laps),
+                    (lapCount: 2, time: fastest2Laps),
+                    (lapCount: 1, time: fastestLap)
+                ]
+            case .aggregateLap:
+                results = []
+            }
 
             for result in results {
                 guard let time = result.time, let seconds = Double(time), seconds > 0 else { continue }
