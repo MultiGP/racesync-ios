@@ -26,6 +26,7 @@ class PushMessagesViewController: UIViewController {
         tableView.register(cellType: MessageViewCell.self)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = MessageViewCell.estimatedHeight
+        tableView.backgroundColor = Color.tableBackground
         return tableView
     }()
 
@@ -98,6 +99,7 @@ class PushMessagesViewController: UIViewController {
     fileprivate func setupLayout() {
 
         configureNavigationItems()
+        view.backgroundColor = Color.tableBackground
 
         view.addSubview(tableView)
         tableView.snp.makeConstraints {

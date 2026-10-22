@@ -54,7 +54,6 @@ class SeriesDetailViewController: UIViewController {
         let view = ProfileHeaderView()
         view.topLayoutInset = 0
         view.locationIconView.isHidden = true
-        view.backgroundColor = .red
         return view
     }()
 

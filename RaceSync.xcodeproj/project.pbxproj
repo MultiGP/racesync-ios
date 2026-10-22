@@ -59,7 +59,6 @@
 		4F35D991303A30750089E6C3 /* ZippyqPilotStatsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F35D990303A30730089E6C3 /* ZippyqPilotStatsViewModel.swift */; };
 		4F3750A92EF4C9510068FE16 /* RaceEditable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3750A82EF4C9510068FE16 /* RaceEditable.swift */; };
 		4F3750AB2EF8B0BD0068FE16 /* TimeUtilTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3750AA2EF8B0BD0068FE16 /* TimeUtilTests.swift */; };
-		CB121A0E9F2042C0B1BB0002 /* RaceRulesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB121A0E9F2042C0B1BB0001 /* RaceRulesTests.swift */; };
 		4F3D640D23FB253900DE6DF2 /* UICollectionView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3D640C23FB253900DE6DF2 /* UICollectionView+Extensions.swift */; };
 		4F3D640F23FC65F700DE6DF2 /* TextPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3D640E23FC65F700DE6DF2 /* TextPickerViewController.swift */; };
 		4F3D641123FE664A00DE6DF2 /* TextFieldViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3D641023FE664A00DE6DF2 /* TextFieldViewController.swift */; };
@@ -303,6 +302,7 @@
 		4FFDE1222F44ED680031DDA5 /* MapError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFDE1212F44ED680031DDA5 /* MapError.swift */; };
 		4FFDE1262F4535AD0031DDA5 /* SeriesFeedController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFDE1252F4535AD0031DDA5 /* SeriesFeedController.swift */; };
 		9545A27A3685C3F227C6CCDC /* Pods_RaceSync.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03ADD4F5A98600BFEB5B6C6E /* Pods_RaceSync.framework */; };
+		CB121A0E9F2042C0B1BB0002 /* RaceRulesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB121A0E9F2042C0B1BB0001 /* RaceRulesTests.swift */; };
 		FA8A945598D582AC78BB26B0 /* Pods_RaceSyncAPITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 912450B59256F98707505DCE /* Pods_RaceSyncAPITests.framework */; };
 /* End PBXBuildFile section */
 
@@ -405,7 +405,6 @@
 		4F35D990303A30730089E6C3 /* ZippyqPilotStatsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqPilotStatsViewModel.swift; sourceTree = "<group>"; };
 		4F3750A82EF4C9510068FE16 /* RaceEditable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceEditable.swift; sourceTree = "<group>"; };
 		4F3750AA2EF8B0BD0068FE16 /* TimeUtilTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeUtilTests.swift; sourceTree = "<group>"; };
-		CB121A0E9F2042C0B1BB0001 /* RaceRulesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceRulesTests.swift; sourceTree = "<group>"; };
 		4F3D640C23FB253900DE6DF2 /* UICollectionView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Extensions.swift"; sourceTree = "<group>"; };
 		4F3D640E23FC65F700DE6DF2 /* TextPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPickerViewController.swift; sourceTree = "<group>"; };
 		4F3D641023FE664A00DE6DF2 /* TextFieldViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldViewController.swift; sourceTree = "<group>"; };
@@ -654,6 +653,7 @@
 		4FFDE1252F4535AD0031DDA5 /* SeriesFeedController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesFeedController.swift; sourceTree = "<group>"; };
 		912450B59256F98707505DCE /* Pods_RaceSyncAPITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RaceSyncAPITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0AD3F0FAC42488B672FD23B /* Pods-RaceSyncAPITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RaceSyncAPITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RaceSyncAPITests/Pods-RaceSyncAPITests.debug.xcconfig"; sourceTree = "<group>"; };
+		CB121A0E9F2042C0B1BB0001 /* RaceRulesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceRulesTests.swift; sourceTree = "<group>"; };
 		D073602CBE253F96567B3B54 /* Pods_RaceSyncAPI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RaceSyncAPI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -2096,7 +2096,7 @@
 				CODE_SIGN_ENTITLEMENTS = RaceSync/RaceSync.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 130;
+				CURRENT_PROJECT_VERSION = 131;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = TJ4PB66YQS;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
@@ -2132,7 +2132,7 @@
 				CODE_SIGN_ENTITLEMENTS = RaceSync/RaceSync.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 130;
+				CURRENT_PROJECT_VERSION = 131;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = TJ4PB66YQS;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
