@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 70;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -235,6 +235,9 @@
 		4FCD99B829788F720094C562 /* AppWebConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCD99B729788F720094C562 /* AppWebConstants.swift */; };
 		4FCEAB442F0CD81F00CAE0BD /* UIApplication+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCEAB432F0CD81F00CAE0BD /* UIApplication+Extensions.swift */; };
 		4FCEAB462F11761900CAE0BD /* SeriesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCEAB452F11761900CAE0BD /* SeriesController.swift */; };
+		4FCFF7D5308ABE7200EFADA9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4FCFF7D1308ABE7200EFADA9 /* LaunchScreen.storyboard */; };
+		4FCFF7D6308ABE7200EFADA9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4FCFF7CE308ABE7200EFADA9 /* Assets.xcassets */; };
+		4FCFF7D7308ABE7200EFADA9 /* ZippyQApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCFF7D2308ABE7200EFADA9 /* ZippyQApp.swift */; };
 		4FD4E1BC237DCAA3008816B3 /* UserApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1BB237DCAA3008816B3 /* UserApi.swift */; };
 		4FD4E1BE237DCB24008816B3 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1BD237DCB24008816B3 /* User.swift */; };
 		4FD4E1C1237DDFB4008816B3 /* RaceFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1C0237DDFB4008816B3 /* RaceFeedViewController.swift */; };
@@ -593,6 +596,10 @@
 		4FCD99B729788F720094C562 /* AppWebConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppWebConstants.swift; sourceTree = "<group>"; };
 		4FCEAB432F0CD81F00CAE0BD /* UIApplication+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extensions.swift"; sourceTree = "<group>"; };
 		4FCEAB452F11761900CAE0BD /* SeriesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesController.swift; sourceTree = "<group>"; };
+		4FCFF7CE308ABE7200EFADA9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4FCFF7CF308ABE7200EFADA9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4FCFF7D0308ABE7200EFADA9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		4FCFF7D2308ABE7200EFADA9 /* ZippyQApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyQApp.swift; sourceTree = "<group>"; };
 		4FD4E1BB237DCAA3008816B3 /* UserApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserApi.swift; sourceTree = "<group>"; };
 		4FD4E1BD237DCB24008816B3 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		4FD4E1C0237DDFB4008816B3 /* RaceFeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceFeedViewController.swift; sourceTree = "<group>"; };
@@ -664,20 +671,6 @@
 		CB121A0E9F2042C0B1BB0001 /* RaceRulesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceRulesTests.swift; sourceTree = "<group>"; };
 		D073602CBE253F96567B3B54 /* Pods_RaceSyncAPI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RaceSyncAPI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		4F3EA734308AAF7B009202C2 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 4F3EA722308AAF79009202C2 /* ZippyQApp */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		4F3EA724308AAF79009202C2 /* ZippyQApp */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (4F3EA734308AAF7B009202C2 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ZippyQApp; sourceTree = "<group>"; };
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		4F1342412360B67D00A9DBDE /* Frameworks */ = {
@@ -773,7 +766,7 @@
 				4F1342462360B67D00A9DBDE /* RaceSync */,
 				4F13426E2360DA4B00A9DBDE /* RaceSyncAPI */,
 				4F13427B2360DA4C00A9DBDE /* RaceSyncAPITests */,
-				4F3EA724308AAF79009202C2 /* ZippyQApp */,
+				4FCFF7D3308ABE7200EFADA9 /* ZippyQApp */,
 				4F1342452360B67D00A9DBDE /* Products */,
 				8CA907F11021D980864A2634 /* Pods */,
 				630E12C4F78138F076CDB368 /* Frameworks */,
@@ -1192,6 +1185,17 @@
 			path = Events;
 			sourceTree = "<group>";
 		};
+		4FCFF7D3308ABE7200EFADA9 /* ZippyQApp */ = {
+			isa = PBXGroup;
+			children = (
+				4FCFF7CE308ABE7200EFADA9 /* Assets.xcassets */,
+				4FCFF7CF308ABE7200EFADA9 /* Info.plist */,
+				4FCFF7D1308ABE7200EFADA9 /* LaunchScreen.storyboard */,
+				4FCFF7D2308ABE7200EFADA9 /* ZippyQApp.swift */,
+			);
+			path = ZippyQApp;
+			sourceTree = "<group>";
+		};
 		4FD4E1D2237F9DEF008816B3 /* Search */ = {
 			isa = PBXGroup;
 			children = (
@@ -1467,9 +1471,6 @@
 			dependencies = (
 				4F3EA739308AAFC5009202C2 /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				4F3EA724308AAF79009202C2 /* ZippyQApp */,
-			);
 			name = ZippyQApp;
 			packageProductDependencies = (
 			);
@@ -1562,6 +1563,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4FCFF7D5308ABE7200EFADA9 /* LaunchScreen.storyboard in Resources */,
+				4FCFF7D6308ABE7200EFADA9 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1993,6 +1996,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4FCFF7D7308ABE7200EFADA9 /* ZippyQApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2034,6 +2038,14 @@
 			isa = PBXVariantGroup;
 			children = (
 				4F1342512360B67D00A9DBDE /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		4FCFF7D1308ABE7200EFADA9 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4FCFF7D0308ABE7200EFADA9 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -2381,7 +2393,6 @@
 				INFOPLIST_FILE = ZippyQApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
@@ -2424,7 +2435,6 @@
 				INFOPLIST_FILE = ZippyQApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
