@@ -210,6 +210,12 @@ extension ApplicationControl {
                 return true
             }
         }
+        if (link.domain == .pilot || link.domain == .pilots), link.action == .view, let pilot = link.parameters[ParamKey.pilot] {
+            return !pilot.isEmpty
+        }
+        if link.domain == .chapters, link.action == .view, let chapter = link.parameters[ParamKey.chapter] {
+            return !chapter.isEmpty
+        }
         return false
     }
 
@@ -217,19 +223,13 @@ extension ApplicationControl {
 
         if link.isRace {
             if link.action == .view, let raceId = link.parameters[ParamKey.id]  {
-                if let nc = UIViewController.topMostViewController() as? NavigationController {
-
-                    let vc = RaceTabBarController(with: raceId)
-                    vc.hidesBottomBarWhenPushed = true
-                    nc.pushViewController(vc, animated: true)
-                }
+                showRace(with: raceId)
             }
             else if link.action == .join  {
                 // Makes sure to dismiss the payment webview, if still present
                 if let webvc = UIViewController.topMostViewController(), webvc.isKind(of: WebViewController.self) {
-
                     webvc.dismiss(animated: true)
-
+                    
                     // force reloading the visible ViewJoinable
                     // to reflect the updated state change.
                     // TODO: Consider reactive join button states, to avoid heavylift reloads
@@ -239,6 +239,12 @@ extension ApplicationControl {
                     }
                 }
             }
+        } else if (link.domain == .pilot || link.domain == .pilots), link.action == .view,
+                  let pilot = link.parameters[ParamKey.pilot], !pilot.isEmpty {
+            showUser(with: pilot)
+        } else if link.domain == .chapters, link.action == .view,
+                  let chapter = link.parameters[ParamKey.chapter], !chapter.isEmpty {
+            showChapter(with: chapter)
         }
     }
 }
@@ -286,5 +292,29 @@ extension ApplicationControl {
                 completion(.joined)
             }
         )
+    }
+}
+
+fileprivate extension ApplicationControl {
+    
+    func showRace(with raceId: ObjectId) {
+        guard let nc = UIViewController.topMostViewController() as? NavigationController else { return }
+        let vc = RaceTabBarController(with: raceId)
+        vc.hidesBottomBarWhenPushed = true
+        nc.pushViewController(vc, animated: true)
+    }
+    
+    func showUser(with userId: ObjectId) {
+        guard let nc = UIViewController.topMostViewController() as? NavigationController else { return }
+        let vc = UserViewController(pilot: userId)
+        vc.hidesBottomBarWhenPushed = true
+        nc.pushViewController(vc, animated: true)
+    }
+
+    func showChapter(with chapter: String) {
+        guard let nc = UIViewController.topMostViewController() as? NavigationController else { return }
+        let vc = ChapterViewController(chapter: chapter)
+        vc.hidesBottomBarWhenPushed = true
+        nc.pushViewController(vc, animated: true)
     }
 }

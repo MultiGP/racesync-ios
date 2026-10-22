@@ -23,6 +23,9 @@ enum LogoImg {
     static let activity_safari = UIImage(named: "icn_activity_safari")
     static let activity_mgp = UIImage(named: "icn_activity_mgp")
     static let activity_copylink = UIImage(named: "icn_activity_copylink")
+    
+    static let gq = UIImage(named: "logo_gq")
+    static let gq_large = UIImage(named: "logo_gq_large")
 
     static let activity_livefpv = UIImage(named: "icn_activity_livefpv")
     static let activity_facebook = UIImage(named: "icn_activity_facebook")
@@ -64,17 +67,19 @@ enum ButtonImg {
     static let join_check = UIImage(named: "icn_join_check")
     static let join_cross = UIImage(named: "icn_join_cross")
 
+    static let search = UIImage(named: "icn_settings_search")
     static let radius = UIImage(named: "icn_settings_radius")
+    static let ruler = UIImage(named: "icn_settings_ruler")
     static let checkmark = UIImage(named: "icn_cell_checkmark")
 
-    static let cal_small = UIImage(named: "icn_calendar_small")
+    static let cal_small = UIImage(named: "icn_calendar_small")?.withRenderingMode(.alwaysTemplate)
     static let race_small = UIImage(named: "icn_race_small")
     static let chapter_small = UIImage(named: "icn_chapter_small")
     static let member_small = UIImage(named: "icn_member_small")
     static let badge_small = UIImage(named: "icn_badge_small")
-    static let date_path2 = UIImage(named: "icn_date_path_progress")
-    static let date_path1 = UIImage(named: "icn_date_path_continuous")
-    static let trophy = UIImage(named: "icn_trophy_qualifier")
+    static let date_path2 = UIImage(named: "icn_date_path_progress")?.withRenderingMode(.alwaysTemplate)
+    static let date_path1 = UIImage(named: "icn_date_path_continuous")?.withRenderingMode(.alwaysTemplate)
+    static let trophy = UIImage(named: "icn_trophy_qualifier")?.withRenderingMode(.alwaysTemplate)
 }
 
 enum SystemImg {
@@ -98,72 +103,18 @@ enum SystemImg {
     static let star = UIImage(systemName:"star") // iOS 13.0+
     static let starFill = UIImage(systemName:"star.fill") // iOS 13.0+
     static let map = UIImage(systemName:"map") // iOS 13.0+
+    static let globe = UIImage(systemName: "globe.americas") // iOS 15.0+
+    static let globeFill = UIImage(systemName: "globe.americas.fill") // iOS 15.0+
 
-    static var globe: UIImage? {
-        if #available(iOS 15.0, *) {
-            return UIImage(systemName:"globe.americas") // iOS 15.0+
-        } else {
-            return UIImage(systemName:"globe") // iOS 13.0+
-        }
-    }
+    static let flagCheckeredCrossed = UIImage(systemName: "flag.pattern.checkered.2.crossed") // iOS 18.0+
+    static let flagCheckered = UIImage(systemName: "flag.pattern.checkered") // iOS 18.0+
+
+    static let medal = UIImage(systemName: "medal") // iOS 16.0+
+    static let medalFill = UIImage(systemName: "medal.fill") // iOS 16.0+
+
+    static let trophy = UIImage(systemName: "trophy") // iOS 16.0+
+    static let trophyFill = UIImage(systemName: "trophy.fill") // iOS 16.0+
     
-    static var globeFill: UIImage? {
-        if #available(iOS 15.0, *) {
-            return UIImage(systemName:"globe.americas.fill") // iOS 15.0+
-        } else {
-            return UIImage(systemName:"globe.fill") // iOS 13.0+
-        }
-    }
-
-    static var flagCheckeredCrossed: UIImage? {
-        if #available(iOS 18.0, *) {
-            return UIImage(systemName:"flag.pattern.checkered.2.crossed") // iOS 18.0+
-        } else if #available(iOS 16.0, *) {
-            return UIImage(systemName:"flag.checkered.2.crossed") // iOS 16.0+
-        } else {
-            return UIImage(systemName:"flag.2.crossed") // iOS 15.0+
-        }
-    }
-
-    static var flagCheckered: UIImage? {
-        if #available(iOS 18.0, *) {
-            return UIImage(systemName:"flag.pattern.checkered") // iOS 18.0+
-        } else if #available(iOS 16.0, *) {
-            return UIImage(systemName:"flag.checkered") // iOS 16.0+
-        } else {
-            return UIImage(systemName:"checkerboard.rectangle") // iOS 14.0+
-        }
-    }
-
-    static var medal: UIImage? {
-        if #available(iOS 16.0, *) {
-            return UIImage(systemName:"medal") // iOS 16.0+
-        } else {
-            return UIImage(named: "icn_tab_medal")
-        }
-    }
-
-    static var medalFill: UIImage? {
-        if #available(iOS 16.0, *) {
-            return UIImage(systemName:"medal.fill") // iOS 16.0+
-        } else {
-            return UIImage(systemName:"")
-        }
-    }
-
-    static var trophy: UIImage? {
-        if #available(iOS 16.0, *) {
-            return UIImage(systemName:"trophy") // iOS 16.0+
-        } else {
-            return UIImage(systemName:"")
-        }
-    }
-
-    static var trophyFill: UIImage? {
-        if #available(iOS 16.0, *) {
-            return UIImage(systemName:"trophy.fill") // iOS 16.0+
-        } else {
-            return UIImage(systemName:"")
-        }
-    }
+    static let bulletList = UIImage(systemName: "list.bullet.clipboard") // iOS 16.0+
+    static let bulletListFill = UIImage(systemName: "list.bullet.clipboard.fill") // iOS 16.0+
 }

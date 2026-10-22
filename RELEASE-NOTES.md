@@ -1,6 +1,31 @@
 
 # App Store Release Notes
 
+## 2.2
+
+### Introducing Native ZippyQ:
+   * View live, upcoming, and past rounds, including pilot assignments, channels, and results, with automatic updates.
+   * Select preferred channels and use Smart Join to enter the next eligible round while respecting queue, rest, and pack limits.
+   * Add, switch, or remove yourself from upcoming rounds.
+   * See pack usage, queued packs, next rounds, and predicted start times at a glance.
+   * Expand or collapse rounds and quickly see participating pilots and available spots.
+   
+### Race Schedule:
+   * Controlled-qualifying races now include a Schedule tab to view rounds, heats, assigned pilots, channels, and results—without queue controls.
+
+### Dark Mode:
+   * Introducing Dark Mode support, with an appearance setting to follow the system or select a preferred mode.
+
+### For Race Organizers:
+   * Update a race's pilot limit and additional ZippyQ settings.
+   * Improved the Payments layout.
+
+### Fixes and Enhancements:
+   * Expanded profile and race detail views to the top edge on newer iOS versions.
+   * Handling pilot and chapter profile urls in-app
+   * Optimized network calls to make the UI feel faster.
+   * General bug fixes.
+
 ---
 
 ## 2.1

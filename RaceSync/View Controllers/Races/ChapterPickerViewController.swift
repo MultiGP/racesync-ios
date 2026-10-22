@@ -57,7 +57,7 @@ class ChapterPickerViewController: UIViewController, Shimmable {
     // MARK: - Private Variables
 
     fileprivate lazy var rightBarButtonItem: UIBarButtonItem = {
-        let item = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(didPressSaveButton))
+        let item = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(didPressSaveButton))
         item.isEnabled = canSave()
         return item
     }()
@@ -216,14 +216,14 @@ extension ChapterPickerViewController: UITableViewDataSource {
         cell.subtitleLabel.text = viewModel.locationLabel
         cell.avatarImageView.imageView.setImage(with: viewModel.imageUrl, placeholderImage: PlaceholderImg.medium, size: Constants.avatarImageSize)
         cell.accessoryType = .none
+        cell.accessoryView = nil
 
         if let selectedId = selectedChapterId {
             if viewModel.chapter.id == selectedId {
-                let imageView = UIImageView(image: ButtonImg.checkmark)
+                let image = ButtonImg.checkmark?.withRenderingMode(.alwaysTemplate)
+                let imageView = UIImageView(image: image)
                 imageView.tintColor = Color.blue
                 cell.accessoryView = imageView
-            } else {
-                cell.accessoryView = nil
             }
         }
 

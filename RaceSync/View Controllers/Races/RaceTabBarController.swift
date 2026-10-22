@@ -49,23 +49,42 @@ class RaceTabBarController: UITabBarController {
 
     override var title: String? {
         didSet {
-            titleButton.setTitle(title, for: .normal)
-            titleButton.invalidateIntrinsicContentSize()
-            titleButton.sizeToFit()
+            titleLabel.text = title
         }
     }
 
     // MARK: - Private Variables
 
-    fileprivate lazy var titleButton: PasteboardButton = {
-        let button = PasteboardButton(type: .system)
-        button.addTarget(self, action: #selector(didPressTitleButton), for: .touchUpInside)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
-        button.titleLabel?.textAlignment = .center
-        button.setTitleColor(Color.black, for: .normal)
-        button.setTitle(self.title, for: .normal)
-        button.titleLabel?.lineBreakMode = .byClipping
-        return button
+    fileprivate lazy var titleLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+        label.textAlignment = .center
+        label.textColor = Color.black
+        label.text = self.title
+        label.lineBreakMode = .byClipping
+        return label
+    }()
+
+    fileprivate lazy var titleActivityIndicatorView: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView(style: .medium)
+        view.color = .secondaryLabel
+        view.hidesWhenStopped = true
+        return view
+    }()
+
+    fileprivate lazy var titleContainerView: UIStackView = {
+        let leadingSpacer = UIView()
+        let activityContainer = UIView()
+        leadingSpacer.snp.makeConstraints { $0.width.equalTo(20) }
+        activityContainer.snp.makeConstraints { $0.width.equalTo(20) }
+        activityContainer.addSubview(titleActivityIndicatorView)
+        titleActivityIndicatorView.snp.makeConstraints { $0.center.equalToSuperview() }
+
+        let stackView = UIStackView(arrangedSubviews: [leadingSpacer, titleLabel, activityContainer])
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        stackView.spacing = 6
+        return stackView
     }()
 
     fileprivate lazy var activityIndicatorView: ActivityLoadingView = {
@@ -129,9 +148,9 @@ class RaceTabBarController: UITabBarController {
     fileprivate func setupLayout() {
 
         // Using a custom button title in this case, to display the id of a Race on tap
-        navigationItem.titleView = titleButton
+        navigationItem.titleView = titleContainerView
 
-        view.backgroundColor = Color.white
+        view.backgroundColor = Color.tableBackground
         tabBar.isHidden = true // hiding temporarily, while the view loads
         delegate = self
 
@@ -144,17 +163,39 @@ class RaceTabBarController: UITabBarController {
     fileprivate func configureViewControllers() {
 
         let controller = raceController
+        let existingVCs = viewControllers ?? []
+        let previouslySelectedVC = selectedViewController
 
         var vcs = [UIViewController]()
-        vcs += [RaceDetailViewController(with: controller)]
-        vcs += [RacePilotsViewController(with: controller)]
+        vcs += [existingVCs.first { $0 is RaceDetailViewController }
+            ?? RaceDetailViewController(with: controller)]
+        vcs += [existingVCs.first { $0 is RacePilotsViewController }
+            ?? RacePilotsViewController(with: controller)]
 
         if let race = race {
-            if race.canShowSchedule { vcs += [RaceScheduleViewController(with: controller)] }
-            if race.canManagePayments { vcs += [RacePaymentsViewController(with: controller)] }
+            vcs += [existingVCs.first { $0 is ZippyqViewController }
+                ?? ZippyqViewController(with: controller)]
+            if race.canManagePayments {
+                vcs += [existingVCs.first { $0 is RacePaymentsViewController }
+                    ?? RacePaymentsViewController(with: controller)]
+            }
         }
 
-        configureTabBarController(with: vcs, selectedIndex: initialSelectedIndex)
+        if viewControllers == nil {
+            configureTabBarController(
+                with: vcs,
+                selectedIndex: min(initialSelectedIndex, max(0, vcs.count-1))
+            )
+        } else {
+            setViewControllers(vcs, animated: false)
+            if let previouslySelectedVC,
+               let selectedIndex = vcs.firstIndex(of: previouslySelectedVC) {
+                self.selectedIndex = selectedIndex
+            } else {
+                selectTab(.details)
+            }
+            preloadTabs()
+        }
 
         tabBar.isHidden = false
     }
@@ -169,19 +210,23 @@ class RaceTabBarController: UITabBarController {
         guard let vc = viewControllers?[index] else { return }
 
         title = vc.title
+        titleActivityIndicatorView.stopAnimating()
         navigationItem.rightBarButtonItems = vc.navigationItem.rightBarButtonItems
+
+        if let detailVC = vc as? RaceDetailViewController,
+           detailVC.shouldUseTransparentNavigationBar {
+            navigationItem.title = nil
+            navigationItem.titleView = nil
+            Appearance.applyTransparentStyle(to: navigationItem)
+        } else {
+            navigationItem.titleView = titleContainerView
+            Appearance.applyOpaqueStyle(to: navigationItem, shadow: true)
+        }
     }
 
-    @objc fileprivate func didPressTitleButton() {
-        guard let _ = race else { return }
-
-        let btnTitle = titleButton.title(for: .normal)
-
-        if btnTitle == title {
-            titleButton.setTitle(raceId, for: .normal)
-        } else if btnTitle == raceId {
-            titleButton.setTitle(title, for: .normal)
-        }
+    func setTitleActivityIndicatorVisible(_ visible: Bool, for viewController: UIViewController) {
+        guard selectedViewController === viewController else { return }
+        visible ? titleActivityIndicatorView.startAnimating() : titleActivityIndicatorView.stopAnimating()
     }
 
     @objc fileprivate func didPressCloseButton() {
@@ -209,13 +254,14 @@ class RaceTabBarController: UITabBarController {
         raceController.loadRace { [weak self] race, error in
             guard let self = self else { return }
 
-            if error != nil {
+            if error == nil {
                 self.reloadRaceTabs()
             }
         }
     }
 
     public func reloadRaceTabs() {
+        configureViewControllers()
         viewControllers?
             .compactMap { $0 as? RaceTabbable }
             .forEach { $0.reloadContent() }

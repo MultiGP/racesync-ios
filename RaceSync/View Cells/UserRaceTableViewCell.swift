@@ -81,12 +81,17 @@ class UserRaceTableViewCell: UITableViewCell {
     // MARK: - Layout
 
     fileprivate func setupLayout() {
+        self.accessoryType = .disclosureIndicator
+        self.backgroundColor = Color.cellColor
+
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = Color.cellColor
+        self.backgroundView = backgroundView
 
         let selectedBackgroundView = UIView()
         selectedBackgroundView.backgroundColor = Color.gray20
         self.selectedBackgroundView = selectedBackgroundView
 
-        accessoryType = .disclosureIndicator
 
         let containerView = UIView()
 

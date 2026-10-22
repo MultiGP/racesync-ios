@@ -36,7 +36,7 @@ class MultiTextPickerViewController: UIViewController {
         tableView.register(cellType: FormTableViewCell.self)
 
         let backgroundView = UIView()
-        backgroundView.backgroundColor = Color.gray20
+        backgroundView.backgroundColor = Color.tableGroupedBackground
         tableView.backgroundView = backgroundView
 
         return tableView
@@ -167,6 +167,7 @@ extension MultiTextPickerViewController: UITableViewDataSource {
         cell.detailTextLabel?.text = nil
         cell.accessoryType = .none
         cell.accessoryView = nil
+        cell.backgroundColor = Color.cellColor
 
         if let withItems = itemWithItems, let subItems = withItems[item] {
             cell.accessoryType = .disclosureIndicator
@@ -179,7 +180,8 @@ extension MultiTextPickerViewController: UITableViewDataSource {
             cell.detailTextLabel?.text = matchingItems.joined(separator: ", ")
 
         } else if selectedItems.contains(item) {
-            let imageView = UIImageView(image: ButtonImg.checkmark)
+            let image = ButtonImg.checkmark?.withRenderingMode(.alwaysTemplate)
+            let imageView = UIImageView(image: image)
             imageView.tintColor = Color.blue
             cell.accessoryView = imageView
         }

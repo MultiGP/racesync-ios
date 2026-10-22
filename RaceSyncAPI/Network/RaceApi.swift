@@ -160,7 +160,7 @@ public class RaceApi: RaceApiInterface {
         let lat = latitude ?? user.latitude
         let long = longitude ?? user.longitude
 
-        getRaces(with: filters, userId: user.id, latitude: lat, longitude: long, completion: completion)
+        getRaces(with: filters, userId: user.id, latitude: lat, longitude: long, pageSize: 25, completion: completion)
     }
 
     public func getRaces(with filters: [RaceListFilters] = [RaceListFilters](),
@@ -202,7 +202,7 @@ public class RaceApi: RaceApiInterface {
             params[ParamKey.raceClass] = raceClass.rawValue
         }
 
-        repositoryAdapter.getObjects(endpoint, parameters: params, currentPage: currentPage, pageSize: pageSize, type: Race.self, completion)
+        repositoryAdapter.getObjects(endpoint, parameters: params, currentPage: currentPage, pageSize: pageSize, type: Race.self, reportRequestErrors: true, completion)
     }
 
     public func view(race raceId: ObjectId, completion: @escaping ObjectCompletionBlock<Race>) {

@@ -59,16 +59,16 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     }()
 
     fileprivate lazy var refreshControl: UIRefreshControl = {
-        let refreshControl = UIRefreshControl()
-        refreshControl.backgroundColor = Color.gray20
-        refreshControl.tintColor = Color.blue
-        refreshControl.addTarget(self, action: #selector(didPullRefreshControl), for: .valueChanged)
-        return refreshControl
+        let control = UIRefreshControl()
+        control.backgroundColor = Color.clear
+        control.tintColor = Color.refreshControl
+        control.addTarget(self, action: #selector(didPullRefreshControl), for: .valueChanged)
+        return control
     }()
 
     fileprivate lazy var headerView: UIView = {
         let view = UIView()
-        view.backgroundColor = Color.navigationBarColor
+        view.backgroundColor = Color.barBackground
         view.tintColor = Color.blue
 
         view.addSubview(searchBar)
@@ -83,13 +83,15 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         return view
     }()
 
-    fileprivate lazy var toolbar: UIView = {
+    fileprivate lazy var bottomBarView: UIView = {
         let view = UIView()
-        view.backgroundColor = Color.navigationBarColor
+        view.backgroundColor = Color.barBackground
         view.addSeparatorLine()
         return view
     }()
 
+    fileprivate var bottomGradientView: UIVisualEffectView = Appearance.navigationGradientView(position: .bottom)
+    
     fileprivate lazy var headerSectionView: UIView = {
 
         let isEmpty = standingsController.isEmpty(for: season)
@@ -187,6 +189,8 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         static let cellHeight: CGFloat = 80
         static let headerViewHeight: CGFloat = 51
         static let searchBarHeight: CGFloat = 56
+        static let defaultBottomBarHeight: CGFloat = 64
+        static let bottomGradientExtension: CGFloat = 36
     }
 
     // MARK: - Lifecycle Methods
@@ -216,6 +220,20 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
         if !standingsController.didFetchStandings(for: season) {
             loadContent()
         }
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        if #available(iOS 26.0, *), !isRootTabBar,
+           let mask = bottomGradientView.layer.mask as? CAGradientLayer {
+            mask.frame = bottomGradientView.bounds
+        }
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        refreshPinnedViewIfAppearanceChanged(from: previousTraitCollection)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -253,25 +271,40 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
             $0.leading.trailing.equalToSuperview()
         }
 
-        if !isRootTabBar {
-            view.addSubview(toolbar)
-            toolbar.snp.makeConstraints {
-                $0.leading.trailing.equalToSuperview()
-                $0.bottom.equalTo(view.snp.bottom)
-                $0.height.equalTo(64)
-            }
-        }
-
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
             $0.top.equalTo(headerView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
 
             if !isRootTabBar {
-                $0.bottom.equalTo(toolbar.snp.top)
+                if #available(iOS 26.0, *) {
+                    $0.bottom.equalTo(view.snp.bottom)
+                } else {
+                    $0.bottom.equalTo(bottomBarView.snp.top)
+                }
                 tableView.refreshControl = nil // a user doesn't need to reload this data, since it won't update
             } else {
                 $0.bottom.equalTo(view.snp.bottom)
+            }
+        }
+
+        if !isRootTabBar {
+            let bottomBarHeight = tabBarController?.tabBar.frame.height ?? Constants.defaultBottomBarHeight
+            view.addSubview(bottomBarView)
+            bottomBarView.snp.makeConstraints {
+                $0.leading.trailing.equalToSuperview()
+                $0.bottom.equalTo(view.snp.bottom)
+                $0.height.equalTo(bottomBarHeight + Constants.bottomGradientExtension)
+            }
+
+            if #available(iOS 26.0, *) {
+                bottomBarView.backgroundColor = .clear
+                bottomBarView.subviews.forEach { $0.removeFromSuperview() }
+                bottomBarView.isUserInteractionEnabled = false
+                bottomBarView.addSubview(bottomGradientView)
+                bottomGradientView.snp.makeConstraints {
+                    $0.edges.equalToSuperview()
+                }
             }
         }
 
@@ -324,13 +357,8 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     // MARK: - Search
 
     fileprivate func enableSearchBar(_ enable: Bool) {
-        if #available(iOS 16.4, *) {
-            searchBar.alpha = enable ? 1.0 : 0.5
-            searchBar.isEnabled = enable
-        } else {
-            searchBar.alpha = enable ? 1.0 : 0.5
-            searchBar.isUserInteractionEnabled = enable
-        }
+        searchBar.alpha = enable ? 1.0 : 0.5
+        searchBar.isEnabled = enable
     }
 
     fileprivate var isSearching: Bool {
@@ -344,6 +372,13 @@ class StandingsViewController: UIViewController, Shimmable, Pinnable {
     }
 
     // MARK: - Cell Pinning
+
+    func pinnedViewBottomInset() -> CGFloat {
+        if #available(iOS 26.0, *), !isRootTabBar {
+            return tabBarController?.tabBar.frame.height ?? Constants.defaultBottomBarHeight
+        }
+        return tableView.adjustedContentInset.bottom
+    }
 
     func canPinView() -> Bool {
         guard let userId = myUserId else { return false }
@@ -497,25 +532,24 @@ extension StandingsViewController: UITableViewDataSource {
         cell.avatarImageView.isHidden = true
         cell.accessoryView = nil
 
-        if let userId = myUserId, viewModel.standing.pilotId == userId {
-            cell.titleLabel.textColor = Color.white
-            cell.subtitleLabel.textColor = Color.gray20
-            cell.rankView.titleLabel.textColor = Color.gray20
-            cell.backgroundView?.backgroundColor = Color.pinned
-            cell.selectedBackgroundView?.backgroundColor = Color.pinnedSelected
-            
-            if isRootTabBar {
-                let image = ButtonImg.share?.withTintColor(.white)
-                let imageView = UIImageView(image: image)
-                imageView.tintColor = .white
-                cell.accessoryView = imageView
-            }
-        } else {
-            cell.titleLabel.textColor = Color.black
-            cell.subtitleLabel.textColor = Color.gray300
-            cell.rankView.titleLabel.textColor = Color.gray300
-            cell.backgroundView?.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : Color.gray20
-            cell.selectedBackgroundView?.backgroundColor = Color.gray50
+        cell.titleLabel.textColor = Color.black
+        cell.subtitleLabel.textColor = Color.gray300
+        cell.rankView.titleLabel.textColor = Color.gray300
+        cell.backgroundView?.backgroundColor = (indexPath.row % 2 == 0) ? Color.cellColor : Color.cellColor2
+        cell.selectedBackgroundView?.backgroundColor = Color.gray50
+    }
+
+    func configurePinned<T>(_ view: T, forRowAt indexPath: IndexPath) where T: UITableViewCell {
+        configure(view, forRowAt: indexPath)
+        guard let cell = view as? AvatarTableViewCell else { return }
+
+        cell.configurePinnedAppearance()
+
+        if isRootTabBar {
+            let image = ButtonImg.share?.withTintColor(.white)
+            let imageView = UIImageView(image: image)
+            imageView.tintColor = .white
+            cell.accessoryView = imageView
         }
     }
 }
@@ -533,7 +567,6 @@ extension StandingsViewController: UITableViewDelegate {
         } else {
             showUserProfile(forUserAt: indexPath, from: cell)
         }
-
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -652,7 +685,7 @@ extension StandingsViewController: EmptyDataSetSource {
         guard !shimmeringView.isShimmering, !isSearching else { return nil }
 
         if isRootTabBar && standingsController.isEmpty(for: season) {
-            return UIImage(named: "logo_gq_large")
+            return LogoImg.gq_large
         }
         return nil
     }

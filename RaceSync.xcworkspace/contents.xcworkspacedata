@@ -20,4 +20,11 @@
          location = "group:README.md">
       </FileRef>
    </Group>
+   <Group
+      location = "group:Scripts"
+      name = "Scripts">
+      <FileRef
+         location = "group:copy-credentials.sh">
+      </FileRef>
+   </Group>
 </Workspace>

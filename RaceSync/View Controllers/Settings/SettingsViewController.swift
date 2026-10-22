@@ -23,7 +23,7 @@ class SettingsViewController: UIViewController {
         tableView.register(cellType: FormTableViewCell.self)
 
         let backgroundView = UIView()
-        backgroundView.backgroundColor = Color.gray20
+        backgroundView.backgroundColor = Color.tableGroupedBackground
         tableView.backgroundView = backgroundView
 
         return tableView
@@ -32,7 +32,7 @@ class SettingsViewController: UIViewController {
     fileprivate var sections = [Section: [Row]]()
     fileprivate let isDevModeEnabled: Bool = true
     fileprivate var isTogglingPush: Bool = false
-
+    
     fileprivate func nextEnvironment() -> APIEnvironment {
         return APIServices.shared.settings.isDev ? APIEnvironment.prod : APIEnvironment.dev
     }
@@ -94,6 +94,11 @@ class SettingsViewController: UIViewController {
     func loadSections() {
 
         sections = {
+            var settings: [Row] = [.notifications]
+            if Appearance.isDarkModeEnabled {
+                settings.append(.appearance)
+            }
+            
             var resources: [Row] = [.buildGuide, .seasonRules]
             if ApplicationControl.shared.isIOWindowEnable {
                 resources += [.ioSite]
@@ -105,10 +110,9 @@ class SettingsViewController: UIViewController {
                 auth += [.switchEnv]
             }
 
-            var about: [Row] = [.feedback, .joinBeta, .viewProject]
-            if UIApplication.shared.supportsAlternateIcons { about += [.appicon] }
+            let about: [Row] = [.feedback, .joinBeta, .viewProject]
 
-            return [.notifications: [Row.notifications], .resources: resources, .about: about, .auth: auth]
+            return [.settings: settings, .resources: resources, .about: about, .auth: auth]
        }()
     }
 
@@ -172,26 +176,18 @@ class SettingsViewController: UIViewController {
         }, cancel: nil)
     }
 
-    fileprivate func sendFeedback() {
-        let subject = "RaceSync iOS Feedback"
-        let email = StringConstants.supportEmail
-        let device = UIDevice.current
-
-        let diagnostics = """
-        Device: \(device.model )
-        OS: \(device.systemName ) \(device.systemVersion)
-        App Version: \(Bundle.main.releaseDescriptionPretty)
-        ***************************
-        \n
-        \n
-        """
-        
-        guard let encodedSubject = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { return }
-        guard let encodedBody = diagnostics.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { return }
-        guard let url = URL(string: "mailto:\(email)?subject=\(encodedSubject)&body=\(encodedBody)") else { return }
-
-        if UIApplication.shared.canOpenURL(url) {
-            UIApplication.shared.open(url)
+    fileprivate func selectAppearance() {
+        let appearances = AppAppearance.allCases
+        ActionSheetUtil.presentActionSheet(
+            withTitle: "Appearance Mode",
+            buttonTitles: appearances.map(\.title),
+            disabledButtonTitles: [AppPrefs.appearance.title]
+        ) { [weak self] action in
+            guard let title = action.title,
+                  let appearance = appearances.first(where: { $0.title == title }) else { return }
+            AppPrefs.appearance = appearance
+            Appearance.applyUserInterfaceStyle()
+            self?.tableView.reloadData()
         }
     }
 }
@@ -204,6 +200,8 @@ extension SettingsViewController: UITableViewDelegate {
         guard let section = Section(rawValue: indexPath.section), let row = sections[section]?[indexPath.row] else { return }
 
         switch row {
+        case .appearance:
+            selectAppearance()
         case .notifications:
             togglePushNotifications()
             cell.isLoading = isTogglingPush
@@ -213,10 +211,6 @@ extension SettingsViewController: UITableViewDelegate {
             WebViewController.open(AppWebConstants.obstaclesDoc)
         case .seasonRules:
             WebViewController.open(AppWebConstants.seasonRulesDoc)
-        case .appicon:
-            let vc = AppIconViewController()
-            vc.title = row.title
-            navigationController?.pushViewController(vc, animated: true)
         case .joinBeta:
             WebViewController.open(AppWebConstants.testflight)
         case .viewProject:
@@ -230,7 +224,7 @@ extension SettingsViewController: UITableViewDelegate {
         case .switchEnv:
             switchEnvironment()
         case .feedback:
-            sendFeedback()
+            WebViewController.open(AppWebConstants.helpdesk)
         }
     }
 
@@ -275,16 +269,16 @@ extension SettingsViewController: UITableViewDataSource {
         cell.textLabel?.text = row.title
         cell.textLabel?.textColor = Color.black
         cell.detailTextLabel?.text = nil
-        cell.imageView?.image = UIImage.init(named: row.imageName)
+        cell.imageView?.image = row.image
+        cell.imageView?.tintColor = Color.black
         cell.accessoryType = .disclosureIndicator
         cell.isLoading = false
-
-        if row == .notifications {
+        
+        if row == .appearance {
+            cell.detailTextLabel?.text = AppPrefs.appearance.title
+        } else if row == .notifications {
             cell.detailTextLabel?.text = PushMessagesController.shared.isPushNotificationsEnabled() ? "Enabled" : "Disabled"
             cell.isLoading = isTogglingPush
-        } else if row == .appicon {
-            let icon = AppIconManager.selectedIcon()
-            cell.detailTextLabel?.text = icon.title
         } else if row == .joinBeta {
             cell.detailTextLabel?.text = "Testflight"
         } else if row == .viewProject {
@@ -299,11 +293,11 @@ extension SettingsViewController: UITableViewDataSource {
 }
 
 fileprivate enum Section: Int, EnumTitle {
-    case notifications, resources, about, auth
+    case settings, resources, about, auth
 
     var title: String {
         switch self {
-        case .notifications:    return ""
+        case .settings:         return ""
         case .resources:        return "Resources"
         case .about:            return "RaceSync iOS \(Bundle.main.releaseDescriptionPretty)"
         case .auth:             return ""
@@ -312,6 +306,7 @@ fileprivate enum Section: Int, EnumTitle {
 }
 
 fileprivate enum Row: Int, EnumTitle {
+    case appearance
     case notifications
     case tracksGuide
     case buildGuide
@@ -321,12 +316,12 @@ fileprivate enum Row: Int, EnumTitle {
     case feedback
     case joinBeta
     case viewProject
-    case appicon
     case logout
     case switchEnv
 
     var title: String {
         switch self {
+        case .appearance:           return "Appearance"
         case .notifications:        return "Push Notifications"
         case .tracksGuide:          return "MultiGP Tracks"
         case .buildGuide:           return "Obstacles Build Guide"
@@ -336,7 +331,6 @@ fileprivate enum Row: Int, EnumTitle {
         case .feedback:             return "Share Feedback"
         case .joinBeta:             return "Join the Beta"
         case .viewProject:          return "View Project"
-        case .appicon:              return "Change App Icon"
         case .logout:               return "Logout"
         case .switchEnv:            return "Switch to"
         }
@@ -345,6 +339,7 @@ fileprivate enum Row: Int, EnumTitle {
     // For including icons to each row. Look for icons at https://thenounproject.com/
     var imageName: String {
         switch self {
+        case .appearance:           return "circle.lefthalf.filled"
         case .notifications:        return "icn_settings_apns"
         case .tracksGuide:          return "icn_settings_tracks"
         case .buildGuide:           return "icn_settings_buildguide"
@@ -354,9 +349,13 @@ fileprivate enum Row: Int, EnumTitle {
         case .feedback:             return "icn_settings_feedback"
         case .joinBeta:             return "icn_settings_testflight"
         case .viewProject:          return "icn_settings_github"
-        case .appicon:              return "icn_settings_appicn"
         case .logout:               return "icn_settings_logout"
         case .switchEnv:            return "icn_settings_logout"
         }
+    }
+
+    var image: UIImage? {
+        let image = UIImage(named: self.imageName) ?? UIImage(systemName: self.imageName)
+        return image?.withRenderingMode(.alwaysTemplate)
     }
 }

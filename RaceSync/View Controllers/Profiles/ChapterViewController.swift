@@ -25,26 +25,38 @@ class ChapterViewController: ProfileViewController, ViewJoinable, RaceEditable {
         button.addTarget(self, action: #selector(didPressJoinButton), for: .touchUpInside)
         button.hitTestEdgeInsets = UIEdgeInsets(proportionally: -10)
         button.type = .chapter
-        button.objectId = chapter.id
-        button.joinState = chapterViewModel.joinState
-        button.isHidden = !chapter.isApproved
+        button.objectId = chapter?.id
+        button.joinState = chapter.map { ChapterViewModel(with: $0).joinState } ?? .notJoined
+        button.isHidden = !(chapter?.isApproved ?? false)
         return button
     }()
 
-    fileprivate let chapter: Chapter
+    fileprivate var chapter: Chapter?
+    fileprivate var chapterLookup: ChapterLookup?
     fileprivate let raceApi = RaceApi()
     fileprivate let chapterApi = ChapterApi()
 
     fileprivate var raceViewModels = [RaceViewModel]()
     fileprivate var userViewModels = [UserViewModel]()
-    fileprivate let chapterViewModel: ChapterViewModel
     fileprivate var chapterCoordinate: CLLocationCoordinate2D?
+    fileprivate var emptyStateError: EmptyStateViewModel?
+
+    fileprivate enum ChapterLookup {
+        case id(String), name(String)
+    }
+
+    fileprivate lazy var activityIndicatorView: ActivityLoadingView = {
+        let view = ActivityLoadingView(style: .medium)
+        view.title = "Loading Chapter..."
+        view.hidesWhenStopped = true
+        return view
+    }()
 
     fileprivate let emptyStateRaces = EmptyStateViewModel(.noRaces)
     fileprivate let emptyStateUsers = EmptyStateViewModel(.noChapterMembers)
 
     fileprivate var canCreateRaces: Bool {
-        guard chapter.isMyChapter else { return false }
+        guard let chapter, chapter.isMyChapter else { return false }
         return true
     }
 
@@ -59,7 +71,6 @@ class ChapterViewController: ProfileViewController, ViewJoinable, RaceEditable {
 
     init(with chapter: Chapter) {
         self.chapter = chapter
-        self.chapterViewModel = ChapterViewModel(with: chapter)
 
         let profileViewModel = ProfileViewModel(with: chapter)
         super.init(with: profileViewModel)
@@ -67,6 +78,11 @@ class ChapterViewController: ProfileViewController, ViewJoinable, RaceEditable {
         if let latitude = CLLocationDegrees(chapter.latitude), let longitude = CLLocationDegrees(chapter.longitude) {
             self.chapterCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
         }
+    }
+
+    init(chapter: String) {
+        self.chapterLookup = chapter.allSatisfy({ $0.isASCII && $0.isNumber }) ? .id(chapter) : .name(chapter)
+        super.init(with: nil)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -78,7 +94,11 @@ class ChapterViewController: ProfileViewController, ViewJoinable, RaceEditable {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        loadContent()
+        if chapter == nil {
+            loadChapter()
+        } else {
+            loadContent()
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -100,6 +120,12 @@ class ChapterViewController: ProfileViewController, ViewJoinable, RaceEditable {
     // MARK: - Layout
 
     override func setupLayout() {
+        guard chapter != nil else {
+            view.backgroundColor = Color.tableBackground
+            view.addSubview(activityIndicatorView)
+            activityIndicatorView.snp.makeConstraints { $0.center.equalToSuperview() }
+            return
+        }
         super.setupLayout()
 
         registerJoinable()
@@ -159,16 +185,17 @@ class ChapterViewController: ProfileViewController, ViewJoinable, RaceEditable {
     }
 
     override func didSelectRow(at indexPath: IndexPath) {
-        if selectedSegment == .left, let viewModel = raceViewModel(for: indexPath.row) {
+        if selectedSegment == .left, let viewModel = raceViewModel(at: indexPath.row) {
             let vc = RaceTabBarController(with: viewModel.race)
             navigationController?.pushViewController(vc, animated: true)
-        } else if selectedSegment == .right, let viewModel = userViewModel(for: indexPath.row), let user = viewModel.user {
+        } else if selectedSegment == .right, let viewModel = userViewModel(at: indexPath.row), let user = viewModel.user {
             let vc = UserViewController(with: user)
             navigationController?.pushViewController(vc, animated: true)
         }
     }
 
     @objc func didPressAddButton() {
+        guard let chapter else { return }
         guard let chapters = APIServices.shared.myManagedChapters, chapters.count > 0 else { return }
 
         let vc = RaceFormViewController(with: chapters, selectedChapterId: chapter.id, selectedChapterName: chapter.name)
@@ -190,10 +217,10 @@ class ChapterViewController: ProfileViewController, ViewJoinable, RaceEditable {
                     self?.fetchRaces(nil)
                 }
             }
-        } else if sender.type == .chapter {
+        } else if sender.type == .chapter, let chapter {
             toggleJoinButton(sender, forChapter: chapter, chapterApi: chapterApi) { [weak self] (newState) in
                 if joinState != newState {
-                    self?.chapter.isJoined = (newState == .joined)
+                    self?.chapter?.isJoined = (newState == .joined)
                     sender.joinState = newState
                 }
             }
@@ -205,7 +232,7 @@ class ChapterViewController: ProfileViewController, ViewJoinable, RaceEditable {
     }
 
     @objc func didPressShareButton() {
-        guard let chapterURL = URL(string: chapter.url) else { return }
+        guard let chapter, let chapterURL = URL(string: chapter.url) else { return }
 
         let leaderboardActivity = MGPLeaderboardActivity()
         leaderboardActivity.chapterId = chapter.id
@@ -225,8 +252,46 @@ class ChapterViewController: ProfileViewController, ViewJoinable, RaceEditable {
 
     // MARK: - Data Update
 
+    fileprivate func loadChapter() {
+        guard let chapterLookup else { return }
+        activityIndicatorView.isLoading = true
+
+        let completion: ObjectCompletionBlock<Chapter> = { [weak self] chapter, error in
+            guard let self else { return }
+            self.activityIndicatorView.isLoading = false
+
+            guard let chapter else {
+                let error = error ?? NSError(domain: "ChapterProfile", code: 0, userInfo: [NSLocalizedDescriptionKey: "Couldn't find this chapter."])
+                self.emptyStateError = EmptyStateViewModel(.error(error))
+                let scrollView = UIScrollView()
+                scrollView.contentInsetAdjustmentBehavior = .never
+                scrollView.emptyDataSetSource = self
+                scrollView.emptyDataSetDelegate = self
+                self.view.addSubview(scrollView)
+                scrollView.snp.makeConstraints { $0.edges.equalToSuperview() }
+                scrollView.reloadEmptyDataSet()
+                return
+            }
+
+            self.chapter = chapter
+            self.profileViewModel = ProfileViewModel(with: chapter)
+            if let latitude = CLLocationDegrees(chapter.latitude), let longitude = CLLocationDegrees(chapter.longitude) {
+                self.chapterCoordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+            }
+            self.activityIndicatorView.removeFromSuperview()
+            self.setupLayout()
+            self.loadContent()
+        }
+
+        switch chapterLookup {
+        case .id(let id): chapterApi.getChapter(with: id, completion)
+        case .name(let name): chapterApi.searchChapter(with: name, completion)
+        }
+    }
+
     // ViewJoinable
     func loadContent(forced: Bool = false) {
+        guard chapter != nil else { return }
         if selectedSegment == .left {
             loadRaces(forced)
         } else {
@@ -245,6 +310,7 @@ class ChapterViewController: ProfileViewController, ViewJoinable, RaceEditable {
     }
 
     func fetchRaces(_ completion: VoidCompletionBlock? = nil) {
+        guard let chapter else { completion?(); return }
         raceApi.getRaces(chapterIds: [chapter.id]) { (races, error) in
             if let races = races {
                 // skip parent races for now
@@ -264,6 +330,7 @@ class ChapterViewController: ProfileViewController, ViewJoinable, RaceEditable {
     }
 
     func fetchUsers(_ completion: VoidCompletionBlock? = nil) {
+        guard let chapter else { completion?(); return }
         chapterApi.getChapterMembers(with: chapter.id) { (users, error) in
             if let users = users {
                 let viewModels = UserViewModel.viewModels(with: users)
@@ -312,14 +379,14 @@ class ChapterViewController: ProfileViewController, ViewJoinable, RaceEditable {
         }
     }
 
-    func raceViewModel(for index: Int) -> RaceViewModel? {
+    func raceViewModel(at index: Int) -> RaceViewModel? {
         if index >= 0, index < raceViewModels.count {
             return raceViewModels[index]
         }
         return nil
     }
 
-    func userViewModel(for index: Int) -> UserViewModel? {
+    func userViewModel(at index: Int) -> UserViewModel? {
         if index >= 0, index < userViewModels.count {
             return userViewModels[index]
         }
@@ -353,7 +420,7 @@ extension ChapterViewController: UITableViewDataSource {
 
     func raceTableViewCell(for indexPath: IndexPath) -> RaceTableViewCell {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as RaceTableViewCell
-        guard let viewModel = raceViewModel(for: indexPath.row) else { return cell }
+        guard let viewModel = raceViewModel(at: indexPath.row) else { return cell }
 
         cell.dateLabel.text = viewModel.startDateLabel //"Saturday Sept 14 @ 9:00 AM"
         cell.titleLabel.text = viewModel.titleLabel
@@ -362,7 +429,7 @@ extension ChapterViewController: UITableViewDataSource {
         cell.joinButton.isHidden = false
         cell.memberBadgeView.isHidden = false
 
-        if chapter.isApproved {
+        if chapter?.isApproved == true {
             cell.joinButton.type = .race
             cell.joinButton.objectId = viewModel.race.id
             cell.joinButton.joinState = viewModel.joinState
@@ -378,7 +445,7 @@ extension ChapterViewController: UITableViewDataSource {
 
     func avatarTableViewCell(for indexPath: IndexPath) -> AvatarTableViewCell {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as AvatarTableViewCell
-        guard let viewModel = userViewModel(for: indexPath.row) else { return cell }
+        guard let viewModel = userViewModel(at: indexPath.row) else { return cell }
 
         cell.titleLabel.text = viewModel.displayName
         cell.avatarImageView.imageView.setImage(with: viewModel.pictureUrl, placeholderImage: PlaceholderImg.medium, size: Constants.avatarImageSize)
@@ -403,6 +470,7 @@ extension ChapterViewController: RaceFormViewControllerDelegate {
 extension ChapterViewController: EmptyDataSetSource {
 
     func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        if let emptyStateError { return emptyStateError.title }
         if selectedSegment == .left {
             return emptyStateRaces.title
         } else if selectedSegment == .right {
@@ -413,6 +481,7 @@ extension ChapterViewController: EmptyDataSetSource {
     }
 
     func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
+        if let emptyStateError { return emptyStateError.description }
         if selectedSegment == .left {
             return emptyStateRaces.description
         } else if selectedSegment == .right {

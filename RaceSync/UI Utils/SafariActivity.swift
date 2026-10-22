@@ -10,6 +10,8 @@ import UIKit
 import RaceSyncAPI
 
 class SafariActivity: UIActivity {
+    
+    var useInternalWebView: Bool = true
 
     override var activityTitle: String? {
         return "Open Link in Safari"
@@ -39,9 +41,13 @@ class SafariActivity: UIActivity {
 
     override func perform() {
         guard let url = _url else { return }
-
-        UIApplication.shared.open(url , options: [:]) { [weak self] (completed) in
-            self?.activityDidFinish(completed)
+        
+        if useInternalWebView {
+            WebViewController.open(url)
+        } else {
+            UIApplication.shared.open(url , options: [:]) { [weak self] (completed) in
+                self?.activityDidFinish(completed)
+            }
         }
     }
 
@@ -56,6 +62,23 @@ class MGPActivity: SafariActivity {
 
     override var activityImage: UIImage? {
         return LogoImg.activity_mgp
+    }
+}
+
+class MGPZippyQActivity: MGPActivity {
+
+    var raceId: ObjectId?
+
+    override var activityTitle: String? {
+        return "View Web ZippyQ"
+    }
+
+    override var _url : URL? {
+        get {
+            guard let id = raceId else { return nil }
+            return MGPWeb.getURL(for: .zippyqView, value: id)
+        }
+        set { }
     }
 }
 

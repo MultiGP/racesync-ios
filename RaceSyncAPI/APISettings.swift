@@ -17,7 +17,7 @@ public enum APISettingsType: Int, EnumTitle {
 
     public var title: String {
         switch self {
-        case .raceFeedFilters:  return "Filter Races By"
+        case .raceFeedFilters:  return "Filter by"
         case .searchRadius:     return "Search Radius"
         case .measurement:      return "Measurement System"
         case .environment:      return "Environment"
@@ -34,7 +34,7 @@ public enum APISettingsType: Int, EnumTitle {
     }
 }
 
-public let APISettingsDomain: String = "com.multigp.RaceSync.settings"
+public let APISettingsDomain: String = "com.multigp.racesync.settings"
 
 public class APISettings {
 

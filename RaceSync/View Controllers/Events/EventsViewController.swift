@@ -23,13 +23,12 @@ class EventsViewController: UIViewController, Shimmable {
         tableView.emptyDataSetSource = self
         tableView.emptyDataSetDelegate = self
         tableView.tableFooterView = UIView()
-        tableView.backgroundView = UIView()
-        tableView.backgroundView?.backgroundColor = Color.clear
-        tableView.backgroundColor = Color.gray50
         tableView.contentInsetAdjustmentBehavior = .always
         tableView.register(cellType: EventSessionTableViewCell.self)
         tableView.refreshControl = refreshControl
-        
+        tableView.tableFooterView = UIView()
+        tableView.backgroundColor = Color.tableGroupedBackground
+
         for direction in [UISwipeGestureRecognizer.Direction.left, UISwipeGestureRecognizer.Direction.right] {
             let gesture = UISwipeGestureRecognizer(target: self, action: #selector(didSwipeHorizontally(_:)))
             gesture.direction = direction
@@ -45,8 +44,8 @@ class EventsViewController: UIViewController, Shimmable {
 
     fileprivate lazy var refreshControl: UIRefreshControl = {
         let control = UIRefreshControl()
-        control.backgroundColor = Color.gray50
-        control.tintColor = Color.blue
+        control.backgroundColor = Color.clear
+        control.tintColor = Color.refreshControl
         control.addTarget(self, action: #selector(didPullRefreshControl), for: .valueChanged)
         return control
     }()
@@ -342,7 +341,7 @@ extension EventsViewController: UITableViewDelegate {
 extension EventsViewController: MapViewControllerDelegate {
     
     func mapViewController(_ mapViewController: MapViewController, didSelectLocation location: MapViewLocation) {
-        guard let track = eventsController.io26Event?.tracks?.first(where: { $0.name == location.name }) else { return }
+        guard let _ = eventsController.io26Event?.tracks?.first(where: { $0.name == location.name }) else { return }
         
         // 
     }
@@ -381,7 +380,7 @@ extension EventsViewController: EmptyDataSetSource {
     }
 
     func backgroundColor(forEmptyDataSet scrollView: UIScrollView) -> UIColor? {
-        return Color.white
+        return tableView.backgroundColor
     }
 }
 

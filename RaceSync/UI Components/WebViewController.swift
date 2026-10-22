@@ -61,7 +61,7 @@ class WebViewController: SFSafariViewController {
     // MARK: - Layout
 
     func configureLayout() {
-        preferredBarTintColor = Color.navigationBarColor
+        preferredBarTintColor = Color.viewTint
         preferredControlTintColor = Color.blue
         dismissButtonStyle = .close
     }

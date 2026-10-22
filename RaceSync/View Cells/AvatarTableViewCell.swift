@@ -15,12 +15,19 @@ class AvatarTableViewCell: UITableViewCell {
 
     var isLoading: Bool = false {
         didSet {
+            guard isLoading != oldValue else { return }
+
             if isLoading {
+                accessoryTypeBeforeLoading = accessoryType
+                accessoryViewBeforeLoading = accessoryView
+                accessoryType = .none
                 accessoryView = spinnerView
                 spinnerView.startAnimating()
             } else {
-                accessoryView = nil
-                accessoryType = .disclosureIndicator
+                spinnerView.stopAnimating()
+                accessoryType = accessoryTypeBeforeLoading
+                accessoryView = accessoryViewBeforeLoading
+                accessoryViewBeforeLoading = nil
             }
         }
     }
@@ -75,6 +82,8 @@ class AvatarTableViewCell: UITableViewCell {
     fileprivate var imageViewWidthConstraint: Constraint?
     fileprivate var rankLabelWidthConstraint: Constraint?
     fileprivate var rankLabelLeadingConstraint: Constraint?
+    fileprivate var accessoryTypeBeforeLoading: UITableViewCell.AccessoryType = .none
+    fileprivate var accessoryViewBeforeLoading: UIView?
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -95,16 +104,41 @@ class AvatarTableViewCell: UITableViewCell {
 
     // MARK: - Layout
 
+    func configureDisclosureIndicator(color: UIColor) {
+        let configuration = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
+        let image = SystemImg.chevronRight?
+            .applyingSymbolConfiguration(configuration)?
+            .withTintColor(color, renderingMode: .alwaysOriginal)
+
+        accessoryType = .none
+        accessoryView = UIImageView(image: image)
+    }
+
+    func configurePinnedAppearance() {
+        titleLabel.textColor = Color.light
+        subtitleLabel.textColor = Color.light.withAlphaComponent(0.8)
+        rankView.titleLabel.textColor = Color.light
+        backgroundView?.backgroundColor = Color.pinned
+        selectedBackgroundView?.backgroundColor = Color.pinnedSelected
+    }
+
+    func configurePinnedResultAppearance() {
+        configurePinnedAppearance()
+        textPill.style = .text
+        textPill.titleLabel.textColor = Color.gray400.resolvedColor(with: traitCollection)
+        textPill.backgroundColor = Color.gray100.withAlphaComponent(0.75).resolvedColor(with: traitCollection)
+        configureDisclosureIndicator(color: Color.light.withAlphaComponent(0.7))
+    }
+
     open func setupLayout() {
-        backgroundColor = Color.white
+        self.accessoryType = .disclosureIndicator
+        self.backgroundColor =  Color.cellColor
         
         self.backgroundView = UIView()
-        self.backgroundView?.backgroundColor = Color.clear
+        self.backgroundView?.backgroundColor =  Color.cellColor
         
         self.selectedBackgroundView = UIView()
         self.selectedBackgroundView?.backgroundColor = Color.gray20
-
-        accessoryType = .disclosureIndicator
 
         contentView.addSubview(textPill)
         textPill.snp.makeConstraints {
@@ -162,6 +196,10 @@ class AvatarTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
 
+        if isLoading {
+            isLoading = false
+        }
+        accessoryViewBeforeLoading = nil
         titleLabel.numberOfLines = 1
         titleLabel.text = nil
         subtitleLabel.text = nil

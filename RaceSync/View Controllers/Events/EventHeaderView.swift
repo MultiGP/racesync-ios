@@ -21,6 +21,16 @@ protocol EventHeaderViewDelegate: AnyObject {
 
 class EventHeaderView: UIView {
 
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) else { return }
+
+        for button in dateStackView.arrangedSubviews.compactMap({ $0 as? UIButton }) {
+            let color = button.isSelected ? tintColor : Color.gray50
+            button.layer.borderColor = color?.resolvedColor(with: traitCollection).cgColor
+        }
+    }
+
     // MARK: - Public
 
     weak var delegate: EventHeaderViewDelegate?
@@ -43,14 +53,14 @@ class EventHeaderView: UIView {
     func selectNextDate() {
         let nextIndex = selectedDateIndex + 1
         guard nextIndex < dates.count, let button = dateButton(at: nextIndex) else { return }
-        animateButtonPress(button)
+        button.animatePress()
         selectDate(at: nextIndex)
     }
 
     func selectPreviousDate() {
         let prevIndex = selectedDateIndex - 1
         guard prevIndex >= 0, let button = dateButton(at: prevIndex) else { return }
-        animateButtonPress(button)
+        button.animatePress()
         selectDate(at: prevIndex)
     }
 
@@ -170,7 +180,7 @@ class EventHeaderView: UIView {
     // MARK: - Layout
 
     fileprivate func setupLayout() {
-        backgroundColor = Color.navigationBarColor
+        backgroundColor = Color.viewTint
         addSeparatorLine(.bottom)
 
         addSubview(dateScrollView)
@@ -341,22 +351,6 @@ class EventHeaderView: UIView {
             }
             
             return button
-        }
-    }
-    
-    fileprivate func animateButtonPress(_ button: UIButton) {
-        UIView.animate(
-            withDuration: 0.12,
-            animations: { button.transform = CGAffineTransform(scaleX: 0.88, y: 0.88) }
-        ) { _ in
-            UIView.animate(
-                withDuration: 0.4,
-                delay: 0,
-                usingSpringWithDamping: 0.4,
-                initialSpringVelocity: 8,
-                options: .allowUserInteraction,
-                animations: { button.transform = .identity }
-            )
         }
     }
 

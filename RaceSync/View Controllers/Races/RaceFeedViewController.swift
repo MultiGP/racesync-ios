@@ -31,7 +31,8 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
         tableView.refreshControl = self.refreshControl
         tableView.tableFooterView = UIView()
         tableView.contentInsetAdjustmentBehavior = .always
-
+        tableView.backgroundColor = Color.cellColor
+        
         for direction in [UISwipeGestureRecognizer.Direction.left, UISwipeGestureRecognizer.Direction.right] {
             let gesture = UISwipeGestureRecognizer(target: self, action: #selector(didSwipeHorizontally(_:)))
             gesture.direction = direction
@@ -53,8 +54,8 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
 
     fileprivate lazy var headerView: UIView = {
         let view = UIView()
-        view.backgroundColor = Color.navigationBarColor
-        view.tintColor = Color.blue
+        view.backgroundColor = Color.barBackground
+        view.tintColor = Color.buttonTint
 
         let spacing: CGFloat = 10
         let buttonWidth: CGFloat = 30
@@ -88,6 +89,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
     fileprivate lazy var segmentedControl: UISegmentedControl = {
         let control = UISegmentedControl()
         control.addTarget(self, action: #selector(didChangeSegment), for: .valueChanged)
+        control.selectedSegmentTintColor = Color.barBackground
         return control
     }()
 
@@ -106,11 +108,11 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
     }()
 
     fileprivate lazy var refreshControl: UIRefreshControl = {
-        let refreshControl = UIRefreshControl()
-        refreshControl.backgroundColor = Color.white
-        refreshControl.tintColor = Color.blue
-        refreshControl.addTarget(self, action: #selector(didPullRefreshControl), for: .valueChanged)
-        return refreshControl
+        let control = UIRefreshControl()
+        control.backgroundColor = Color.clear
+        control.tintColor = Color.refreshControl
+        control.addTarget(self, action: #selector(didPullRefreshControl), for: .valueChanged)
+        return control
     }()
 
     fileprivate var selectedRaceFilter: RaceFilter {
@@ -120,7 +122,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
         }
     }
 
-    func raceViewModel(for index: Int) -> RaceViewModel? {
+    func raceViewModel(at index: Int) -> RaceViewModel? {
         guard let list = raceFeedController.viewModels(for: selectedRaceFilter) else { return nil }
         if index >= 0, index < list.count {
             return list[index]
@@ -203,6 +205,7 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
 
     deinit {
         unregisterJoinable()
+        APIServices.shared.settings.remove(self)
     }
 
     // MARK: - Layout
@@ -353,7 +356,7 @@ extension RaceFeedViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        if let viewModel = raceViewModel(for: indexPath.row) {
+        if let viewModel = raceViewModel(at: indexPath.row) {
             openRaceDetail(viewModel)
         }
     }
@@ -368,11 +371,16 @@ extension RaceFeedViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return feedCount()
     }
-
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(forIndexPath: indexPath) as RaceTableViewCell
-        guard let viewModel = raceViewModel(for: indexPath.row) else { return cell }
-
+        configure(cell, forRowAt: indexPath)
+        return cell
+    }
+    
+    func configure<T>(_ view: T, forRowAt indexPath: IndexPath) where T : UITableViewCell {
+        guard let cell = view as? RaceTableViewCell,
+              let viewModel = raceViewModel(at: indexPath.row) else { return }
         cell.titleLabel.text = viewModel.titleLabel
         cell.dateLabel.text = viewModel.dateLabel //"Saturday Sept 14 @ 9:00 AM"
         cell.joinButton.type = .race
@@ -381,6 +389,8 @@ extension RaceFeedViewController: UITableViewDataSource {
         cell.joinButton.addTarget(self, action: #selector(didPressJoinButton), for: .touchUpInside)
         cell.memberBadgeView.count = viewModel.participantCount
         cell.avatarImageView.imageView.setImage(with: viewModel.imageUrl, placeholderImage: PlaceholderImg.medium)
+        cell.backgroundView?.backgroundColor = Color.cellColor
+        cell.backgroundColor = Color.cellColor
 
         if selectedRaceFilter == .joined {
             cell.subtitleLabel.text = viewModel.locationLabel
@@ -389,8 +399,6 @@ extension RaceFeedViewController: UITableViewDataSource {
         } else {
             cell.subtitleLabel.text = viewModel.chapterLabel
         }
-
-        return cell
     }
 }
 
@@ -462,13 +470,16 @@ extension RaceFeedViewController: EmptyDataSetSource {
 }
 
 extension RaceFeedViewController: EmptyDataSetDelegate {
+    
+    func emptyDataSetShouldDisplay(_ scrollView: UIScrollView) -> Bool {
+        return !shimmeringView.isShimmering
+    }
 
     func emptyDataSetShouldAllowScroll(_ scrollView: UIScrollView) -> Bool {
         return true
     }
 
     func emptyDataSet(_ scrollView: UIScrollView, didTapButton button: UIButton) {
-
         if selectedRaceFilter == .joined {
             selectSegment(.nearby)
         } else if selectedRaceFilter == .chapters {

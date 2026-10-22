@@ -80,7 +80,7 @@ class ActionButton: CustomButton {
         if showsShadow {
             layer.masksToBounds = false
             layer.shadowOffset = CGSize(width: 0, height: 1)
-            layer.shadowColor = Color.black.cgColor
+            layer.shadowColor = UIColor.black.cgColor
             layer.shadowRadius = 4.0
             layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: layer.cornerRadius).cgPath
             layer.shadowOpacity = 0.1

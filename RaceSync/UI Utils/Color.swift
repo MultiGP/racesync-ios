@@ -10,32 +10,54 @@ import UIKit
 
 // Color Palette
 public struct Color {
+    
     // Main colors
-    public static let red: UIColor =            #colorLiteral(red: 0.5529411765, green: 0.09411764706, blue: 0.1058823529, alpha: 1) // #8d181b          // Links and text action items
-    public static let blue: UIColor =           #colorLiteral(red: 0.1333333333, green: 0.168627451, blue: 0.3568627451, alpha: 1) // #222b5b          // UI buttons and interactive elements
+    public static let light =                   #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1) // Always white regardless of color mode
+    public static let dark =                    #colorLiteral(red: 0.057, green: 0.057, blue: 0.06, alpha: 1) // Always black regardless of color mode
     public static let green: UIColor =          #colorLiteral(red: 0.2196078431, green: 0.4941176471, blue: 0.1607843137, alpha: 1) // #387e29
-    public static let yellow: UIColor =         #colorLiteral(red: 0.9764705882, green: 0.8431372549, blue: 0.2862745098, alpha: 1) // #f9d749          // Special elements (GQ Trophee)
+    public static let red =                     dynamic(light: #colorLiteral(red: 0.6355610395, green: 0.1081806025, blue: 0.1217031777, alpha: 1), dark: #colorLiteral(red: 0.768627451, green: 0.1254901961, blue: 0.2, alpha: 1)) // #8d181b       // Links and text action items
+    public static let blue =                    dynamic(light: #colorLiteral(red: 0.1627927972, green: 0.2058850083, blue: 0.4357101338, alpha: 1), dark: #colorLiteral(red: 0.2743648603, green: 0.6327382272, blue: 0.8573901885, alpha: 1)) // #222b5b       // UI buttons and interactive elements
 
     // Secondary Colors
-    public static let lightRed: UIColor =       #colorLiteral(red: 0.9764705882, green: 0.2705882353, blue: 0.231372549, alpha: 1) // #f9453b          // badges
+    public static let lightRed: UIColor =       #colorLiteral(red: 0.9764705882, green: 0.2705882353, blue: 0.231372549, alpha: 1) // #F9453B          // badges
     public static let lightBlue: UIColor =      #colorLiteral(red: 0.4588235294, green: 0.7450980392, blue: 0.8588235294, alpha: 1) // #75bedb
+    public static let orange: UIColor =         #colorLiteral(red: 1, green: 0.5843137255, blue: 0.1960784314, alpha: 1) // #FF9532
+    public static let yellow: UIColor =         #colorLiteral(red: 0.9764705882, green: 0.8431372549, blue: 0.2862745098, alpha: 1) // #F9D749          // Special elements (GQ Trophee)
 
-    // Grayscale
-    public static let white: UIColor =          #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1) // #FFFFFF
-    public static let gray20: UIColor =         #colorLiteral(red: 0.9607843137, green: 0.9647058824, blue: 0.988627451, alpha: 1) // #F5F6FC          // lite-backgrounds
-    public static let gray50: UIColor =         #colorLiteral(red: 0.9294117647, green: 0.9254901961, blue: 0.9533333333, alpha: 1) // #EDECF3          // backgrounds
-    public static let gray100: UIColor =        #colorLiteral(red: 0.7921568627, green: 0.7921568627, blue: 0.8121568627, alpha: 1) // #CACACF          // bar shadow, separator lines
-    public static let gray200: UIColor =        #colorLiteral(red: 0.5568627451, green: 0.5568627451, blue: 0.5964705882, alpha: 1) // #8E8E98
-    public static let gray300: UIColor =        #colorLiteral(red: 0.4274509804, green: 0.4274509804, blue: 0.4670588235, alpha: 1) // #6D6D77          // sub-titles
-    public static let gray400: UIColor =        #colorLiteral(red: 0.262745098, green: 0.262745098, blue: 0.282745098, alpha: 1) // #434348          // caption
-    public static let gray500: UIColor =        #colorLiteral(red: 0.1921568627, green: 0.1921568627, blue: 0.2200000000, alpha: 1) // #313138
-    public static let black: UIColor =          #colorLiteral(red: 0.0431372549, green: 0.0431372549, blue: 0.0431372549, alpha: 1) // #0B0B0B          // titles / text
+    // Grayscales
+    public static let white =                   dynamic(light: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), dark: #colorLiteral(red: 0.09803921569, green: 0.1137254902, blue: 0.1333333333, alpha: 0.98))
+    public static let gray20 =                  dynamic(light: #colorLiteral(red: 0.9702, green: 0.97284, blue: 0.99, alpha: 1), dark: #colorLiteral(red: 0.1294117647, green: 0.1529411765, blue: 0.1843137255, alpha: 1))                  // lite-backgrounds
+    public static let gray50 =                  dynamic(light: #colorLiteral(red: 0.9368088889, green: 0.9342666666, blue: 0.9533333333, alpha: 1), dark: #colorLiteral(red: 0.168627451, green: 0.2, blue: 0.2352941176, alpha: 1))                  // backgrounds
+    public static let gray100 =                 dynamic(light: #colorLiteral(red: 0.7921568627, green: 0.7921568627, blue: 0.8121568627, alpha: 1), dark: #colorLiteral(red: 0.2823529412, green: 0.3176470588, blue: 0.3647058824, alpha: 1))                  // bar shadow, separator lines
+    public static let gray200 =                 dynamic(light: #colorLiteral(red: 0.5568627451, green: 0.5568627451, blue: 0.5964705882, alpha: 1), dark: #colorLiteral(red: 0.5019607843, green: 0.537254902, blue: 0.5921568627, alpha: 1))
+    public static let gray300 =                 dynamic(light: #colorLiteral(red: 0.4274509804, green: 0.4274509804, blue: 0.4670588235, alpha: 1), dark: #colorLiteral(red: 0.6156862745, green: 0.6470588235, blue: 0.6980392157, alpha: 1))                  // sub-titles
+    public static let gray400 =                 dynamic(light: #colorLiteral(red: 0.262745098, green: 0.262745098, blue: 0.282745098, alpha: 1), dark: #colorLiteral(red: 0.7098039216, green: 0.7450980392, blue: 0.7960784314, alpha: 1))                  // caption
+    public static let gray500 =                 dynamic(light: #colorLiteral(red: 0.1921568627, green: 0.1921568627, blue: 0.2200000000, alpha: 1), dark: #colorLiteral(red: 0.8235294118, green: 0.8470588235, blue: 0.8862745098, alpha: 1))
+    public static let black =                   dynamic(light: #colorLiteral(red: 0.05458580635, green: 0.05458580635, blue: 0.05627402716, alpha: 1), dark: #colorLiteral(red: 0.9333333333, green: 0.9490196078, blue: 0.9725490196, alpha: 1))                  // titles / text
     public static let clear: UIColor =          #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0) // #000000
-
-    // UI specific
-    public static let navigationBarColor =      Color.white.withAlphaComponent(0.98)
-    public static let link =                    Color.red
     
-    public static let pinned =                  #colorLiteral(red: 0.3921568627, green: 0.4196078431, blue: 0.5490196078, alpha: 1) // #646b8c          // standings pinned cell background
-    public static let pinnedSelected =          #colorLiteral(red: 0.1843137255, green: 0.2196078431, blue: 0.3960784314, alpha: 1) // #2f3865          // standings pinned cell selected background
+    // UI specific
+    public static let cellColor =               dynamic(light: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), dark: #colorLiteral(red: 0.1036, green: 0.1197777778, blue: 0.14, alpha: 0.98))
+    public static let cellColor2 =              dynamic(light: #colorLiteral(red: 0.9702, green: 0.9702, blue: 0.98, alpha: 1), dark: #colorLiteral(red: 0.0825, green: 0.09472222224, blue: 0.11, alpha: 0.98))
+
+    public static let buttonTint =              dynamic(light: Self.blue, dark: Self.light)
+    public static let viewTint =                dynamic(light: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0.98), dark: #colorLiteral(red: 0.0862745098, green: 0.1019607843, blue: 0.1215686275, alpha: 0.98))
+    public static let barBackground =           dynamic(light: #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0.98), dark: #colorLiteral(red: 0.09803921569, green: 0.1137254902, blue: 0.1333333333, alpha: 0.98))
+    public static let tabBarForeground =        dynamic(light: Color.blue, dark: Self.light)
+    public static let tableBackground =         dynamic(light: UIColor.systemBackground, dark: #colorLiteral(red: 0.09803921569, green: 0.1137254902, blue: 0.1333333333, alpha: 0.98))
+    public static let tableGroupedBackground =  dynamic(light: UIColor.systemGroupedBackground, dark: #colorLiteral(red: 0.1258, green: 0.1454444445, blue: 0.17, alpha: 0.98))
+    public static let highlightedBackground =   dynamic(light: #colorLiteral(red: 0.9294117647, green: 0.9607843137, blue: 1, alpha: 1), dark: #colorLiteral(red: 0.1411764706, green: 0.2, blue: 0.2588235294, alpha: 1))
+    public static let refreshControl =          Self.gray400
+    public static let link =                    dynamic(light: Self.red, dark: Self.blue)
+
+    public static let pinned =                  #colorLiteral(red: 0.3921568627, green: 0.4196078431, blue: 0.5490196078, alpha: 1)                   // standings pinned cell background
+    public static let pinnedSelected =          #colorLiteral(red: 0.2178431373, green: 0.2475490196, blue: 0.3960784314, alpha: 1)                   // standings pinned cell selected background
+}
+
+public extension Color {
+    static func dynamic(light: UIColor, dark: UIColor) -> UIColor {
+        UIColor { traits in
+            traits.userInterfaceStyle == .dark ? dark : light
+        }
+    }
 }

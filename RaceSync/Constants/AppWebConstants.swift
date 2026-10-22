@@ -15,6 +15,7 @@ public class AppWebConstants {
     static let passwordReset = "https://www.multigp.com/initiatepasswordreset"
     static let accountRegistration = "https://www.multigp.com/register"
     static let termsOfUse = "https://www.multigp.com/terms-of-use/"
+    static let helpdesk = "https://helpdesk.multigp.com/"
     static let shop = "https://shop.multigp.com/"
     static let tracks = "https://www.multigp.com/multigp-tracks/"
     static let obstaclesDoc = "https://www.multigp.com/multigp-drone-race-course-obstacles/"

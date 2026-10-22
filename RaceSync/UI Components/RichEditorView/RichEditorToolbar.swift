@@ -81,7 +81,7 @@ class RichEditorToolbar: UIView {
 
     private func setupLayout() {
         autoresizingMask = .flexibleWidth
-        backgroundColor = Color.navigationBarColor
+        backgroundColor = Color.viewTint
         addSeparatorLine()
 
         addSubview(scrollView)

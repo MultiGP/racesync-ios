@@ -55,13 +55,16 @@ class ColumnTableViewCell: UITableViewCell {
     // MARK: - Layout
 
     fileprivate func setupLayout() {
+        
+        self.backgroundColor = Color.cellColor
+        
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = Color.cellColor
+        self.backgroundView = backgroundView
+        
         let selectedBackgroundView = UIView()
         selectedBackgroundView.backgroundColor = Color.gray20
         self.selectedBackgroundView = selectedBackgroundView
-
-        let backgroundView = UIView()
-        backgroundView.backgroundColor = Color.white
-        self.backgroundView = backgroundView
 
         textLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
         textLabel?.textColor = Color.black

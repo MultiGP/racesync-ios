@@ -35,8 +35,9 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
         tableView.register(cellType: FormTableViewCell.self)
         tableView.register(cellType: AvatarTableViewCell.self)
         tableView.refreshControl = self.refreshControl
+        tableView.tableHeaderView = UIView()
         tableView.tableFooterView = UIView()
-        tableView.backgroundColor = Color.gray50
+        tableView.backgroundColor = Color.tableGroupedBackground
         
         let longPress = UILongPressGestureRecognizer(target: self,action: #selector(didLongPress(_:)))
         longPress.minimumPressDuration = 0.3
@@ -47,11 +48,11 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
     }()
 
     fileprivate lazy var refreshControl: UIRefreshControl = {
-        let refreshControl = UIRefreshControl()
-        refreshControl.backgroundColor = Color.gray50
-        refreshControl.tintColor = Color.blue
-        refreshControl.addTarget(self, action: #selector(didPullRefreshControl), for: .valueChanged)
-        return refreshControl
+        let control = UIRefreshControl()
+        control.backgroundColor = Color.clear
+        control.tintColor = Color.refreshControl
+        control.addTarget(self, action: #selector(didPullRefreshControl), for: .valueChanged)
+        return control
     }()
 
     fileprivate var userApi = UserApi()
@@ -110,6 +111,11 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
         super.viewDidAppear(animated)
     }
 
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        refreshPinnedViewIfAppearanceChanged(from: previousTraitCollection)
+    }
+
     deinit {
         unregisterJoinable()
     }
@@ -118,7 +124,7 @@ class RacePilotsViewController: UIViewController, ViewJoinable, RaceTabbable, Pi
 
     fileprivate func setupLayout() {
 
-        view.backgroundColor = Color.white
+        view.backgroundColor = tableView.backgroundColor
 
         registerPinnedView(viewType: AvatarTableViewCell.self)
 
@@ -298,15 +304,8 @@ extension RacePilotsViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        guard let visibleIndexPaths = tableView.indexPathsForVisibleRows else { return }
-
-        // Best spot to lay the pinned view for the first time
-        if indexPath == visibleIndexPaths.max() && !didShowPinnedView {
-            DispatchQueue.main.async {
-                self.invalidatePinnedView()
-                self.didShowPinnedView = true
-            }
-        }
+        guard !didShowPinnedView else { return }
+        didShowPinnedView = layoutPinnedViewAfterInitialDisplay(at: indexPath)
     }
 }
 
@@ -356,6 +355,7 @@ extension RacePilotsViewController: UITableViewDataSource {
 
         cell.textLabel?.text = "View full results on"
         cell.detailImage = web.image
+        cell.backgroundView?.backgroundColor = Color.cellColor
         
         if cell.detailImage == nil {
             cell.detailTextLabel?.text = URL(string: url)?.rootDomain ?? ""
@@ -378,9 +378,10 @@ extension RacePilotsViewController: UITableViewDataSource {
         cell.titleLabel.textColor = Color.black
         cell.subtitleLabel.textColor = Color.gray300
         cell.rankView.titleLabel.textColor = Color.gray300
-        cell.backgroundView?.backgroundColor = (indexPath.row % 2 == 0) ? Color.white : Color.gray20
+        cell.configureDisclosureIndicator(color: Color.gray300.resolvedColor(with: traitCollection))
+        cell.backgroundView?.backgroundColor = (indexPath.row % 2 == 0) ? Color.cellColor : Color.cellColor2
         cell.selectedBackgroundView?.backgroundColor = Color.gray50
-
+        
         if race.canShowResults {
             var score:Int32? = 0
             cell.rankView.rank = score
@@ -408,20 +409,14 @@ extension RacePilotsViewController: UITableViewDataSource {
                 cell.textPill.style = .text
                 cell.rankView.rank = Int32(indexPath.row+1)
             }
-
-            if let userId = myUserId, viewModel.userId == userId {
-                cell.titleLabel.textColor = Color.white
-                cell.subtitleLabel.textColor = Color.gray20
-                cell.rankView.titleLabel.textColor = Color.gray20                
-                cell.backgroundView?.backgroundColor = Color.pinned
-                cell.selectedBackgroundView?.backgroundColor = Color.pinnedSelected
-            }
         }
+    }
 
-        // only real races have frequencies
-        if !race.hasEnded && race.raceClass != .esport {
-           cell.textPill.text = viewModel.channelLabel
-       }
+    func configurePinned<T>(_ view: T, forRowAt indexPath: IndexPath) where T: UITableViewCell {
+        configure(view, forRowAt: indexPath)
+        guard let cell = view as? AvatarTableViewCell else { return }
+
+        cell.configurePinnedResultAppearance()
     }
 }
 
@@ -450,7 +445,7 @@ extension RacePilotsViewController: EmptyDataSetSource {
     }
 
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
-        if race.status == .open && !race.hasStarted {
+        if race.status == .open && race.scheduleState != .current && race.scheduleState != .past {
             return emptyStateNoPilots.buttonTitle(state)
         } else {
             return nil
@@ -462,7 +457,7 @@ extension RacePilotsViewController: EmptyDataSetSource {
     }
 
     func backgroundColor(forEmptyDataSet scrollView: UIScrollView) -> UIColor? {
-        return Color.white
+        return tableView.backgroundColor
     }
 }
 

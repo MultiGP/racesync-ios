@@ -64,12 +64,10 @@ class GalleryViewController: UIViewController {
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: ButtonImg.close, style: .plain, target: self, action: #selector(didPressCloseButton))
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: ButtonImg.share, style: .plain, target: self, action: #selector(didPressShareButton))
 
-        if #available(iOS 15.0, *) {
-            let navigationBarAppearance = UINavigationBarAppearance()
-            navigationBarAppearance.configureWithTransparentBackground()
-            navigationBarAppearance.titleTextAttributes = textAttributes
-            navigationItem.standardAppearance = navigationBarAppearance
-        }
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.configureWithTransparentBackground()
+        navigationBarAppearance.titleTextAttributes = textAttributes
+        navigationItem.standardAppearance = navigationBarAppearance
 
         let barAppearance = UINavigationBar.appearance(whenContainedInInstancesOf: [Self.self])
         barAppearance.barTintColor = backgroundColor
@@ -149,6 +147,11 @@ class GalleryViewController: UIViewController {
         self.images = [UIImage]()
         self.initialPage = 0
         super.init(coder: aDecoder)
+    }
+
+    deinit {
+        timer?.cancel()
+        timer = nil
     }
 
     // MARK: - View Lifecyle
@@ -295,28 +298,29 @@ class GalleryViewController: UIViewController {
         timer?.cancel()
         timer = nil
 
-        func animate() {
-            let alpha: CGFloat = hide ? 0 : 1
-            let duration: TimeInterval = animated ? 1 : 0
-
-            UIView.animate(withDuration: duration, delay: 0, options: [.curveEaseInOut, .allowUserInteraction], animations: { () -> Void in
-                self.pageControl.alpha = alpha
-                self.navigationBar.alpha = alpha
-                self.setNeedsStatusBarAppearanceUpdate()
-            }, completion: nil)
-        }
-
         if delay > 0 {
             // timer used to delay the fade-out animation. This was needed since UIView's animation API delay didn't affect the status bar.
             timer = DispatchSource.makeTimerSource(flags: [], queue: .main)
             timer?.schedule(deadline: .now() + delay)
-            timer?.setEventHandler {
-                animate()
+            timer?.setEventHandler { [weak self] in
+                self?.animateChrome(hidden: hide, animated: animated)
+                self?.timer = nil
             }
             timer?.resume()
         } else {
-            animate()
+            animateChrome(hidden: hide, animated: animated)
         }
+    }
+
+    fileprivate func animateChrome(hidden: Bool, animated: Bool) {
+        let alpha: CGFloat = hidden ? 0 : 1
+        let duration: TimeInterval = animated ? 1 : 0
+
+        UIView.animate(withDuration: duration, delay: 0, options: [.curveEaseInOut, .allowUserInteraction], animations: { [weak self] in
+            self?.pageControl.alpha = alpha
+            self?.navigationBar.alpha = alpha
+            self?.setNeedsStatusBarAppearanceUpdate()
+        }, completion: nil)
     }
 
     // MARK: - Actions

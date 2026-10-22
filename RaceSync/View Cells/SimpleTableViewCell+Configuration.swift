@@ -25,5 +25,8 @@ extension SimpleTableViewCell {
         cell.iconImageView.contentMode = .center
         cell.iconImageView.layer.cornerRadius = 6
         cell.iconImageView.layer.masksToBounds = true
+        
+        cell.backgroundColor = Color.white
+        cell.selectedBackgroundView?.backgroundColor = Color.gray20
     }
 }

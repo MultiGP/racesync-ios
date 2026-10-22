@@ -26,6 +26,7 @@ class PushMessagesViewController: UIViewController {
         tableView.register(cellType: MessageViewCell.self)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = MessageViewCell.estimatedHeight
+        tableView.backgroundColor = Color.tableBackground
         return tableView
     }()
 
@@ -98,6 +99,7 @@ class PushMessagesViewController: UIViewController {
     fileprivate func setupLayout() {
 
         configureNavigationItems()
+        view.backgroundColor = Color.tableBackground
 
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
@@ -117,15 +119,13 @@ class PushMessagesViewController: UIViewController {
         rightBtnItem.isEnabled = false
         navigationItem.rightBarButtonItem = rightBtnItem
 
-        if #available(iOS 16.0, *) { rightBtnItem.isHidden = true }
+        rightBtnItem.isHidden = true
     }
     
     fileprivate func updateClearButton() {
         let item = navigationItem.rightBarButtonItem
 
-        if #available(iOS 16.0, *) {
-            item?.isHidden = !PushMessagesController.shared.isPushNotificationsEnabled()
-        }
+        item?.isHidden = !PushMessagesController.shared.isPushNotificationsEnabled()
         item?.isEnabled = messageViewModels.count > 0
     }
 
@@ -334,7 +334,7 @@ extension PushMessagesViewController: EmptyDataSetSource {
     }
 
     func backgroundColor(forEmptyDataSet scrollView: UIScrollView) -> UIColor? {
-        return Color.white
+        return tableView.backgroundColor
     }
 }
 

@@ -71,7 +71,7 @@ class ProfileHeaderView: UIView {
         button.tintColor = Color.white
         button.hitTestEdgeInsets = UIEdgeInsets(proportionally: -20)
         button.addTarget(self, action: #selector(didTapCameraButton), for: .touchUpInside)
-        button.layer.shadowColor = Color.black.cgColor
+        button.layer.shadowColor = UIColor.black.cgColor
         button.layer.shadowOffset = CGSize(width: 0, height: 2.0)
         button.layer.shadowOpacity = 0.35
         button.layer.shadowRadius = 2.5
@@ -118,13 +118,33 @@ class ProfileHeaderView: UIView {
         return label
     }()
 
+    fileprivate lazy var profileIdLabel: PasteboardLabel = {
+        let label = PasteboardLabel()
+        label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        label.textColor = Color.light
+        label.textAlignment = .right
+        label.numberOfLines = 1
+        label.isUserInteractionEnabled = true
+        return label
+    }()
+
+    fileprivate lazy var profileIdEffectView: UIVisualEffectView = {
+        let view = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterialDark))
+        view.layer.cornerRadius = Constants.padding / 2
+        view.clipsToBounds = true
+        view.isUserInteractionEnabled = true
+        view.contentView.isUserInteractionEnabled = true
+        view.alpha = 1
+        return view
+    }()
+
     fileprivate lazy var topBadgeButton: UIButton = {
         let button = UIButton(type: .system)
-        button.tintColor = Color.white
+        button.tintColor = UIColor.white
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.titleEdgeInsets = UIEdgeInsets(right: -Constants.padding/2)
         button.isUserInteractionEnabled = false
-        button.layer.shadowColor = Color.black.cgColor
+        button.layer.shadowColor = UIColor.black.cgColor
         button.layer.shadowOffset = CGSize(width: 0, height: 1.0)
         button.layer.shadowOpacity = 0.7
         button.layer.shadowRadius = 1.0
@@ -168,6 +188,7 @@ class ProfileHeaderView: UIView {
 
     fileprivate var imagePicker: ImagePickerController?
     fileprivate var separatorViewHeightConstraint: Constraint?
+    fileprivate var headerLabelTopConstraint: Constraint?
 
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
@@ -202,6 +223,17 @@ class ProfileHeaderView: UIView {
             $0.leading.trailing.equalToSuperview()
             $0.width.equalTo(UIScreen.main.bounds.width)
             $0.height.equalTo(Self.backgroundViewHeight)
+        }
+
+        addSubview(profileIdEffectView)
+        addSubview(profileIdLabel)
+        profileIdLabel.snp.makeConstraints {
+            $0.trailing.equalTo(backgroundView).inset(Constants.padding)
+            $0.bottom.equalTo(backgroundView).inset(Constants.padding)
+        }
+
+        profileIdEffectView.snp.makeConstraints {
+            $0.edges.equalTo(profileIdLabel).inset(-Constants.padding / 2)
         }
 
         addSubview(separatorView)
@@ -246,7 +278,9 @@ class ProfileHeaderView: UIView {
 
         addSubview(headerLabelStackView)
         headerLabelStackView.snp.makeConstraints {
-            $0.top.equalTo(leftBadgeButton.snp.bottom).offset(Constants.padding*2)
+            headerLabelTopConstraint = $0.top.equalTo(leftBadgeButton.snp.bottom)
+                .offset(Constants.padding * 2)
+                .constraint
             $0.leading.equalToSuperview().offset(Constants.padding)
             $0.trailing.equalToSuperview().offset(-Constants.padding)
             $0.bottom.equalToSuperview()
@@ -297,6 +331,10 @@ class ProfileHeaderView: UIView {
         }
 
         mainTextLabel.text = viewModel.mainTextLabel
+        let displaysProfileId = viewModel.type != .series
+        profileIdEffectView.isHidden = !displaysProfileId
+        profileIdLabel.isHidden = !displaysProfileId
+        profileIdLabel.text = displaysProfileId ? "ID: \(viewModel.id)" : nil
 
         if let color = viewModel.color {
             separatorView.backgroundColor = color
@@ -306,6 +344,7 @@ class ProfileHeaderView: UIView {
         if !viewModel.secondaryTextLabel.isEmpty {
             locationButton.setTitle(viewModel.secondaryTextLabel, for: .normal)
             locationButton.isHidden = false
+            locationIconView.isHidden = false
         } else {
             locationButton.setTitle(nil, for: .normal)
             locationButton.isHidden = true
@@ -317,11 +356,16 @@ class ProfileHeaderView: UIView {
             topBadgeButton.setImage(viewModel.topBadgeImage, for: .normal)
         }
 
-        leftBadgeButton.setTitle(viewModel.leftBadgeLabel, for: .normal)
-        leftBadgeButton.setImage(viewModel.leftBadgeImage, for: .normal)
+        leftBadgeButton.isHidden = !viewModel.displaysLeftBadge
+        leftBadgeButton.setTitle(viewModel.displaysLeftBadge ? viewModel.leftBadgeLabel : nil, for: .normal)
+        leftBadgeButton.setImage(viewModel.displaysLeftBadge ? viewModel.leftBadgeImage : nil, for: .normal)
 
-        rightBadgeButton.setTitle(viewModel.rightBadgeLabel, for: .normal)
-        rightBadgeButton.setImage(viewModel.rightBadgeImage, for: .normal)
+        rightBadgeButton.isHidden = !viewModel.displaysRightBadge
+        rightBadgeButton.setTitle(viewModel.displaysRightBadge ? viewModel.rightBadgeLabel : nil, for: .normal)
+        rightBadgeButton.setImage(viewModel.displaysRightBadge ? viewModel.rightBadgeImage : nil, for: .normal)
+
+        let displaysBadge = viewModel.displaysLeftBadge || viewModel.displaysRightBadge
+        headerLabelTopConstraint?.update(offset: displaysBadge ? Constants.padding * 2 : 0)
     }
 
     // MARK: - Actions

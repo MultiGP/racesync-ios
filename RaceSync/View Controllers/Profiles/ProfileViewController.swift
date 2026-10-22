@@ -18,7 +18,7 @@ class ProfileViewController: UIViewController, Shimmable {
 
     // MARK: - Public Variables
 
-    let profileViewModel: ProfileViewModel
+    var profileViewModel: ProfileViewModel?
 
     let headerView = ProfileHeaderView()
     let shimmeringView: ShimmeringView = defaultShimmeringView()
@@ -30,11 +30,9 @@ class ProfileViewController: UIViewController, Shimmable {
         tableView.contentInsetAdjustmentBehavior = .always
         tableView.alwaysBounceVertical = true
         tableView.tableFooterView = UIView()
-        tableView.backgroundColor = Color.white
+        tableView.backgroundColor = Color.tableBackground
 
-        if #available(iOS 15.0, *) {
-            tableView.sectionHeaderTopPadding = 0
-        }
+        tableView.sectionHeaderTopPadding = 0
 
         for direction in [UISwipeGestureRecognizer.Direction.left, UISwipeGestureRecognizer.Direction.right] {
             let gesture = UISwipeGestureRecognizer(target: self, action: #selector(didSwipeHorizontally(_:)))
@@ -47,6 +45,7 @@ class ProfileViewController: UIViewController, Shimmable {
 
     var segmentedControl: UISegmentedControl? {
         didSet {
+            guard let profileViewModel else { return }
             segmentedControl?.setTitle(profileViewModel.leftSegmentLabel, forSegmentAt: ProfileSegment.left.rawValue)
             segmentedControl?.setTitle(profileViewModel.rightSegmentLabel, forSegmentAt: ProfileSegment.right.rawValue)
             segmentedControl?.addTarget(self, action: #selector(didChangeSegment), for: .valueChanged)
@@ -74,13 +73,17 @@ class ProfileViewController: UIViewController, Shimmable {
         return button
     }()
 
+    fileprivate var navigationGradientView: UIVisualEffectView = Appearance.navigationGradientView()
+    fileprivate var isNavigationBarOpaque = false
+
     fileprivate enum Constants {
         static let padding: CGFloat = UniversalConstants.padding
+        static let navigationGradientExtension: CGFloat = 44
     }
 
     // MARK: - Initialization
 
-    init(with profileViewModel: ProfileViewModel) {
+    init(with profileViewModel: ProfileViewModel?) {
         self.profileViewModel = profileViewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -104,14 +107,31 @@ class ProfileViewController: UIViewController, Shimmable {
         super.viewDidAppear(animated)
     }
 
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        if #available(iOS 26.0, *),
+           let mask = navigationGradientView.layer.mask as? CAGradientLayer {
+            mask.frame = navigationGradientView.bounds
+        }
+    }
+
     // MARK: - Layout
 
     open func setupLayout() {
+        guard let profileViewModel else { return }
+        
         title = profileViewModel.title
         view.backgroundColor = Color.white
 
-        // Using a custom button title in this case, to display the id of a User/Chapter on tap
-        navigationItem.titleView = titleButton
+        if #available(iOS 26.0, *) {
+            navigationItem.title = nil
+            navigationItem.titleView = nil
+        } else {
+            navigationItem.titleView = titleButton
+        }
+        
+        Appearance.applyTransparentStyle(to: navigationItem)
 
         headerView.topLayoutInset = topOffset
         headerView.viewModel = profileViewModel
@@ -132,6 +152,15 @@ class ProfileViewController: UIViewController, Shimmable {
         shimmeringView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(headerViewSize.height + SegmentedTableViewHeaderView.headerHeight)
             $0.leading.trailing.bottom.equalToSuperview()
+        }
+
+        if #available(iOS 26.0, *) {
+            view.addSubview(navigationGradientView)
+            navigationGradientView.snp.makeConstraints {
+                $0.top.leading.trailing.equalToSuperview()
+                $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.top)
+                    .offset(Constants.navigationGradientExtension)
+            }
         }
     }
 
@@ -162,7 +191,7 @@ class ProfileViewController: UIViewController, Shimmable {
     }
 
     @objc fileprivate func didPressTitleButton() {
-
+        guard let profileViewModel else { return }
         let btnTitle = titleButton.title(for: .normal)
         let id = profileViewModel.id
 
@@ -208,6 +237,20 @@ extension ProfileViewController: UIScrollViewDelegate {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         stretchHeaderView(with: scrollView.contentOffset)
+
+        let shouldUseOpaqueNavigationBar = scrollView.contentOffset.y >= headerView.frame.height - topOffset
+        guard shouldUseOpaqueNavigationBar != isNavigationBarOpaque else { return }
+
+        isNavigationBarOpaque = shouldUseOpaqueNavigationBar
+        if #available(iOS 26.0, *) {
+            navigationGradientView.isHidden = shouldUseOpaqueNavigationBar
+        }
+
+        if shouldUseOpaqueNavigationBar {
+            Appearance.applyOpaqueStyle(to: navigationItem, shadow: false)
+        } else {
+            Appearance.applyTransparentStyle(to: navigationItem)
+        }
     }
 }
 

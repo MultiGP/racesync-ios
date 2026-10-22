@@ -1,7 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "logo_gq2026.pdf",
+      "filename" : "logo_gq.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "logo_gq_dark.pdf",
       "idiom" : "universal"
     }
   ],

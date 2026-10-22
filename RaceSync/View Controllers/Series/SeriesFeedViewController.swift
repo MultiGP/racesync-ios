@@ -20,7 +20,7 @@ class SeriesFeedViewController: UIViewController, Shimmable {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.backgroundView = UIView()
         tableView.backgroundView?.backgroundColor = Color.clear
-        tableView.backgroundColor = Color.gray50
+        tableView.backgroundColor = Color.gray20
         tableView.contentInsetAdjustmentBehavior = .always
         tableView.dataSource = self
         tableView.delegate = self
@@ -38,8 +38,8 @@ class SeriesFeedViewController: UIViewController, Shimmable {
 
     fileprivate lazy var headerView: UIView = {
         let view = UIView()
-        view.backgroundColor = Color.navigationBarColor
-        view.tintColor = Color.blue
+        view.backgroundColor = Color.barBackground
+        view.tintColor = Color.buttonTint
 
         let spacing: CGFloat = 10
         let buttonWidth: CGFloat = 30
@@ -68,6 +68,7 @@ class SeriesFeedViewController: UIViewController, Shimmable {
         let control = UISegmentedControl(items: SeriesFilter.titles)
         control.selectedSegmentIndex = AppPrefs.lastSelectedSeriesFilter.index
         control.addTarget(self, action: #selector(didChangeSegment), for: .valueChanged)
+        control.selectedSegmentTintColor = Color.barBackground
         return control
     }()
 
@@ -79,17 +80,17 @@ class SeriesFeedViewController: UIViewController, Shimmable {
     }()
 
     fileprivate lazy var refreshControl: UIRefreshControl = {
-        let refreshControl = UIRefreshControl()
-        refreshControl.backgroundColor = Color.gray50
-        refreshControl.tintColor = Color.blue
-        refreshControl.addTarget(self, action: #selector(didPullRefreshControl), for: .valueChanged)
-        return refreshControl
+        let control = UIRefreshControl()
+        control.backgroundColor = Color.clear
+        control.tintColor = Color.refreshControl
+        control.addTarget(self, action: #selector(didPullRefreshControl), for: .valueChanged)
+        return control
     }()
 
     fileprivate lazy var sliderHeaderView: SliderTableViewHeaderView = {
         let view = SliderTableViewHeaderView()
         view.autoresizingMask = [.flexibleHeight, .flexibleWidth]
-        view.backgroundColor = Color.gray50
+        view.backgroundColor = Color.gray20
         view.autoScrollInterval = 5.0
         view.delegate = self
         return view
@@ -317,6 +318,6 @@ extension SeriesFeedViewController: EmptyDataSetSource {
     }
 
     func backgroundColor(forEmptyDataSet scrollView: UIScrollView) -> UIColor? {
-        return Color.white
+        return tableView.backgroundColor
     }
 }

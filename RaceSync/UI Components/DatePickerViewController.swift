@@ -39,16 +39,12 @@ class DatePickerViewController: FormBaseViewController {
 
     fileprivate lazy var pickerView: UIDatePicker = {
         let view = UIDatePicker()
-
-        if #available(iOS 13.4, *) {
-            view.preferredDatePickerStyle = .wheels
-        }
-
         view.timeZone = NSTimeZone.local
         view.backgroundColor = Color.white
         view.datePickerMode = .dateAndTime
         view.minuteInterval = 15
         view.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
+        view.preferredDatePickerStyle = .wheels
         return view
     }()
 
