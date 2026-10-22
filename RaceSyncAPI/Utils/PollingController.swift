@@ -1,13 +1,12 @@
 //
 //  PollingController.swift
-//  RaceSync
+//  RaceSyncAPI
 //
 //  Created by Ignacio Romero on 2026-08-01.
 //  Copyright © 2026 MultiGP Inc. All rights reserved.
 //
 
 import Foundation
-import RaceSyncAPI
 
 /// Receives polling events and determines whether polling is currently allowed.
 public protocol PollingControllerDelegate: AnyObject {
@@ -24,12 +23,14 @@ public class PollingController {
 
     /// The web app does every 15 seconds but the mobile apps expectation is different
     public static let refreshInterval: TimeInterval = 12
-    
+
     /// The object that supplies the polling state and handles refreshes.
-    weak var delegate: PollingControllerDelegate?
+    public weak var delegate: PollingControllerDelegate?
+
+    public init() {}
 
     /// Starts interval-based polling when the delegate allows it.
-    func start() {
+    public func start() {
         guard delegate?.isPollEnabled() == true, refreshTimer == nil else { return }
 
         refreshTimer = Timer.scheduledTimer(withTimeInterval: Self.refreshInterval, repeats: true) { [weak self] _ in
@@ -40,7 +41,7 @@ public class PollingController {
     }
 
     /// Stops polling until `start()` is called again.
-    func stop() {
+    public func stop() {
         refreshTimer?.invalidate()
         refreshTimer = nil
 
@@ -48,7 +49,7 @@ public class PollingController {
     }
 
     /// Immediately requests a refresh and defers the next scheduled callback.
-    func pollNow() {
+    public func pollNow() {
         guard delegate?.isPollEnabled() == true else { return }
 
         forward()
@@ -56,17 +57,17 @@ public class PollingController {
     }
 
     /// Defers the next polling callback by one refresh interval.
-    func forward() {
+    public func forward() {
         lastRefreshInterval = Date.timeIntervalSinceReferenceDate
     }
 
     /// Allows polling to resume on the next timer tick.
-    func resume() {
+    public func resume() {
         lastRefreshInterval = 0
     }
-    
+
     // MARK: - Private Variables
-    
+
     fileprivate var refreshTimer: Timer?
     fileprivate var lastRefreshInterval: TimeInterval = 0
 
@@ -76,7 +77,7 @@ public class PollingController {
 
         delegate?.polling()
     }
-    
+
     deinit {
         stop()
     }

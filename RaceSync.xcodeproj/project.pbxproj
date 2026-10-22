@@ -638,7 +638,7 @@
 		4FE64524301C1001008CBD26 /* ZippyqFrequencyContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqFrequencyContentView.swift; sourceTree = "<group>"; };
 		4FE64524301C2001008CBD26 /* FrequencyColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrequencyColor.swift; sourceTree = "<group>"; };
 		4FE64526301C3001008CBD26 /* FrequencyActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrequencyActionButton.swift; sourceTree = "<group>"; };
-		4FE64528301D0001008CBD26 /* PollingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PollingController.swift; path = "RaceSync/UI Utils/PollingController.swift"; sourceTree = SOURCE_ROOT; };
+		4FE64528301D0001008CBD26 /* PollingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollingController.swift; sourceTree = "<group>"; };
 		4FE91EE02FB670F000460A74 /* UIBarButtonItem+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem+Extensions.swift"; sourceTree = "<group>"; };
 		4FE91EE22FBC098900460A74 /* EventApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventApi.swift; sourceTree = "<group>"; };
 		4FE91EE42FBC09C800460A74 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
@@ -949,7 +949,6 @@
 				4F91BC892398FBCE00539E95 /* ViewJoinable.swift */,
 				4FF16CBF2E70EC9300B4FC51 /* ViewJoinableRegistry.swift */,
 				4F536ECE2F8AD826006FF620 /* ViewApprovable.swift */,
-				4FE64528301D0001008CBD26 /* PollingController.swift */,
 				4F4129DA2DC0AE32006A2763 /* NotificationsController.swift */,
 				4F5001E423823C940025A593 /* FlagEmojiGenerator.swift */,
 				4F5C1E4E2390B01700D756EB /* ImageNetworking.swift */,
@@ -1124,6 +1123,7 @@
 			children = (
 				4FC05C142E64FFB700EB97A4 /* DeepLink.swift */,
 				4FC05C162E65004400EB97A4 /* DeepLinkURLHandler.swift */,
+				4FE64528301D0001008CBD26 /* PollingController.swift */,
 				4F8B8664295C112B00EAF695 /* EnumTitle.swift */,
 				4F8668F723864389005E310A /* Descriptable.swift */,
 				4FEADB7124147D2D00F82F0D /* LocationManager.swift */,
@@ -1815,7 +1815,6 @@
 				4F004EA7295B83F6009C46AA /* RaceForm.swift in Sources */,
 				4F8B4A0A2DDC7AEF00B735DA /* PushMessagesViewController.swift in Sources */,
 				4FC57C33258E1362006E210F /* AppUtil.swift in Sources */,
-				4FE64529301D0001008CBD26 /* PollingController.swift in Sources */,
 				4FABC004301D200000000001 /* ZippyqSmartJoiner.swift in Sources */,
 				4FABC006301D200000000001 /* ZippyqSmartJoinable.swift in Sources */,
 				4FABC008301D300000000001 /* ZippyqDataController.swift in Sources */,
@@ -1975,6 +1974,7 @@
 				4FDD499823B0470E009DD2DB /* ChapterEnums.swift in Sources */,
 				4FA1AB4123CAC956007CF389 /* Dictionary+Extensions.swift in Sources */,
 				4F6A28E12D13F38000FF692D /* ResultEntry.swift in Sources */,
+				4FE64529301D0001008CBD26 /* PollingController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
