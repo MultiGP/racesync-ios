@@ -120,6 +120,7 @@ class ProfileViewController: UIViewController, Shimmable {
 
     open func setupLayout() {
         guard let profileViewModel else { return }
+        
         title = profileViewModel.title
         view.backgroundColor = Color.white
 

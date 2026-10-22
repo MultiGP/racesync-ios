@@ -121,7 +121,7 @@ class ProfileHeaderView: UIView {
     fileprivate lazy var profileIdLabel: PasteboardLabel = {
         let label = PasteboardLabel()
         label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
-        label.textColor = Color.white
+        label.textColor = Color.light
         label.textAlignment = .right
         label.numberOfLines = 1
         label.isUserInteractionEnabled = true
