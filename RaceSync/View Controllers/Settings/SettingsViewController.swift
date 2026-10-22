@@ -33,11 +33,6 @@ class SettingsViewController: UIViewController {
     fileprivate let isDevModeEnabled: Bool = true
     fileprivate var isTogglingPush: Bool = false
     
-    fileprivate var isAlternateIconsEnabled: Bool {
-        // disabled for now
-        get { return UIApplication.shared.supportsAlternateIcons && false }
-    }
-
     fileprivate func nextEnvironment() -> APIEnvironment {
         return APIServices.shared.settings.isDev ? APIEnvironment.prod : APIEnvironment.dev
     }
@@ -115,8 +110,7 @@ class SettingsViewController: UIViewController {
                 auth += [.switchEnv]
             }
 
-            var about: [Row] = [.feedback, .joinBeta, .viewProject]
-            if isAlternateIconsEnabled { about += [.appicon] }
+            let about: [Row] = [.feedback, .joinBeta, .viewProject]
 
             return [.settings: settings, .resources: resources, .about: about, .auth: auth]
        }()
@@ -240,10 +234,6 @@ extension SettingsViewController: UITableViewDelegate {
             WebViewController.open(AppWebConstants.obstaclesDoc)
         case .seasonRules:
             WebViewController.open(AppWebConstants.seasonRulesDoc)
-        case .appicon:
-            let vc = AppIconViewController()
-            vc.title = row.title
-            navigationController?.pushViewController(vc, animated: true)
         case .joinBeta:
             WebViewController.open(AppWebConstants.testflight)
         case .viewProject:
@@ -312,9 +302,6 @@ extension SettingsViewController: UITableViewDataSource {
         } else if row == .notifications {
             cell.detailTextLabel?.text = PushMessagesController.shared.isPushNotificationsEnabled() ? "Enabled" : "Disabled"
             cell.isLoading = isTogglingPush
-        } else if row == .appicon {
-            let icon = AppIconManager.selectedIcon()
-            cell.detailTextLabel?.text = icon.title
         } else if row == .joinBeta {
             cell.detailTextLabel?.text = "Testflight"
         } else if row == .viewProject {
@@ -352,7 +339,6 @@ fileprivate enum Row: Int, EnumTitle {
     case feedback
     case joinBeta
     case viewProject
-    case appicon
     case logout
     case switchEnv
 
@@ -368,7 +354,6 @@ fileprivate enum Row: Int, EnumTitle {
         case .feedback:             return "Share Feedback"
         case .joinBeta:             return "Join the Beta"
         case .viewProject:          return "View Project"
-        case .appicon:              return "Change App Icon"
         case .logout:               return "Logout"
         case .switchEnv:            return "Switch to"
         }
@@ -387,7 +372,6 @@ fileprivate enum Row: Int, EnumTitle {
         case .feedback:             return "icn_settings_feedback"
         case .joinBeta:             return "icn_settings_testflight"
         case .viewProject:          return "icn_settings_github"
-        case .appicon:              return "icn_settings_appicn"
         case .logout:               return "icn_settings_logout"
         case .switchEnv:            return "icn_settings_logout"
         }
