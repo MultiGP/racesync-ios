@@ -125,6 +125,7 @@ final class ZippyqDataController {
     private(set) var frequencyQueueCounts = [String: Int]()
     private(set) var currentUserStats: ZippyqPilotStats?
     private(set) var selectedFrequencies = Set<String>()
+    private var selectedFrequencyPreferences = Set<String>()
     private var hasRestoredFrequencyPreferences = false
     private var visiblePastQueueCount = ZippyqDataController.visiblePastQueueCount
 
@@ -184,7 +185,7 @@ final class ZippyqDataController {
     }
 
     fileprivate var preferencesKey: String {
-        return "com.multigp.racesync.preferences.zippyq.frequencies.\(raceId)"
+        return "com.multigp.racesync.preferences.zippyq.frequencies"
     }
 
     // MARK: - Initialization
@@ -221,7 +222,9 @@ final class ZippyqDataController {
     func setSelectedFrequencies(_ frequencies: Set<String>) {
         let validFrequencies = Set(self.frequencies.map { $0.frequency })
         selectedFrequencies = frequencies.intersection(validFrequencies)
-        userDefaults.set(Array(selectedFrequencies).sorted(), forKey: preferencesKey)
+        selectedFrequencyPreferences.subtract(validFrequencies)
+        selectedFrequencyPreferences.formUnion(selectedFrequencies)
+        userDefaults.set(Array(selectedFrequencyPreferences).sorted(), forKey: preferencesKey)
     }
 
     func toggleSelectedFrequency(_ frequency: String) {
@@ -418,15 +421,14 @@ private extension ZippyqDataController {
 
         if !hasRestoredFrequencyPreferences {
             if let storedFrequencies = userDefaults.stringArray(forKey: preferencesKey) {
-                selectedFrequencies = Set(storedFrequencies).intersection(validFrequencies)
+                selectedFrequencyPreferences = Set(storedFrequencies)
             } else {
-                selectedFrequencies = validFrequencies
+                selectedFrequencyPreferences = validFrequencies
             }
             hasRestoredFrequencyPreferences = true
-        } else {
-            selectedFrequencies.formIntersection(validFrequencies)
         }
-        userDefaults.set(Array(selectedFrequencies).sorted(), forKey: preferencesKey)
+        selectedFrequencies = selectedFrequencyPreferences.intersection(validFrequencies)
+        userDefaults.set(Array(selectedFrequencyPreferences).sorted(), forKey: preferencesKey)
     }
 
     func updateQueueCounts() {
