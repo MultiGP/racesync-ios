@@ -157,56 +157,30 @@ final class ZippyqDataController {
     }
 
     var initialExpandedRoundIds: Set<String> {
-        guard !allowsQueueActions, let race else { return [] }
+        guard !allowsQueueActions else { return [] }
 
-        switch race.scheduleState {
-        case .upcoming:
-            return Set(roundViewModels
-                .filter { $0.cycle == 1 && $0.isExpandable }
-                .map(\.id))
-        case .current:
-            guard let latestPopulatedCycle = roundViewModels
+        if let lastResultIndex = roundViewModels.lastIndex(where: {
+            $0.frequencyViewModels.contains { $0.resultLabel != nil }
+        }) {
+            return Set(roundViewModels[...lastResultIndex]
                 .filter(\.isExpandable)
-                .map(\.cycle)
-                .max() else {
-                return []
-            }
-            var roundIds = Set(roundViewModels
-                .filter { $0.cycle == latestPopulatedCycle && $0.isExpandable }
                 .map(\.id))
-            roundIds.formUnion(roundViewModels
-                .filter { $0.badge == .running && $0.isExpandable }
-                .map(\.id))
-            return roundIds
-        case .past:
-            let hasResults = roundViewModels.contains {
-                $0.frequencyViewModels.contains { $0.resultLabel != nil }
-            }
-            guard hasResults else { return [] }
-            return Set(roundViewModels.filter(\.isExpandable).map(\.id))
-        case .unknown:
-            return []
         }
+
+        guard let firstCycle = roundViewModels.first?.cycle else { return [] }
+        return Set(roundViewModels
+            .filter { $0.cycle == firstCycle && $0.isExpandable }
+            .map(\.id))
     }
 
     var initialScheduleScrollRoundId: String? {
-        guard !allowsQueueActions, let race else {
+        guard !allowsQueueActions else {
             return nil
         }
 
-        if race.scheduleState == .current {
-            return roundViewModels.first(where: {
-                $0.badge == .running
-            })?.id ?? roundViewModels.first?.id
-        }
-
-        if let upNextRoundId = roundViewModels.first(where: {
-            $0.badge == .upNext
-        })?.id {
-            return upNextRoundId
-        }
-
-        return roundViewModels.first?.id
+        return roundViewModels.last(where: {
+            $0.frequencyViewModels.contains { $0.resultLabel != nil }
+        })?.id ?? roundViewModels.first?.id
     }
 
     fileprivate var preferencesKey: String {
@@ -515,6 +489,16 @@ private extension ZippyqDataController {
         }
         let heatCountsByCycle = Dictionary(grouping: response.queues, by: \.cycle)
             .mapValues { Set($0.map(\.heat)).count }
+        let lastResultIndex = orderedQueues.lastIndex {
+            $0.entries.contains(where: \.hasResults)
+        }
+        let isPastEmptyQueue: (Int, ZippyQueue) -> Bool = { index, queue in
+            guard queue.entries.isEmpty else { return false }
+            if queue.status == .previous || race.scheduleState == .past {
+                return true
+            }
+            return !self.allowsQueueActions && lastResultIndex.map { index <= $0 } == true
+        }
         
         let visibleQueues: [ZippyQueue]
         if allowsQueueActions {
@@ -523,6 +507,7 @@ private extension ZippyqDataController {
             }
             var includedTrailingEmptyQueuedRound = false
             visibleQueues = orderedQueues.enumerated().compactMap { index, queue in
+                guard !isPastEmptyQueue(index, queue) else { return nil }
                 guard queue.status == .queued, queue.entries.isEmpty else { return queue }
                 if let lastOccupiedQueuedIndex, index < lastOccupiedQueuedIndex { return queue }
                 guard canJoinQueues, !includedTrailingEmptyQueuedRound else { return nil }
@@ -531,11 +516,17 @@ private extension ZippyqDataController {
             }
         } else {
             let populatedQueueIndices = orderedQueues.indices.filter {
-                !orderedQueues[$0].entries.isEmpty
+                !isPastEmptyQueue($0, orderedQueues[$0])
+                    && !orderedQueues[$0].entries.isEmpty
             }
             if let firstPopulatedIndex = populatedQueueIndices.first,
                let lastPopulatedIndex = populatedQueueIndices.last {
-                visibleQueues = Array(orderedQueues[firstPopulatedIndex...lastPopulatedIndex])
+                visibleQueues = orderedQueues[firstPopulatedIndex...lastPopulatedIndex]
+                    .enumerated()
+                    .compactMap { offset, queue in
+                        let index = firstPopulatedIndex + offset
+                        return isPastEmptyQueue(index, queue) ? nil : queue
+                    }
             } else {
                 visibleQueues = []
             }
@@ -554,6 +545,7 @@ private extension ZippyqDataController {
                 showsHeatLabel: heatCountsByCycle[queue.cycle, default: 0] > 1,
                 showsContextualLabel: allowsQueueActions,
                 showsPackUsage: allowsQueueActions && shouldShowPackUsage,
+                showsQueueStatus: allowsQueueActions,
                 isUpNext: (!race.isFinalized
                     && race.scheduleState == .current
                     && index == nextQueuedIndex)

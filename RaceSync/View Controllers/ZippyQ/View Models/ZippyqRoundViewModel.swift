@@ -36,6 +36,7 @@ class ZippyqRoundViewModel: Descriptable {
          showsHeatLabel: Bool = false,
          showsContextualLabel: Bool = true,
          showsPackUsage: Bool = true,
+         showsQueueStatus: Bool = true,
          isUpNext: Bool) {
 
         id = "\(queue.cycle):\(queue.heat)"
@@ -75,16 +76,21 @@ class ZippyqRoundViewModel: Descriptable {
             availabilityBadge = .none
         }
 
-        switch queue.status {
-        case .running:
-            badge = .running
-            contextualLabel = showsContextualLabel ? "\(pilotCount) Racing" : nil
-        case .queued:
-            badge = isUpNext ? .upNext : availabilityBadge
-            contextualLabel = showsContextualLabel ? "\(pilotCount) Waiting" : nil
-        case .previous:
-            badge = .past
-            contextualLabel = showsContextualLabel ? "\(pilotCount) Raced" : nil
+        if showsQueueStatus {
+            switch queue.status {
+            case .running:
+                badge = .running
+                contextualLabel = showsContextualLabel ? "\(pilotCount) Racing" : nil
+            case .queued:
+                badge = isUpNext ? .upNext : availabilityBadge
+                contextualLabel = showsContextualLabel ? "\(pilotCount) Waiting" : nil
+            case .previous:
+                badge = .past
+                contextualLabel = showsContextualLabel ? "\(pilotCount) Raced" : nil
+            }
+        } else {
+            badge = hasResults ? .past : .none
+            contextualLabel = nil
         }
     }
 }
