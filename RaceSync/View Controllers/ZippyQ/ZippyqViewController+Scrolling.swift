@@ -274,13 +274,60 @@ extension ZippyqViewController: UICollectionViewDelegate {
         if offset <= 0 {
             headerCollapseTracking = .contentOffset
             setHeaderCollapseProgress(0)
+        } else if headerCollapseTracking == .relativeOffset {
+            let delta = offset - lastHeaderScrollOffset
+            setHeaderCollapseProgress(headerCollapseProgress + delta / headerCollapseRange)
+            if headerCollapseProgress >= 1, delta > 0 {
+                headerCollapseTracking = .contentOffset
+            }
         } else {
             setHeaderCollapseProgress(offset / headerCollapseRange)
         }
+        lastHeaderScrollOffset = offset
     }
 
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         lastUserScrollTime = CACurrentMediaTime()
+        lastHeaderScrollOffset = scrollView.contentOffset.y + scrollView.adjustedContentInset.top
+    }
+
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView,
+                                   withVelocity velocity: CGPoint,
+                                   targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        guard !collectionView.isHidden,
+              shouldDisplaySmartJoinHeader,
+              headerCollapseTracking != .suspended,
+              headerCollapseRange > 0 else { return }
+
+        let currentOffset = scrollView.contentOffset.y + scrollView.adjustedContentInset.top
+        let projectedOffset = targetContentOffset.pointee.y + scrollView.adjustedContentInset.top
+
+        if velocity.y < Constants.fastUpwardScrollVelocity, headerCollapseProgress > 0 {
+            headerCollapseTracking = .relativeOffset
+            lastHeaderScrollOffset = currentOffset
+            let requiredDistance = headerCollapseProgress * headerCollapseRange
+            let projectedDistance = max(0, currentOffset - projectedOffset)
+            if projectedDistance < requiredDistance {
+                targetContentOffset.pointee.y -= requiredDistance - projectedDistance
+            }
+            return
+        }
+
+        if headerCollapseTracking == .relativeOffset {
+            guard headerCollapseProgress > 0, headerCollapseProgress < 1 else { return }
+
+            let projectedProgress = headerCollapseProgress
+                + (projectedOffset - currentOffset) / headerCollapseRange
+            let targetProgress: CGFloat = projectedProgress >= 0.5 ? 1 : 0
+            targetContentOffset.pointee.y += (targetProgress - projectedProgress) * headerCollapseRange
+            return
+        }
+
+        guard projectedOffset > 0, projectedOffset < headerCollapseRange else { return }
+
+        let targetProgress: CGFloat = projectedOffset >= headerCollapseRange / 2 ? 1 : 0
+        targetContentOffset.pointee.y = targetProgress * headerCollapseRange
+            - scrollView.adjustedContentInset.top
     }
 }
 

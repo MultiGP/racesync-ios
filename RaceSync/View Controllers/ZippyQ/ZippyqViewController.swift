@@ -17,7 +17,7 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     
     /// UI-only override for App Store screenshots. Queue eligibility and API actions remain unchanged.
 #if DEBUG
-    static var forceDisplaySmartJoinHeader = true
+    static var forceDisplaySmartJoinHeader = false
 #else
     static var forceDisplaySmartJoinHeader = false
 #endif
@@ -71,6 +71,7 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     var headerLayoutMetrics: ZippyqHeaderView.LayoutMetrics?
     var headerCollapseProgress: CGFloat = 0
     var headerCollapseTracking: HeaderCollapseTracking = .contentOffset
+    var lastHeaderScrollOffset: CGFloat = 0
     var lastUserScrollTime: CFTimeInterval = 0
     var shouldDisplaySmartJoinHeader: Bool {
         return (dataController.canDisplaySmartJoinHeader && dataController.canJoinQueues) || Self.forceDisplaySmartJoinHeader
@@ -100,10 +101,12 @@ class ZippyqViewController: UIViewController, RaceTabbable {
 
     enum HeaderCollapseTracking {
         case contentOffset
+        case relativeOffset
         case suspended
     }
 
     enum Constants {
+        static let fastUpwardScrollVelocity: CGFloat = -0.8
         static let runningRoundTransitionIdleInterval: CFTimeInterval = 5
         static let expandedRoundBottomMargin: CGFloat = UniversalConstants.padding
     }
