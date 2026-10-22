@@ -171,9 +171,13 @@ final class ZippyqDataController {
                 .max() else {
                 return []
             }
-            return Set(roundViewModels
+            var roundIds = Set(roundViewModels
                 .filter { $0.cycle == latestPopulatedCycle && $0.isExpandable }
                 .map(\.id))
+            roundIds.formUnion(roundViewModels
+                .filter { $0.badge == .running && $0.isExpandable }
+                .map(\.id))
+            return roundIds
         case .past:
             let hasResults = roundViewModels.contains {
                 $0.frequencyViewModels.contains { $0.resultLabel != nil }
@@ -190,18 +194,16 @@ final class ZippyqDataController {
             return nil
         }
 
+        if race.scheduleState == .current {
+            return roundViewModels.first(where: {
+                $0.badge == .running
+            })?.id ?? roundViewModels.first?.id
+        }
+
         if let upNextRoundId = roundViewModels.first(where: {
             $0.badge == .upNext
         })?.id {
             return upNextRoundId
-        }
-
-        if race.scheduleState == .current,
-           let latestPopulatedCycle = roundViewModels
-            .filter(\.isExpandable)
-            .map(\.cycle)
-            .max() {
-            return roundViewModels.first { $0.cycle == latestPopulatedCycle }?.id
         }
 
         return roundViewModels.first?.id
