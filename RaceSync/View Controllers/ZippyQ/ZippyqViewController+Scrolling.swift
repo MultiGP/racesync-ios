@@ -127,16 +127,10 @@ extension ZippyqViewController {
             ) else { return }
 
             let currentOffset = collectionView.contentOffset
-            let minimumOffsetY = -collectionView.adjustedContentInset.top
-            let targetOffsetY = min(
-                maximumContentOffsetY,
-                max(
-                    minimumOffsetY,
-                    headerAttributes.frame.minY
-                        - collectionView.adjustedContentInset.top
-                        - ZippyqCollectionViewLayout.sectionSpacing
-                )
+            let target = targetScrollState(
+                forRoundHeaderAt: headerAttributes.frame.minY
             )
+            let targetOffsetY = target.offset.y
 
             // Put the tapped round immediately beneath the navigation chrome,
             // retaining only the standard gap between grouped sections.
@@ -145,16 +139,13 @@ extension ZippyqViewController {
             let targetOffset = CGPoint(x: currentOffset.x, y: targetOffsetY)
 
             headerCollapseTracking = .suspended
-            let targetHeaderProgress = headerCollapseRange > 0
-                ? (targetOffset.y + collectionView.adjustedContentInset.top) / headerCollapseRange
-                : headerCollapseProgress
 
             UIView.animate(
                 withDuration: 0.25,
                 delay: 0,
                 options: [.allowUserInteraction, .beginFromCurrentState, .curveEaseInOut]
             ) {
-                self.setHeaderCollapseProgress(targetHeaderProgress)
+                self.setHeaderCollapseProgress(target.headerCollapseProgress)
                 self.collectionView.contentOffset = targetOffset
                 self.collectionView.layoutIfNeeded()
             } completion: { [weak self] _ in
@@ -200,6 +191,53 @@ extension ZippyqViewController {
             max(targetOffset.y, minimumOffsetForVisibleRound)
         )
         return targetOffset
+    }
+
+    private func targetScrollState(forRoundHeaderAt headerMinY: CGFloat) -> (
+        offset: CGPoint,
+        headerCollapseProgress: CGFloat
+    ) {
+        let topInset = collectionView.adjustedContentInset.top
+        let minimumOffsetY = -topInset
+
+        func constrainedOffset(_ offsetY: CGFloat) -> CGPoint {
+            CGPoint(
+                x: collectionView.contentOffset.x,
+                y: min(maximumContentOffsetY, max(minimumOffsetY, offsetY))
+            )
+        }
+
+        guard shouldDisplaySmartJoinHeader,
+              headerView?.isHidden == false,
+              headerCollapseRange > 0 else {
+            return (
+                constrainedOffset(
+                    headerMinY
+                        - topInset
+                        - ZippyqCollectionViewLayout.sectionSpacing
+                ),
+                headerCollapseProgress
+            )
+        }
+
+        let expandedOffset = constrainedOffset(
+            headerMinY
+                - topInset
+                - expandedHeaderHeight
+        )
+        let expandedNormalizedOffset = expandedOffset.y + topInset
+
+        if expandedNormalizedOffset < headerCollapseRange {
+            return (expandedOffset, 0)
+        }
+
+        let compactHeaderHeight = expandedHeaderHeight - headerCollapseRange
+        let collapsedOffset = constrainedOffset(
+            headerMinY
+                - topInset
+                - compactHeaderHeight
+        )
+        return (collapsedOffset, 1)
     }
 
     var maximumContentOffsetY: CGFloat {

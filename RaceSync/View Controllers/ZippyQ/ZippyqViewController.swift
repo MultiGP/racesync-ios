@@ -17,7 +17,7 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     
     /// UI-only override for App Store screenshots. Queue eligibility and API actions remain unchanged.
 #if DEBUG
-    static var forceDisplaySmartJoinHeader = false
+    static var forceDisplaySmartJoinHeader = true
 #else
     static var forceDisplaySmartJoinHeader = false
 #endif
@@ -73,8 +73,7 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     var headerCollapseTracking: HeaderCollapseTracking = .contentOffset
     var lastUserScrollTime: CFTimeInterval = 0
     var shouldDisplaySmartJoinHeader: Bool {
-        return dataController.canDisplaySmartJoinHeader
-            && (dataController.canJoinQueues || Self.forceDisplaySmartJoinHeader)
+        return (dataController.canDisplaySmartJoinHeader && dataController.canJoinQueues) || Self.forceDisplaySmartJoinHeader
     }
     fileprivate var emptyStateError: EmptyStateViewModel?
     fileprivate let emptyStateNoRaceQueues = EmptyStateViewModel(.noRaceQueues)
