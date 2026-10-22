@@ -190,29 +190,6 @@ class SettingsViewController: UIViewController {
             self?.tableView.reloadData()
         }
     }
-
-    fileprivate func sendFeedback() {
-        let subject = "RaceSync iOS Feedback"
-        let email = StringConstants.supportEmail
-        let device = UIDevice.current
-
-        let diagnostics = """
-        Device: \(device.model )
-        OS: \(device.systemName ) \(device.systemVersion)
-        App Version: \(Bundle.main.releaseDescriptionPretty)
-        ***************************
-        \n
-        \n
-        """
-        
-        guard let encodedSubject = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { return }
-        guard let encodedBody = diagnostics.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { return }
-        guard let url = URL(string: "mailto:\(email)?subject=\(encodedSubject)&body=\(encodedBody)") else { return }
-
-        if UIApplication.shared.canOpenURL(url) {
-            UIApplication.shared.open(url)
-        }
-    }
 }
 
 extension SettingsViewController: UITableViewDelegate {
@@ -247,7 +224,7 @@ extension SettingsViewController: UITableViewDelegate {
         case .switchEnv:
             switchEnvironment()
         case .feedback:
-            sendFeedback()
+            WebViewController.open(AppWebConstants.helpdesk)
         }
     }
 
@@ -296,7 +273,7 @@ extension SettingsViewController: UITableViewDataSource {
         cell.imageView?.tintColor = Color.black
         cell.accessoryType = .disclosureIndicator
         cell.isLoading = false
-
+        
         if row == .appearance {
             cell.detailTextLabel?.text = AppPrefs.appearance.title
         } else if row == .notifications {
