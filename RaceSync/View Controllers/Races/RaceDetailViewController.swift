@@ -509,7 +509,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         if !shouldUseTransparentNavigationBar {
             title = "Details"
         }
-        tabBarItem = UITabBarItem(title: title, image: SystemImg.calendarCclock, selectedImage: nil)
+        tabBarItem = UITabBarItem(title: "Details", image: SystemImg.calendarCclock, selectedImage: nil)
         navigationItem.rightBarButtonItems = raceController.navigationItems()
     }
 

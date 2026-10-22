@@ -59,7 +59,7 @@ class AppplicationPreferences {
     static var lastSelectedRaceFilter: RaceFilter {
         get {
             let string = UserDefaults.standard.string(forKey: LastSelected.raceFilter)
-            return string.flatMap { RaceFilter(title: $0) } ?? RaceFilter.joined
+            return string.flatMap { RaceFilter(title: $0) } ?? RaceFilter.nearby // default filter for new logged in users
         }
         set {
             UserDefaults.standard.set(newValue.title, forKey: LastSelected.raceFilter)
