@@ -127,6 +127,8 @@ extension Section {
     
     var image: UIImage? {
         switch self {
+            // no need for specific logos for these.
+            // TODO: Once 2026 has passed, remove that file too. It is being used on the standings card.
         case .y2023, .y2024, .y2025:
             return LogoImg.gq
         default:

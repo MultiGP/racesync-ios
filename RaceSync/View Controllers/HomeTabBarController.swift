@@ -12,7 +12,7 @@ import RaceSyncAPI
 
 enum HomeTabs: Int {
     case races, series, standings, events
-    static let `default`: Self = .series
+    static let `default`: Self = .races
 }
 
 class HomeTabBarController: UITabBarController {
