@@ -118,6 +118,26 @@ class ProfileHeaderView: UIView {
         return label
     }()
 
+    fileprivate lazy var profileIdLabel: PasteboardLabel = {
+        let label = PasteboardLabel()
+        label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        label.textColor = Color.white
+        label.textAlignment = .right
+        label.numberOfLines = 1
+        label.isUserInteractionEnabled = true
+        return label
+    }()
+
+    fileprivate lazy var profileIdEffectView: UIVisualEffectView = {
+        let view = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterialDark))
+        view.layer.cornerRadius = Constants.padding / 2
+        view.clipsToBounds = true
+        view.isUserInteractionEnabled = true
+        view.contentView.isUserInteractionEnabled = true
+        view.alpha = 1
+        return view
+    }()
+
     fileprivate lazy var topBadgeButton: UIButton = {
         let button = UIButton(type: .system)
         button.tintColor = UIColor.white
@@ -203,6 +223,17 @@ class ProfileHeaderView: UIView {
             $0.leading.trailing.equalToSuperview()
             $0.width.equalTo(UIScreen.main.bounds.width)
             $0.height.equalTo(Self.backgroundViewHeight)
+        }
+
+        addSubview(profileIdEffectView)
+        addSubview(profileIdLabel)
+        profileIdLabel.snp.makeConstraints {
+            $0.trailing.equalTo(backgroundView).inset(Constants.padding)
+            $0.bottom.equalTo(backgroundView).inset(Constants.padding)
+        }
+
+        profileIdEffectView.snp.makeConstraints {
+            $0.edges.equalTo(profileIdLabel).inset(-Constants.padding / 2)
         }
 
         addSubview(separatorView)
@@ -300,6 +331,10 @@ class ProfileHeaderView: UIView {
         }
 
         mainTextLabel.text = viewModel.mainTextLabel
+        let displaysProfileId = viewModel.type != .series
+        profileIdEffectView.isHidden = !displaysProfileId
+        profileIdLabel.isHidden = !displaysProfileId
+        profileIdLabel.text = displaysProfileId ? "ID: \(viewModel.id)" : nil
 
         if let color = viewModel.color {
             separatorView.backgroundColor = color
