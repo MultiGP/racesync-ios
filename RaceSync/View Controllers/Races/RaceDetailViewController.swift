@@ -59,6 +59,15 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
         return label
     }()
 
+    fileprivate lazy var raceIdLabel: PasteboardLabel = {
+        let label = PasteboardLabel()
+        label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        label.textColor = Color.gray200
+        label.textAlignment = .right
+        label.numberOfLines = 1
+        return label
+    }()
+
     fileprivate lazy var feeLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
@@ -403,6 +412,17 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
             $0.top.equalToSuperview()
         }
 
+        headerView.addSubview(raceIdLabel)
+        raceIdLabel.snp.makeConstraints {
+            $0.centerY.equalTo(subtitleLabel)
+            $0.trailing.equalToSuperview().inset(Constants.padding)
+            $0.leading.greaterThanOrEqualTo(subtitleLabel.snp.trailing).offset(Constants.padding)
+        }
+
+        subtitleLabel.snp.makeConstraints {
+            $0.trailing.lessThanOrEqualTo(raceIdLabel.snp.leading).offset(-Constants.padding)
+        }
+
         if canDisplayGQIcon {
             headerView.addSubview(rotatingIconView)
             rotatingIconView.snp.makeConstraints {
@@ -485,9 +505,11 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     }
 
     fileprivate func configureNavigationItems() {
-        title = "Details"
+        
+        if !shouldUseTransparentNavigationBar {
+            title = "Details"
+        }
         tabBarItem = UITabBarItem(title: title, image: SystemImg.calendarCclock, selectedImage: nil)
-
         navigationItem.rightBarButtonItems = raceController.navigationItems()
     }
 
@@ -505,6 +527,7 @@ class RaceDetailViewController: UIViewController, ViewJoinable, RaceTabbable {
     fileprivate func populateContent() {
         titleLabel.text = raceViewModel.titleLabel.uppercased()
         subtitleLabel.attributedText = raceViewModel.subtitleLabel
+        raceIdLabel.text = "ID: \(race.id)"
         memberBadgeView.count = raceViewModel.participantCount
 
         configureJoinButton()

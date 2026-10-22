@@ -123,8 +123,12 @@ class ProfileViewController: UIViewController, Shimmable {
         title = profileViewModel.title
         view.backgroundColor = Color.white
 
-        // Using a custom button title in this case, to display the id of a User/Chapter on tap
-        navigationItem.titleView = titleButton
+        if #available(iOS 26.0, *) {
+            navigationItem.title = nil
+            navigationItem.titleView = nil
+        } else {
+            navigationItem.titleView = titleButton
+        }
         
         Appearance.applyTransparentStyle(to: navigationItem)
 

@@ -49,23 +49,20 @@ class RaceTabBarController: UITabBarController {
 
     override var title: String? {
         didSet {
-            titleButton.setTitle(title, for: .normal)
-            titleButton.invalidateIntrinsicContentSize()
-            titleButton.sizeToFit()
+            titleLabel.text = title
         }
     }
 
     // MARK: - Private Variables
 
-    fileprivate lazy var titleButton: PasteboardButton = {
-        let button = PasteboardButton(type: .system)
-        button.addTarget(self, action: #selector(didPressTitleButton), for: .touchUpInside)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
-        button.titleLabel?.textAlignment = .center
-        button.setTitleColor(Color.black, for: .normal)
-        button.setTitle(self.title, for: .normal)
-        button.titleLabel?.lineBreakMode = .byClipping
-        return button
+    fileprivate lazy var titleLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+        label.textAlignment = .center
+        label.textColor = Color.black
+        label.text = self.title
+        label.lineBreakMode = .byClipping
+        return label
     }()
 
     fileprivate lazy var titleActivityIndicatorView: UIActivityIndicatorView = {
@@ -83,7 +80,7 @@ class RaceTabBarController: UITabBarController {
         activityContainer.addSubview(titleActivityIndicatorView)
         titleActivityIndicatorView.snp.makeConstraints { $0.center.equalToSuperview() }
 
-        let stackView = UIStackView(arrangedSubviews: [leadingSpacer, titleButton, activityContainer])
+        let stackView = UIStackView(arrangedSubviews: [leadingSpacer, titleLabel, activityContainer])
         stackView.axis = .horizontal
         stackView.alignment = .center
         stackView.spacing = 6
@@ -218,8 +215,11 @@ class RaceTabBarController: UITabBarController {
 
         if let detailVC = vc as? RaceDetailViewController,
            detailVC.shouldUseTransparentNavigationBar {
+            navigationItem.title = nil
+            navigationItem.titleView = nil
             Appearance.applyTransparentStyle(to: navigationItem)
         } else {
+            navigationItem.titleView = titleContainerView
             Appearance.applyOpaqueStyle(to: navigationItem, shadow: true)
         }
     }
@@ -227,18 +227,6 @@ class RaceTabBarController: UITabBarController {
     func setTitleActivityIndicatorVisible(_ visible: Bool, for viewController: UIViewController) {
         guard selectedViewController === viewController else { return }
         visible ? titleActivityIndicatorView.startAnimating() : titleActivityIndicatorView.stopAnimating()
-    }
-
-    @objc fileprivate func didPressTitleButton() {
-        guard let _ = race else { return }
-
-        let btnTitle = titleButton.title(for: .normal)
-
-        if btnTitle == title {
-            titleButton.setTitle(raceId, for: .normal)
-        } else if btnTitle == raceId {
-            titleButton.setTitle(title, for: .normal)
-        }
     }
 
     @objc fileprivate func didPressCloseButton() {
