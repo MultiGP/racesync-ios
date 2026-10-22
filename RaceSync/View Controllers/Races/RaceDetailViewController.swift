@@ -950,6 +950,16 @@ extension RaceDetailViewController: UIScrollViewDelegate {
     }
 }
 
+extension RaceDetailViewController: ScrollToTop {
+
+    func scrollToTop() {
+        scrollView.setContentOffset(
+            CGPoint(x: scrollView.contentOffset.x, y: -scrollView.adjustedContentInset.top),
+            animated: true
+        )
+    }
+}
+
 // MARK: - MKMapView Delegate
 
 extension RaceDetailViewController: MKMapViewDelegate {

@@ -395,6 +395,16 @@ extension SeriesStandingsViewController: UIScrollViewDelegate {
     }
 }
 
+extension SeriesStandingsViewController: ScrollToTop {
+
+    func scrollToTop() {
+        tableView.setContentOffset(
+            CGPoint(x: tableView.contentOffset.x, y: -tableView.adjustedContentInset.top),
+            animated: true
+        )
+    }
+}
+
 extension SeriesStandingsViewController: EmptyDataSetSource {
 
     func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {

@@ -430,7 +430,10 @@ extension RacePilotsViewController: UIScrollViewDelegate {
 extension RacePilotsViewController: ScrollToTop {
 
     func scrollToTop() {
-        tableView.setContentOffset(.zero, animated: true)
+        tableView.setContentOffset(
+                    CGPoint(x: tableView.contentOffset.x, y: -tableView.adjustedContentInset.top),
+                    animated: true
+                )
     }
 }
 
