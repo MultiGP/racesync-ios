@@ -17,7 +17,7 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     
     /// UI-only override for App Store screenshots. Queue eligibility and API actions remain unchanged.
 #if DEBUG
-    static var forceDisplaySmartJoinHeader = true
+    static var forceDisplaySmartJoinHeader = false
 #else
     static var forceDisplaySmartJoinHeader = false
 #endif
@@ -77,7 +77,7 @@ class ZippyqViewController: UIViewController, RaceTabbable {
         return (dataController.canDisplaySmartJoinHeader && dataController.canJoinQueues) || Self.forceDisplaySmartJoinHeader
     }
     fileprivate var emptyStateError: EmptyStateViewModel?
-    fileprivate let emptyStateNoRaceQueues = EmptyStateViewModel(.noRaceQueues)
+    fileprivate let emptyStateNoRaceRounds = EmptyStateViewModel(.noRaceRounds)
     fileprivate var isJoiningNextRound = false
     fileprivate var isLoadingPastRounds = false
 
@@ -516,18 +516,18 @@ private extension ZippyqViewController {
 extension ZippyqViewController: EmptyDataSetSource {
 
     func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
-        return emptyStateError?.title ?? emptyStateNoRaceQueues.title
+        return emptyStateError?.title ?? emptyStateNoRaceRounds.title
     }
 
     func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
-        return emptyStateError?.description ?? emptyStateNoRaceQueues.description
+        return emptyStateError?.description ?? emptyStateNoRaceRounds.description
     }
 
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
         if emptyStateError != nil || dataController.roundsMode == .schedule {
             return nil
         }
-        return emptyStateNoRaceQueues.buttonTitle(state)
+        return emptyStateNoRaceRounds.buttonTitle(state)
     }
 
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {
