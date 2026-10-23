@@ -40,10 +40,12 @@ final class ZippyqDataController {
     // MARK: - Public Variables
 
     /// Number of the most recent past queues displayed while focusing on a running race.
-    static var visiblePastQueueCount = 3
+    static var visiblePastQueueCount = 2
 
     /// Number of additional past queues revealed by each load-more request.
     static var pastQueueLoadBatchSize = 6
+
+    static let controlledPollingRefreshInterval: TimeInterval = 30
 
     weak var delegate: ZippyqDataControllerDelegate?
 
@@ -112,7 +114,14 @@ final class ZippyqDataController {
     fileprivate let smartJoiner: ZippyqSmartJoinable = ZippyqSmartJoiner()
     fileprivate let resultsCalculator = ZippyqResultsCalculator()
     fileprivate let userDefaults = UserDefaults.standard
-    fileprivate let pollingController = PollingController()
+    fileprivate lazy var pollingController: PollingController = {
+        let refreshInterval = allowsQueueActions
+            ? PollingController.refreshInterval
+            : Self.controlledPollingRefreshInterval
+        let controller = PollingController(refreshInterval: refreshInterval)
+        controller.delegate = self
+        return controller
+    }()
 
     fileprivate var response: ZippyqResponse?
     fileprivate var revisionHash: ZippyqRevisionHash?
@@ -142,6 +151,10 @@ final class ZippyqDataController {
         return response.queues.filter { $0.status == .previous }.count > visiblePastQueueCount
     }
 
+    var canRefreshRounds: Bool {
+        return !allowsQueueActions || roundViewModels.isEmpty
+    }
+
     var shouldLimitPastQueues: Bool {
         guard let response, let race else { return false }
         return allowsQueueActions
@@ -158,7 +171,12 @@ final class ZippyqDataController {
     }
 
     var initialExpandedRoundIds: Set<String> {
-        guard !allowsQueueActions else { return [] }
+        if allowsQueueActions {
+            return Set(roundViewModels
+                .filter { $0.badge == .running || $0.badge == .upNext }
+                .filter(\.isExpandable)
+                .map(\.id))
+        }
 
         if let lastResultIndex = roundViewModels.lastIndex(where: {
             $0.frequencyViewModels.contains { $0.resultLabel != nil }
@@ -193,7 +211,6 @@ final class ZippyqDataController {
     init(raceController: RaceController) {
         self.raceController = raceController
         self.raceId = raceController.raceId
-        pollingController.delegate = self
     }
 
     // MARK: - Data Load
@@ -217,6 +234,11 @@ final class ZippyqDataController {
         visiblePastQueueCount += Self.pastQueueLoadBatchSize
         updateRoundViewModels()
         delegate?.zippyqDataControllerDidUpdateContent(self)
+    }
+
+    func refreshRounds() {
+        pollingController.forward()
+        loadContent(force: true)
     }
 
     func setSelectedFrequencies(_ frequencies: Set<String>) {

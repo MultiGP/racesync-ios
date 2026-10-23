@@ -59,7 +59,9 @@ class ZippyqRoundViewModel: Descriptable {
             )
         }
         let assignedViewModels = viewModels.filter { $0.isAssigned }
-        let showsEmptySlots = showsEmptyFrequencies && queue.status != .previous
+        let showsEmptySlots = showsEmptyFrequencies
+            && queue.status == .queued
+            && !hasResults
         frequencyViewModels = showsEmptySlots ? viewModels : assignedViewModels
         isExpandable = showsEmptySlots || !assignedViewModels.isEmpty
         avatarImageUrls = assignedViewModels.map { $0.imageUrl }

@@ -93,6 +93,18 @@ class ZippyqViewController: UIViewController, RaceTabbable {
         return control
     }()
 
+    fileprivate lazy var roundsRefreshControl: UIRefreshControl = {
+        let control = UIRefreshControl()
+        control.backgroundColor = .clear
+        control.tintColor = Color.refreshControl
+        control.attributedTitle = NSAttributedString(
+            string: "Refresh Rounds",
+            attributes: [.foregroundColor: Color.refreshControl]
+        )
+        control.addTarget(self, action: #selector(refreshRounds), for: .valueChanged)
+        return control
+    }()
+
     fileprivate lazy var activityIndicatorView: ActivityLoadingView = {
         let view = ActivityLoadingView(style: .medium)
         view.hidesWhenStopped = true
@@ -254,7 +266,7 @@ class ZippyqViewController: UIViewController, RaceTabbable {
             expandsRoundsContainingCurrentUser: dataController.allowsQueueActions,
             initialExpandedRoundIds: dataController.initialExpandedRoundIds
         )
-        configurePastRoundsRefreshControl()
+        configureRefreshControl()
         configureHeaderView()
 
         let runningRoundId = snapshotController.runningRoundId
@@ -330,12 +342,16 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     @objc fileprivate func loadMorePastRounds() {
         guard dataController.canLoadMorePastQueues else {
             pastRoundsRefreshControl.endRefreshing()
-            configurePastRoundsRefreshControl()
+            configureRefreshControl()
             return
         }
 
         isLoadingPastRounds = true
         dataController.loadMorePastQueues()
+    }
+
+    @objc fileprivate func refreshRounds() {
+        dataController.refreshRounds()
     }
 
     fileprivate func joinNextRound() {
@@ -443,13 +459,7 @@ extension ZippyqViewController: ZippyqDataControllerDelegate {
             animatingPastRoundInsertion: animatingPastRoundInsertion
         )
 
-        if pastRoundsRefreshControl.isRefreshing {
-            DispatchQueue.main.async { [weak self] in
-                guard let self else { return }
-                pastRoundsRefreshControl.endRefreshing()
-                configurePastRoundsRefreshControl()
-            }
-        }
+        endRefreshing()
 
         if isInitialLoad {
             collectionView.layoutIfNeeded()
@@ -472,28 +482,27 @@ extension ZippyqViewController: ZippyqDataControllerDelegate {
                 collectionView.layoutIfNeeded()
                 if let roundId = dataController.initialScheduleScrollRoundId {
                     scrollRoundToTop(withId: roundId, animated: false)
-                } else if dataController.shouldLimitPastQueues,
-                   let runningRoundId = snapshotController.runningRoundId {
-                    scrollRoundToTop(withId: runningRoundId, animated: false)
                 }
-                configurePastRoundsRefreshControl()
+                configureRefreshControl()
             }
         }
     }
 
     func zippyqDataController(_ controller: ZippyqDataController,
                               didFailToLoadContent error: NSError) {
+        endRefreshing()
         guard !controller.hasLoadedContent else { return }
 
         emptyStateError = EmptyStateViewModel(.error(error))
         setInitialLoading(false)
         collectionView.reloadEmptyDataSet()
+        configureRefreshControl()
     }
 }
 
 private extension ZippyqViewController {
 
-    func configurePastRoundsRefreshControl() {
+    func configureRefreshControl() {
         guard !collectionView.isHidden else {
             collectionView.refreshControl = nil
             return
@@ -503,8 +512,23 @@ private extension ZippyqViewController {
             if collectionView.refreshControl !== pastRoundsRefreshControl {
                 collectionView.refreshControl = pastRoundsRefreshControl
             }
-        } else if !pastRoundsRefreshControl.isRefreshing {
+        } else if dataController.canRefreshRounds {
+            if collectionView.refreshControl !== roundsRefreshControl {
+                collectionView.refreshControl = roundsRefreshControl
+            }
+        } else if !pastRoundsRefreshControl.isRefreshing && !roundsRefreshControl.isRefreshing {
             collectionView.refreshControl = nil
+        }
+    }
+
+    func endRefreshing() {
+        guard pastRoundsRefreshControl.isRefreshing || roundsRefreshControl.isRefreshing else { return }
+
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            pastRoundsRefreshControl.endRefreshing()
+            roundsRefreshControl.endRefreshing()
+            configureRefreshControl()
         }
     }
 

@@ -27,13 +27,15 @@ public class PollingController {
     /// The object that supplies the polling state and handles refreshes.
     public weak var delegate: PollingControllerDelegate?
 
-    public init() {}
+    public init(refreshInterval: TimeInterval = PollingController.refreshInterval) {
+        self.refreshInterval = refreshInterval
+    }
 
     /// Starts interval-based polling when the delegate allows it.
     public func start() {
         guard delegate?.isPollEnabled() == true, refreshTimer == nil else { return }
 
-        refreshTimer = Timer.scheduledTimer(withTimeInterval: Self.refreshInterval, repeats: true) { [weak self] _ in
+        refreshTimer = Timer.scheduledTimer(withTimeInterval: refreshInterval, repeats: true) { [weak self] _ in
             self?.pollIfNeeded()
         }
 
@@ -73,10 +75,12 @@ public class PollingController {
 
     fileprivate func pollIfNeeded() {
         guard delegate?.isPollEnabled() == true,
-              Date.timeIntervalSinceReferenceDate - lastRefreshInterval >= Self.refreshInterval else { return }
+              Date.timeIntervalSinceReferenceDate - lastRefreshInterval >= refreshInterval else { return }
 
         delegate?.polling()
     }
+
+    fileprivate let refreshInterval: TimeInterval
 
     deinit {
         stop()
