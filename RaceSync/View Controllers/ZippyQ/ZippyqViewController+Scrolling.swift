@@ -11,6 +11,38 @@ import UIKit
 
 extension ZippyqViewController {
 
+    func expandSmartJoinHeader() {
+        guard shouldDisplaySmartJoinHeader,
+              headerCollapseProgress > 0,
+              headerCollapseRange > 0,
+              headerCollapseTracking != .suspended else { return }
+
+        let currentOffset = collectionView.contentOffset
+        let minimumOffsetY = -collectionView.adjustedContentInset.top
+        let targetOffset = CGPoint(
+            x: currentOffset.x,
+            y: max(
+                minimumOffsetY,
+                currentOffset.y - headerCollapseProgress * headerCollapseRange
+            )
+        )
+
+        headerCollapseTracking = .suspended
+        UIView.animate(
+            withDuration: 0.25,
+            delay: 0,
+            options: [.allowUserInteraction, .beginFromCurrentState, .curveEaseInOut]
+        ) {
+            self.setHeaderCollapseProgress(0)
+            self.collectionView.contentOffset = targetOffset
+            self.collectionView.layoutIfNeeded()
+        } completion: { [weak self] _ in
+            guard let self else { return }
+            self.lastHeaderScrollOffset = targetOffset.y + self.collectionView.adjustedContentInset.top
+            self.headerCollapseTracking = .relativeOffset
+        }
+    }
+
     func toggleRound(withId roundId: String) {
         if !snapshotController.isRoundExpanded(withId: roundId) {
             expandAndScrollToRound(withId: roundId)

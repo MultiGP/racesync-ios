@@ -28,6 +28,7 @@ class ZippyqHeaderView: UICollectionReusableView {
 
     var didSelectFrequency: ((String) -> Void)?
     var didTapJoinNextRound: (() -> Void)?
+    var didTapCollapsedHeader: (() -> Void)?
     var didResolveLayoutMetrics: ((LayoutMetrics) -> Void)?
     private(set) var layoutMetrics: LayoutMetrics?
 
@@ -210,6 +211,21 @@ class ZippyqHeaderView: UICollectionReusableView {
         DispatchQueue.main.async { [weak self] in
             self?.didResolveLayoutMetrics?(metrics)
         }
+    }
+
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+
+        guard collapseProgress > 0,
+              let touch = touches.first else { return }
+
+        var touchedView = hitTest(touch.location(in: self), with: event)
+        while let view = touchedView {
+            guard !(view is UIControl) else { return }
+            touchedView = view.superview
+        }
+
+        didTapCollapsedHeader?()
     }
 
     // MARK: - Configuration

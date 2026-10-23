@@ -197,6 +197,9 @@ class ZippyqViewController: UIViewController, RaceTabbable {
         headerView.didTapJoinNextRound = { [weak self] in
             self?.joinNextRound()
         }
+        headerView.didTapCollapsedHeader = { [weak self] in
+            self?.expandSmartJoinHeader()
+        }
     }
 
     func makeCollectionViewLayout() -> UICollectionViewLayout {
