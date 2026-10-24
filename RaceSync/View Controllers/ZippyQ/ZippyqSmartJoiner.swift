@@ -26,10 +26,7 @@
 final class ZippyqSmartJoiner: ZippyqSmartJoinable {
 
     func recommendation(for input: ZippyqSmartJoinInput) -> ZippyqSmartJoinRecommendation? {
-        guard input.canJoinAnotherRound, !input.selectedFrequencies.isEmpty else { return nil }
-
-        let queuedRoundCount = input.queuedRounds.filter(\.containsCurrentUser).count
-        guard input.maximumQueueDepth <= 0 || Int32(queuedRoundCount) < input.maximumQueueDepth else { return nil }
+        guard !input.selectedFrequencies.isEmpty else { return nil }
 
         let eligibleRounds = input.queuedRounds
             .filter {
