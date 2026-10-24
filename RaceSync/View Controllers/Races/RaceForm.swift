@@ -53,7 +53,7 @@ enum RaceFormRow: Int, EnumTitle {
         case .scoring:      return "Fun Fly"
         case .season:       return "Season"
         case .startDate:    return "Start Date"
-        case .zDepth:       return "Pilot Queue Limit"
+        case .zDepth:       return "Pilot Queue Limit (Depth)"
         case .zIterator:    return "Rest Rounds"
         case .zNoKiosk:     return "Allow Pilot Devices to Q"
         case .zPrediction:  return "Predict Round Times"

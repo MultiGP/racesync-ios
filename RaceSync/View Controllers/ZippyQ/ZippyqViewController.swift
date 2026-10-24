@@ -77,19 +77,15 @@ class ZippyqViewController: UIViewController, RaceTabbable {
         return (dataController.canDisplaySmartJoinHeader && dataController.canJoinQueues) || Self.forceDisplaySmartJoinHeader
     }
     fileprivate var emptyStateError: EmptyStateViewModel?
-    fileprivate let emptyStateNoRaceQueues = EmptyStateViewModel(.noRaceQueues)
+    fileprivate let emptyStateNoRaceRounds = EmptyStateViewModel(.noRaceRounds)
     fileprivate var isJoiningNextRound = false
     fileprivate var isLoadingPastRounds = false
 
-    fileprivate lazy var pastRoundsRefreshControl: UIRefreshControl = {
+    fileprivate lazy var refreshControl: UIRefreshControl = {
         let control = UIRefreshControl()
         control.backgroundColor = .clear
         control.tintColor = Color.refreshControl
-        control.attributedTitle = NSAttributedString(
-            string: "Load Past Rounds",
-            attributes: [.foregroundColor: Color.refreshControl]
-        )
-        control.addTarget(self, action: #selector(loadMorePastRounds), for: .valueChanged)
+        control.addTarget(self, action: #selector(refreshContent), for: .valueChanged)
         return control
     }()
 
@@ -197,6 +193,9 @@ class ZippyqViewController: UIViewController, RaceTabbable {
         headerView.didTapJoinNextRound = { [weak self] in
             self?.joinNextRound()
         }
+        headerView.didTapCollapsedHeader = { [weak self] in
+            self?.expandSmartJoinHeader()
+        }
     }
 
     func makeCollectionViewLayout() -> UICollectionViewLayout {
@@ -251,7 +250,7 @@ class ZippyqViewController: UIViewController, RaceTabbable {
             expandsRoundsContainingCurrentUser: dataController.allowsQueueActions,
             initialExpandedRoundIds: dataController.initialExpandedRoundIds
         )
-        configurePastRoundsRefreshControl()
+        configureRefreshControl()
         configureHeaderView()
 
         let runningRoundId = snapshotController.runningRoundId
@@ -324,15 +323,16 @@ class ZippyqViewController: UIViewController, RaceTabbable {
 
     // MARK: - Actions
 
-    @objc fileprivate func loadMorePastRounds() {
-        guard dataController.canLoadMorePastQueues else {
-            pastRoundsRefreshControl.endRefreshing()
-            configurePastRoundsRefreshControl()
-            return
+    @objc fileprivate func refreshContent() {
+        if dataController.canLoadMorePastQueues {
+            isLoadingPastRounds = true
+            dataController.loadMorePastQueues()
+        } else if dataController.canRefreshRounds {
+            dataController.refreshRounds()
+        } else {
+            refreshControl.endRefreshing()
+            configureRefreshControl()
         }
-
-        isLoadingPastRounds = true
-        dataController.loadMorePastQueues()
     }
 
     fileprivate func joinNextRound() {
@@ -440,13 +440,7 @@ extension ZippyqViewController: ZippyqDataControllerDelegate {
             animatingPastRoundInsertion: animatingPastRoundInsertion
         )
 
-        if pastRoundsRefreshControl.isRefreshing {
-            DispatchQueue.main.async { [weak self] in
-                guard let self else { return }
-                pastRoundsRefreshControl.endRefreshing()
-                configurePastRoundsRefreshControl()
-            }
-        }
+        endRefreshing()
 
         if isInitialLoad {
             collectionView.layoutIfNeeded()
@@ -469,39 +463,57 @@ extension ZippyqViewController: ZippyqDataControllerDelegate {
                 collectionView.layoutIfNeeded()
                 if let roundId = dataController.initialScheduleScrollRoundId {
                     scrollRoundToTop(withId: roundId, animated: false)
-                } else if dataController.shouldLimitPastQueues,
-                   let runningRoundId = snapshotController.runningRoundId {
-                    scrollRoundToTop(withId: runningRoundId, animated: false)
                 }
-                configurePastRoundsRefreshControl()
+                configureRefreshControl()
             }
         }
     }
 
     func zippyqDataController(_ controller: ZippyqDataController,
                               didFailToLoadContent error: NSError) {
+        endRefreshing()
         guard !controller.hasLoadedContent else { return }
 
         emptyStateError = EmptyStateViewModel(.error(error))
         setInitialLoading(false)
         collectionView.reloadEmptyDataSet()
+        configureRefreshControl()
     }
 }
 
 private extension ZippyqViewController {
 
-    func configurePastRoundsRefreshControl() {
+    func configureRefreshControl() {
         guard !collectionView.isHidden else {
             collectionView.refreshControl = nil
             return
         }
 
-        if dataController.canLoadMorePastQueues {
-            if collectionView.refreshControl !== pastRoundsRefreshControl {
-                collectionView.refreshControl = pastRoundsRefreshControl
-            }
-        } else if !pastRoundsRefreshControl.isRefreshing {
+        let canRefresh = dataController.canLoadMorePastQueues || dataController.canRefreshRounds
+        guard canRefresh else {
+            guard !refreshControl.isRefreshing else { return }
             collectionView.refreshControl = nil
+            return
+        }
+
+        refreshControl.attributedTitle = dataController.canLoadMorePastQueues
+            ? NSAttributedString(
+                string: "Load Past Rounds",
+                attributes: [.foregroundColor: Color.refreshControl]
+            )
+            : nil
+        if collectionView.refreshControl !== refreshControl {
+            collectionView.refreshControl = refreshControl
+        }
+    }
+
+    func endRefreshing() {
+        guard refreshControl.isRefreshing else { return }
+
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            refreshControl.endRefreshing()
+            configureRefreshControl()
         }
     }
 
@@ -516,18 +528,18 @@ private extension ZippyqViewController {
 extension ZippyqViewController: EmptyDataSetSource {
 
     func title(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
-        return emptyStateError?.title ?? emptyStateNoRaceQueues.title
+        return emptyStateError?.title ?? emptyStateNoRaceRounds.title
     }
 
     func description(forEmptyDataSet scrollView: UIScrollView) -> NSAttributedString? {
-        return emptyStateError?.description ?? emptyStateNoRaceQueues.description
+        return emptyStateError?.description ?? emptyStateNoRaceRounds.description
     }
 
     func buttonTitle(forEmptyDataSet scrollView: UIScrollView, for state: UIControl.State) -> NSAttributedString? {
         if emptyStateError != nil || dataController.roundsMode == .schedule {
             return nil
         }
-        return emptyStateNoRaceQueues.buttonTitle(state)
+        return emptyStateNoRaceRounds.buttonTitle(state)
     }
 
     func verticalOffset(forEmptyDataSet scrollView: UIScrollView) -> CGFloat {

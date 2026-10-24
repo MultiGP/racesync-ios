@@ -28,6 +28,7 @@ class ZippyqHeaderView: UICollectionReusableView {
 
     var didSelectFrequency: ((String) -> Void)?
     var didTapJoinNextRound: (() -> Void)?
+    var didTapCollapsedHeader: (() -> Void)?
     var didResolveLayoutMetrics: ((LayoutMetrics) -> Void)?
     private(set) var layoutMetrics: LayoutMetrics?
 
@@ -122,8 +123,6 @@ class ZippyqHeaderView: UICollectionReusableView {
                                                bottom: Constants.padding/2, right: Constants.padding)
         button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -6, bottom: 0, right: 6)
         button.layer.cornerCurve = .continuous
-        button.layer.borderColor = Color.gray100.cgColor
-        button.layer.borderWidth = 0.5
         button.spinnerView.color = Color.light
         button.bouncesOnPress = true
 
@@ -212,6 +211,21 @@ class ZippyqHeaderView: UICollectionReusableView {
         }
     }
 
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+
+        guard collapseProgress > 0,
+              let touch = touches.first else { return }
+
+        var touchedView = hitTest(touch.location(in: self), with: event)
+        while let view = touchedView {
+            guard !(view is UIControl) else { return }
+            touchedView = view.superview
+        }
+
+        didTapCollapsedHeader?()
+    }
+
     // MARK: - Configuration
 
     func configure(with viewModel: ZippyqHeaderViewModel) {
@@ -283,8 +297,9 @@ private extension ZippyqHeaderView {
         button.layer.cornerCurve = .continuous
         button.layer.cornerRadius = Constants.toggleCornerRadius
         button.layer.borderWidth = viewModel.isSelected ? 1.0 : 0.5
+        let traits = window?.traitCollection ?? UIScreen.main.traitCollection
         button.layer.borderColor = (viewModel.isSelected ? Color.blue : Color.gray100)
-            .resolvedColor(with: traitCollection)
+            .resolvedColor(with: traits)
             .cgColor
 
         guard let frequency = viewModel.frequency,

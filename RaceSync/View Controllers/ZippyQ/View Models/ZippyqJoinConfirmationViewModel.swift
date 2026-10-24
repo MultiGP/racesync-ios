@@ -9,7 +9,7 @@
 import UIKit
 import RaceSyncAPI
 
-class ZippyqJoinConfirmationViewModel {
+struct ZippyqJoinConfirmationViewModel {
 
     let title: String
     let message: String
