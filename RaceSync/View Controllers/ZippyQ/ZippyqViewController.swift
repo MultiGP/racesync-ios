@@ -81,27 +81,11 @@ class ZippyqViewController: UIViewController, RaceTabbable {
     fileprivate var isJoiningNextRound = false
     fileprivate var isLoadingPastRounds = false
 
-    fileprivate lazy var pastRoundsRefreshControl: UIRefreshControl = {
+    fileprivate lazy var refreshControl: UIRefreshControl = {
         let control = UIRefreshControl()
         control.backgroundColor = .clear
         control.tintColor = Color.refreshControl
-        control.attributedTitle = NSAttributedString(
-            string: "Load Past Rounds",
-            attributes: [.foregroundColor: Color.refreshControl]
-        )
-        control.addTarget(self, action: #selector(loadMorePastRounds), for: .valueChanged)
-        return control
-    }()
-
-    fileprivate lazy var roundsRefreshControl: UIRefreshControl = {
-        let control = UIRefreshControl()
-        control.backgroundColor = .clear
-        control.tintColor = Color.refreshControl
-        control.attributedTitle = NSAttributedString(
-            string: "Refresh Rounds",
-            attributes: [.foregroundColor: Color.refreshControl]
-        )
-        control.addTarget(self, action: #selector(refreshRounds), for: .valueChanged)
+        control.addTarget(self, action: #selector(refreshContent), for: .valueChanged)
         return control
     }()
 
@@ -339,19 +323,16 @@ class ZippyqViewController: UIViewController, RaceTabbable {
 
     // MARK: - Actions
 
-    @objc fileprivate func loadMorePastRounds() {
-        guard dataController.canLoadMorePastQueues else {
-            pastRoundsRefreshControl.endRefreshing()
+    @objc fileprivate func refreshContent() {
+        if dataController.canLoadMorePastQueues {
+            isLoadingPastRounds = true
+            dataController.loadMorePastQueues()
+        } else if dataController.canRefreshRounds {
+            dataController.refreshRounds()
+        } else {
+            refreshControl.endRefreshing()
             configureRefreshControl()
-            return
         }
-
-        isLoadingPastRounds = true
-        dataController.loadMorePastQueues()
-    }
-
-    @objc fileprivate func refreshRounds() {
-        dataController.refreshRounds()
     }
 
     fileprivate func joinNextRound() {
@@ -508,26 +489,30 @@ private extension ZippyqViewController {
             return
         }
 
-        if dataController.canLoadMorePastQueues {
-            if collectionView.refreshControl !== pastRoundsRefreshControl {
-                collectionView.refreshControl = pastRoundsRefreshControl
-            }
-        } else if dataController.canRefreshRounds {
-            if collectionView.refreshControl !== roundsRefreshControl {
-                collectionView.refreshControl = roundsRefreshControl
-            }
-        } else if !pastRoundsRefreshControl.isRefreshing && !roundsRefreshControl.isRefreshing {
+        let canRefresh = dataController.canLoadMorePastQueues || dataController.canRefreshRounds
+        guard canRefresh else {
+            guard !refreshControl.isRefreshing else { return }
             collectionView.refreshControl = nil
+            return
+        }
+
+        refreshControl.attributedTitle = dataController.canLoadMorePastQueues
+            ? NSAttributedString(
+                string: "Load Past Rounds",
+                attributes: [.foregroundColor: Color.refreshControl]
+            )
+            : nil
+        if collectionView.refreshControl !== refreshControl {
+            collectionView.refreshControl = refreshControl
         }
     }
 
     func endRefreshing() {
-        guard pastRoundsRefreshControl.isRefreshing || roundsRefreshControl.isRefreshing else { return }
+        guard refreshControl.isRefreshing else { return }
 
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
-            pastRoundsRefreshControl.endRefreshing()
-            roundsRefreshControl.endRefreshing()
+            refreshControl.endRefreshing()
             configureRefreshControl()
         }
     }
