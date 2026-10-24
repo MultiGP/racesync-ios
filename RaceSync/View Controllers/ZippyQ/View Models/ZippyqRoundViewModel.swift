@@ -9,7 +9,7 @@
 import UIKit
 import RaceSyncAPI
 
-class ZippyqRoundViewModel: Descriptable {
+struct ZippyqRoundViewModel: Descriptable {
 
     let id: String
     let cycle: Int32
@@ -97,7 +97,7 @@ class ZippyqRoundViewModel: Descriptable {
     }
 }
 
-class ZippyqHeaderFrequencyViewModel {
+struct ZippyqHeaderFrequencyViewModel: Descriptable {
 
     let frequency: String?
     let channelLabel: String?

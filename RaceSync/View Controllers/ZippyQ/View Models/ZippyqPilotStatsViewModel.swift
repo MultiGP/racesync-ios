@@ -9,7 +9,7 @@
 import UIKit
 import RaceSyncAPI
 
-class ZippyqPilotStatsViewModel {
+struct ZippyqPilotStatsViewModel {
 
     enum ZippyqPilotStatsDetailLevel {
         case packUsage

@@ -123,8 +123,6 @@ class ZippyqHeaderView: UICollectionReusableView {
                                                bottom: Constants.padding/2, right: Constants.padding)
         button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -6, bottom: 0, right: 6)
         button.layer.cornerCurve = .continuous
-        button.layer.borderColor = Color.gray100.cgColor
-        button.layer.borderWidth = 0.5
         button.spinnerView.color = Color.light
         button.bouncesOnPress = true
 
@@ -299,8 +297,9 @@ private extension ZippyqHeaderView {
         button.layer.cornerCurve = .continuous
         button.layer.cornerRadius = Constants.toggleCornerRadius
         button.layer.borderWidth = viewModel.isSelected ? 1.0 : 0.5
+        let traits = window?.traitCollection ?? UIScreen.main.traitCollection
         button.layer.borderColor = (viewModel.isSelected ? Color.blue : Color.gray100)
-            .resolvedColor(with: traitCollection)
+            .resolvedColor(with: traits)
             .cgColor
 
         guard let frequency = viewModel.frequency,

@@ -9,7 +9,7 @@
 import UIKit
 import RaceSyncAPI
 
-class ZippyqFrequencyViewModel: Descriptable {
+struct ZippyqFrequencyViewModel: Descriptable {
 
     let user: User?
 
