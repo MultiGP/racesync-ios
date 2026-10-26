@@ -291,6 +291,7 @@
 		4FE91EFC2FC5266D00460A74 /* EventsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EF92FC5266D00460A74 /* EventsViewController.swift */; };
 		4FE91EFE2FC6401700460A74 /* RaceSync.icon in Resources */ = {isa = PBXBuildFile; fileRef = 4FE91EFD2FC6401700460A74 /* RaceSync.icon */; };
 		4FE96E9224E3E687009A7F53 /* HeaderStretchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE96E9124E3E687009A7F53 /* HeaderStretchable.swift */; };
+		4FE9B66230D0A64000A9DBDE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE9B66130D0A64000A9DBDE /* SceneDelegate.swift */; };
 		4FEADB7224147D2D00F82F0D /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEADB7124147D2D00F82F0D /* LocationManager.swift */; };
 		4FEADB742416B3D400F82F0D /* EventTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEADB732416B3D400F82F0D /* EventTracker.swift */; };
 		4FEBB27623A1F9DA007514B4 /* UITabBarController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEBB27523A1F9DA007514B4 /* UITabBarController+Extensions.swift */; };
@@ -653,6 +654,7 @@
 		4FE91EF92FC5266D00460A74 /* EventsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsViewController.swift; sourceTree = "<group>"; };
 		4FE91EFD2FC6401700460A74 /* RaceSync.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = RaceSync.icon; sourceTree = "<group>"; };
 		4FE96E9124E3E687009A7F53 /* HeaderStretchable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeaderStretchable.swift; sourceTree = "<group>"; };
+		4FE9B66130D0A64000A9DBDE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		4FEADB7124147D2D00F82F0D /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		4FEADB732416B3D400F82F0D /* EventTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTracker.swift; sourceTree = "<group>"; };
 		4FEBB27523A1F9DA007514B4 /* UITabBarController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITabBarController+Extensions.swift"; sourceTree = "<group>"; };
@@ -787,6 +789,7 @@
 		4F1342462360B67D00A9DBDE /* RaceSync */ = {
 			isa = PBXGroup;
 			children = (
+				4FE9B66130D0A64000A9DBDE /* SceneDelegate.swift */,
 				4F1342472360B67D00A9DBDE /* AppDelegate.swift */,
 				4FD4E1D6237F9E23008816B3 /* View Controllers */,
 				4F8F2C0F2384903100DC4907 /* View Models */,
@@ -1739,6 +1742,7 @@
 				4FFDE1262F4535AD0031DDA5 /* SeriesFeedController.swift in Sources */,
 				4F3D640F23FC65F700DE6DF2 /* TextPickerViewController.swift in Sources */,
 				4F1342482360B67D00A9DBDE /* AppDelegate.swift in Sources */,
+				4FE9B66230D0A64000A9DBDE /* SceneDelegate.swift in Sources */,
 				4FC4C59C24D8F3F2007D3B71 /* DimmableView.swift in Sources */,
 				4F80A661296F9951008B19AF /* RichEditorOptionItem.swift in Sources */,
 				4F9DB7A323D397B700570483 /* SettingsViewController.swift in Sources */,

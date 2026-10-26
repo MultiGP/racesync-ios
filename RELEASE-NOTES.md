@@ -1,6 +1,17 @@
 
 # App Store Release Notes
 
+## 2.2.1
+
+### ZippyQ Hot Fixes
+   * Allowing to hide the smart join header with a single tap gesture
+   - General UI and UX behavior tweaks
+### iOS27 & iPhone Duo upgrade:
+   * Compiling against the recent iOS 27.1 SDK
+   - Optimizing the UI for the new iPhone Duo
+
+---
+
 ## 2.2
 
 ### Introducing Native ZippyQ:

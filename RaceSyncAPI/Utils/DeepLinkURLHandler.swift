@@ -18,6 +18,7 @@ public class DeepLinkURLHandler: Descriptable {
 
     public static let shared = DeepLinkURLHandler()
 
+    @discardableResult
     public func handle(url: URL) -> Bool {
         guard let link = DeepLink.create(from: url) else { return false }
         return handleDeepLink(link)
@@ -34,6 +35,7 @@ extension DeepLinkURLHandler {
 
     // racesync://race/join?id=29941&pilotId=20676
 
+    @discardableResult
     func handleDeepLink(_ deepLink: DeepLink) -> Bool {
         if (deepLink.domain == .race || deepLink.domain == .races) {
             if deepLink.action == .join {
