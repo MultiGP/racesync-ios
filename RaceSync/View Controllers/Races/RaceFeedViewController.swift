@@ -217,20 +217,20 @@ class RaceFeedViewController: UIViewController, ViewJoinable, Shimmable, RaceEdi
         view.addSubview(headerView)
         headerView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            $0.leading.trailing.equalToSuperview()
+            $0.leading.trailing.equalTo(view.safeAreaLayoutGuide)
         }
 
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
             $0.top.equalTo(headerView.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
+            $0.leading.trailing.equalTo(view.safeAreaLayoutGuide)
             $0.bottom.equalTo(view.snp.bottom)
         }
 
         view.addSubview(shimmeringView)
         shimmeringView.snp.makeConstraints {
             $0.top.equalTo(tableView.snp.top)
-            $0.leading.trailing.equalToSuperview()
+            $0.leading.trailing.equalTo(view.safeAreaLayoutGuide)
             $0.bottom.equalTo(tableView.snp.bottom)
         }
     }
