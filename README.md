@@ -34,10 +34,6 @@ Find and join local drone races hosted by MultiGP chapters worldwide with a free
 ### Features for chapter organizers:
 * Create, duplicate, and edit races
 * Manage pilot participation in races
-* Access official MultiGP track designs (GQ, UTT, Champs, and more)
-* Submit GQ track measurement validation
-
-Start racing now with RaceSync!
 
 ## Public beta is open
 
@@ -66,5 +62,5 @@ The following application targets are being privately built and tested using XCo
 
 ## Platform
 
-* Optimized for: iOS 26.0
-* Minimum OS: iOS 14.0
+* Optimized for: iOS 27.1
+* Minimum OS: iOS 18.2

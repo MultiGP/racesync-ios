@@ -9,7 +9,7 @@
 import UIKit
 import RaceSyncAPI
 
-class ZippyqRoundViewModel: Descriptable {
+struct ZippyqRoundViewModel: Descriptable {
 
     let id: String
     let cycle: Int32
@@ -59,7 +59,9 @@ class ZippyqRoundViewModel: Descriptable {
             )
         }
         let assignedViewModels = viewModels.filter { $0.isAssigned }
-        let showsEmptySlots = showsEmptyFrequencies && queue.status != .previous
+        let showsEmptySlots = showsEmptyFrequencies
+            && queue.status == .queued
+            && !hasResults
         frequencyViewModels = showsEmptySlots ? viewModels : assignedViewModels
         isExpandable = showsEmptySlots || !assignedViewModels.isEmpty
         avatarImageUrls = assignedViewModels.map { $0.imageUrl }
@@ -95,7 +97,7 @@ class ZippyqRoundViewModel: Descriptable {
     }
 }
 
-class ZippyqHeaderFrequencyViewModel {
+struct ZippyqHeaderFrequencyViewModel: Descriptable {
 
     let frequency: String?
     let channelLabel: String?

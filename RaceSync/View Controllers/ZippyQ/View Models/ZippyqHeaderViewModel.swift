@@ -9,7 +9,7 @@
 import UIKit
 import RaceSyncAPI
 
-class ZippyqHeaderViewModel {
+struct ZippyqHeaderViewModel {
 
     let frequencyViewModels: [ZippyqHeaderFrequencyViewModel]
     let preferenceLabel: String

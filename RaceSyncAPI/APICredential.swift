@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class APICredential {
+public class APICredential: Descriptable {
     public let apiKey: String
     public var email: String
     public var password: String

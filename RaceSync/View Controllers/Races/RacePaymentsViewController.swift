@@ -51,6 +51,7 @@ class RacePaymentsViewController: UIViewController, RaceTabbable {
         tableView.tableHeaderView = UIView()
         tableView.tableFooterView = UIView()
         tableView.backgroundColor = Color.tableGroupedBackground
+        tableView.alwaysBounceVertical = true
         return tableView
     }()
 
@@ -481,6 +482,6 @@ extension RacePaymentsViewController: EmptyDataSetSource {
 extension RacePaymentsViewController: EmptyDataSetDelegate {
 
     func emptyDataSetShouldAllowScroll(_ scrollView: UIScrollView) -> Bool {
-        return false
+        return true
     }
 }

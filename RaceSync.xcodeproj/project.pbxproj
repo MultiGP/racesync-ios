@@ -235,6 +235,9 @@
 		4FCD99B829788F720094C562 /* AppWebConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCD99B729788F720094C562 /* AppWebConstants.swift */; };
 		4FCEAB442F0CD81F00CAE0BD /* UIApplication+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCEAB432F0CD81F00CAE0BD /* UIApplication+Extensions.swift */; };
 		4FCEAB462F11761900CAE0BD /* SeriesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCEAB452F11761900CAE0BD /* SeriesController.swift */; };
+		4FCFF7D5308ABE7200EFADA9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4FCFF7D1308ABE7200EFADA9 /* LaunchScreen.storyboard */; };
+		4FCFF7D6308ABE7200EFADA9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4FCFF7CE308ABE7200EFADA9 /* Assets.xcassets */; };
+		4FCFF7D7308ABE7200EFADA9 /* ZippyQApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCFF7D2308ABE7200EFADA9 /* ZippyQApp.swift */; };
 		4FD4E1BC237DCAA3008816B3 /* UserApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1BB237DCAA3008816B3 /* UserApi.swift */; };
 		4FD4E1BE237DCB24008816B3 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1BD237DCB24008816B3 /* User.swift */; };
 		4FD4E1C1237DDFB4008816B3 /* RaceFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD4E1C0237DDFB4008816B3 /* RaceFeedViewController.swift */; };
@@ -288,6 +291,7 @@
 		4FE91EFC2FC5266D00460A74 /* EventsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE91EF92FC5266D00460A74 /* EventsViewController.swift */; };
 		4FE91EFE2FC6401700460A74 /* RaceSync.icon in Resources */ = {isa = PBXBuildFile; fileRef = 4FE91EFD2FC6401700460A74 /* RaceSync.icon */; };
 		4FE96E9224E3E687009A7F53 /* HeaderStretchable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE96E9124E3E687009A7F53 /* HeaderStretchable.swift */; };
+		4FE9B66230D0A64000A9DBDE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE9B66130D0A64000A9DBDE /* SceneDelegate.swift */; };
 		4FEADB7224147D2D00F82F0D /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEADB7124147D2D00F82F0D /* LocationManager.swift */; };
 		4FEADB742416B3D400F82F0D /* EventTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEADB732416B3D400F82F0D /* EventTracker.swift */; };
 		4FEBB27623A1F9DA007514B4 /* UITabBarController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FEBB27523A1F9DA007514B4 /* UITabBarController+Extensions.swift */; };
@@ -315,6 +319,13 @@
 			remoteInfo = RaceSyncAPI;
 		};
 		4F1342802360DA4C00A9DBDE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4F13423C2360B67D00A9DBDE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4F13426C2360DA4B00A9DBDE;
+			remoteInfo = RaceSyncAPI;
+		};
+		4F3EA738308AAFC5009202C2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4F13423C2360B67D00A9DBDE /* Project object */;
 			proxyType = 1;
@@ -411,6 +422,7 @@
 		4F3E2D012DEE23D900A6646C /* ImageExportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageExportViewController.swift; sourceTree = "<group>"; };
 		4F3E2D032DEE4E8500A6646C /* StandingBadgeView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = StandingBadgeView.xib; sourceTree = "<group>"; };
 		4F3E2D052DEE52AE00A6646C /* StandingBadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandingBadgeView.swift; sourceTree = "<group>"; };
+		4F3EA723308AAF79009202C2 /* ZippyQApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZippyQApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F4129DA2DC0AE32006A2763 /* NotificationsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NotificationsController.swift; path = "RaceSync/UI Utils/NotificationsController.swift"; sourceTree = SOURCE_ROOT; };
 		4F482EFA251158FF00DBA0DF /* SocialActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialActivity.swift; sourceTree = "<group>"; };
 		4F5001E423823C940025A593 /* FlagEmojiGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagEmojiGenerator.swift; sourceTree = "<group>"; };
@@ -585,6 +597,10 @@
 		4FCD99B729788F720094C562 /* AppWebConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppWebConstants.swift; sourceTree = "<group>"; };
 		4FCEAB432F0CD81F00CAE0BD /* UIApplication+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extensions.swift"; sourceTree = "<group>"; };
 		4FCEAB452F11761900CAE0BD /* SeriesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesController.swift; sourceTree = "<group>"; };
+		4FCFF7CE308ABE7200EFADA9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4FCFF7CF308ABE7200EFADA9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4FCFF7D0308ABE7200EFADA9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		4FCFF7D2308ABE7200EFADA9 /* ZippyQApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyQApp.swift; sourceTree = "<group>"; };
 		4FD4E1BB237DCAA3008816B3 /* UserApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserApi.swift; sourceTree = "<group>"; };
 		4FD4E1BD237DCB24008816B3 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		4FD4E1C0237DDFB4008816B3 /* RaceFeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceFeedViewController.swift; sourceTree = "<group>"; };
@@ -623,7 +639,7 @@
 		4FE64524301C1001008CBD26 /* ZippyqFrequencyContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZippyqFrequencyContentView.swift; sourceTree = "<group>"; };
 		4FE64524301C2001008CBD26 /* FrequencyColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrequencyColor.swift; sourceTree = "<group>"; };
 		4FE64526301C3001008CBD26 /* FrequencyActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrequencyActionButton.swift; sourceTree = "<group>"; };
-		4FE64528301D0001008CBD26 /* PollingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PollingController.swift; path = "RaceSync/UI Utils/PollingController.swift"; sourceTree = SOURCE_ROOT; };
+		4FE64528301D0001008CBD26 /* PollingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollingController.swift; sourceTree = "<group>"; };
 		4FE91EE02FB670F000460A74 /* UIBarButtonItem+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem+Extensions.swift"; sourceTree = "<group>"; };
 		4FE91EE22FBC098900460A74 /* EventApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventApi.swift; sourceTree = "<group>"; };
 		4FE91EE42FBC09C800460A74 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
@@ -638,6 +654,7 @@
 		4FE91EF92FC5266D00460A74 /* EventsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsViewController.swift; sourceTree = "<group>"; };
 		4FE91EFD2FC6401700460A74 /* RaceSync.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = RaceSync.icon; sourceTree = "<group>"; };
 		4FE96E9124E3E687009A7F53 /* HeaderStretchable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeaderStretchable.swift; sourceTree = "<group>"; };
+		4FE9B66130D0A64000A9DBDE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		4FEADB7124147D2D00F82F0D /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		4FEADB732416B3D400F82F0D /* EventTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTracker.swift; sourceTree = "<group>"; };
 		4FEBB27523A1F9DA007514B4 /* UITabBarController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITabBarController+Extensions.swift"; sourceTree = "<group>"; };
@@ -681,6 +698,13 @@
 			files = (
 				4F1342762360DA4C00A9DBDE /* RaceSyncAPI.framework in Frameworks */,
 				FA8A945598D582AC78BB26B0 /* Pods_RaceSyncAPITests.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4F3EA720308AAF79009202C2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -744,6 +768,7 @@
 				4F1342462360B67D00A9DBDE /* RaceSync */,
 				4F13426E2360DA4B00A9DBDE /* RaceSyncAPI */,
 				4F13427B2360DA4C00A9DBDE /* RaceSyncAPITests */,
+				4FCFF7D3308ABE7200EFADA9 /* ZippyQApp */,
 				4F1342452360B67D00A9DBDE /* Products */,
 				8CA907F11021D980864A2634 /* Pods */,
 				630E12C4F78138F076CDB368 /* Frameworks */,
@@ -756,6 +781,7 @@
 				4F1342442360B67D00A9DBDE /* RaceSync.app */,
 				4F13426D2360DA4B00A9DBDE /* RaceSyncAPI.framework */,
 				4F1342752360DA4C00A9DBDE /* RaceSyncAPITests.xctest */,
+				4F3EA723308AAF79009202C2 /* ZippyQApp.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -763,6 +789,7 @@
 		4F1342462360B67D00A9DBDE /* RaceSync */ = {
 			isa = PBXGroup;
 			children = (
+				4FE9B66130D0A64000A9DBDE /* SceneDelegate.swift */,
 				4F1342472360B67D00A9DBDE /* AppDelegate.swift */,
 				4FD4E1D6237F9E23008816B3 /* View Controllers */,
 				4F8F2C0F2384903100DC4907 /* View Models */,
@@ -925,7 +952,6 @@
 				4F91BC892398FBCE00539E95 /* ViewJoinable.swift */,
 				4FF16CBF2E70EC9300B4FC51 /* ViewJoinableRegistry.swift */,
 				4F536ECE2F8AD826006FF620 /* ViewApprovable.swift */,
-				4FE64528301D0001008CBD26 /* PollingController.swift */,
 				4F4129DA2DC0AE32006A2763 /* NotificationsController.swift */,
 				4F5001E423823C940025A593 /* FlagEmojiGenerator.swift */,
 				4F5C1E4E2390B01700D756EB /* ImageNetworking.swift */,
@@ -1100,6 +1126,7 @@
 			children = (
 				4FC05C142E64FFB700EB97A4 /* DeepLink.swift */,
 				4FC05C162E65004400EB97A4 /* DeepLinkURLHandler.swift */,
+				4FE64528301D0001008CBD26 /* PollingController.swift */,
 				4F8B8664295C112B00EAF695 /* EnumTitle.swift */,
 				4F8668F723864389005E310A /* Descriptable.swift */,
 				4FEADB7124147D2D00F82F0D /* LocationManager.swift */,
@@ -1159,6 +1186,17 @@
 				4FE91EF02FC2C72000460A74 /* NotificationScheduler+EventSession.swift */,
 			);
 			path = Events;
+			sourceTree = "<group>";
+		};
+		4FCFF7D3308ABE7200EFADA9 /* ZippyQApp */ = {
+			isa = PBXGroup;
+			children = (
+				4FCFF7CE308ABE7200EFADA9 /* Assets.xcassets */,
+				4FCFF7CF308ABE7200EFADA9 /* Info.plist */,
+				4FCFF7D1308ABE7200EFADA9 /* LaunchScreen.storyboard */,
+				4FCFF7D2308ABE7200EFADA9 /* ZippyQApp.swift */,
+			);
+			path = ZippyQApp;
 			sourceTree = "<group>";
 		};
 		4FD4E1D2237F9DEF008816B3 /* Search */ = {
@@ -1423,6 +1461,26 @@
 			productReference = 4F1342752360DA4C00A9DBDE /* RaceSyncAPITests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		4F3EA722308AAF79009202C2 /* ZippyQApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4F3EA735308AAF7B009202C2 /* Build configuration list for PBXNativeTarget "ZippyQApp" */;
+			buildPhases = (
+				4F3EA71F308AAF79009202C2 /* Sources */,
+				4F3EA720308AAF79009202C2 /* Frameworks */,
+				4F3EA721308AAF79009202C2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4F3EA739308AAFC5009202C2 /* PBXTargetDependency */,
+			);
+			name = ZippyQApp;
+			packageProductDependencies = (
+			);
+			productName = ZippyQApp;
+			productReference = 4F3EA723308AAF79009202C2 /* ZippyQApp.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1430,7 +1488,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastSwiftUpdateCheck = 1310;
+				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 2640;
 				ORGANIZATIONNAME = "MultiGP Inc.";
 				TargetAttributes = {
@@ -1444,6 +1502,9 @@
 					};
 					4F1342742360DA4C00A9DBDE = {
 						CreatedOnToolsVersion = 10.3;
+					};
+					4F3EA722308AAF79009202C2 = {
+						CreatedOnToolsVersion = 26.6;
 					};
 				};
 			};
@@ -1461,6 +1522,7 @@
 			projectRoot = "";
 			targets = (
 				4F1342432360B67D00A9DBDE /* RaceSync */,
+				4F3EA722308AAF79009202C2 /* ZippyQApp */,
 				4F13426C2360DA4B00A9DBDE /* RaceSyncAPI */,
 				4F1342742360DA4C00A9DBDE /* RaceSyncAPITests */,
 			);
@@ -1497,6 +1559,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4F3EA721308AAF79009202C2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4FCFF7D5308ABE7200EFADA9 /* LaunchScreen.storyboard in Resources */,
+				4FCFF7D6308ABE7200EFADA9 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1671,6 +1742,7 @@
 				4FFDE1262F4535AD0031DDA5 /* SeriesFeedController.swift in Sources */,
 				4F3D640F23FC65F700DE6DF2 /* TextPickerViewController.swift in Sources */,
 				4F1342482360B67D00A9DBDE /* AppDelegate.swift in Sources */,
+				4FE9B66230D0A64000A9DBDE /* SceneDelegate.swift in Sources */,
 				4FC4C59C24D8F3F2007D3B71 /* DimmableView.swift in Sources */,
 				4F80A661296F9951008B19AF /* RichEditorOptionItem.swift in Sources */,
 				4F9DB7A323D397B700570483 /* SettingsViewController.swift in Sources */,
@@ -1747,7 +1819,6 @@
 				4F004EA7295B83F6009C46AA /* RaceForm.swift in Sources */,
 				4F8B4A0A2DDC7AEF00B735DA /* PushMessagesViewController.swift in Sources */,
 				4FC57C33258E1362006E210F /* AppUtil.swift in Sources */,
-				4FE64529301D0001008CBD26 /* PollingController.swift in Sources */,
 				4FABC004301D200000000001 /* ZippyqSmartJoiner.swift in Sources */,
 				4FABC006301D200000000001 /* ZippyqSmartJoinable.swift in Sources */,
 				4FABC008301D300000000001 /* ZippyqDataController.swift in Sources */,
@@ -1907,6 +1978,7 @@
 				4FDD499823B0470E009DD2DB /* ChapterEnums.swift in Sources */,
 				4FA1AB4123CAC956007CF389 /* Dictionary+Extensions.swift in Sources */,
 				4F6A28E12D13F38000FF692D /* ResultEntry.swift in Sources */,
+				4FE64529301D0001008CBD26 /* PollingController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1924,6 +1996,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4F3EA71F308AAF79009202C2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4FCFF7D7308ABE7200EFADA9 /* ZippyQApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1936,6 +2016,11 @@
 			isa = PBXTargetDependency;
 			target = 4F13426C2360DA4B00A9DBDE /* RaceSyncAPI */;
 			targetProxy = 4F1342802360DA4C00A9DBDE /* PBXContainerItemProxy */;
+		};
+		4F3EA739308AAFC5009202C2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4F13426C2360DA4B00A9DBDE /* RaceSyncAPI */;
+			targetProxy = 4F3EA738308AAFC5009202C2 /* PBXContainerItemProxy */;
 		};
 		4F9A888B29747EC000B52092 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1957,6 +2042,14 @@
 			isa = PBXVariantGroup;
 			children = (
 				4F1342512360B67D00A9DBDE /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		4FCFF7D1308ABE7200EFADA9 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4FCFF7D0308ABE7200EFADA9 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -2096,7 +2189,7 @@
 				CODE_SIGN_ENTITLEMENTS = RaceSync/RaceSync.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 135;
+				CURRENT_PROJECT_VERSION = 136;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = TJ4PB66YQS;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
@@ -2107,7 +2200,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.2;
+				MARKETING_VERSION = 2.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.multigp.RaceSyncApp;
 				PRODUCT_NAME = RaceSync;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2132,7 +2225,7 @@
 				CODE_SIGN_ENTITLEMENTS = RaceSync/RaceSync.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 135;
+				CURRENT_PROJECT_VERSION = 136;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = TJ4PB66YQS;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
@@ -2143,7 +2236,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.2;
+				MARKETING_VERSION = 2.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.multigp.RaceSyncApp;
 				PRODUCT_NAME = RaceSync;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2288,6 +2381,91 @@
 			};
 			name = Release;
 		};
+		4F3EA736308AAF7B009202C2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = TJ4PB66YQS;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ZippyQApp/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = multigp.ZippyQApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Debug;
+		};
+		4F3EA737308AAF7B009202C2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = TJ4PB66YQS;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ZippyQApp/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = multigp.ZippyQApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2323,6 +2501,15 @@
 			buildConfigurations = (
 				4F1342892360DA4C00A9DBDE /* Debug */,
 				4F13428A2360DA4C00A9DBDE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4F3EA735308AAF7B009202C2 /* Build configuration list for PBXNativeTarget "ZippyQApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4F3EA736308AAF7B009202C2 /* Debug */,
+				4F3EA737308AAF7B009202C2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

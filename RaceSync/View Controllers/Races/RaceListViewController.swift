@@ -250,9 +250,9 @@ class RaceListViewController: UIViewController, ViewJoinable {
 
         sender.isLoading = true
 
-        let handler: AlertCompletionBlock = { _ in
+        let handler: AlertCompletionBlock = { [weak self] _ in
 
-            self.seriesApi.remove(race: race.id, from: series.id) { [weak self] status, error in
+            self?.seriesApi.remove(race: race.id, from: series.id) { [weak self] status, error in
                 if status == true {
                     // reload races to reflect changes, specially approval state
                     self?.loadContent()
